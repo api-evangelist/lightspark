@@ -1,0 +1,2162 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management Customers API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Customers
+  description: Customer management endpoints for creating and updating customer information
+paths:
+  /customers:
+    post:
+      summary: Add a new customer
+      description: Register a new customer in the system with an account identifier and bank account information
+      operationId: createCustomer
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCreateRequestOneOf'
+            examples:
+              individualCustomer:
+                summary: Create an individual customer
+                value:
+                  customerType: INDIVIDUAL
+                  platformCustomerId: ind-9f84e0c2
+                  region: US
+                  currencies:
+                  - USD
+                  - USDC
+                  fullName: Jane Smith
+                  birthDate: '1990-01-15'
+                  nationality: US
+                  email: jane.smith@example.com
+                  phoneNumber: '+14155551234'
+              individualCustomerInferred:
+                summary: Create an individual customer with inferred currencies
+                value:
+                  customerType: INDIVIDUAL
+                  platformCustomerId: ind-7b3f1a9d
+                  region: MX
+                  fullName: Carlos García
+                  birthDate: '1988-05-22'
+                  nationality: MX
+                  phoneNumber: '+525512345678'
+              businessCustomer:
+                summary: Create a business customer
+                value:
+                  customerType: BUSINESS
+                  platformCustomerId: biz-acme-001
+                  region: US
+                  currencies:
+                  - USD
+                  - USDC
+                  email: finance@acme.com
+                  phoneNumber: '+14155559876'
+                  businessInfo:
+                    legalName: Acme Corporation
+                    doingBusinessAs: Acme
+                    country: US
+                    registrationNumber: '5523041'
+                    incorporatedOn: '2018-03-14'
+                    entityType: LLC
+                    taxId: 47-1234567
+                    countriesOfOperation:
+                    - US
+                    businessType: INFORMATION
+                    purposeOfAccount: CONTRACTOR_PAYOUTS
+                    sourceOfFunds: Funds derived from customer payments for software services
+                    expectedMonthlyTransactionCount: COUNT_100_TO_500
+                    expectedMonthlyTransactionVolume: VOLUME_100K_TO_1M
+                    expectedRecipientJurisdictions:
+                    - US
+                    - MX
+                  address:
+                    line1: 123 Market Street
+                    line2: Suite 400
+                    city: San Francisco
+                    state: CA
+                    postalCode: '94105'
+                    country: US
+      responses:
+        '201':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOneOf'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '405':
+          description: Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '409':
+          description: Conflict. `UMA_ADDRESS_EXISTS` when the requested UMA address is already taken; `CONFLICT` when `platformCustomerId` collides with an existing active customer on the same platform.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+    get:
+      summary: List customers
+      description: 'Retrieve a list of customers with optional filtering parameters. Returns all customers that match
+
+        the specified filters. If no filters are provided, returns all customers (paginated).
+
+        '
+      operationId: listCustomers
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: platformCustomerId
+        in: query
+        description: Filter by platform-specific customer identifier
+        required: false
+        schema:
+          type: string
+      - name: customerType
+        in: query
+        description: Filter by customer type
+        required: false
+        schema:
+          $ref: '#/components/schemas/CustomerType'
+      - name: createdAfter
+        in: query
+        description: Filter customers created after this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: createdBefore
+        in: query
+        description: Filter customers created before this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: updatedAfter
+        in: query
+        description: Filter customers updated after this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: updatedBefore
+        in: query
+        description: Filter customers updated before this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        description: Maximum number of results to return (default 20, max 100)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        description: Cursor for pagination (returned from previous request)
+        required: false
+        schema:
+          type: string
+      - name: region
+        in: query
+        description: Filter by customer region (ISO 3166-1 alpha-2 country code)
+        required: false
+        schema:
+          type: string
+      - name: currency
+        in: query
+        description: Filter by currency code. Returns customers that have this currency in their enabled currencies list.
+        required: false
+        schema:
+          type: string
+      - name: umaAddress
+        in: query
+        description: Filter by uma address
+        required: false
+        schema:
+          type: string
+      - name: isIncludingDeleted
+        in: query
+        description: Whether to include deleted customers in the results. Default is false.
+        required: false
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerListResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '405':
+          description: Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error405'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/{customerId}:
+    parameters:
+    - name: customerId
+      in: path
+      description: System-generated unique customer identifier
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get customer by ID
+      description: Retrieve a customer by their system-generated ID
+      operationId: getCustomerById
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOneOf'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    patch:
+      summary: Update customer by ID
+      description: 'Update a customer''s metadata by their system-generated ID.
+
+
+        Most customer updates complete synchronously and return `200` with the updated customer. If the request changes `email` for a customer that has one or more tied Embedded Wallet internal accounts with `EMAIL_OTP` credentials, or changes `phoneNumber` for a customer that has one or more tied Embedded Wallet internal accounts with `SMS_OTP` credentials, the contact update uses the two-step signed-retry flow so the customer''s wallet session authorizes the authentication credential update. On the signed retry, Grid updates the customer contact field and every tied matching OTP credential across all tied Embedded Wallets as one logical operation. If any tied credential cannot be updated, the customer contact field is not changed.
+
+
+        Update `email` and `phoneNumber` in separate PATCH calls. A request that includes both fields is rejected.
+
+
+        For an Embedded Wallet email or SMS auth phone update:
+
+
+        1. Call `PATCH /customers/{customerId}` with the full update body and no signature headers. Grid returns `202` with `payloadToSign`, `requestId`, and `expiresAt`. The pending challenge binds the submitted update fields and the set of tied Embedded Wallet OTP credentials that must be updated.
+
+
+        2. Use the session API keypair of a verified authentication credential on one of the customer''s tied Embedded Wallets to build an API-key stamp over `payloadToSign`, then retry the same request with that full stamp as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The retry body must carry the same update fields submitted in step 1. The signed retry returns `200` with the updated customer.
+
+        '
+      operationId: updateCustomerById
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: Grid-Wallet-Signature
+        in: header
+        required: false
+        description: Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.
+        schema:
+          type: string
+        example: eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9
+      - name: Request-Id
+        in: header
+        required: false
+        description: The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.
+        schema:
+          type: string
+        example: Request:019542f5-b3e7-1d02-0000-000000000010
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateRequestOneOf'
+            examples:
+              individualUpdate:
+                summary: Update individual customer example
+                value:
+                  customerType: INDIVIDUAL
+                  fullName: John Smith
+                  birthDate: '1985-06-15'
+                  currencies:
+                  - USD
+                  - EUR
+                  - USDC
+                  address:
+                    line1: 456 Market St
+                    city: San Francisco
+                    state: CA
+                    postalCode: '94103'
+                    country: US
+              businessUpdate:
+                summary: Update business customer example
+                value:
+                  customerType: BUSINESS
+                  currencies:
+                  - USD
+                  - USDC
+                  businessInfo:
+                    legalName: New Tech Solutions LLC
+                    registrationNumber: BRN-987654321
+                    taxId: EIN-123456789
+                  address:
+                    line1: 100 Technology Parkway
+                    city: Palo Alto
+                    state: CA
+                    postalCode: '94304'
+                    country: US
+              embeddedWalletEmailUpdate:
+                summary: Embedded Wallet email update request (both steps)
+                value:
+                  customerType: INDIVIDUAL
+                  email: john.smith@example.com
+              embeddedWalletPhoneUpdate:
+                summary: Embedded Wallet SMS auth phone update request (both steps)
+                value:
+                  customerType: INDIVIDUAL
+                  phoneNumber: '+14155559876'
+              combinedContactUpdateRejected:
+                summary: Combined email and phone update request (rejected)
+                value:
+                  customerType: INDIVIDUAL
+                  email: john.smith@example.com
+                  phoneNumber: '+14155559876'
+      responses:
+        '200':
+          description: Customer updated successfully. For Embedded Wallet email or SMS auth phone updates, this is returned only on the signed retry after the customer contact field and all tied matching OTP credentials have been updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOneOf'
+        '202':
+          description: Challenge issued for an Embedded Wallet email or SMS auth phone update. The response contains `payloadToSign` plus a `requestId`. Build an API-key stamp over `payloadToSign` with the session API keypair from a verified authentication credential on one of the customer's tied Embedded Wallets, then retry the same request with `Grid-Wallet-Signature` and `Request-Id`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignedRequestChallenge'
+              examples:
+                embeddedWalletEmailUpdate:
+                  summary: Embedded Wallet customer email update challenge
+                  value:
+                    payloadToSign: '{"organizationId":"org_2m9F...","parameters":{"userEmail":"john.smith@example.com","userId":"user_2m9F..."},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_UPDATE_USER_EMAIL"}'
+                    requestId: Request:019542f5-b3e7-1d02-0000-000000000010
+                    expiresAt: '2026-04-08T15:35:00Z'
+                embeddedWalletPhoneUpdate:
+                  summary: Embedded Wallet customer SMS auth phone update challenge
+                  value:
+                    payloadToSign: '{"organizationId":"org_2m9F...","parameters":{"userId":"user_2m9F...","userPhoneNumber":"+14155559876"},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_UPDATE_USER_PHONE_NUMBER"}'
+                    requestId: Request:019542f5-b3e7-1d02-0000-000000000011
+                    expiresAt: '2026-04-08T15:35:00Z'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized. Also returned for Embedded Wallet email or SMS auth phone update retries when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match the pending customer update challenge, when the `Request-Id` does not match an unexpired pending challenge, or when the retry body does not match the update fields bound into `payloadToSign` on the initial call.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. Returned when the supplied email address is already associated with an `EMAIL_OTP` credential, or the supplied phone number is already associated with an `SMS_OTP` credential, on this or another internal account, or when the tied Embedded Wallet OTP credential set changed between the initial `202` challenge and the signed retry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '424':
+          description: Failed dependency. Returned when Grid cannot update one or more tied Embedded Wallet OTP credentials. The customer contact field is not changed unless all tied credentials are updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error424'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    delete:
+      summary: Delete customer by ID
+      description: Delete a customer by their system-generated ID
+      operationId: deleteCustomerById
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Customer deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOneOf'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '410':
+          description: Customer deleted already
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error410'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/bulk/csv:
+    post:
+      summary: Upload customers via CSV file
+      description: 'Upload a CSV file containing customer information for bulk creation. The CSV file should follow
+
+        a specific format with required and optional columns based on customer type.
+
+
+        ### CSV Format
+
+        The CSV file should have the following columns:
+
+
+        Required columns for all customers:
+
+        - umaAddress: The customer''s UMA address (e.g., $john.doe@uma.domain.com)
+
+        - platformCustomerId: Your platform''s unique identifier for the customer
+
+        - customerType: Either "INDIVIDUAL" or "BUSINESS"
+
+
+        Required columns for individual customers:
+
+        - fullName: Individual''s full name
+
+        - birthDate: Date of birth in YYYY-MM-DD format
+
+        - addressLine1: Street address line 1
+
+        - city: City
+
+        - state: State/Province/Region
+
+        - postalCode: Postal/ZIP code
+
+        - country: Country code (ISO 3166-1 alpha-2)
+
+
+        Required columns for business customers:
+
+        - businessLegalName: Legal name of the business
+
+        - addressLine1: Street address line 1
+
+        - city: City
+
+        - state: State/Province/Region
+
+        - postalCode: Postal/ZIP code
+
+        - country: Country code (ISO 3166-1 alpha-2)
+
+
+        Optional columns for all customers:
+
+        - addressLine2: Street address line 2
+
+        - platformAccountId: Your platform''s identifier for the bank account
+
+        - description: Optional description for the customer
+
+
+        Optional columns for individual customers:
+
+        - email: Customer''s email address
+
+
+        Optional columns for business customers:
+
+        - businessRegistrationNumber: Business registration number
+
+        - businessTaxId: Tax identification number
+
+
+        ### Example CSV
+
+        ```csv
+
+        umaAddress,platformCustomerId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,platformAccountId,businessLegalName
+
+        john.doe@uma.domain.com,customer123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US
+
+        acme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US
+
+        ```
+
+
+        The upload process is asynchronous and will return a job ID that can be used to track progress.
+
+        You can monitor the job status using the `/customers/bulk/jobs/{jobId}` endpoint.
+
+        '
+      operationId: uploadCustomersCsv
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: CSV file containing customer information
+      responses:
+        '202':
+          description: CSV upload accepted for processing
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkCustomerImportJobAccepted'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/bulk/jobs/{jobId}:
+    get:
+      summary: Get bulk import job status
+      description: 'Retrieve the current status and results of a bulk customer import job. This endpoint can be used
+
+        to track the progress of both CSV uploads.
+
+
+        The response includes:
+
+        - Overall job status
+
+        - Progress statistics
+
+        - Detailed error information for failed entries
+
+        - Completion timestamp when finished
+
+        '
+      operationId: getBulkCustomerImportJob
+      tags:
+      - Customers
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: jobId
+        in: path
+        description: ID of the bulk import job to retrieve
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Job status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkCustomerImportJob'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    BeneficialOwnerPersonalInfo:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - birthDate
+      - nationality
+      - address
+      - idType
+      - identifier
+      properties:
+        firstName:
+          type: string
+          description: First name of the individual
+          example: Jane
+        middleName:
+          type: string
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
+    Error424:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 424
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | PAYREQ_REQUEST_FAILED | Payment request failed |
+
+            | COUNTERPARTY_PUBKEY_FETCH_ERROR | Error fetching counterparty public key |
+
+            | NO_COMPATIBLE_UMA_VERSION | No compatible UMA version |
+
+            | LNURLP_REQUEST_FAILED | LNURLP request failed |
+
+            | EMAIL_OTP_CREDENTIAL_SYNC_FAILED | Failed to update one or more tied EMAIL_OTP credentials |
+
+            '
+          enum:
+          - PAYREQ_REQUEST_FAILED
+          - COUNTERPARTY_PUBKEY_FETCH_ERROR
+          - NO_COMPATIBLE_UMA_VERSION
+          - LNURLP_REQUEST_FAILED
+          - EMAIL_OTP_CREDENTIAL_SYNC_FAILED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    IndividualCustomerFields:
+      type: object
+      required:
+      - customerType
+      properties:
+        customerType:
+          type: string
+          enum:
+          - INDIVIDUAL
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
+        fullName:
+          type: string
+          description: Individual's full name
+          example: John Michael Doe
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1990-01-15'
+        nationality:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+        address:
+          $ref: '#/components/schemas/Address'
+    Address:
+      type: object
+      required:
+      - line1
+      - postalCode
+      - country
+      properties:
+        line1:
+          type: string
+          description: Street address line 1
+          example: 123 Main Street
+        line2:
+          type: string
+          description: Street address line 2
+          example: Apt 4B
+        city:
+          type: string
+          description: City
+          example: San Francisco
+        state:
+          type: string
+          description: State/Province/Region
+          example: CA
+        postalCode:
+          type: string
+          description: Postal/ZIP code
+          example: '94105'
+        country:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+    BeneficialOwner:
+      type: object
+      required:
+      - id
+      - customerId
+      - roles
+      - ownershipPercentage
+      - personalInfo
+      - kycStatus
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this beneficial owner
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the business customer this beneficial owner is associated with
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100)
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was last updated
+          example: '2025-10-03T12:00:00Z'
+    BusinessCustomerCreateRequest:
+      title: Business Customer Create Request
+      allOf:
+      - $ref: '#/components/schemas/CustomerCreateRequest'
+      - $ref: '#/components/schemas/BusinessCustomerFields'
+      - type: object
+        properties:
+          businessInfo:
+            $ref: '#/components/schemas/BusinessInfo'
+    BulkCustomerImportJobAccepted:
+      type: object
+      required:
+      - jobId
+      - status
+      properties:
+        jobId:
+          type: string
+          description: Unique identifier for the bulk import job
+          example: Job:019542f5-b3e7-1d02-0000-000000000006
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PROCESSING
+    CustomerListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of customers matching the filter criteria
+          items:
+            $ref: '#/components/schemas/CustomerOneOf'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of customers matching the criteria (excluding pagination)
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Customer:
+      type: object
+      required:
+      - umaAddress
+      - platformCustomerId
+      - customerType
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
+          type: string
+          description: Platform-specific customer identifier
+          example: 9f84e0c2a72c4fa
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        region:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2) representing the customer's regional identity and regulatory jurisdiction.
+          example: US
+        currencies:
+          type: array
+          items:
+            type: string
+          description: List of currency codes enabled for this customer.
+          example:
+          - USD
+          - USDC
+        email:
+          type: string
+          format: email
+          description: Email address for the customer.
+          example: john.doe@example.com
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Phone number for the customer in strict E.164 format.
+          example: '+14155551234'
+        umaAddress:
+          type: string
+          description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        isDeleted:
+          type: boolean
+          description: Whether the customer is marked as deleted
+          example: false
+          readOnly: true
+        contactVerification:
+          allOf:
+          - $ref: '#/components/schemas/ContactVerification'
+          readOnly: true
+          description: Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.
+    CustomerType:
+      type: string
+      enum:
+      - INDIVIDUAL
+      - BUSINESS
+      description: Whether the customer is an individual or a business entity
+      example: INDIVIDUAL
+    PurposeOfAccount:
+      type: string
+      enum:
+      - CONTRACTOR_PAYOUTS
+      - CREATOR_PAYOUTS
+      - EMPLOYEE_PAYOUTS
+      - MARKETPLACE_SELLER_PAYOUTS
+      - SUPPLIER_PAYMENTS
+      - CROSS_BORDER_B2B
+      - AR_AUTOMATION
+      - AP_AUTOMATION
+      - EMBEDDED_PAYMENTS
+      - PLATFORM_FEE_COLLECTION
+      - P2P_TRANSFERS
+      - CHARITABLE_DONATIONS
+      - OTHER
+      description: The intended purpose for using the Grid account
+      example: CONTRACTOR_PAYOUTS
+    BusinessCustomerFields:
+      type: object
+      required:
+      - customerType
+      properties:
+        customerType:
+          type: string
+          enum:
+          - BUSINESS
+        kybStatus:
+          $ref: '#/components/schemas/KybStatus'
+        address:
+          $ref: '#/components/schemas/Address'
+        businessInfo:
+          $ref: '#/components/schemas/BusinessInfoUpdate'
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    BulkCustomerImportErrorEntry:
+      allOf:
+      - $ref: '#/components/schemas/GridError'
+      - type: object
+        description: Error information for a failed bulk import entry
+        required:
+        - correlationId
+        properties:
+          correlationId:
+            type: string
+            description: Platform customer ID or row number for the failed entry
+            example: biz456
+    BusinessType:
+      type: string
+      description: The high-level industry category of the business
+      enum:
+      - AGRICULTURE_FORESTRY_FISHING_AND_HUNTING
+      - MINING_QUARRYING_AND_OIL_AND_GAS_EXTRACTION
+      - UTILITIES
+      - CONSTRUCTION
+      - MANUFACTURING
+      - WHOLESALE_TRADE
+      - RETAIL_TRADE
+      - TRANSPORTATION_AND_WAREHOUSING
+      - INFORMATION
+      - FINANCE_AND_INSURANCE
+      - REAL_ESTATE_AND_RENTAL_AND_LEASING
+      - PROFESSIONAL_SCIENTIFIC_AND_TECHNICAL_SERVICES
+      - MANAGEMENT_OF_COMPANIES_AND_ENTERPRISES
+      - ADMINISTRATIVE_AND_SUPPORT_AND_WASTE_MANAGEMENT_AND_REMEDIATION_SERVICES
+      - EDUCATIONAL_SERVICES
+      - HEALTH_CARE_AND_SOCIAL_ASSISTANCE
+      - ARTS_ENTERTAINMENT_AND_RECREATION
+      - ACCOMMODATION_AND_FOOD_SERVICES
+      - OTHER_SERVICES
+      - PUBLIC_ADMINISTRATION
+    IdentificationType:
+      type: string
+      enum:
+      - SSN
+      - ITIN
+      - EIN
+      - NON_US_TAX_ID
+      description: Type of tax identification
+      example: SSN
+    SignedRequestChallenge:
+      title: Signed Request Challenge
+      type: object
+      required:
+      - payloadToSign
+      - requestId
+      - expiresAt
+      description: Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.
+      properties:
+        payloadToSign:
+          type: string
+          description: Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request.
+          example: '{"organizationId":"org_2m9F...","parameters":{"userId":"user_2m9F..."},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_EXAMPLE"}'
+        requestId:
+          type: string
+          description: Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge.
+          example: Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time.
+          example: '2026-04-08T15:35:00Z'
+    IndividualCustomer:
+      title: Individual Customer
+      allOf:
+      - $ref: '#/components/schemas/Customer'
+      - $ref: '#/components/schemas/IndividualCustomerFields'
+    BusinessInfo:
+      type: object
+      description: Additional information required for business entities
+      required:
+      - legalName
+      - taxId
+      - incorporatedOn
+      properties:
+        legalName:
+          type: string
+          description: Legal name of the business
+          example: Acme Corporation, Inc.
+        doingBusinessAs:
+          type: string
+          description: Trade name or DBA name of the business, if different from the legal name
+          example: Acme
+        country:
+          type: string
+          description: Country of incorporation or registration (ISO 3166-1 alpha-2)
+          example: US
+        registrationNumber:
+          type: string
+          description: Business registration number
+          example: '5523041'
+        incorporatedOn:
+          type: string
+          format: date
+          description: Date of incorporation in ISO 8601 format (YYYY-MM-DD)
+          example: '2018-03-14'
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        taxId:
+          type: string
+          description: Tax identification number
+          example: 47-1234567
+        countriesOfOperation:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business operates (ISO 3166-1 alpha-2)
+          example:
+          - US
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        purposeOfAccount:
+          $ref: '#/components/schemas/PurposeOfAccount'
+        sourceOfFunds:
+          type: string
+          description: The primary source of funds for the business
+          example: Funds derived from customer payments for software services
+        expectedMonthlyTransactionCount:
+          type: string
+          enum:
+          - COUNT_UNDER_10
+          - COUNT_10_TO_100
+          - COUNT_100_TO_500
+          - COUNT_500_TO_1000
+          - COUNT_OVER_1000
+          description: Expected number of transactions per month
+          example: COUNT_100_TO_500
+        expectedMonthlyTransactionVolume:
+          type: string
+          enum:
+          - VOLUME_UNDER_10K
+          - VOLUME_10K_TO_100K
+          - VOLUME_100K_TO_1M
+          - VOLUME_1M_TO_10M
+          - VOLUME_OVER_10M
+          description: Expected total transaction volume per month in USD equivalent
+          example: VOLUME_100K_TO_1M
+        expectedRecipientJurisdictions:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business expects to send payments (ISO 3166-1 alpha-2)
+          example:
+          - US
+        naicsCode:
+          type: string
+          pattern: ^\d{2,6}$
+          description: NAICS code describing the nature of the business (2-6 digits)
+          example: '541511'
+        sourceOfFundsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceOfFundsCategory'
+          description: Structured source-of-funds categories for the business
+          example:
+          - OPERATING_REVENUE
+        sourceOfFundsOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the source of funds when OTHER is selected
+          example: Proceeds from a legal settlement
+        purposeOfAccountOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the account purpose when OTHER is selected
+          example: Escrow for equipment leases
+        expectedCounterpartyCountries:
+          type: array
+          items:
+            type: string
+          description: List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)
+          example:
+          - US
+    Error410:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 410
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | CUSTOMER_DELETED | Customer has been permanently deleted |
+
+            '
+          enum:
+          - CUSTOMER_DELETED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CustomerCreateRequest:
+      type: object
+      required:
+      - customerType
+      properties:
+        platformCustomerId:
+          type: string
+          description: Platform-specific customer identifier. If not provided, one will be generated by the system.
+          example: 9f84e0c2a72c4fa
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        region:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2) representing the customer's regional identity. This determines the regulatory jurisdiction and KYC requirements for the customer. Required if the customer will use currencies with different KYC requirements across regions. A customer with accounts in multiple regions should be registered as separate customers. This field is immutable after creation.
+          example: US
+        currencies:
+          type: array
+          items:
+            type: string
+          description: List of currency codes the customer will use (ISO 4217 for fiat, e.g. "USD", "EUR"; tickers for crypto, e.g. "BTC", "USDC"). Required if the customer will use more than one sending currency, since the correct currencies cannot always be inferred. If not provided, currencies will be inferred from the customer's region. Some currency combinations may require separate customers — if so, the request will be rejected with details.
+          example:
+          - USD
+          - USDC
+        email:
+          type: string
+          format: email
+          description: Email address for the customer.
+          example: john.doe@example.com
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Phone number for the customer in strict E.164 format.
+          example: '+14155551234'
+        umaAddress:
+          type: string
+          description: Optional UMA address identifier. If not provided during customer creation, one will be generated by the system. If provided during customer update, the UMA address will be updated to the provided value. This is an optional identifier to route payments to the customer. This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
+    Error501:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 501
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
+
+            | NOT_IMPLEMENTED | Feature not implemented |
+
+            '
+          enum:
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    GridError:
+      type: object
+      title: GridError
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    SourceOfFundsCategory:
+      type: string
+      enum:
+      - OPERATING_REVENUE
+      - INVESTMENT_INCOME
+      - LOANS
+      - VENTURE_CAPITAL
+      - PERSONAL_SAVINGS
+      - DONATIONS
+      - OTHER
+      description: A structured source-of-funds category for the business
+      example: OPERATING_REVENUE
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    EntityType:
+      type: string
+      enum:
+      - SOLE_PROPRIETORSHIP
+      - PARTNERSHIP
+      - LLC
+      - CORPORATION
+      - S_CORPORATION
+      - NON_PROFIT
+      - OTHER
+      description: Legal entity type of the business
+      example: LLC
+    BusinessInfoUpdate:
+      type: object
+      description: Additional information for business entities
+      properties:
+        legalName:
+          type: string
+          description: Legal name of the business
+          example: Acme Corporation, Inc.
+        doingBusinessAs:
+          type: string
+          description: Trade name or DBA name of the business, if different from the legal name
+          example: Acme
+        country:
+          type: string
+          description: Country of incorporation or registration (ISO 3166-1 alpha-2)
+          example: US
+        registrationNumber:
+          type: string
+          description: Business registration number
+          example: '5523041'
+        incorporatedOn:
+          type: string
+          format: date
+          description: Date of incorporation in ISO 8601 format (YYYY-MM-DD)
+          example: '2018-03-14'
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        taxId:
+          type: string
+          description: Tax identification number
+          example: 47-1234567
+        countriesOfOperation:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business operates (ISO 3166-1 alpha-2)
+          example:
+          - US
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        purposeOfAccount:
+          $ref: '#/components/schemas/PurposeOfAccount'
+        sourceOfFunds:
+          type: string
+          description: The primary source of funds for the business
+          example: Funds derived from customer payments for software services
+        expectedMonthlyTransactionCount:
+          type: string
+          enum:
+          - COUNT_UNDER_10
+          - COUNT_10_TO_100
+          - COUNT_100_TO_500
+          - COUNT_500_TO_1000
+          - COUNT_OVER_1000
+          description: Expected number of transactions per month
+          example: COUNT_100_TO_500
+        expectedMonthlyTransactionVolume:
+          type: string
+          enum:
+          - VOLUME_UNDER_10K
+          - VOLUME_10K_TO_100K
+          - VOLUME_100K_TO_1M
+          - VOLUME_1M_TO_10M
+          - VOLUME_OVER_10M
+          description: Expected total transaction volume per month in USD equivalent
+          example: VOLUME_100K_TO_1M
+        expectedRecipientJurisdictions:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business expects to send payments (ISO 3166-1 alpha-2)
+          example:
+          - US
+        naicsCode:
+          type: string
+          pattern: ^\d{2,6}$
+          description: NAICS code describing the nature of the business (2-6 digits)
+          example: '541511'
+        sourceOfFundsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceOfFundsCategory'
+          description: Structured source-of-funds categories for the business
+          example:
+          - OPERATING_REVENUE
+        sourceOfFundsOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the source of funds when OTHER is selected
+          example: Proceeds from a legal settlement
+        purposeOfAccountOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the account purpose when OTHER is selected
+          example: Escrow for equipment leases
+        expectedCounterpartyCountries:
+          type: array
+          items:
+            type: string
+          description: List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)
+          example:
+          - US
+    CustomerOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/IndividualCustomer'
+      - $ref: '#/components/schemas/BusinessCustomer'
+      discriminator:
+        propertyName: customerType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+          BUSINESS: '#/components/schemas/BusinessCustomer'
+    CustomerUpdateRequest:
+      title: Customer Update Request
+      description: Request body for `PATCH /customers/{customerId}`. When `email` changes for a customer with tied Embedded Wallet internal accounts, Grid updates the customer email and every tied `EMAIL_OTP` credential through the endpoint's signed-retry flow. When `phoneNumber` changes for a customer with tied Embedded Wallet internal accounts, Grid updates the customer phone number and every tied `SMS_OTP` credential through the same signed-retry flow. Update `email` and `phoneNumber` in separate PATCH calls.
+      type: object
+      required:
+      - customerType
+      properties:
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        currencies:
+          type: array
+          items:
+            type: string
+          description: Updated list of currency codes the customer will use (ISO 4217 for fiat, e.g. "USD", "EUR"; tickers for crypto, e.g. "BTC", "USDC"). Replaces the existing list. Some currency combinations may require separate customers — if so, the request will be rejected with details.
+          example:
+          - USD
+          - EUR
+          - USDC
+        email:
+          type: string
+          format: email
+          description: Email address for the customer. For customers with tied Embedded Wallet internal accounts, changing this value also updates every tied `EMAIL_OTP` credential across all tied Embedded Wallets.
+          example: john.doe@example.com
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Phone number for the customer in strict E.164 format. For customers with tied Embedded Wallet internal accounts, changing this value also updates every tied `SMS_OTP` credential across all tied Embedded Wallets. Send phone number and email updates as separate PATCH calls.
+          example: '+14155551234'
+        umaAddress:
+          type: string
+          description: Optional UMA address identifier. If provided, the customer's UMA address will be updated. This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
+    IndividualCustomerUpdateRequest:
+      title: Individual Customer Update Request
+      allOf:
+      - $ref: '#/components/schemas/CustomerUpdateRequest'
+      - $ref: '#/components/schemas/IndividualCustomerFields'
+    BusinessCustomer:
+      title: Business Customer
+      allOf:
+      - $ref: '#/components/schemas/Customer'
+      - $ref: '#/components/schemas/BusinessCustomerFields'
+      - type: object
+        properties:
+          businessInfo:
+            $ref: '#/components/schemas/BusinessInfoResponse'
+          beneficialOwners:
+            type: array
+            items:
+              $ref: '#/components/schemas/BeneficialOwner'
+    ContactVerificationStatus:
+      type: string
+      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
+      enum:
+      - PENDING
+      - VERIFIED
+      example: VERIFIED
+    CustomerUpdateRequestOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/IndividualCustomerUpdateRequest'
+      - $ref: '#/components/schemas/BusinessCustomerUpdateRequest'
+      discriminator:
+        propertyName: customerType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualCustomerUpdateRequest'
+          BUSINESS: '#/components/schemas/BusinessCustomerUpdateRequest'
+    KybStatus:
+      type: string
+      enum:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYB status of a business customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
+    IndividualCustomerCreateRequest:
+      title: Individual Customer Create Request
+      allOf:
+      - $ref: '#/components/schemas/CustomerCreateRequest'
+      - $ref: '#/components/schemas/IndividualCustomerFields'
+      - type: object
+        properties:
+          idType:
+            $ref: '#/components/schemas/IdentificationType'
+          identifier:
+            type: string
+            writeOnly: true
+            description: The individual's tax identification number. Required to onboard the individual as a US account holder. Only SSN and ITIN are currently accepted for an individual account holder; other identification types are rejected. Write-only — never returned in customer responses.
+            example: 123-45-6789
+    Error400:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 400
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
+
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - QUOTE_REQUEST_FAILED
+          - INVALID_PAYREQ_RESPONSE
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - LOOKUP_REQUEST_FAILED
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ContactVerification:
+      type: object
+      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
+
+
+        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
+      properties:
+        email:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's email address. Present only when the provider requires email verification.
+        phone:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
+    BeneficialOwnerRole:
+      type: string
+      enum:
+      - UBO
+      - DIRECTOR
+      - COMPANY_OFFICER
+      - CONTROL_PERSON
+      - TRUSTEE
+      - GENERAL_PARTNER
+      description: Role of the beneficial owner within the business
+      example: UBO
+    CustomerCreateRequestOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/IndividualCustomerCreateRequest'
+      - $ref: '#/components/schemas/BusinessCustomerCreateRequest'
+      discriminator:
+        propertyName: customerType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualCustomerCreateRequest'
+          BUSINESS: '#/components/schemas/BusinessCustomerCreateRequest'
+    BusinessCustomerUpdateRequest:
+      title: Business Customer Update Request
+      allOf:
+      - $ref: '#/components/schemas/CustomerUpdateRequest'
+      - $ref: '#/components/schemas/BusinessCustomerFields'
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    KycStatus:
+      type: string
+      enum:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
+    Error405:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 405
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | METHOD_NOT_ALLOWED | The HTTP method is not supported for this endpoint |
+
+            '
+          enum:
+          - METHOD_NOT_ALLOWED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    BusinessInfoResponse:
+      type: object
+      description: 'Business information returned on a customer. `taxId` and `incorporatedOn` are
+
+        required on creation but may be absent on legacy customers that pre-date the
+
+        requirement, so both are optional in responses.
+
+        '
+      required:
+      - legalName
+      properties:
+        legalName:
+          type: string
+          description: Legal name of the business
+          example: Acme Corporation, Inc.
+        doingBusinessAs:
+          type: string
+          description: Trade name or DBA name of the business, if different from the legal name
+          example: Acme
+        country:
+          type: string
+          description: Country of incorporation or registration (ISO 3166-1 alpha-2)
+          example: US
+        registrationNumber:
+          type: string
+          description: Business registration number
+          example: '5523041'
+        incorporatedOn:
+          type: string
+          format: date
+          description: Date of incorporation in ISO 8601 format (YYYY-MM-DD)
+          example: '2018-03-14'
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        taxId:
+          type: string
+          description: Tax identification number
+          example: 47-1234567
+        countriesOfOperation:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business operates (ISO 3166-1 alpha-2)
+          example:
+          - US
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        purposeOfAccount:
+          $ref: '#/components/schemas/PurposeOfAccount'
+        sourceOfFunds:
+          type: string
+          description: The primary source of funds for the business
+          example: Funds derived from customer payments for software services
+        expectedMonthlyTransactionCount:
+          type: string
+          enum:
+          - COUNT_UNDER_10
+          - COUNT_10_TO_100
+          - COUNT_100_TO_500
+          - COUNT_500_TO_1000
+          - COUNT_OVER_1000
+          description: Expected number of transactions per month
+          example: COUNT_100_TO_500
+        expectedMonthlyTransactionVolume:
+          type: string
+          enum:
+          - VOLUME_UNDER_10K
+          - VOLUME_10K_TO_100K
+          - VOLUME_100K_TO_1M
+          - VOLUME_1M_TO_10M
+          - VOLUME_OVER_10M
+          description: Expected total transaction volume per month in USD equivalent
+          example: VOLUME_100K_TO_1M
+        expectedRecipientJurisdictions:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business expects to send payments (ISO 3166-1 alpha-2)
+          example:
+          - US
+        naicsCode:
+          type: string
+          pattern: ^\d{2,6}$
+          description: NAICS code describing the nature of the business (2-6 digits)
+          example: '541511'
+        sourceOfFundsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceOfFundsCategory'
+          description: Structured source-of-funds categories for the business
+          example:
+          - OPERATING_REVENUE
+        sourceOfFundsOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the source of funds when OTHER is selected
+          example: Proceeds from a legal settlement
+        purposeOfAccountOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the account purpose when OTHER is selected
+          example: Escrow for equipment leases
+        expectedCounterpartyCountries:
+          type: array
+          items:
+            type: string
+          description: List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)
+          example:
+          - US
+    BulkCustomerImportJob:
+      type: object
+      required:
+      - id
+      - status
+      - progress
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the bulk import job
+          example: Job:019542f5-b3e7-1d02-0000-000000000006
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          description: Current status of the job
+          example: PROCESSING
+        progress:
+          type: object
+          required:
+          - total
+          - processed
+          - successful
+          - failed
+          properties:
+            total:
+              type: integer
+              description: Total number of customers to process
+              example: 5000
+            processed:
+              type: integer
+              description: Number of customers processed so far
+              example: 2500
+            successful:
+              type: integer
+              description: Number of customers successfully created
+              example: 2450
+            failed:
+              type: integer
+              description: Number of customers that failed to create
+              example: 50
+        errors:
+          type: array
+          description: Detailed error information for failed entries
+          items:
+            $ref: '#/components/schemas/BulkCustomerImportErrorEntry'
+        completedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
+          example: '2025-08-15T14:32:00Z'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

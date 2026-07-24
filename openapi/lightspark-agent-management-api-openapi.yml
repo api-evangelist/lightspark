@@ -1,0 +1,5352 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Agent Management
+  description: 'Endpoints for creating and managing agents (experimental), called by the partner''s backend using platform credentials. Covers the full agent lifecycle: creation, policy configuration, pausing, deletion, the device code installation flow, and approving or rejecting transactions initiated by agents.'
+paths:
+  /agents:
+    post:
+      summary: Create an agent
+      description: 'Create a new agent with a specified policy. Returns the created agent and a device code that must be redeemed by the agent software to complete installation.
+
+        '
+      operationId: createAgent
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCreateRequest'
+      responses:
+        '201':
+          description: Agent created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentCreateResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    get:
+      summary: List agents
+      description: Retrieve a paginated list of agents for the authenticated platform.
+      operationId: listAgents
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: customerId
+        in: query
+        description: Filter by customer ID
+        required: false
+        schema:
+          type: string
+      - name: isPaused
+        in: query
+        description: Filter by paused status
+        required: false
+        schema:
+          type: boolean
+      - name: isConnected
+        in: query
+        description: Filter by connection status (whether the device code has been redeemed)
+        required: false
+        schema:
+          type: boolean
+      - name: createdAfter
+        in: query
+        description: Filter agents created after this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: createdBefore
+        in: query
+        description: Filter agents created before this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: updatedAfter
+        in: query
+        description: Filter agents updated after this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: updatedBefore
+        in: query
+        description: Filter agents updated before this timestamp (inclusive)
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        description: Maximum number of results to return (default 20, max 100)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        description: Cursor for pagination (returned from previous request)
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentListResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/approvals:
+    get:
+      summary: List agent transaction approval requests
+      description: 'Retrieve a paginated list of agent actions that require platform approval. Filter by `agentId` or `customerId` to scope results to a specific agent or customer. Approve or reject individual actions via `POST /agents/{agentId}/actions/{actionId}/approve` or `POST /agents/{agentId}/actions/{actionId}/reject`.
+
+        '
+      operationId: listAgentApprovals
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: agentId
+        in: query
+        description: Filter by agent ID
+        required: false
+        schema:
+          type: string
+      - name: customerId
+        in: query
+        description: Filter by customer ID
+        required: false
+        schema:
+          type: string
+      - name: startDate
+        in: query
+        description: Filter by start date (inclusive) in ISO 8601 format
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: endDate
+        in: query
+        description: Filter by end date (inclusive) in ISO 8601 format
+        required: false
+        schema:
+          type: string
+          format: date-time
+      - name: limit
+        in: query
+        description: Maximum number of results to return (default 20, max 100)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        description: Cursor for pagination (returned from previous request)
+        required: false
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: Order to sort results in
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentActionListResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/{agentId}:
+    parameters:
+    - name: agentId
+      in: path
+      description: System-generated unique agent identifier
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get agent by ID
+      description: Retrieve an agent by its system-generated ID.
+      operationId: getAgentById
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    patch:
+      summary: Update agent
+      description: Update an agent's name or paused state.
+      operationId: updateAgent
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentUpdateRequest'
+      responses:
+        '200':
+          description: Agent updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    delete:
+      summary: Delete agent
+      description: Permanently delete an agent. Connected agent software will lose access immediately.
+      operationId: deleteAgent
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      responses:
+        '204':
+          description: Agent deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/{agentId}/policy:
+    parameters:
+    - name: agentId
+      in: path
+      description: System-generated unique agent identifier
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update agent policy
+      description: 'Partially update an agent''s policy. Only provided fields will be updated; omitted fields retain their current values. Policy changes take effect immediately.
+
+        '
+      operationId: updateAgentPolicy
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentPolicyUpdateRequest'
+      responses:
+        '200':
+          description: Agent policy updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Agent'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/{agentId}/device-codes:
+    parameters:
+    - name: agentId
+      in: path
+      description: System-generated unique agent identifier
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Regenerate a device code
+      description: 'Generate a new device code for an existing agent. Use this when the original device code has expired before being redeemed, or when the agent software needs to be reinstalled. Any previously issued unredeemed device codes for this agent are invalidated.
+
+        '
+      operationId: regenerateAgentDeviceCode
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      responses:
+        '201':
+          description: New device code generated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDeviceCode'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict - Agent already has an active connection and cannot regenerate a device code
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/{agentId}/actions/{actionId}/approve:
+    parameters:
+    - name: agentId
+      in: path
+      description: System-generated unique agent identifier
+      required: true
+      schema:
+        type: string
+    - name: actionId
+      in: path
+      description: Unique identifier of the agent action to approve
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Approve an agent action
+      description: 'Approve a pending agent action, allowing Grid to proceed with execution. The action must have status `PENDING_APPROVAL`. Once approved, Grid executes the underlying operation (quote execution or transfer) and the action transitions to `APPROVED`.
+
+        For `EXECUTE_QUOTE` actions, note that the underlying quote may have expired between submission and approval — in that case the action will transition to `FAILED` instead.
+
+        This endpoint is called by the platform''s backend using platform credentials, not by the agent itself.
+
+        '
+      operationId: approveAgentAction
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Action approved successfully. Returns the updated AgentAction.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentAction'
+        '400':
+          description: Bad request - Action cannot be approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent or action not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict - Action is not pending approval or has already been processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/{agentId}/actions/{actionId}/reject:
+    parameters:
+    - name: agentId
+      in: path
+      description: System-generated unique agent identifier
+      required: true
+      schema:
+        type: string
+    - name: actionId
+      in: path
+      description: Unique identifier of the agent action to reject
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Reject an agent action
+      description: 'Reject a pending agent action, preventing execution. The action must have status `PENDING_APPROVAL`. Once rejected, the action transitions to `REJECTED` and the underlying operation is not executed.
+
+        This endpoint is called by the platform''s backend using platform credentials, not by the agent itself.
+
+        '
+      operationId: rejectAgentAction
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentActionRejectRequest'
+      responses:
+        '200':
+          description: Action rejected successfully. Returns the updated AgentAction.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentAction'
+        '400':
+          description: Bad request - Action cannot be rejected
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Agent or action not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict - Action is not pending approval or has already been processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/device-codes/{code}/status:
+    parameters:
+    - name: code
+      in: path
+      description: The device code to check
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get device code status
+      description: 'Check whether a device code has been redeemed. Use this to poll for agent installation completion after creating an agent.
+
+        '
+      operationId: getAgentDeviceCodeStatus
+      tags:
+      - Agent Management
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDeviceCodeStatusResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Device code not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /agents/device-codes/{code}/redeem:
+    parameters:
+    - name: code
+      in: path
+      description: The device code to redeem
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Redeem device code
+      description: 'Redeem a device code to obtain agent credentials. This endpoint is called by the agent software during installation. On success, returns a Bearer access token that the agent uses for all subsequent API calls. The token is returned only once and must be stored securely.
+
+        This endpoint does not require platform authentication — the device code itself serves as proof of authorization.
+
+        '
+      operationId: redeemAgentDeviceCode
+      tags:
+      - Agent Management
+      security: []
+      responses:
+        '200':
+          description: Device code redeemed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AgentDeviceCodeRedeemResponse'
+        '400':
+          description: Bad request (e.g., code already redeemed or expired)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '404':
+          description: Device code not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    PaymentEmbeddedWalletInfo:
+      title: Embedded Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountType
+        - payloadToSign
+        properties:
+          accountType:
+            type: string
+            enum:
+            - EMBEDDED_WALLET
+            description: Discriminator value identifying this as Embedded Wallet payment instructions.
+          payloadToSign:
+            type: string
+            description: JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet.
+            example: '{"type":"ACTIVITY_TYPE_SIGN_TRANSACTION_V2","timestampMs":"1746736509954","organizationId":"org_abc123","parameters":{"signWith":"wallet_abc123def456","unsignedTransaction":"ea69b4bf05f775209f26ff0a34a05569180f7936579d5c4af9377ae550194f72","type":"TRANSACTION_TYPE_ETHEREUM"},"generateAppProofs":true}'
+    EurAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - EUR_ACCOUNT
+        iban:
+          type: string
+          description: The IBAN of the bank account
+          example: DE89370400440532013000
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: EUR_ACCOUNT
+        iban: DE89370400440532013000
+        swiftCode: DEUTDEFF
+    PaymentBwpAccountInfo:
+      title: BWP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BwpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    QuoteSourceType:
+      type: string
+      enum:
+      - ACCOUNT
+      - REALTIME_FUNDING
+      description: Type of quote funding source
+      example: ACCOUNT
+    AgentDeviceCodeRedeemResponse:
+      type: object
+      required:
+      - agentId
+      - agentName
+      - accessToken
+      - policy
+      properties:
+        agentId:
+          type: string
+          description: The agent's system-generated ID.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000001
+        agentName:
+          type: string
+          description: The agent's name.
+          example: Payroll Automation Agent
+        accessToken:
+          type: string
+          description: 'Bearer token used to authenticate all subsequent API calls as this agent. Pass as `Authorization: Bearer <accessToken>`. This token is returned only once and must be stored securely — it cannot be retrieved again.'
+          example: gat_ed0ad25881e234cc28fb2dec0a4fe64e4172a3b9
+        policy:
+          $ref: '#/components/schemas/AgentPolicy'
+    PaymentSlvAccountInfo:
+      title: SLV Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SlvAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentVndAccountInfo:
+      title: VND Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/VndAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    TzsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/TzsAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentBrlAccountInfo:
+      title: BRL Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - qrCode
+        properties:
+          accountType:
+            type: string
+            enum:
+            - BRL_ACCOUNT
+          qrCode:
+            type: string
+            description: A PIX QR code payload that can be used to fund the transaction. This can be rendered as a QR code image or pasted into a PIX-compatible banking app.
+            minLength: 1
+    PaymentJmdAccountInfo:
+      title: JMD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/JmdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentHkdAccountInfo:
+      title: HKD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HkdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Agent:
+      type: object
+      description: A programmatic agent with scoped permissions and a spending policy, used to automate payment workflows.
+      required:
+      - id
+      - name
+      - customerId
+      - isPaused
+      - isConnected
+      - policy
+      - usage
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier for the agent.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000001
+        name:
+          type: string
+          description: Human-readable name for the agent.
+          example: Payroll Automation Agent
+        customerId:
+          type: string
+          description: The ID of the customer this agent operates on behalf of.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        isPaused:
+          type: boolean
+          description: Whether the agent is currently paused. Paused agents cannot initiate any actions.
+          example: false
+        isConnected:
+          type: boolean
+          description: Whether the agent has been installed and connected (i.e., its device code has been redeemed).
+          example: true
+        policy:
+          $ref: '#/components/schemas/AgentPolicy'
+        usage:
+          $ref: '#/components/schemas/AgentUsage'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp.
+          example: '2025-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+          example: '2025-07-21T17:32:28Z'
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    InrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/InrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - UPI
+              - NEFT
+              - RTGS
+    TransactionStatus:
+      type: string
+      enum:
+      - CREATED
+      - PENDING
+      - PENDING_AUTHORIZATION
+      - PROCESSING
+      - COMPLETED
+      - REJECTED
+      - FAILED
+      - REFUNDED
+      - EXPIRED
+      description: 'Status of a payment transaction.
+
+
+        | Status | Description |
+
+        |--------|-------------|
+
+        | `CREATED` | Initial lookup has been created |
+
+        | `PENDING` | Quote has been created |
+
+        | `PENDING_AUTHORIZATION` | Awaiting Strong Customer Authentication. Only occurs for customers in a region where SCA is required (e.g. EU); authorize the transaction''s `scaChallenge` to proceed. |
+
+        | `PROCESSING` | Funding has been received and payment initiated |
+
+        | `COMPLETED` | Cross border payment has been received, converted and payment has been sent to the offramp network |
+
+        | `REJECTED` | Receiving institution or wallet rejected payment, payment has been refunded |
+
+        | `FAILED` | An error occurred during payment |
+
+        | `REFUNDED` | Payment was unable to complete and refunded |
+
+        | `EXPIRED` | Quote has expired |
+
+        '
+    GtqAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GTQ_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: GTQ_ACCOUNT
+        accountNumber: '1234567890'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    CadAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankCode
+      - branchCode
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - CAD_ACCOUNT
+        bankCode:
+          type: string
+          description: Canadian financial institution number (3 digits)
+          example: '001'
+          minLength: 3
+          maxLength: 3
+          pattern: ^[0-9]{3}$
+        branchCode:
+          type: string
+          description: Transit number identifying the branch (5 digits)
+          example: '00012'
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        accountNumber:
+          type: string
+          description: Bank account number (7-12 digits)
+          example: '1234567'
+          minLength: 7
+          maxLength: 12
+          pattern: ^[0-9]{7,12}$
+    EgpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/EgpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentNgnAccountInfo:
+      title: NGN Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/NgnAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    QuoteDestinationOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountDestination'
+      - $ref: '#/components/schemas/UmaAddressDestination'
+      discriminator:
+        propertyName: destinationType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountDestination'
+          UMA_ADDRESS: '#/components/schemas/UmaAddressDestination'
+    PaymentHtgAccountInfo:
+      title: HTG Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HtgAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BaseWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BASE_WALLET
+        address:
+          type: string
+          description: Base eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    BaseTransactionDestination:
+      type: object
+      required:
+      - destinationType
+      properties:
+        destinationType:
+          $ref: '#/components/schemas/TransactionDestinationType'
+        currency:
+          type: string
+          description: Currency code for the destination
+          example: EUR
+    PaymentEgpAccountInfo:
+      title: EGP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EgpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AgentTransferDetails:
+      type: object
+      description: Details of a transfer-type agent action (TRANSFER_OUT or TRANSFER_IN).
+      required:
+      - amount
+      - currency
+      - sourceAccountId
+      - destinationAccountId
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Transfer amount in the smallest unit of the specified currency.
+          example: 50000
+        currency:
+          type: string
+          description: ISO 4217 currency code for the transfer amount.
+          example: USD
+        sourceAccountId:
+          type: string
+          description: ID of the source account (internal or external).
+          example: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        destinationAccountId:
+          type: string
+          description: ID of the destination account (internal or external).
+          example: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+    GbpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - sortCode
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GBP_ACCOUNT
+        sortCode:
+          type: string
+          description: The UK sort code
+          example: '123456'
+          minLength: 6
+          maxLength: 6
+          pattern: ^[0-9]{6}$
+        accountNumber:
+          type: string
+          description: UK bank account number (8 digits)
+          minLength: 8
+          maxLength: 8
+          example: '12345678'
+          pattern: ^[0-9]{8}$
+      example:
+        accountType: GBP_ACCOUNT
+        sortCode: '123456'
+        accountNumber: '12345678'
+    AgentActionListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of agent actions matching the filter criteria.
+          items:
+            $ref: '#/components/schemas/AgentAction'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page.
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true).
+        totalCount:
+          type: integer
+          description: Total number of actions matching the criteria (excluding pagination).
+    PaymentRail:
+      type: string
+      enum:
+      - ACH
+      - ACH_COLOMBIA
+      - BANK_TRANSFER
+      - BRE_B
+      - CIPS
+      - FAST
+      - FASTER_PAYMENTS
+      - FEDNOW
+      - INSTAPAY
+      - MOBILE_MONEY
+      - NEFT
+      - PAYNOW
+      - PESONET
+      - PIX
+      - RTGS
+      - RTP
+      - SEPA
+      - SEPA_INSTANT
+      - SPEI
+      - SWIFT
+      - UNIONPAY
+      - UPI
+      - WIRE
+      description: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
+      example: ACH
+    PaymentSparkWalletInfo:
+      title: Spark Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SparkWalletInfo'
+      - type: object
+        required:
+        - assetType
+        properties:
+          assetType:
+            type: string
+            description: Type of asset or configured Spark token currency code
+          invoice:
+            type: string
+            description: Invoice for the payment
+            example: sparkrt1pgss8ter0fhc4c220f3zftmpz49h8wqte8eg3m5zkrraplgc048jucgszg3ssqgjzqqekv73mmh842yj7drsjwh7t7tz5zt8wf5kghm5v4ehggszppjp5s80cg3qjdzc55g2567tn3lj705hdsr577tg8ah795mlnt6807y657qhkmgfkf9w75p4wz3l8vhua85zdn6ryj32zuj0p00pv2l5z4u47mw6h4s
+    ThbAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ThbAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    MwkAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MwkAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    OutgoingRateDetails:
+      description: 'Details about the rate and fees for an outgoing transaction or quote. Note: `counterpartyFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.'
+      type: object
+      required:
+      - counterpartyMultiplier
+      - counterpartyFixedFee
+      - gridApiMultiplier
+      - gridApiFixedFee
+      - gridApiVariableFeeRate
+      - gridApiVariableFeeAmount
+      properties:
+        counterpartyMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
+          exclusiveMinimum: 0
+          example: 1.08
+        counterpartyFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        gridApiFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.
+          minimum: 0
+          example: 0.003
+        gridApiVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
+          minimum: 0
+          example: 30
+    XafAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/XafAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentPhpAccountInfo:
+      title: PHP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PhpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentKesAccountInfo:
+      title: KES Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/KesAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    OutgoingTransactionStatus:
+      type: string
+      enum:
+      - PENDING
+      - PENDING_AUTHORIZATION
+      - EXPIRED
+      - PROCESSING
+      - COMPLETED
+      - FAILED
+      description: 'Status of an outgoing payment transaction.
+
+
+        | Status | Description |
+
+        |--------|-------------|
+
+        | `PENDING` | Quote is pending confirmation |
+
+        | `PENDING_AUTHORIZATION` | Awaiting Strong Customer Authentication. Only occurs for customers in a region where SCA is required (e.g. EU); authorize the transaction''s `scaChallenge` to proceed. |
+
+        | `EXPIRED` | Quote wasn''t executed before expiry window |
+
+        | `PROCESSING` | Executing the quote after receiving funds |
+
+        | `COMPLETED` | Payout successfully reached the destination |
+
+        | `FAILED` | Something went wrong — accompanied by a `failureReason` |
+
+        '
+    DkkAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/DkkAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SEPA
+              - SEPA_INSTANT
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CardPullSummary:
+      type: object
+      required:
+      - count
+      - totalAmount
+      properties:
+        count:
+          type: integer
+          description: Total number of pulls (debits) executed against the funding source for this transaction. `> 1` indicates one or more post-hoc pulls — e.g. restaurant tip / over-auth clearings.
+          example: 2
+        totalAmount:
+          type: integer
+          format: int64
+          description: Sum of all pull amounts in the smallest unit of the funding source's currency.
+          example: 1500
+        pendingCount:
+          type: integer
+          description: Number of pulls still in the `PENDING` state. Drops to zero when every pull has reached a terminal state. Non-zero values that persist beyond the expected settlement window are an early signal for the `EXCEPTION` path.
+          example: 0
+    PaymentBdtAccountInfo:
+      title: BDT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BdtAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    HtgAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/HtgAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    IncomingTransaction:
+      title: Incoming Transaction
+      allOf:
+      - $ref: '#/components/schemas/Transaction'
+      - type: object
+        required:
+        - type
+        - receivedAmount
+        properties:
+          type:
+            type: string
+            enum:
+            - INCOMING
+          source:
+            $ref: '#/components/schemas/TransactionSourceOneOf'
+          receivedAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+            description: Amount received in the recipient's currency
+          fees:
+            type: integer
+            format: int64
+            description: The total fees available from the receive quote in the smallest unit of the receiving currency (eg. cents).
+            minimum: 0
+            example: 10
+          reconciliationInstructions:
+            $ref: '#/components/schemas/ReconciliationInstructions'
+            description: Included for all transactions except those with "CREATED" status
+          rateDetails:
+            $ref: '#/components/schemas/IncomingRateDetails'
+            description: Details about the rate and fees for the transaction.
+          failureReason:
+            $ref: '#/components/schemas/IncomingTransactionFailureReason'
+            description: If the transaction failed, this field provides the reason for failure.
+    MyrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MYR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Malaysian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: MABORUMMYYY
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: MYR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: MABORUMMYYY
+    TransactionSourceOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountTransactionSource'
+      - $ref: '#/components/schemas/UmaAddressTransactionSource'
+      - $ref: '#/components/schemas/RealtimeFundingTransactionSource'
+      discriminator:
+        propertyName: sourceType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountTransactionSource'
+          UMA_ADDRESS: '#/components/schemas/UmaAddressTransactionSource'
+          REALTIME_FUNDING: '#/components/schemas/RealtimeFundingTransactionSource'
+    OutgoingTransactionFailureReason:
+      type: string
+      enum:
+      - QUOTE_EXPIRED
+      - QUOTE_EXECUTION_FAILED
+      - LIGHTNING_PAYMENT_FAILED
+      - FUNDING_AMOUNT_MISMATCH
+      - COUNTERPARTY_POST_TX_FAILED
+      description: Reason for failure of an outgoing transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
+    AgentUpdateRequest:
+      type: object
+      description: Partial update to an agent's basic fields. At least one field must be provided.
+      properties:
+        name:
+          type: string
+          description: Updated name for the agent.
+          example: Updated Payroll Agent
+        isPaused:
+          type: boolean
+          description: Set to true to pause the agent or false to resume it.
+          example: true
+    PaymentSwiftAccountInfo:
+      title: SWIFT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SwiftAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Error400:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 400
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
+
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - QUOTE_REQUEST_FAILED
+          - INVALID_PAYREQ_RESPONSE
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - LOOKUP_REQUEST_FAILED
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    HtgAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HTG_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: HTG_ACCOUNT
+        phoneNumber: '+1234567890'
+    IdrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - IDR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+          example: Bank Central Asia
+        accountNumber:
+          type: string
+          description: Indonesian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: CENAIDJA
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: Indonesian phone number for e-wallet payments
+          example: '+6281234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+62[0-9]{9,12}$
+      example:
+        accountType: IDR_ACCOUNT
+        bankName: Bank Central Asia
+        accountNumber: '1234567890'
+        swiftCode: CENAIDJA
+        phoneNumber: '+6281234567890'
+    PaymentThbAccountInfo:
+      title: THB Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ThbAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    RwfAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/RwfAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    AgentAction:
+      type: object
+      description: An action submitted by an agent that may require platform approval before execution. All agent-initiated operations (quote execution, transfers) are represented as AgentActions, giving the platform a consistent object to approve, reject, and audit regardless of the underlying operation type.
+      required:
+      - id
+      - agentId
+      - customerId
+      - platformCustomerId
+      - status
+      - type
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier for this action.
+          example: AgentAction:019542f5-b3e7-1d02-0000-000000000099
+        agentId:
+          type: string
+          description: The agent that submitted this action.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000042
+        customerId:
+          type: string
+          description: The customer on whose behalf the action was submitted.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000010
+        platformCustomerId:
+          type: string
+          description: Platform-specific ID of the customer.
+          example: user-a1b2c3
+        status:
+          $ref: '#/components/schemas/AgentActionStatus'
+        type:
+          $ref: '#/components/schemas/AgentActionType'
+        quote:
+          allOf:
+          - $ref: '#/components/schemas/Quote'
+          description: The quote being executed. Populated for `EXECUTE_QUOTE` actions; absent for transfer actions. Contains the full amount, currency, destination, and rate details needed to present an approval decision to the user.
+        transferDetails:
+          allOf:
+          - $ref: '#/components/schemas/AgentTransferDetails'
+          description: Details of the transfer being requested. Populated for `TRANSFER_OUT` and `TRANSFER_IN` actions; absent for `EXECUTE_QUOTE` actions.
+        transaction:
+          allOf:
+          - $ref: '#/components/schemas/TransactionOneOf'
+          description: The resulting transaction, populated once the action has been approved and execution has begun. Absent while the action is `PENDING_APPROVAL` or `REJECTED`.
+        rejectionReason:
+          type: string
+          description: Human-readable reason provided by the platform when rejecting the action. Only present when status is `REJECTED`.
+          example: Transaction amount exceeds customer's current risk limit.
+        createdAt:
+          type: string
+          format: date-time
+          description: When the action was submitted by the agent.
+          example: '2025-10-03T15:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the action was last updated.
+          example: '2025-10-03T15:02:00Z'
+    HkdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HKD_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Hong Kong bank account number
+          minLength: 1
+          maxLength: 34
+          example: '123456789012'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: HSBCHKHHHKH
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: HKD_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '123456789012'
+        swiftCode: HSBCHKHHHKH
+    SwiftAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - swiftCode
+      - bankName
+      - country
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SWIFT_ACCOUNT
+        country:
+          type: string
+          description: The ISO 3166-1 alpha-2 country code of the bank account
+          example: NG
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        bankName:
+          type: string
+          description: The name of the bank
+          example: Deutsche Bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).
+          example: '1234567890'
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.
+          example: GB29NWBK60161331926819
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+      example:
+        accountType: SWIFT_ACCOUNT
+        country: NG
+        swiftCode: DEUTDEFF
+        bankName: Deutsche Bank
+        accountNumber: '1234567890'
+    EurAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/EurAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SEPA
+              - SEPA_INSTANT
+    PaymentZarAccountInfo:
+      title: ZAR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZarAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentInstructions:
+      type: object
+      required:
+      - accountOrWalletInfo
+      properties:
+        instructionsNotes:
+          type: string
+          description: Additional human-readable instructions for making the payment
+          example: Please ensure the reference code is included in the payment memo/description field
+        isPlatformAccount:
+          type: boolean
+          description: Indicates whether the account is a platform account or a customer account.
+          example: true
+        accountOrWalletInfo:
+          oneOf:
+          - $ref: '#/components/schemas/PaymentUsdAccountInfo'
+          - $ref: '#/components/schemas/PaymentBrlAccountInfo'
+          - $ref: '#/components/schemas/PaymentMxnAccountInfo'
+          - $ref: '#/components/schemas/PaymentDkkAccountInfo'
+          - $ref: '#/components/schemas/PaymentEurAccountInfo'
+          - $ref: '#/components/schemas/PaymentInrAccountInfo'
+          - $ref: '#/components/schemas/PaymentNgnAccountInfo'
+          - $ref: '#/components/schemas/PaymentCadAccountInfo'
+          - $ref: '#/components/schemas/PaymentGbpAccountInfo'
+          - $ref: '#/components/schemas/PaymentHkdAccountInfo'
+          - $ref: '#/components/schemas/PaymentIdrAccountInfo'
+          - $ref: '#/components/schemas/PaymentMyrAccountInfo'
+          - $ref: '#/components/schemas/PaymentPhpAccountInfo'
+          - $ref: '#/components/schemas/PaymentSgdAccountInfo'
+          - $ref: '#/components/schemas/PaymentThbAccountInfo'
+          - $ref: '#/components/schemas/PaymentVndAccountInfo'
+          - $ref: '#/components/schemas/PaymentAedAccountInfo'
+          - $ref: '#/components/schemas/PaymentKesAccountInfo'
+          - $ref: '#/components/schemas/PaymentMwkAccountInfo'
+          - $ref: '#/components/schemas/PaymentRwfAccountInfo'
+          - $ref: '#/components/schemas/PaymentTzsAccountInfo'
+          - $ref: '#/components/schemas/PaymentUgxAccountInfo'
+          - $ref: '#/components/schemas/PaymentXofAccountInfo'
+          - $ref: '#/components/schemas/PaymentZarAccountInfo'
+          - $ref: '#/components/schemas/PaymentZmwAccountInfo'
+          - $ref: '#/components/schemas/PaymentBwpAccountInfo'
+          - $ref: '#/components/schemas/PaymentXafAccountInfo'
+          - $ref: '#/components/schemas/PaymentBdtAccountInfo'
+          - $ref: '#/components/schemas/PaymentArsAccountInfo'
+          - $ref: '#/components/schemas/PaymentCopAccountInfo'
+          - $ref: '#/components/schemas/PaymentEgpAccountInfo'
+          - $ref: '#/components/schemas/PaymentGhsAccountInfo'
+          - $ref: '#/components/schemas/PaymentGtqAccountInfo'
+          - $ref: '#/components/schemas/PaymentHtgAccountInfo'
+          - $ref: '#/components/schemas/PaymentJmdAccountInfo'
+          - $ref: '#/components/schemas/PaymentPkrAccountInfo'
+          - $ref: '#/components/schemas/PaymentSlvAccountInfo'
+          - $ref: '#/components/schemas/PaymentSwiftAccountInfo'
+          - $ref: '#/components/schemas/PaymentCnyAccountInfo'
+          - $ref: '#/components/schemas/PaymentSparkWalletInfo'
+          - $ref: '#/components/schemas/PaymentLightningInvoiceInfo'
+          - $ref: '#/components/schemas/PaymentSolanaWalletInfo'
+          - $ref: '#/components/schemas/PaymentTronWalletInfo'
+          - $ref: '#/components/schemas/PaymentPolygonWalletInfo'
+          - $ref: '#/components/schemas/PaymentBaseWalletInfo'
+          - $ref: '#/components/schemas/PaymentEthereumWalletInfo'
+          - $ref: '#/components/schemas/PaymentEmbeddedWalletInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              USD_ACCOUNT: '#/components/schemas/PaymentUsdAccountInfo'
+              BRL_ACCOUNT: '#/components/schemas/PaymentBrlAccountInfo'
+              MXN_ACCOUNT: '#/components/schemas/PaymentMxnAccountInfo'
+              DKK_ACCOUNT: '#/components/schemas/PaymentDkkAccountInfo'
+              EUR_ACCOUNT: '#/components/schemas/PaymentEurAccountInfo'
+              INR_ACCOUNT: '#/components/schemas/PaymentInrAccountInfo'
+              NGN_ACCOUNT: '#/components/schemas/PaymentNgnAccountInfo'
+              CAD_ACCOUNT: '#/components/schemas/PaymentCadAccountInfo'
+              GBP_ACCOUNT: '#/components/schemas/PaymentGbpAccountInfo'
+              HKD_ACCOUNT: '#/components/schemas/PaymentHkdAccountInfo'
+              IDR_ACCOUNT: '#/components/schemas/PaymentIdrAccountInfo'
+              MYR_ACCOUNT: '#/components/schemas/PaymentMyrAccountInfo'
+              PHP_ACCOUNT: '#/components/schemas/PaymentPhpAccountInfo'
+              SGD_ACCOUNT: '#/components/schemas/PaymentSgdAccountInfo'
+              THB_ACCOUNT: '#/components/schemas/PaymentThbAccountInfo'
+              VND_ACCOUNT: '#/components/schemas/PaymentVndAccountInfo'
+              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+              LIGHTNING: '#/components/schemas/PaymentLightningInvoiceInfo'
+              SOLANA_WALLET: '#/components/schemas/PaymentSolanaWalletInfo'
+              TRON_WALLET: '#/components/schemas/PaymentTronWalletInfo'
+              POLYGON_WALLET: '#/components/schemas/PaymentPolygonWalletInfo'
+              BASE_WALLET: '#/components/schemas/PaymentBaseWalletInfo'
+              ETHEREUM_WALLET: '#/components/schemas/PaymentEthereumWalletInfo'
+              AED_ACCOUNT: '#/components/schemas/PaymentAedAccountInfo'
+              KES_ACCOUNT: '#/components/schemas/PaymentKesAccountInfo'
+              MWK_ACCOUNT: '#/components/schemas/PaymentMwkAccountInfo'
+              RWF_ACCOUNT: '#/components/schemas/PaymentRwfAccountInfo'
+              TZS_ACCOUNT: '#/components/schemas/PaymentTzsAccountInfo'
+              UGX_ACCOUNT: '#/components/schemas/PaymentUgxAccountInfo'
+              XOF_ACCOUNT: '#/components/schemas/PaymentXofAccountInfo'
+              ZAR_ACCOUNT: '#/components/schemas/PaymentZarAccountInfo'
+              ZMW_ACCOUNT: '#/components/schemas/PaymentZmwAccountInfo'
+              BWP_ACCOUNT: '#/components/schemas/PaymentBwpAccountInfo'
+              XAF_ACCOUNT: '#/components/schemas/PaymentXafAccountInfo'
+              BDT_ACCOUNT: '#/components/schemas/PaymentBdtAccountInfo'
+              ARS_ACCOUNT: '#/components/schemas/PaymentArsAccountInfo'
+              COP_ACCOUNT: '#/components/schemas/PaymentCopAccountInfo'
+              EGP_ACCOUNT: '#/components/schemas/PaymentEgpAccountInfo'
+              GHS_ACCOUNT: '#/components/schemas/PaymentGhsAccountInfo'
+              GTQ_ACCOUNT: '#/components/schemas/PaymentGtqAccountInfo'
+              HTG_ACCOUNT: '#/components/schemas/PaymentHtgAccountInfo'
+              JMD_ACCOUNT: '#/components/schemas/PaymentJmdAccountInfo'
+              PKR_ACCOUNT: '#/components/schemas/PaymentPkrAccountInfo'
+              SLV_ACCOUNT: '#/components/schemas/PaymentSlvAccountInfo'
+              EMBEDDED_WALLET: '#/components/schemas/PaymentEmbeddedWalletInfo'
+              SWIFT_ACCOUNT: '#/components/schemas/PaymentSwiftAccountInfo'
+              CNY_ACCOUNT: '#/components/schemas/PaymentCnyAccountInfo'
+    BasePaymentAccountInfo:
+      type: object
+      required:
+      - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/PaymentAccountType'
+    ZarAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ZarAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    ZmwAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ZmwAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    AgentPermission:
+      type: string
+      enum:
+      - VIEW_TRANSACTIONS
+      - CREATE_TRANSFERS
+      - CREATE_QUOTES
+      - EXECUTE_QUOTES
+      - MANAGE_EXTERNAL_ACCOUNTS
+      description: 'Permission granted to an agent that determines what actions it can perform. VIEW_TRANSACTIONS: Can list and retrieve transactions and account balances. CREATE_TRANSFERS: Can initiate same-currency transfers. CREATE_QUOTES: Can create cross-currency quotes. EXECUTE_QUOTES: Can execute cross-currency quotes. MANAGE_EXTERNAL_ACCOUNTS: Can create and manage external accounts.'
+    PaymentXofAccountInfo:
+      title: XOF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XofAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    IncomingTransactionFailureReason:
+      type: string
+      enum:
+      - LNURLP_FAILED
+      - PAY_REQUEST_FAILED
+      - PAYMENT_APPROVAL_WEBHOOK_ERROR
+      - PAYMENT_APPROVAL_TIMED_OUT
+      - OFFRAMP_FAILED
+      - MISSING_MANDATORY_PAYEE_DATA
+      - QUOTE_EXPIRED
+      - QUOTE_EXECUTION_FAILED
+      description: Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
+    AccountTransactionSource:
+      title: Account Source
+      allOf:
+      - $ref: '#/components/schemas/BaseTransactionSource'
+      - type: object
+        required:
+        - accountId
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Source account identifier
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          onChainTransaction:
+            $ref: '#/components/schemas/OnChainTransaction'
+            description: On-chain transaction that delivered funds from this source, when the source is an external crypto wallet. Populated once the crypto transfer has settled.
+        description: Source account details
+    BaseQuoteSource:
+      type: object
+      required:
+      - sourceType
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/QuoteSourceType'
+    KesAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - KES_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Kenyan mobile money phone number
+          example: '+254712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+254[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: KES_ACCOUNT
+        phoneNumber: '+254712345678'
+        provider: Example Provider
+    PaymentSolanaWalletInfo:
+      title: Solana Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SolanaWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+            - USDT
+    AgentCreateResponse:
+      type: object
+      description: Response returned when an agent is created, including the agent and a device code for installation.
+      required:
+      - agent
+      - deviceCode
+      properties:
+        agent:
+          $ref: '#/components/schemas/Agent'
+        deviceCode:
+          $ref: '#/components/schemas/AgentDeviceCode'
+    UgxAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - UGX_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: UGX_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    MxnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - clabeNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MXN_ACCOUNT
+        clabeNumber:
+          type: string
+          description: The CLABE number of the bank
+          example: '123456789012345678'
+          minLength: 18
+          maxLength: 18
+          pattern: ^[0-9]{18}$
+      example:
+        accountType: MXN_ACCOUNT
+        clabeNumber: '123456789012345678'
+    TransactionType:
+      type: string
+      enum:
+      - INCOMING
+      - OUTGOING
+      description: Type of transaction (incoming payment or outgoing payment)
+    InrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      description: 'Required fields depend on the selected paymentRails:
+
+        - NEFT: accountNumber, ifsc, rail
+
+        - RTGS: accountNumber, ifsc, rail
+
+        - UPI: vpa'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - INR_ACCOUNT
+        vpa:
+          type: string
+          description: The UPI Virtual Payment Address
+          example: user@upi
+          minLength: 3
+          maxLength: 255
+          pattern: ^[a-zA-Z0-9.\-_]+@[a-zA-Z0-9]+$
+        accountNumber:
+          type: string
+          description: Indian bank account number (9–18 digits)
+          minLength: 9
+          maxLength: 18
+          example: '000111222333'
+          pattern: ^[0-9]{9,18}$
+        ifsc:
+          type: string
+          description: The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)
+          example: HDFC0001234
+          minLength: 11
+          maxLength: 11
+          pattern: ^[A-Z]{4}0[A-Z0-9]{6}$
+        rail:
+          type: string
+          description: The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).
+          example: NEFT
+          minLength: 1
+          maxLength: 32
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: INR_ACCOUNT
+        vpa: user@upi
+        accountNumber: '000111222333'
+        ifsc: HDFC0001234
+        rail: NEFT
+        bankName: Example Bank
+    PolygonWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - POLYGON_WALLET
+        address:
+          type: string
+          description: Polygon eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    PaymentTzsAccountInfo:
+      title: TZS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TzsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    TransactionDirection:
+      type: string
+      enum:
+      - CREDIT
+      - DEBIT
+      description: 'Whether the transaction credits (funds in) or debits (funds out) the customer''s account. Independent of `type`: an incoming transaction is normally a `CREDIT`, but an inbound ACH pull, for example, is an `INCOMING` transaction with a `DEBIT` direction.'
+    IdrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/IdrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentCadAccountInfo:
+      title: CAD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CadAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentZmwAccountInfo:
+      title: ZMW Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZmwAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AgentCreateRequest:
+      type: object
+      required:
+      - name
+      - customerId
+      - policy
+      properties:
+        name:
+          type: string
+          description: Human-readable name to identify the agent.
+          example: Payroll Automation Agent
+        customerId:
+          type: string
+          description: The ID of the customer this agent will operate on behalf of.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        policy:
+          $ref: '#/components/schemas/AgentPolicy'
+    AccountDestination:
+      title: Account
+      allOf:
+      - $ref: '#/components/schemas/BaseDestination'
+      - type: object
+        required:
+        - accountId
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Destination account identifier
+            example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+          paymentRail:
+            allOf:
+            - $ref: '#/components/schemas/PaymentRail'
+            - description: The payment rail to use for the transfer. Must be one of the rails supported by the destination account. If not specified, the system will select a default rail.
+        description: Destination account details
+    PaymentUsdAccountInfo:
+      title: USD Bank Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UsdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Quote:
+      type: object
+      required:
+      - id
+      - status
+      - expiresAt
+      - createdAt
+      - source
+      - destination
+      - sendingCurrency
+      - receivingCurrency
+      - totalSendingAmount
+      - totalReceivingAmount
+      - exchangeRate
+      - feesIncluded
+      - transactionId
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this quote
+          example: Quote:019542f5-b3e7-1d02-0000-000000000006
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PENDING_AUTHORIZATION
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - EXPIRED
+          description: 'Current status of the quote. `PENDING_AUTHORIZATION` occurs only for customers in a region where Strong Customer Authentication is required (e.g. EU): the quote carries an `scaChallenge` that must be authorized before execution, and for realtime-funding sources `paymentInstructions` are withheld until it is satisfied.'
+          example: PENDING
+        createdAt:
+          type: string
+          format: date-time
+          description: When this quote was created
+          example: '2025-10-03T12:00:00Z'
+        expiresAt:
+          type: string
+          format: date-time
+          description: 'Absolute UTC timestamp when the rate locked in this quote becomes invalid and the quote can no longer be executed. The window depends on the rail and corridor: instant rails (Lightning, Spark, USDC on Solana/Base/Polygon, RTP, SEPA Instant) typically expire in 1–5 minutes; corridors with longer settlement guarantees may have longer windows. Always rely on this timestamp rather than assuming a fixed window.'
+          example: '2025-10-03T12:05:00Z'
+        source:
+          $ref: '#/components/schemas/QuoteSourceOneOf'
+        destination:
+          $ref: '#/components/schemas/QuoteDestinationOneOf'
+        sendingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the sending amount
+        receivingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the receiving amount
+        totalSendingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 123010
+        totalReceivingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 1000
+        exchangeRate:
+          type: number
+          description: Number of sending currency units per receiving currency unit.
+          exclusiveMinimum: 0
+        feesIncluded:
+          type: integer
+          format: int64
+          description: 'The fees associated with the quote in the smallest unit of the sending currency (eg. cents). Note: this value may fluctuate between quotes — some underlying fee components are defined in the receiving currency, so their equivalent in the sending currency moves with the FX rate. The fees shown here are locked only for the lifetime of this quote.'
+          minimum: 0
+          example: 10
+        paymentInstructions:
+          type: array
+          description: Payment instructions for executing the payment. This is not required when using an internal account source.
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+          example:
+          - accountOrWalletInfo:
+              accountType: USD_ACCOUNT
+              paymentRails:
+              - ACH
+              - WIRE
+              accountNumber: '1234567890'
+              routingNumber: '021000021'
+              bankName: Chase Bank
+              reference: UMA-Q12345-REF
+            instructionsNotes: Include reference UMA-Q12345-REF in memo
+          - accountOrWalletInfo:
+              accountType: SPARK_WALLET
+              assetType: BTC
+              address: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+              invoice: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+        transactionId:
+          type: string
+          description: The ID of the transaction created from this quote.
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+        remittanceInformation:
+          type: string
+          maxLength: 80
+          description: 'Free-form information about the payment that travels with it to the recipient, as provided on the quote request. The field this populates depends on the payment rail: for ACH it populates the Addenda record, for FedNow and RTP it populates the remittanceInformation field, and for wires it populates the OBI (Originator to Beneficiary Information) / beneficiary information.'
+          example: '12345'
+        counterpartyInformation:
+          $ref: '#/components/schemas/CounterpartyInformation'
+          description: Additional information about the counterparty, if available and required by the platform in their configuration.
+        rateDetails:
+          $ref: '#/components/schemas/OutgoingRateDetails'
+          description: Details about the rate and fees for the transaction.
+        scaChallenge:
+          $ref: '#/components/schemas/ScaChallenge'
+          readOnly: true
+          description: 'Present only while `status` is `PENDING_AUTHORIZATION`: the Strong Customer Authentication challenge to satisfy before this quote can be executed (or, for realtime-funding sources, before `paymentInstructions` are issued). Omitted for customers outside SCA-regulated regions (non-EU).'
+    MwkAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MWK_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: MWK_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    TransactionDestinationOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountTransactionDestination'
+      - $ref: '#/components/schemas/UmaAddressTransactionDestination'
+      discriminator:
+        propertyName: destinationType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountTransactionDestination'
+          UMA_ADDRESS: '#/components/schemas/UmaAddressTransactionDestination'
+    RealtimeFundingTransactionSource:
+      title: External Funding Source
+      allOf:
+      - $ref: '#/components/schemas/BaseTransactionSource'
+      - type: object
+        required:
+        - currency
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - REALTIME_FUNDING
+          customerId:
+            type: string
+            description: The customer on whose behalf the transaction was initiated.
+            example: Customer:019542f5-b3e7-1d02-0000-000000000009
+          currency:
+            type: string
+            description: Currency code for the funding source
+            example: USDC
+          accountHolderName:
+            type: string
+            description: The name of the originator (sender) of the payment.
+            example: John Sender
+          accountIdentifier:
+            type: string
+            description: The originator's account number or IBAN. May be masked or partial depending on the rail.
+            example: '****6789'
+          bankName:
+            type: string
+            description: The name of the originating bank.
+            example: Chase Bank
+          bankIdentifier:
+            type: string
+            description: The identifier of the originating bank, such as a routing number, BIC, or SWIFT code.
+            example: '021000021'
+          paymentRail:
+            description: The payment rail the funds arrived on.
+            allOf:
+            - $ref: '#/components/schemas/PaymentRail'
+          remittanceInformation:
+            type: string
+            description: 'Free-form information about the payment provided by the originator. The source field depends on the payment rail: the Addenda record for ACH, the OBI / beneficiary information for wires, and the remittanceInformation field for RTP and FedNow.'
+            example: '12345'
+          endToEndId:
+            type: string
+            description: The originator's own end-to-end reference for the payment.
+            example: E2E-9f2c6b6f
+          traceNumber:
+            type: string
+            description: Rail-level tracking identifier for the payment, such as an ACH trace number or a wire IMAD/OMAD, useful for reconciliation.
+            example: '021000020123456'
+          onChainTransaction:
+            $ref: '#/components/schemas/OnChainTransaction'
+            description: On-chain transaction that delivered the funding, when the funds arrived from an external crypto wallet. Populated once the crypto transfer has settled.
+        description: Transaction was funded using an external funding source. All originator fields are optional and populated on a best-effort basis depending on what the funding source provides.
+    SolanaWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SOLANA_WALLET
+        address:
+          type: string
+          description: Solana wallet address
+          example: 4Nd1m6Qkq7RfKuE5vQ9qP9Tn6H94Ueqb4xXHzsAbd8Wg
+    RwfAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - RWF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Rwandan mobile money phone number
+          example: '+250781234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+250[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: RWF_ACCOUNT
+        phoneNumber: '+250781234567'
+        provider: Example Provider
+    PaymentAedAccountInfo:
+      title: AED Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/AedAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SlvAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: bankAccountType, accountNumber
+
+        - MOBILE_MONEY: phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SLV_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank (BANK_TRANSFER only)
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The account number of the bank (BANK_TRANSFER only)
+          minLength: 1
+          maxLength: 34
+        bankAccountType:
+          type: string
+          description: The bank account type (BANK_TRANSFER only)
+          enum:
+          - CHECKING
+          - SAVINGS
+        phoneNumber:
+          type: string
+          description: The phone number in international format (MOBILE_MONEY only — e.g. Tigo Money)
+          example: '+50312345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: SLV_ACCOUNT
+        bankName: Banco Cuscatlan
+        accountNumber: 0123456789
+        bankAccountType: CHECKING
+    JmdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/JmdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PhpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PHP_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+          example: BDO Unibank
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 8
+          maxLength: 16
+          example: 001234567890
+          pattern: ^[0-9]{8,16}$
+      example:
+        accountType: PHP_ACCOUNT
+        bankName: BDO Unibank
+        accountNumber: 001234567890
+    GhsAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GHS_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: GHS_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    AgentActionType:
+      type: string
+      enum:
+      - EXECUTE_QUOTE
+      - TRANSFER_OUT
+      - TRANSFER_IN
+      description: 'The type of action the agent is requesting.
+
+
+        | Type | Description |
+
+        |------|-------------|
+
+        | `EXECUTE_QUOTE` | Execute a cross-currency quote |
+
+        | `TRANSFER_OUT` | Transfer from an internal account to an external account |
+
+        | `TRANSFER_IN` | Transfer from an external account to an internal account |
+
+        '
+    AedAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - AED_ACCOUNT
+        iban:
+          type: string
+          description: UAE IBAN (23 characters, starting with AE)
+          example: AE070331234567890123456
+          minLength: 23
+          maxLength: 23
+          pattern: ^AE[0-9]{21}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: EBILAEAD
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: AED_ACCOUNT
+        iban: AE070331234567890123456
+        swiftCode: EBILAEAD
+    MxnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MxnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SPEI
+    PaymentPolygonWalletInfo:
+      title: Polygon Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PolygonWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    GhsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GhsAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentRwfAccountInfo:
+      title: RWF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/RwfAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    OutgoingTransaction:
+      title: Outgoing Transaction
+      allOf:
+      - $ref: '#/components/schemas/Transaction'
+      - type: object
+        required:
+        - type
+        - sentAmount
+        - source
+        properties:
+          status:
+            $ref: '#/components/schemas/OutgoingTransactionStatus'
+          type:
+            type: string
+            enum:
+            - OUTGOING
+          source:
+            $ref: '#/components/schemas/TransactionSourceOneOf'
+          sentAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+            description: Amount sent in the sender's currency
+          receivedAmount:
+            $ref: '#/components/schemas/CurrencyAmount'
+            description: Amount to be received by recipient in the recipient's currency
+          exchangeRate:
+            type: number
+            description: Number of sending currency units per receiving currency unit.
+            exclusiveMinimum: 0
+            example: 1.08
+          fees:
+            type: integer
+            format: int64
+            description: The fees associated with the quote in the smallest unit of the sending currency (eg. cents).
+            minimum: 0
+            example: 10
+          reconciliationInstructions:
+            $ref: '#/components/schemas/ReconciliationInstructions'
+            description: Reconciliation details for this transaction. For the on-chain hash of a crypto payout to an external wallet, see the destination's `onChainTransaction` instead.
+          quoteId:
+            type: string
+            description: The ID of the quote that was used to trigger this payment
+            example: Quote:019542f5-b3e7-1d02-0000-000000000006
+          paymentInstructions:
+            type: array
+            description: Payment instructions for executing the payment.
+            items:
+              $ref: '#/components/schemas/PaymentInstructions'
+            example:
+            - accountOrWalletInfo:
+                accountType: USD_ACCOUNT
+                paymentRails:
+                - ACH
+                - WIRE
+                accountNumber: '1234567890'
+                routingNumber: '021000021'
+                bankName: Chase Bank
+                reference: UMA-Q12345-REF
+              instructionsNotes: Include reference UMA-Q12345-REF in memo
+            - accountOrWalletInfo:
+                accountType: SPARK_WALLET
+                assetType: BTC
+                address: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+                invoice: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+          refund:
+            $ref: '#/components/schemas/Refund'
+            description: The refund if transaction was refunded.
+          rateDetails:
+            $ref: '#/components/schemas/OutgoingRateDetails'
+            description: Details about the rate and fees for the transaction.
+          failureReason:
+            $ref: '#/components/schemas/OutgoingTransactionFailureReason'
+            description: If the transaction failed, this field provides the reason for failure.
+          paymentRail:
+            anyOf:
+            - $ref: '#/components/schemas/PaymentRail'
+            - type: 'null'
+            description: The payment rail used to settle this transaction (e.g. ACH, WIRE, NEFT, FASTER_PAYMENTS). Uses the same values as the PaymentRail sent on quote requests. Null when no external rail is used (e.g. instant or intra-network transfers, or non-direct-destination transactions) or before a rail is resolved.
+          railSelectionMode:
+            anyOf:
+            - $ref: '#/components/schemas/RailSelectionMode'
+            - type: 'null'
+            description: How the rail was chosen — MANUAL when the platform specified a paymentRail on the destination, AUTO when Lightspark selects it. Null when no rail is resolved.
+          expectedSettlementAt:
+            type:
+            - string
+            - 'null'
+            format: date-time
+            description: Expected settlement time at the beneficiary. Null for instant rails (settlement is immediate) and before a rail with deferred settlement is resolved.
+          settlementTimelineSeconds:
+            type:
+            - integer
+            - 'null'
+            description: Expected number of seconds from quote creation to settlement. Null when not yet known.
+    BdtAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BdtAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    ReconciliationInstructions:
+      type: object
+      minProperties: 1
+      description: Instructions for reconciling a payment with this transaction. For the on-chain transaction to or from an external crypto wallet that is the transaction's own source or destination, use the `onChainTransaction` on the relevant source or destination instead.
+      properties:
+        reference:
+          type: string
+          description: Unique reference code to include with the payment to match it with the correct incoming transaction, when available.
+          example: UMA-Q12345-REF
+        transactionHash:
+          type: string
+          description: Transaction hash of the internal settlement transfer used to deliver a UMA payment — the inter-VASP settlement leg (e.g. USDC on Solana to the receiving partner), when available. This is not a transfer to a customer's own wallet; for that, see the `onChainTransaction` on the transaction's source or destination.
+          example: '0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566'
+    EthereumWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ETHEREUM_WALLET
+        address:
+          type: string
+          description: Ethereum L1 wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    CardTransaction:
+      title: Card Transaction
+      type: object
+      required:
+      - type
+      - id
+      - status
+      - direction
+      - merchant
+      - authorizedAmount
+      - accountId
+      - customerId
+      - platformCustomerId
+      - authorizedAt
+      - createdAt
+      - updatedAt
+      description: Parent transaction row for a card authorization and all of the pulls / settlements / refunds that reconcile against it. Child events are rolled up into the `pullSummary`, `refundSummary`, and `settlementSummary` aggregates. Delivered as the payload of the generic transaction webhook stream (extends the Transaction model with a card destination type) on every transition.
+      properties:
+        type:
+          type: string
+          enum:
+          - CARD
+          description: Discriminator identifying this transaction as a card transaction in the `Transaction` list.
+        id:
+          type: string
+          description: System-generated unique card transaction identifier
+          readOnly: true
+          example: CardTransaction:019542f5-b3e7-1d02-0000-000000000100
+        cardId:
+          type: string
+          description: The id of the `Card` this transaction was made on.
+          example: Card:019542f5-b3e7-1d02-0000-000000000010
+        customerId:
+          type: string
+          description: System ID of the customer (cardholder) this transaction belongs to.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
+          type: string
+          description: Platform-specific ID of the customer (cardholder) this transaction belongs to.
+          example: 18d3e5f7b4a9c2
+        issuerTransactionToken:
+          type: string
+          description: Opaque identifier for the transaction on the underlying issuer. Used to cross-reference Grid records against issuer dashboards and webhooks.
+          example: lithic_txn_b81c2a4f
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/CardTransactionStatus'
+        direction:
+          $ref: '#/components/schemas/TransactionDirection'
+          description: Card transactions debit the customer's account.
+          example: DEBIT
+        merchant:
+          $ref: '#/components/schemas/CardMerchant'
+        authorizedAmount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        settledAmount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        refundedAmount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        accountId:
+          type: string
+          description: Internal account id that funded this transaction (the funding source selected by Authorization Decisioning at auth time).
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        pullSummary:
+          $ref: '#/components/schemas/CardPullSummary'
+        refundSummary:
+          $ref: '#/components/schemas/CardRefundSummary'
+        settlementSummary:
+          $ref: '#/components/schemas/CardSettlementSummary'
+        authorizedAt:
+          type: string
+          format: date-time
+          description: When the auth was approved.
+          example: '2026-05-08T14:30:00Z'
+        lastEventAt:
+          type: string
+          format: date-time
+          description: Timestamp of the most recent reconcile event (pull / clearing / refund) against this transaction.
+          example: '2026-05-08T15:42:11Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp (same as `authorizedAt` for card transactions).
+          readOnly: true
+          example: '2026-05-08T14:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+          readOnly: true
+          example: '2026-05-08T15:42:11Z'
+    TronWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TRON_WALLET
+        address:
+          type: string
+          description: Tron wallet address
+          example: TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL
+    CardSettlementSummary:
+      type: object
+      required:
+      - count
+      - totalAmount
+      properties:
+        count:
+          type: integer
+          description: Number of settlement (clearing) events received for this transaction.
+          example: 1
+        totalAmount:
+          type: integer
+          format: int64
+          description: Sum of all settled amounts in the smallest unit of the funding source's currency.
+          example: 1500
+    PaymentInrAccountInfo:
+      title: INR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/InrAccountInfo'
+    PaymentAccountType:
+      type: string
+      enum:
+      - USD_ACCOUNT
+      - BRL_ACCOUNT
+      - MXN_ACCOUNT
+      - DKK_ACCOUNT
+      - ARS_ACCOUNT
+      - COP_ACCOUNT
+      - EUR_ACCOUNT
+      - INR_ACCOUNT
+      - NGN_ACCOUNT
+      - CAD_ACCOUNT
+      - GBP_ACCOUNT
+      - HKD_ACCOUNT
+      - IDR_ACCOUNT
+      - MYR_ACCOUNT
+      - PHP_ACCOUNT
+      - SGD_ACCOUNT
+      - THB_ACCOUNT
+      - VND_ACCOUNT
+      - SPARK_WALLET
+      - LIGHTNING
+      - SOLANA_WALLET
+      - TRON_WALLET
+      - POLYGON_WALLET
+      - BASE_WALLET
+      - ETHEREUM_WALLET
+      - EMBEDDED_WALLET
+      description: Type of payment account or wallet
+      example: USD_ACCOUNT
+    UmaAddressDestination:
+      title: UMA Address
+      allOf:
+      - $ref: '#/components/schemas/BaseDestination'
+      - type: object
+        required:
+        - umaAddress
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - UMA_ADDRESS
+          umaAddress:
+            type: string
+            description: UMA address of the recipient
+            example: $receiver@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the destination. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies.
+            example: EUR
+        description: UMA address destination details
+    CardRefundSummary:
+      type: object
+      required:
+      - count
+      - totalAmount
+      properties:
+        count:
+          type: integer
+          description: Number of refund (return) events received for this transaction.
+          example: 0
+        totalAmount:
+          type: integer
+          format: int64
+          description: Sum of all refund amounts in the smallest unit of the funding source's currency.
+          example: 0
+    AgentPolicy:
+      type: object
+      description: Policy governing what an agent can do, how it executes actions, and its spending boundaries.
+      required:
+      - permissions
+      - defaultExecutionMode
+      - spendingLimits
+      properties:
+        permissions:
+          type: array
+          description: List of permissions granted to the agent.
+          items:
+            $ref: '#/components/schemas/AgentPermission'
+        defaultExecutionMode:
+          $ref: '#/components/schemas/AgentExecutionMode'
+        spendingLimits:
+          $ref: '#/components/schemas/AgentSpendingLimits'
+        accountRestrictions:
+          $ref: '#/components/schemas/AgentAccountRestrictions'
+        approvalThresholds:
+          $ref: '#/components/schemas/AgentApprovalThresholds'
+    PaymentEurAccountInfo:
+      title: EUR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EurAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    CardTransactionStatus:
+      type: string
+      enum:
+      - AUTHORIZED
+      - PARTIALLY_SETTLED
+      - SETTLED
+      - REFUNDED
+      - EXCEPTION
+      description: 'Lifecycle status of a card transaction.
+
+
+        | Status | Description |
+
+        |--------|-------------|
+
+        | `AUTHORIZED` | The auth has been approved and a hold placed on the funding source; no clearing has arrived yet. |
+
+        | `PARTIALLY_SETTLED` | At least one clearing has arrived and posted, but more clearings are still expected (split shipments, tips, multi-leg trips). |
+
+        | `SETTLED` | All clearings for the auth have posted and the transaction is closed against the funding source. |
+
+        | `REFUNDED` | A `RETURN` was received from the merchant; the net settled amount has been refunded in part or whole. |
+
+        | `EXCEPTION` | The transaction settled to the card network but the corresponding pull from the funding source failed (e.g. balance no longer covers the post-hoc clearing). Surfaces high-urgency alerts and is the dashboard query for stuck reconciliations. |
+
+        '
+    AgentExecutionMode:
+      type: string
+      enum:
+      - AUTO
+      - APPROVAL_REQUIRED
+      description: 'Execution mode controlling whether agent actions require human approval. AUTO: The agent can execute actions autonomously without explicit approval. APPROVAL_REQUIRED: All agent actions require explicit human approval before execution.'
+    CnyAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - CNY_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: CNY_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    TransactionOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/IncomingTransaction'
+      - $ref: '#/components/schemas/OutgoingTransaction'
+      - $ref: '#/components/schemas/CardTransaction'
+      discriminator:
+        propertyName: type
+        mapping:
+          INCOMING: '#/components/schemas/IncomingTransaction'
+          OUTGOING: '#/components/schemas/OutgoingTransaction'
+          CARD: '#/components/schemas/CardTransaction'
+    CounterpartyInformation:
+      type: object
+      description: Additional information about the counterparty, if available and relevant to the transaction and platform.
+      additionalProperties: true
+      example:
+        FULL_NAME: John Sender
+        BIRTH_DATE: '1985-06-15'
+        NATIONALITY: DE
+    UmaAddressTransactionSource:
+      title: UMA Address Source
+      allOf:
+      - $ref: '#/components/schemas/BaseTransactionSource'
+      - type: object
+        required:
+        - umaAddress
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - UMA_ADDRESS
+          umaAddress:
+            type: string
+            description: UMA address of the sender
+            example: $sender@uma.domain.com
+        description: UMA address source details
+    DestinationType:
+      type: string
+      enum:
+      - ACCOUNT
+      - UMA_ADDRESS
+      description: Type of payment destination
+      example: ACCOUNT
+    KesAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/KesAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    QuoteSourceOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountQuoteSource'
+      - $ref: '#/components/schemas/RealtimeFundingQuoteSource'
+      discriminator:
+        propertyName: sourceType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountQuoteSource'
+          REALTIME_FUNDING: '#/components/schemas/RealtimeFundingQuoteSource'
+    GbpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GbpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - FASTER_PAYMENTS
+    AccountTransactionDestination:
+      title: Account Destination
+      allOf:
+      - $ref: '#/components/schemas/BaseTransactionDestination'
+      - type: object
+        required:
+        - accountId
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Destination account identifier
+            example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+          onChainTransaction:
+            $ref: '#/components/schemas/OnChainTransaction'
+            description: On-chain transaction that delivered funds to this destination, when the destination is an external crypto wallet. Populated once the crypto transfer has settled.
+        description: Destination account details
+    OnChainTransaction:
+      type: object
+      required:
+      - transactionHash
+      - network
+      properties:
+        transactionHash:
+          type: string
+          description: On-chain transaction hash of the crypto transfer for this leg of the transaction.
+          example: h82pJGF9p7kpzb6eU326EFZf2cDnimbTFVeJtx1qtBmUNJAEqN76R7PwPfHt3oWb8R6cKvhgyxQdDn53jFrK6wFx
+        network:
+          $ref: '#/components/schemas/CryptoNetwork'
+          description: Blockchain network the transaction settled on (mainnet vs test network is determined by your platform environment).
+    CryptoNetwork:
+      type: string
+      enum:
+      - BITCOIN
+      - ETHEREUM
+      - SOLANA
+      - BASE
+      - POLYGON
+      - TRON
+      - SPARK
+      description: The blockchain network an on-chain transaction settled on. Whether this is the mainnet or a test network (e.g. Solana devnet) is determined by your platform's environment — sandbox platforms operate on test networks, production platforms on mainnet — mirroring how `cryptoNetwork` is interpreted elsewhere in the API.
+      example: SOLANA
+    JmdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - branchCode
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - JMD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: JMD_ACCOUNT
+        accountNumber: '1234567890'
+        branchCode: '11111'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    TransactionSourceType:
+      type: string
+      enum:
+      - ACCOUNT
+      - UMA_ADDRESS
+      - REALTIME_FUNDING
+      description: Type of transaction source
+      example: ACCOUNT
+    TransactionDestinationType:
+      type: string
+      enum:
+      - ACCOUNT
+      - UMA_ADDRESS
+      description: Type of transaction destination
+      example: ACCOUNT
+    CnyAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CnyAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    UgxAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UgxAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    SwiftAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SwiftAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SWIFT
+    AgentAccountRule:
+      type: object
+      description: Per-account policy override that takes precedence over the agent's default policy for a specific account.
+      required:
+      - accountId
+      properties:
+        accountId:
+          type: string
+          description: The internal account ID this rule applies to.
+          example: Account:019542f5-b3e7-1d02-0000-000000000001
+        executionMode:
+          $ref: '#/components/schemas/AgentExecutionMode'
+        perTransactionLimit:
+          type:
+          - integer
+          - 'null'
+          description: Per-transaction limit override, in the smallest unit of the relevant currency. Null inherits from the agent's spending limits.
+          example: 10000
+    PaymentMwkAccountInfo:
+      title: MWK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MwkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BwpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BwpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    Transaction:
+      type: object
+      required:
+      - id
+      - status
+      - type
+      - direction
+      - destination
+      - customerId
+      - platformCustomerId
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the transaction
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000004
+        status:
+          $ref: '#/components/schemas/TransactionStatus'
+        type:
+          $ref: '#/components/schemas/TransactionType'
+        direction:
+          $ref: '#/components/schemas/TransactionDirection'
+          description: Whether this transaction credits or debits the customer's account.
+        destination:
+          $ref: '#/components/schemas/TransactionDestinationOneOf'
+        customerId:
+          type: string
+          description: System ID of the customer (sender for outgoing, recipient for incoming)
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
+          type: string
+          description: Platform-specific ID of the customer (sender for outgoing, recipient for incoming)
+          example: 18d3e5f7b4a9c2
+        settledAt:
+          type: string
+          format: date-time
+          description: When the payment was or will be settled
+          example: '2025-08-15T14:30:00Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: When the transaction was created
+          example: '2025-08-15T14:25:18Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When the transaction was last updated
+          example: '2025-08-15T14:30:00Z'
+        receiptDeliveryConfirmedAt:
+          type: string
+          format: date-time
+          description: The time at which the platform confirmed delivery of the receipt to their customer.
+          example: '2025-08-15T14:31:00Z'
+        agentId:
+          type: string
+          description: If this transaction was initiated by an agent, the system-generated ID of that agent. Absent for platform-initiated transactions.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000042
+        description:
+          type: string
+          description: Optional memo or description for the payment
+          example: 'Payment for invoice #1234'
+        counterpartyInformation:
+          $ref: '#/components/schemas/CounterpartyInformation'
+    RailSelectionMode:
+      type: string
+      enum:
+      - AUTO
+      - MANUAL
+      description: How the payment rail was chosen — MANUAL when the platform specified a paymentRail on the destination, AUTO when Lightspark selects it.
+      example: AUTO
+    NgnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - NGN_ACCOUNT
+        accountNumber:
+          type: string
+          description: Nigerian bank account number
+          minLength: 10
+          maxLength: 10
+          example: 0123456789
+          pattern: ^[0-9]{10}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: NGN_ACCOUNT
+        accountNumber: 0123456789
+        bankName: Example Bank
+    BaseDestination:
+      type: object
+      required:
+      - destinationType
+      properties:
+        destinationType:
+          $ref: '#/components/schemas/DestinationType'
+    PaymentIdrAccountInfo:
+      title: IDR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/IdrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SlvAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SlvAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    AgentSpendingLimitsUpdate:
+      type: object
+      description: Partial update to spending limits. Only provided fields will be updated; omitted fields retain their current values.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 currency code that all amount limits are denominated in. Updating this recasts all existing limits into the new currency denomination.
+          example: USD
+        perTransactionLimit:
+          type: integer
+          description: Maximum amount per transaction.
+          example: 50000
+        dailyLimit:
+          type:
+          - integer
+          - 'null'
+          description: Maximum daily spend. Set to null to remove the daily limit.
+          example: 500000
+        dailyTransactionLimit:
+          type: integer
+          description: Maximum number of transactions per day.
+          example: 10
+        monthlyLimit:
+          type:
+          - integer
+          - 'null'
+          description: Maximum monthly spend. Set to null to remove the monthly limit.
+          example: 5000000
+    PaymentLightningInvoiceInfo:
+      title: Lightning Invoice
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - invoice
+        properties:
+          accountType:
+            type: string
+            enum:
+            - LIGHTNING
+          invoice:
+            type: string
+            description: Invoice for the payment
+            example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+    AgentActionRejectRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          description: Optional human-readable reason for the rejection, stored on the action and visible to the platform.
+          example: Transaction amount exceeds customer's current risk limit.
+    AedAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/AedAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    TzsAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TZS_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Tanzanian mobile money phone number
+          example: '+255712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+255[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: TZS_ACCOUNT
+        phoneNumber: '+255712345678'
+        provider: Example Provider
+    PaymentSgdAccountInfo:
+      title: SGD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SgdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    ThbAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - THB_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Thai bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: BKKBTHBK
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: THB_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: BKKBTHBK
+    PhpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/PhpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentCnyAccountInfo:
+      title: CNY Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CnyAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentGtqAccountInfo:
+      title: GTQ Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GtqAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    NgnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/NgnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    XafAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XAF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the Central African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - CM
+          - CG
+      example:
+        accountType: XAF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: CM
+    ScaChallenge:
+      type: object
+      description: 'A Strong Customer Authentication challenge that must be satisfied before a money-movement operation can complete. This object is **only present when the customer is in a region where SCA is required** (the EU); for customers outside SCA-regulated regions it is omitted entirely and no action is needed.
+
+
+        When present on a quote, authorize it by submitting an `ScaAuthorization` proof to `POST /quotes/{quoteId}/authorize`.
+
+
+        **A single operation may require more than one authorization, in sequence.** Treat `scaChallenge` as *the challenge to satisfy now*, not "the only one". After each authorize, re-inspect the returned quote/transaction: if it is still `PENDING_AUTHORIZATION`, it carries the **next** `scaChallenge` (a new `id`) — authorize that too, and repeat until it leaves `PENDING_AUTHORIZATION`. Do not assume one authorization releases the transfer. The number of authorizations is flow-dependent and **may decrease in future**: for example, a cross-currency send today authorizes the currency conversion and the payout as two separate challenges; a future update may collapse them into one. A client written to loop on status handles any count unchanged.'
+      required:
+      - id
+      - expiresAt
+      - factor
+      - availableFactors
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this challenge. The server resolves the active challenge from the quote or transaction being authorized, so this field need not be supplied back; it is informational (e.g. for logging or correlation).
+          example: ScaChallenge:019542f5-b3e7-1d02-0000-000000000007
+        expiresAt:
+          type: string
+          format: date-time
+          description: Absolute UTC timestamp after which this challenge can no longer be authorized.
+          example: '2025-10-03T12:05:00Z'
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor this challenge was issued for. Defaults to `SMS_OTP`.
+        availableFactors:
+          type: array
+          description: The factors the customer may use to satisfy this challenge.
+          items:
+            $ref: '#/components/schemas/ScaFactor'
+          example:
+          - SMS_OTP
+        purpose:
+          type:
+          - string
+          - 'null'
+          description: Optional, informational label for what this particular challenge in the sequence authorizes — useful for step UX (e.g. "Authorize the currency conversion" vs "Authorize the payout"). Known values include `CURRENCY_CONVERSION`, `PAYOUT`, and `TRANSFER`, but the set is **non-exhaustive and may grow** — treat unrecognized values as a generic authorization step and do not branch program logic on it. Omitted when steps are not distinguished (e.g. a single-authorization flow).
+          example: PAYOUT
+        passkeyAssertionOptions:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion request options (including the relying-party id, challenge, and allowed credentials), present only when `factor` is `PASSKEY`. Pass to the device's WebAuthn API to produce the assertion submitted back in `ScaAuthorization.passkeyAssertion`.
+        passkeyAllowedOrigins:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The origins the WebAuthn ceremony may run against. Populated for enrollment and login passkey challenges; the origin the assertion is produced against must be one of these and echoed back as `ScaAuthorization.origin`. Per-transaction passkey challenges omit this (they carry `passkeyAssertionOptions` only) — see `ScaAuthorization.origin` for how to source the origin in that case.
+          example:
+          - https://app.example.com
+    PaymentEthereumWalletInfo:
+      title: Ethereum Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EthereumWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    PaymentPkrAccountInfo:
+      title: PKR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PkrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AgentActionStatus:
+      type: string
+      enum:
+      - PENDING_APPROVAL
+      - APPROVED
+      - REJECTED
+      - FAILED
+      description: 'Status of an agent action.
+
+
+        | Status | Description |
+
+        |--------|-------------|
+
+        | `PENDING_APPROVAL` | Submitted by the agent, awaiting platform approval before execution |
+
+        | `APPROVED` | Approved by the platform; execution is in progress or completed |
+
+        | `REJECTED` | Rejected by the platform; the underlying transaction was not executed |
+
+        | `FAILED` | Approved but execution failed (e.g. quote expired, insufficient funds) |
+
+        '
+    BdtAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BDT_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: BDT_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        branchCode: '11111'
+        swiftCode: DEUTDEFF
+        phoneNumber: '+1234567890'
+    PaymentUgxAccountInfo:
+      title: UGX Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UgxAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    MyrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MyrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    RealtimeFundingQuoteSource:
+      title: Real-time Funding
+      allOf:
+      - $ref: '#/components/schemas/BaseQuoteSource'
+      - type: object
+        required:
+        - currency
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - REALTIME_FUNDING
+          customerId:
+            type: string
+            description: Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself.
+            example: Customer:019542f5-b3e7-1d02-0000-000000000009
+          currency:
+            type: string
+            description: Currency code for the funding source. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies.
+            example: USD
+          cryptoNetwork:
+            type: string
+            description: 'The crypto network to use for the funding source. Required when `currency` is a stablecoin (e.g. USDC, USDT). Specifies which network the customer will deposit on, so the correct deposit address can be generated. Example values: `SOLANA`, `ETHEREUM`, `BASE`, `POLYGON`, `SPARK`, `LIGHTNING`, `BITCOIN`.'
+            example: SOLANA
+        description: Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.).
+    UsdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - routingNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - USD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        routingNumber:
+          type: string
+          description: The ABA routing number
+          example: '021000021'
+          minLength: 9
+          maxLength: 9
+          pattern: ^[0-9]{9}$
+      example:
+        accountType: USD_ACCOUNT
+        accountNumber: '1234567890'
+        routingNumber: '021000021'
+    XofAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XOF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the West African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - BJ
+          - CI
+          - SN
+          - TG
+      example:
+        accountType: XOF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: BJ
+    PaymentBaseWalletInfo:
+      title: Base Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BaseWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    VndAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/VndAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PkrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/PkrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PkrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PKR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: Pakistani IBAN (24 characters, starting with PK)
+          example: PK36SCBL0000001123456702
+          minLength: 24
+          maxLength: 24
+          pattern: ^PK[0-9]{2}[A-Z]{4}[0-9]{16}$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: PKR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        iban: PK36SCBL0000001123456702
+        phoneNumber: '+1234567890'
+    PaymentMxnAccountInfo:
+      title: MXN Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MxnAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    EgpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: bankName, iban
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - EGP_ACCOUNT
+        iban:
+          type: string
+          description: Egyptian IBAN (29 characters, starting with EG)
+          example: EG380019000500000000263180002
+          minLength: 29
+          maxLength: 29
+          pattern: ^EG[0-9]{27}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: EGP_ACCOUNT
+        iban: EG380019000500000000263180002
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    ScaFactor:
+      type: string
+      enum:
+      - SMS_OTP
+      - TOTP
+      - PASSKEY
+      description: 'A Strong Customer Authentication factor.
+
+
+        | Factor | Description |
+
+        |--------|-------------|
+
+        | `SMS_OTP` | One-time code sent by SMS to the customer''s verified phone. Requires no prior enrollment. |
+
+        | `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |
+
+        | `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |
+
+        '
+    PaymentXafAccountInfo:
+      title: XAF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XafAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SparkWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SPARK_WALLET
+        address:
+          type: string
+          description: Spark wallet address
+          example: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+    DkkAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - DKK_ACCOUNT
+        iban:
+          type: string
+          description: Danish IBAN (18 characters, starting with DK)
+          example: DK5000400040116243
+          minLength: 18
+          maxLength: 18
+          pattern: ^DK[0-9]{16}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DABADKKK
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: DKK_ACCOUNT
+        iban: DK5000400040116243
+        swiftCode: DABADKKK
+    PaymentCopAccountInfo:
+      title: COP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - paymentUrl
+        properties:
+          accountType:
+            type: string
+            enum:
+            - COP_ACCOUNT
+          paymentUrl:
+            type: string
+            format: uri
+            description: A payment URL where the customer can complete their COP deposit.
+            example: https://payments.example.com/t/abc123
+    ZmwAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZMW_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Zambian mobile money phone number
+          example: '+260971234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+260[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZMW_ACCOUNT
+        phoneNumber: '+260971234567'
+        provider: Example Provider
+    VndAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - VND_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Vietnamese bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: BFTVVNVX
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: VND_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: BFTVVNVX
+    AgentAccountRestrictions:
+      type: object
+      description: Optional restrictions that limit the agent to specific accounts or override policy per account.
+      properties:
+        allowedAccountIds:
+          type:
+          - array
+          - 'null'
+          description: If set, restricts the agent to operate only on the specified internal account IDs. Null means the agent can access all accounts.
+          items:
+            type: string
+            example: Account:019542f5-b3e7-1d02-0000-000000000001
+        accountRules:
+          type: array
+          description: Per-account rules that override the agent's default policy for specific accounts.
+          items:
+            $ref: '#/components/schemas/AgentAccountRule'
+    BaseTransactionSource:
+      type: object
+      required:
+      - sourceType
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/TransactionSourceType'
+        currency:
+          type: string
+          description: Currency code for the source
+          example: USD
+    AgentUsage:
+      type: object
+      description: Real-time counters tracking the agent's spending and transaction activity against its policy limits.
+      required:
+      - dailyTransactionCount
+      - dailySpend
+      - monthlySpend
+      properties:
+        dailyTransactionCount:
+          type: integer
+          description: Number of transactions initiated by the agent today.
+          example: 3
+        dailySpend:
+          type: integer
+          description: Total amount spent by the agent today, in the smallest unit of the policy's `spendingLimits.currency`.
+          example: 150000
+        dailyResetDate:
+          type: string
+          format: date
+          description: The date when daily usage counters will reset.
+          example: '2025-07-22'
+        monthlySpend:
+          type: integer
+          description: Total amount spent by the agent this month, in the smallest unit of the policy's `spendingLimits.currency`.
+          example: 750000
+        monthlyResetMonth:
+          type: string
+          description: The year-month (YYYY-MM) when monthly usage counters will reset.
+          example: 2025-08
+    IncomingRateDetails:
+      description: 'Details about the rate and fees for an incoming transaction. Note: `gridApiFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.'
+      type: object
+      required:
+      - gridApiMultiplier
+      - gridApiFixedFee
+      - gridApiVariableFeeRate
+      - gridApiVariableFeeAmount
+      properties:
+        gridApiMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the mSATS to the receiving currency, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        gridApiFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the receiving currency amount.
+          minimum: 0
+          example: 0.003
+        gridApiVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.
+          minimum: 0
+          example: 30
+    PaymentGhsAccountInfo:
+      title: GHS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GhsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AgentSpendingLimits:
+      type: object
+      description: Spending limits that cap the agent's transaction amounts and frequency. All amount fields are integers in the smallest unit of the specified currency. When a transaction is denominated in a different currency, Grid converts using the exchange rate at evaluation time.
+      required:
+      - currency
+      - perTransactionLimit
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 currency code that all amount limits are denominated in.
+          example: USD
+        perTransactionLimit:
+          type: integer
+          description: Maximum amount the agent can transfer in a single transaction.
+          example: 50000
+        dailyLimit:
+          type:
+          - integer
+          - 'null'
+          description: Maximum total amount the agent can transfer per day. Null means no daily limit.
+          example: 500000
+        dailyTransactionLimit:
+          type: integer
+          description: Maximum number of transactions the agent can initiate per day.
+          example: 10
+        monthlyLimit:
+          type:
+          - integer
+          - 'null'
+          description: Maximum total amount the agent can transfer per month. Null means no monthly limit.
+          example: 5000000
+    PaymentDkkAccountInfo:
+      title: DKK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/DkkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentMyrAccountInfo:
+      title: MYR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MyrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AgentApprovalThresholds:
+      type: object
+      description: Thresholds that force approval for high-value transactions, overriding the default execution mode. When a transaction is denominated in a different currency than the threshold, Grid converts using the exchange rate at evaluation time.
+      properties:
+        currency:
+          type: string
+          description: ISO 4217 currency code that the amount threshold is denominated in. Required when amount is set.
+          example: USD
+        amount:
+          type:
+          - integer
+          - 'null'
+          description: If set, any transaction above this amount (in the smallest unit of the specified currency) will require explicit approval even when the agent's defaultExecutionMode is AUTO. Null means no threshold override.
+          example: 100000
+    UmaAddressTransactionDestination:
+      title: UMA Address Destination
+      allOf:
+      - $ref: '#/components/schemas/BaseTransactionDestination'
+      - type: object
+        required:
+        - umaAddress
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - UMA_ADDRESS
+          umaAddress:
+            type: string
+            description: UMA address of the recipient
+            example: $receiver@uma.domain.com
+        description: UMA address destination details
+    AccountQuoteSource:
+      title: Account
+      allOf:
+      - $ref: '#/components/schemas/BaseQuoteSource'
+      - type: object
+        required:
+        - accountId
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Source account identifier
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          customerId:
+            type: string
+            description: Required when funding from an FBO account to identify the customer on whose behalf the transaction is being initiated.  Otherwise, will default to the customerId of the account owner.
+            example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        description: Source account details
+    PaymentGbpAccountInfo:
+      title: GBP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GbpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    HkdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/HkdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    BwpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BWP_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: BWP_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    AgentPolicyUpdateRequest:
+      type: object
+      description: Partial update to an agent's policy. Only provided fields will be updated; omitted fields retain their current values.
+      properties:
+        permissions:
+          type: array
+          description: Updated list of permissions. Replaces the entire permissions list when provided.
+          items:
+            $ref: '#/components/schemas/AgentPermission'
+        defaultExecutionMode:
+          $ref: '#/components/schemas/AgentExecutionMode'
+        spendingLimits:
+          $ref: '#/components/schemas/AgentSpendingLimitsUpdate'
+        accountRestrictions:
+          $ref: '#/components/schemas/AgentAccountRestrictions'
+        approvalThresholds:
+          $ref: '#/components/schemas/AgentApprovalThresholds'
+    Refund:
+      type: object
+      required:
+      - reference
+      - initiatedAt
+      - status
+      properties:
+        reference:
+          type: string
+          description: The unique reference ID of the refund
+          example: UMA-Q12345-REFUND
+        initiatedAt:
+          type: string
+          format: date-time
+          description: When the refund was initiated
+          example: '2025-08-15T14:30:00Z'
+        settledAt:
+          type: string
+          format: date-time
+          description: When the refund was settled
+          example: '2025-08-15T14:35:00Z'
+        status:
+          type: string
+          enum:
+          - PENDING
+          - COMPLETED
+          - FAILED
+          description: Current status of the refund
+          example: COMPLETED
+        reason:
+          type: string
+          enum:
+          - TRANSACTION_FAILED
+          - USER_CANCELLATION
+          - TIMEOUT
+          description: Reason for the refund
+          example: TRANSACTION_FAILED
+    SgdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SgdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - PAYNOW
+              - FAST
+              - BANK_TRANSFER
+    AgentDeviceCode:
+      type: object
+      required:
+      - code
+      - agentId
+      - expiresAt
+      - redeemed
+      properties:
+        code:
+          type: string
+          description: Human-readable device code used to install and connect the agent software.
+          example: GRID-AGENT-X7K9-M2P4
+        agentId:
+          type: string
+          description: The agent this device code belongs to.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000001
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp when this device code expires.
+          example: '2025-07-22T17:32:28Z'
+        redeemed:
+          type: boolean
+          description: Whether this device code has already been redeemed by the agent.
+          example: false
+    AgentDeviceCodeStatusResponse:
+      type: object
+      required:
+      - code
+      - redeemed
+      properties:
+        code:
+          type: string
+          description: The device code.
+          example: GRID-AGENT-X7K9-M2P4
+        redeemed:
+          type: boolean
+          description: Whether this device code has been redeemed.
+          example: false
+    ZarAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZAR_ACCOUNT
+        accountNumber:
+          type: string
+          description: South African bank account number
+          minLength: 9
+          maxLength: 13
+          example: '1234567890'
+          pattern: ^[0-9]{9,13}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZAR_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+    AgentListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of agents matching the filter criteria.
+          items:
+            $ref: '#/components/schemas/Agent'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page.
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true).
+        totalCount:
+          type: integer
+          description: Total number of agents matching the criteria (excluding pagination).
+    PaymentArsAccountInfo:
+      title: ARS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountNumber
+        properties:
+          accountType:
+            type: string
+            enum:
+            - ARS_ACCOUNT
+          accountNumber:
+            type: string
+            description: The static CVU (Clave Virtual Uniforme) bank account number to pay to.
+            minLength: 22
+            maxLength: 22
+            pattern: ^\d{22}$
+            example: '0000003100074052501434'
+    SgdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SGD_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.
+          minLength: 1
+          maxLength: 255
+          example: DBS Bank Ltd
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 1
+          maxLength: 34
+          example: 0123456789
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DBSSSGSG
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: SGD_ACCOUNT
+        bankName: DBS Bank Ltd
+        accountNumber: 0123456789
+        swiftCode: DBSSSGSG
+    CadAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CadAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    CardMerchant:
+      type: object
+      required:
+      - descriptor
+      properties:
+        descriptor:
+          type: string
+          description: Merchant descriptor string captured from the card network at authorization time.
+          example: BLUE BOTTLE COFFEE SF
+        mcc:
+          type: string
+          description: Merchant Category Code (ISO 18245) — four-digit numeric string.
+          example: '5814'
+        country:
+          type: string
+          description: Two-letter ISO 3166-1 alpha-2 country code of the merchant.
+          example: US
+    UsdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UsdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - ACH
+              - WIRE
+              - RTP
+              - FEDNOW
+    XofAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/XofAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    GtqAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GtqAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentTronWalletInfo:
+      title: Tron Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TronWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDT
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

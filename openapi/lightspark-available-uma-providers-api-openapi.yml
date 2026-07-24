@@ -1,0 +1,288 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management Available UMA Providers API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Available UMA Providers
+paths:
+  /uma-providers:
+    get:
+      summary: List available Counterparty Providers
+      description: 'Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
+
+        '
+      operationId: getAvailableUmaProviders
+      tags:
+      - Available UMA Providers
+      parameters:
+      - in: query
+        name: countryCode
+        description: The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.
+        required: false
+        schema:
+          type: string
+          example: US
+      - in: query
+        name: currencyCode
+        description: The ISO 4217 currency code to filter providers by supported currency.
+        required: false
+        schema:
+          type: string
+          example: USD
+      - in: query
+        name: hasBlockedProviders
+        description: Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.
+        required: false
+        schema:
+          type: boolean
+      - name: limit
+        in: query
+        description: Maximum number of results to return (default 20, max 100)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        description: Cursor for pagination (returned from previous request)
+        required: false
+        schema:
+          type: string
+      - name: sortOrder
+        in: query
+        description: Order to sort results in
+        required: false
+        schema:
+          type: string
+          enum:
+          - asc
+          - desc
+          default: desc
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaProviderListResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    UmaProviderListResponse:
+      type: object
+      properties:
+        data:
+          description: List of available UMA Providers using Grid
+          type: array
+          items:
+            $ref: '#/components/schemas/UmaProvider'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of transactions matching the criteria (excluding pagination)
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    UmaProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the UMA Provider
+          example: Lightspark Group
+        supportedRegions:
+          type: array
+          items:
+            type: string
+          description: Region(s) this UMA Provider operates in
+          example:
+          - US
+        domain:
+          type: string
+          description: Domain this VASP uses for UMA addresses
+          example: uma.me
+        logoUrl:
+          type: string
+          description: Logo URL for the VASP
+          format: uri
+          example: https://uma.me/logo.png
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Currency'
+          description: List of currencies supported by this UMA Provider
+          example:
+          - code: USD
+            name: United States Dollar
+            symbol: $
+            decimals: 2
+        lei:
+          type: string
+          description: Legal Entity Identifier for the UMA Provider
+          example: 5493001KJTIIGC8Y1R12
+        allowListStatus:
+          type: boolean
+          description: Whether this UMA Provider is on your allow list
+          example: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

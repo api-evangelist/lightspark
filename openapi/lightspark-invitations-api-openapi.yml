@@ -1,0 +1,729 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management Invitations API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Invitations
+  description: Endpoints for creating, claiming and managing UMA invitations
+paths:
+  /invitations:
+    post:
+      summary: Create an UMA invitation
+      description: 'Create an UMA invitation from a given platform customer.
+
+        '
+      operationId: createInvitation
+      tags:
+      - Invitations
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UmaInvitationCreateRequest'
+      responses:
+        '201':
+          description: Invitation created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /invitations/{invitationCode}:
+    get:
+      summary: Get an UMA invitation by code
+      description: 'Retrieve details about an UMA invitation by its invitation code.
+
+        '
+      operationId: getInvitation
+      tags:
+      - Invitations
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: invitationCode
+        in: path
+        description: The code of the invitation to get
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invitation retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /invitations/{invitationCode}/claim:
+    post:
+      summary: Claim an UMA invitation
+      description: 'Claim an UMA invitation by associating it with an invitee UMA address.
+
+
+        When an invitation is successfully claimed:
+
+        1. The invitation status changes from PENDING to CLAIMED
+
+        2. The invitee UMA address is associated with the invitation
+
+        3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation
+
+
+        This endpoint allows customers to accept invitations sent to them by other UMA customers.
+
+        '
+      operationId: claimInvitation
+      tags:
+      - Invitations
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: invitationCode
+        in: path
+        description: The code of the invitation to claim
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UmaInvitationClaimRequest'
+      responses:
+        '200':
+          description: Invitation claimed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /invitations/{invitationCode}/cancel:
+    post:
+      summary: Cancel an UMA invitation
+      description: 'Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.
+
+
+        When an invitation is cancelled:
+
+        1. The invitation status changes from PENDING to CANCELLED
+
+        2. The invitation can no longer be claimed
+
+        3. The invitation URL will show as cancelled when accessed
+
+
+        Only pending invitations can be cancelled. Attempting to cancel an invitation
+
+        that is already claimed, expired, or cancelled will result in an error.
+
+        '
+      operationId: cancelInvitation
+      tags:
+      - Invitations
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: invitationCode
+        in: path
+        description: The code of the invitation to cancel
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Invitation cancelled successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UmaInvitation'
+        '400':
+          description: Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden - Only the platform which created the invitation can cancel it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Invitation not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    Error403:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 403
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    UmaInvitationClaimRequest:
+      type: object
+      required:
+      - inviteeUma
+      properties:
+        inviteeUma:
+          type: string
+          description: The UMA address of the customer claiming the invitation
+          example: $invitee@uma.domain
+    Error400:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 400
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
+
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - QUOTE_REQUEST_FAILED
+          - INVALID_PAYREQ_RESPONSE
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - LOOKUP_REQUEST_FAILED
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    UmaInvitation:
+      type: object
+      required:
+      - code
+      - createdAt
+      - inviterUma
+      - status
+      - url
+      properties:
+        code:
+          type: string
+          description: The unique code of the invitation
+          example: 019542f5
+        createdAt:
+          type: string
+          format: date-time
+          description: When the invitation was created
+          example: '2025-09-01T14:30:00Z'
+        claimedAt:
+          type: string
+          format: date-time
+          description: When the invitation was claimed if it has been claimed
+          example: '2025-09-01T14:30:00Z'
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: https://uma.me/i/019542f5
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
+        inviterUma:
+          type: string
+          description: The UMA address of the inviter
+          example: $inviter@uma.domain
+        inviteeUma:
+          type: string
+          description: The UMA address of the invitee
+          example: $invitee@uma.domain
+        status:
+          type: string
+          enum:
+          - PENDING
+          - CLAIMED
+          - EXPIRED
+          - CANCELLED
+          description: The status of the invitation
+          example: PENDING
+        firstName:
+          type: string
+          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
+          example: Jane
+        amountToSend:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
+
+            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
+    UmaInvitationCreateRequest:
+      type: object
+      required:
+      - inviterUma
+      properties:
+        inviterUma:
+          type: string
+          description: The UMA address of the customer creating the invitation
+          example: $inviter@uma.domain
+        firstName:
+          type: string
+          description: First name of the invitee to show as part of the invite
+          example: Alice
+        amountToSend:
+          description: 'An amount to send (in the smallest unit of the customer''s currency) to the invitee when the invitation is claimed.
+
+            This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
+
+            the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
+
+            platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
+
+            field is primarily used for display purposes on the claiming side of the invitation.
+
+            '
+          type: integer
+          format: int64
+          example: 12550
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

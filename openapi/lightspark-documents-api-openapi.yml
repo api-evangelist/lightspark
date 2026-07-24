@@ -1,0 +1,795 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management Documents API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Documents
+  description: Endpoints for uploading and managing verification documents for customers and beneficial owners. Supports KYC and KYB document requirements.
+paths:
+  /documents:
+    post:
+      summary: Upload a document
+      description: 'Upload a verification document for a customer or beneficial owner. The request must use multipart/form-data with the file in the `file` field and metadata in the remaining fields.
+
+
+        Supported file types: PDF, JPEG, PNG. Maximum file size: 10 MB.
+
+        '
+      operationId: uploadDocument
+      tags:
+      - Documents
+      security:
+      - BasicAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/DocumentUploadRequestBody'
+      responses:
+        '201':
+          description: Document uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad request - Invalid file type, size, or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Document holder not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    get:
+      summary: List documents
+      description: 'Retrieve a list of documents with optional filtering by document holder.
+
+        '
+      operationId: listDocuments
+      tags:
+      - Documents
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: documentHolder
+        in: query
+        description: Filter by document holder ID (Customer or BeneficialOwner)
+        required: false
+        schema:
+          type: string
+      - name: limit
+        in: query
+        description: Maximum number of results to return (default 20, max 100)
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 100
+          default: 20
+      - name: cursor
+        in: query
+        description: Cursor for pagination (returned from previous request)
+        required: false
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentListResponse'
+        '400':
+          description: Bad request - Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /documents/{documentId}:
+    get:
+      summary: Get a document by ID
+      description: Retrieve details and metadata of a specific document by ID.
+      operationId: getDocument
+      tags:
+      - Documents
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: documentId
+        in: path
+        description: Document ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    put:
+      summary: Replace a document
+      description: 'Replace an existing document with a new file and/or updated metadata. This is useful when a document was rejected and needs to be re-uploaded. The request must use multipart/form-data.
+
+        '
+      operationId: replaceDocument
+      tags:
+      - Documents
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: documentId
+        in: path
+        description: Document ID
+        required: true
+        schema:
+          type: string
+      requestBody:
+        $ref: '#/components/requestBodies/DocumentReplaceRequestBody'
+      responses:
+        '200':
+          description: Document replaced successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Document'
+        '400':
+          description: Bad request - Invalid file type, size, or parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    delete:
+      summary: Delete a document
+      description: 'Delete an uploaded document. This cannot be undone. Documents that have already been submitted for verification may not be deletable.
+
+        '
+      operationId: deleteDocument
+      tags:
+      - Documents
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: documentId
+        in: path
+        description: Document ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Document deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Document not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict - Document cannot be deleted (already submitted for verification)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    Document:
+      type: object
+      required:
+      - id
+      - documentHolder
+      - documentType
+      - country
+      - fileName
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this document
+          example: Document:019542f5-b3e7-1d02-0000-000000000001
+        documentHolder:
+          type: string
+          description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        side:
+          type: string
+          enum:
+          - FRONT
+          - BACK
+          description: Which side of the document this upload represents. Relevant for two-sided documents like driver's licenses or national IDs.
+          example: FRONT
+        country:
+          type: string
+          description: Country that issued the document (ISO 3166-1 alpha-2)
+          example: US
+        documentNumber:
+          type: string
+          description: Document identification number (e.g., passport number)
+          example: A12345678
+        issuingAuthority:
+          type: string
+          description: Name of the government agency or organization that issued the document
+          example: U.S. Department of State
+        fileName:
+          type: string
+          description: Original file name of the uploaded document
+          example: passport_scan.pdf
+        createdAt:
+          type: string
+          format: date-time
+          description: When this document was uploaded
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this document was last updated
+          example: '2025-10-03T12:00:00Z'
+    DocumentReplaceRequest:
+      title: Document Replace Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
+    DocumentListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of documents matching the filter criteria
+          items:
+            $ref: '#/components/schemas/Document'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of results matching the criteria
+    DocumentUploadRequest:
+      title: Document Upload Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
+      - type: object
+        required:
+        - documentHolder
+        properties:
+          documentHolder:
+            type: string
+            description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+            example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+    Error400:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 400
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
+
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - QUOTE_REQUEST_FAILED
+          - INVALID_PAYREQ_RESPONSE
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - LOOKUP_REQUEST_FAILED
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    DocumentType:
+      type: string
+      enum:
+      - PASSPORT
+      - DRIVERS_LICENSE
+      - NATIONAL_ID
+      - PROOF_OF_ADDRESS
+      - BANK_STATEMENT
+      - TAX_RETURN
+      - CERTIFICATE_OF_INCORPORATION
+      - ARTICLES_OF_INCORPORATION
+      - ARTICLES_OF_ASSOCIATION
+      - STATE_REGISTRY_EXCERPT
+      - GOOD_STANDING_CERTIFICATE
+      - INFORMATION_STATEMENT
+      - INCUMBENCY_CERTIFICATE
+      - BUSINESS_LICENSE
+      - SHAREHOLDER_REGISTER
+      - POWER_OF_ATTORNEY
+      - UTILITY_BILL
+      - ELECTRICITY_BILL
+      - RENT_OR_LEASE_AGREEMENT
+      - DIRECTOR_REGISTRY
+      - TRUST_AGREEMENT
+      - STATE_COMPANY_REGISTRY
+      - PARTNERSHIP_CONTROL_AGREEMENT
+      - PARTNERSHIP_AGREEMENT
+      - SELFIE
+      - OTHER
+      description: 'Type of identity or business verification document. Document types are grouped by verification category:
+
+        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
+
+        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
+
+        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
+
+        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
+
+        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
+      example: PASSPORT
+    BaseDocumentRequest:
+      type: object
+      required:
+      - file
+      - documentType
+      - country
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The document file (PDF, JPEG, or PNG, max 10 MB)
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        side:
+          type: string
+          enum:
+          - FRONT
+          - BACK
+          description: Which side of the document (for two-sided documents like driver's licenses)
+          example: FRONT
+        country:
+          type: string
+          description: Country that issued the document (ISO 3166-1 alpha-2)
+          example: US
+        documentNumber:
+          type: string
+          description: Document identification number (e.g., passport number)
+          example: A12345678
+        issuingAuthority:
+          type: string
+          description: Name of the government agency or organization that issued the document
+          example: U.S. Department of State
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+  requestBodies:
+    DocumentReplaceRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentReplaceRequest'
+    DocumentUploadRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentUploadRequest'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

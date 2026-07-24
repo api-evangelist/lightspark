@@ -1,0 +1,5135 @@
+openapi: 3.1.0
+info:
+  title: Grid Agent Management Strong Customer Authentication API
+  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+
+    '
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Strong Customer Authentication
+  description: Endpoints for authorizing money-movement operations that require Strong Customer Authentication. Relevant only for customers in a region where SCA is required (e.g. EU); customers outside SCA-regulated regions never see an SCA challenge and these endpoints return 409.
+paths:
+  /sca/factors:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer whose factors are listed or enrolled.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    get:
+      summary: List enrolled SCA factors
+      description: 'List the Strong Customer Authentication factors the customer has enrolled.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: listScaFactors
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: The customer's enrolled SCA factors.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaFactorList'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    post:
+      summary: Start SCA factor enrollment
+      description: 'Begin enrolling an SCA factor for the customer. Enrollment covers the
+
+        explicit, opt-in factors a customer chooses to add — the request body''s
+
+        `type` selects `TOTP` or `PASSKEY`. Returns the factor-specific material
+
+        needed to finish via `POST /sca/factors/confirm`.
+
+
+        `SMS_OTP` is implicit and is not enrolled through this endpoint. Every
+
+        customer in an SCA-regulated region has a verified phone number from
+
+        customer creation (via the Contact Verification flows —
+
+        `POST /customers/{customerId}/verify-phone` and `.../verify-phone/confirm`),
+
+        so SMS is always available as a factor with no extra setup and appears
+
+        among the customer''s enrolled factors in `GET /sca/factors`.
+
+
+        A customer may have **only one passkey**. Starting a passkey enrollment when
+
+        one is already enrolled returns `409` (`PASSKEY_ALREADY_ENROLLED`) — delete it
+
+        via `DELETE /sca/factors/{credentialId}` first.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: startScaFactorEnrollment
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaFactorEnrollRequestOneOf'
+      responses:
+        '200':
+          description: Enrollment started; the factor-specific completion material is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaFactorEnrollStartOneOf'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer (`CONFLICT`), or a passkey enrollment was requested while one is already enrolled (`PASSKEY_ALREADY_ENROLLED`) — only one passkey per customer is supported.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/factors/confirm:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer confirming a factor enrollment.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    post:
+      summary: Confirm SCA factor enrollment
+      description: 'Finalize the factor enrollment started by `POST /sca/factors`. The request
+
+        body is discriminated by `type`: for `TOTP`, submit the shared `secret` from
+
+        the start call plus the first `code`; for `PASSKEY`, submit the WebAuthn
+
+        `credential` the device produced plus the `origin` it was produced against.
+
+        The threaded secret/credential binds the confirmation to its enrollment, so
+
+        no separate id is needed.
+
+
+        A TOTP confirmation returns one-time recovery codes (shown once); a passkey
+
+        confirmation returns the enrolled factor.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+
+        In sandbox, the TOTP code is always `123456`.
+
+        '
+      operationId: confirmScaFactorEnrollment
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaFactorConfirmRequestOneOf'
+      responses:
+        '200':
+          description: Factor enrolled; the factor-specific result is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaFactorConfirmResponseOneOf'
+        '400':
+          description: Invalid or incorrect confirmation proof
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/factors/{credentialId}:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer whose factor is being deleted.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    - name: credentialId
+      in: path
+      description: The credential id of the enrolled factor to delete (from the factor's `credentialId`).
+      required: true
+      schema:
+        type: string
+    delete:
+      summary: Delete an enrolled SCA factor
+      description: 'Delete an enrolled SCA factor by its credential id. Today only `PASSKEY`
+
+        factors carry a `credentialId` and are deletable this way.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: deleteScaFactor
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '204':
+          description: Factor deleted; no content is returned.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or factor not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/login/start:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer starting an SCA login.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    post:
+      summary: Start an SCA login
+      description: 'Begin an SCA login for the customer with the chosen factor, opening the
+
+        end-user SCA session (an exemption gating read / account access beyond the
+
+        per-transaction window). Returns factor-specific material: `SMS_OTP`
+
+        dispatches a code and returns a `challengeId` + `expiresAt`; `TOTP` returns
+
+        only the factor (the customer reads the code from their app); `PASSKEY`
+
+        returns WebAuthn `passkeyOptions`. Complete with
+
+        `POST /sca/login/complete`.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: startScaLogin
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaLoginStartRequest'
+      responses:
+        '200':
+          description: SCA login started; factor-specific material is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaLoginStart'
+        '400':
+          description: Invalid or unknown factor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/login/complete:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer completing an SCA login.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    post:
+      summary: Complete an SCA login
+      description: 'Finalize an SCA login by submitting the proof for the started factor
+
+        (`code` for `SMS_OTP` / `TOTP`, or `passkeyAssertion` + `origin` for
+
+        `PASSKEY`), echoing the `challengeId` for `SMS_OTP`. Returns the
+
+        reported session status.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+
+        In sandbox, the SMS/TOTP code is always `123456`.
+
+        '
+      operationId: completeScaLogin
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaLoginCompleteRequest'
+      responses:
+        '200':
+          description: SCA login completed; the session status is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScaLoginComplete'
+        '400':
+          description: Invalid or expired proof
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '423':
+          description: The customer's login is locked (or suspended) after too many failed attempts. `details.lockedUntil` says when they may retry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error423'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/record-event:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer the security event is recorded for.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    post:
+      summary: Record a security event
+      description: 'Record a client-side security-relevant event for the customer with Grid''s risk engine (e.g. a sign-in, a sensitive view), to
+
+        feed adaptive-authentication signals.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: recordSecurityEvent
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordSecurityEventRequest'
+      responses:
+        '200':
+          description: Event recorded; the customer's resulting login-security state is returned (including any lockout).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecordSecurityEventResponse'
+        '400':
+          description: Invalid event type
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '423':
+          description: The customer's login is locked (or suspended) after too many failed attempts. `details.lockedUntil` says when they may retry.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error423'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/factors/reset:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer resetting a factor.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    post:
+      summary: Start a 2FA reset
+      description: 'Begin recovering a lost enrolled factor via a liveness-gated, poll-based
+
+        flow. Opens the liveness check and returns a `resetId` plus the
+
+        opaque liveness handles (`livenessAccessToken` / `verificationLink`) the end
+
+        user completes it with. Poll
+
+        `GET /sca/factors/reset/{resetId}` until liveness
+
+        passes, then call the complete endpoint.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: startTwoFactorReset
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwoFactorResetStartRequest'
+      responses:
+        '201':
+          description: Reset initiated; the reset handle and liveness material are returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwoFactorResetStart'
+        '400':
+          description: Invalid or unknown factor
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '429':
+          description: Too many reset attempts. Reset initiation is rate-limited to 5 per 24 hours per customer; retry after the window indicated by `Retry-After`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error429'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/factors/reset/{resetId}:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer whose reset status is polled.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    - name: resetId
+      in: path
+      description: The reset handle returned by the start call.
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get 2FA reset status
+      description: 'Poll the status of an in-progress 2FA reset until it reaches the liveness-passed value, after which the reset can be completed.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: getTwoFactorResetStatus
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: The current reset status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TwoFactorResetStatus'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or reset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /sca/factors/reset/{resetId}/complete:
+    parameters:
+    - name: customerId
+      in: query
+      description: The unique identifier of the customer completing the reset.
+      required: true
+      schema:
+        type: string
+      example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    - name: resetId
+      in: path
+      description: The reset handle returned by the start call.
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Complete a 2FA reset
+      description: 'Complete a 2FA reset once liveness has passed, clearing the lost factor so
+
+        the customer can re-enroll.
+
+
+        For an `SMS_OTP` reset, supply the new `mobile` number in the body — completing
+
+        the reset enrolls it as the customer''s number. Other factors need no body.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: completeTwoFactorReset
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TwoFactorResetCompleteRequest'
+      responses:
+        '204':
+          description: Reset completed; no content is returned.
+        '400':
+          description: Reset not ready (liveness not yet passed)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or reset not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/external-accounts/{externalAccountId}/trust:
+    parameters:
+    - name: externalAccountId
+      in: path
+      description: The unique identifier of the external account (beneficiary) being trusted.
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Start trusting a beneficiary
+      description: 'Begin trusting (whitelisting) an external account so future sends to it can
+
+        skip the per-transaction SCA ceremony. Returns the `scaChallenge` to satisfy
+
+        (when one is issued). Complete with
+
+        `POST /customers/external-accounts/{externalAccountId}/trust/confirm`.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: startBeneficiaryTrust
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Beneficiary trust started; the SCA challenge (if any) is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeneficiaryTrustStart'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or external account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/external-accounts/{externalAccountId}/trust/confirm:
+    parameters:
+    - name: externalAccountId
+      in: path
+      description: The unique identifier of the external account (beneficiary) being trusted.
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Confirm trusting a beneficiary
+      description: 'Finalize trusting a beneficiary (identified by the `externalAccountId` in the
+
+        path) by submitting the SCA proof (`code` for `SMS_OTP` / `TOTP`, or
+
+        `passkeyAssertion` + `origin` for `PASSKEY`), echoing the `challengeId` when
+
+        one was issued. Returns `trusted: true`.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+
+        In sandbox, the SMS/TOTP code is always `123456`.
+
+        '
+      operationId: confirmBeneficiaryTrust
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeneficiaryTrustConfirmRequest'
+      responses:
+        '200':
+          description: Beneficiary trusted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeneficiaryTrustConfirm'
+        '400':
+          description: Invalid or expired proof
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or external account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/external-accounts/{externalAccountId}/untrust:
+    parameters:
+    - name: externalAccountId
+      in: path
+      description: The unique identifier of the external account (beneficiary) being untrusted.
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Start untrusting a beneficiary
+      description: 'Begin untrusting (removing the trusted mark from) an external account, so
+
+        future sends to it are dynamically linked and require the per-transaction SCA
+
+        ceremony again. Returns the `scaChallenge` to satisfy (when one is issued).
+
+        Complete with
+
+        `POST /customers/external-accounts/{externalAccountId}/untrust/confirm`.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+        '
+      operationId: startBeneficiaryUntrust
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: Beneficiary untrust started; the SCA challenge (if any) is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeneficiaryTrustStart'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or external account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /customers/external-accounts/{externalAccountId}/untrust/confirm:
+    parameters:
+    - name: externalAccountId
+      in: path
+      description: The unique identifier of the external account (beneficiary) being untrusted.
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Confirm untrusting a beneficiary
+      description: 'Finalize untrusting a beneficiary (identified by the `externalAccountId` in
+
+        the path) by submitting the SCA proof (`code` for `SMS_OTP` / `TOTP`, or
+
+        `passkeyAssertion` + `origin` for `PASSKEY`), echoing the `challengeId` when
+
+        one was issued. Returns `trusted: false`.
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+
+        In sandbox, the SMS/TOTP code is always `123456`.
+
+        '
+      operationId: confirmBeneficiaryUntrust
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BeneficiaryTrustConfirmRequest'
+      responses:
+        '200':
+          description: Beneficiary untrusted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BeneficiaryTrustConfirm'
+        '400':
+          description: Invalid or expired proof
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Customer or external account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /quotes/{quoteId}/authorize:
+    parameters:
+    - name: quoteId
+      in: path
+      description: The unique identifier of the quote whose SCA challenge is being authorized.
+      required: true
+      schema:
+        type: string
+      example: Quote:019542f5-b3e7-1d02-0000-000000000006
+    post:
+      summary: Authorize a quote's SCA challenge
+      description: 'Satisfy the Strong Customer Authentication challenge carried by a quote in
+
+        `PENDING_AUTHORIZATION` status by submitting an `ScaAuthorization` proof.
+
+
+        This is used for realtime-funding quotes: the quote is returned with an
+
+        `scaChallenge` and **without** `paymentInstructions`; once authorized, the
+
+        quote advances and its `paymentInstructions` are populated so the customer
+
+        can fund the transfer.
+
+
+        As with all SCA, a quote may require more than one authorization: after
+
+        authorizing, if the quote is still `PENDING_AUTHORIZATION` it carries the
+
+        next `scaChallenge` — authorize that too, repeating until it advances (see
+
+        `ScaChallenge`).
+
+
+        This endpoint is only meaningful for customers in a region where SCA is required (e.g. EU). For customers outside SCA-regulated regions, this returns `409`.
+
+
+        In sandbox, the SMS code is always `123456`.
+
+        '
+      operationId: authorizeQuote
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScaAuthorization'
+      responses:
+        '200':
+          description: Challenge authorized; the updated quote is returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Invalid or expired authorization proof
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer, or the quote has no pending challenge to authorize.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '429':
+          description: Too many requests. Returned with `RATE_LIMITED` when authorization attempts for this challenge happen too frequently (for example, repeated bad codes brute-forcing the OTP). The challenge may be invalidated after too many failed attempts. Clients should back off and retry after the interval indicated by the `Retry-After` response header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error429'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /quotes/{quoteId}/authorize/resend:
+    parameters:
+    - name: quoteId
+      in: path
+      description: The unique identifier of the quote whose SCA challenge code should be re-sent.
+      required: true
+      schema:
+        type: string
+      example: Quote:019542f5-b3e7-1d02-0000-000000000006
+    post:
+      summary: Resend a quote's SCA challenge code
+      description: 'Re-send the one-time code for a realtime-funding quote in
+
+        `PENDING_AUTHORIZATION` status whose `scaChallenge.factor` is `SMS_OTP`. The
+
+        existing challenge is reused — no new challenge is issued, and its
+
+        `scaChallenge.expiresAt` is **not** extended; once the challenge is past
+
+        `expiresAt` it can no longer be authorized.
+
+
+        Only meaningful for customers in a region where SCA is required (e.g. EU);
+
+        a 409 is returned otherwise. `PASSKEY` challenges cannot be re-sent and return 409.
+
+
+        In sandbox, the code is always `123456`.
+
+        '
+      operationId: resendQuoteScaCode
+      tags:
+      - Strong Customer Authentication
+      security:
+      - BasicAuth: []
+      responses:
+        '204':
+          description: Code re-sent.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Quote not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: SCA is not required for this customer, the quote has no pending SMS challenge, or the challenge uses a factor whose code cannot be re-sent (e.g. passkey).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '429':
+          description: Too many requests. Returned with `RATE_LIMITED` when codes are re-sent too frequently, to avoid spamming the customer's phone. Clients should back off and retry after the interval indicated by the `Retry-After` response header.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error429'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    ScaLoginStartRequest:
+      type: object
+      description: Selects which enrolled factor to start an SCA login with. The factor must already be enrolled (or, for `SMS_OTP`, the phone verified).
+      required:
+      - factor
+      properties:
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor to authenticate with.
+    PaymentEmbeddedWalletInfo:
+      title: Embedded Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountType
+        - payloadToSign
+        properties:
+          accountType:
+            type: string
+            enum:
+            - EMBEDDED_WALLET
+            description: Discriminator value identifying this as Embedded Wallet payment instructions.
+          payloadToSign:
+            type: string
+            description: JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet.
+            example: '{"type":"ACTIVITY_TYPE_SIGN_TRANSACTION_V2","timestampMs":"1746736509954","organizationId":"org_abc123","parameters":{"signWith":"wallet_abc123def456","unsignedTransaction":"ea69b4bf05f775209f26ff0a34a05569180f7936579d5c4af9377ae550194f72","type":"TRANSACTION_TYPE_ETHEREUM"},"generateAppProofs":true}'
+    EurAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - EUR_ACCOUNT
+        iban:
+          type: string
+          description: The IBAN of the bank account
+          example: DE89370400440532013000
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: EUR_ACCOUNT
+        iban: DE89370400440532013000
+        swiftCode: DEUTDEFF
+    PaymentBwpAccountInfo:
+      title: BWP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BwpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    QuoteSourceType:
+      type: string
+      enum:
+      - ACCOUNT
+      - REALTIME_FUNDING
+      description: Type of quote funding source
+      example: ACCOUNT
+    PaymentSlvAccountInfo:
+      title: SLV Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SlvAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentVndAccountInfo:
+      title: VND Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/VndAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    ScaFactorView:
+      type: object
+      description: An enrolled Strong Customer Authentication factor.
+      required:
+      - factor
+      properties:
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The kind of enrolled factor.
+        credentialId:
+          type: string
+          description: The per-credential id, populated only for `PASSKEY` factors (the id passed to delete a passkey). Omitted for `TOTP` and `SMS_OTP`, which have no per-credential id.
+        name:
+          type: string
+          description: An optional human-readable label for this factor.
+    TzsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/TzsAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentBrlAccountInfo:
+      title: BRL Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - qrCode
+        properties:
+          accountType:
+            type: string
+            enum:
+            - BRL_ACCOUNT
+          qrCode:
+            type: string
+            description: A PIX QR code payload that can be used to fund the transaction. This can be rendered as a QR code image or pasted into a PIX-compatible banking app.
+            minLength: 1
+    TotpEnrollmentConfirmRequest:
+      type: object
+      description: The shared secret returned by the TOTP enrollment start, plus the first code the customer's authenticator app produces, submitted to confirm and finalize the TOTP factor.
+      required:
+      - type
+      - secret
+      - code
+      properties:
+        type:
+          type: string
+          enum:
+          - TOTP
+          description: Discriminator selecting the TOTP confirm variant.
+        secret:
+          type: string
+          description: The shared secret returned as `secret` by the TOTP enrollment start, threaded back to bind the confirmation to that enrollment.
+        code:
+          type: string
+          description: The current time-based one-time code from the customer's authenticator app. In sandbox, the code is always `123456`.
+          example: '123456'
+    PaymentJmdAccountInfo:
+      title: JMD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/JmdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentHkdAccountInfo:
+      title: HKD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HkdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    InrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/InrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - UPI
+              - NEFT
+              - RTGS
+    RecordSecurityEventRequest:
+      type: object
+      description: Records a client-side security event for the customer so Grid can maintain the customer's login-security state (SCA session revocation and failed-login lockout).
+      required:
+      - eventType
+      properties:
+        eventType:
+          type: string
+          enum:
+          - RESET_PASSWORD_COMPLETED
+          - FAILED_LOGIN_ATTEMPT
+          description: 'The security event to record:
+
+
+            | Value | Effect |
+
+            |-------|--------|
+
+            | `RESET_PASSWORD_COMPLETED` | Revokes every active SCA session for the customer and clears the failed-login counter. |
+
+            | `FAILED_LOGIN_ATTEMPT` | Increments the cumulative failed-login counter and escalates the lockout at each milestone: 5 attempts → 15 minutes, 6 → 30 minutes, 7 → 1 hour, 8 → 24 hours, 9 or more → suspension. |
+
+            '
+          example: FAILED_LOGIN_ATTEMPT
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    GtqAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GTQ_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: GTQ_ACCOUNT
+        accountNumber: '1234567890'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    CadAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankCode
+      - branchCode
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - CAD_ACCOUNT
+        bankCode:
+          type: string
+          description: Canadian financial institution number (3 digits)
+          example: '001'
+          minLength: 3
+          maxLength: 3
+          pattern: ^[0-9]{3}$
+        branchCode:
+          type: string
+          description: Transit number identifying the branch (5 digits)
+          example: '00012'
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        accountNumber:
+          type: string
+          description: Bank account number (7-12 digits)
+          example: '1234567'
+          minLength: 7
+          maxLength: 12
+          pattern: ^[0-9]{7,12}$
+    EgpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/EgpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentNgnAccountInfo:
+      title: NGN Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/NgnAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    QuoteDestinationOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountDestination'
+      - $ref: '#/components/schemas/UmaAddressDestination'
+      discriminator:
+        propertyName: destinationType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountDestination'
+          UMA_ADDRESS: '#/components/schemas/UmaAddressDestination'
+    PaymentHtgAccountInfo:
+      title: HTG Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HtgAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BaseWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BASE_WALLET
+        address:
+          type: string
+          description: Base eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    PaymentEgpAccountInfo:
+      title: EGP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EgpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    GbpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - sortCode
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GBP_ACCOUNT
+        sortCode:
+          type: string
+          description: The UK sort code
+          example: '123456'
+          minLength: 6
+          maxLength: 6
+          pattern: ^[0-9]{6}$
+        accountNumber:
+          type: string
+          description: UK bank account number (8 digits)
+          minLength: 8
+          maxLength: 8
+          example: '12345678'
+          pattern: ^[0-9]{8}$
+      example:
+        accountType: GBP_ACCOUNT
+        sortCode: '123456'
+        accountNumber: '12345678'
+    PaymentRail:
+      type: string
+      enum:
+      - ACH
+      - ACH_COLOMBIA
+      - BANK_TRANSFER
+      - BRE_B
+      - CIPS
+      - FAST
+      - FASTER_PAYMENTS
+      - FEDNOW
+      - INSTAPAY
+      - MOBILE_MONEY
+      - NEFT
+      - PAYNOW
+      - PESONET
+      - PIX
+      - RTGS
+      - RTP
+      - SEPA
+      - SEPA_INSTANT
+      - SPEI
+      - SWIFT
+      - UNIONPAY
+      - UPI
+      - WIRE
+      description: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
+      example: ACH
+    PaymentSparkWalletInfo:
+      title: Spark Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SparkWalletInfo'
+      - type: object
+        required:
+        - assetType
+        properties:
+          assetType:
+            type: string
+            description: Type of asset or configured Spark token currency code
+          invoice:
+            type: string
+            description: Invoice for the payment
+            example: sparkrt1pgss8ter0fhc4c220f3zftmpz49h8wqte8eg3m5zkrraplgc048jucgszg3ssqgjzqqekv73mmh842yj7drsjwh7t7tz5zt8wf5kghm5v4ehggszppjp5s80cg3qjdzc55g2567tn3lj705hdsr577tg8ah795mlnt6807y657qhkmgfkf9w75p4wz3l8vhua85zdn6ryj32zuj0p00pv2l5z4u47mw6h4s
+    ThbAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ThbAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    MwkAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MwkAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    TotpFactorEnrollRequest:
+      type: object
+      title: TOTP Factor Enroll Request
+      description: Start enrolling a time-based one-time-password (TOTP) authenticator factor.
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - TOTP
+          description: Discriminator selecting the TOTP factor. TOTP enrollment needs no other input at start.
+    OutgoingRateDetails:
+      description: 'Details about the rate and fees for an outgoing transaction or quote. Note: `counterpartyFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.'
+      type: object
+      required:
+      - counterpartyMultiplier
+      - counterpartyFixedFee
+      - gridApiMultiplier
+      - gridApiFixedFee
+      - gridApiVariableFeeRate
+      - gridApiVariableFeeAmount
+      properties:
+        counterpartyMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.
+          exclusiveMinimum: 0
+          example: 1.08
+        counterpartyFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiMultiplier:
+          type: number
+          format: double
+          description: The underlying multiplier from the sending currency to mSATS, including variable fees.
+          exclusiveMinimum: 0
+          example: 0.925
+        gridApiFixedFee:
+          type: integer
+          format: int64
+          description: The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).
+          minimum: 0
+          example: 10
+        gridApiVariableFeeRate:
+          type: number
+          format: double
+          description: The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.
+          minimum: 0
+          example: 0.003
+        gridApiVariableFeeAmount:
+          type: number
+          format: int64
+          description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
+          minimum: 0
+          example: 30
+    XafAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/XafAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentPhpAccountInfo:
+      title: PHP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PhpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentKesAccountInfo:
+      title: KES Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/KesAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    DkkAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/DkkAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SEPA
+              - SEPA_INSTANT
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    TwoFactorResetStartRequest:
+      type: object
+      description: Selects which enrolled factor to reset via the liveness-gated recovery flow.
+      required:
+      - factor
+      properties:
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The enrolled factor to reset.
+    PaymentBdtAccountInfo:
+      title: BDT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BdtAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    HtgAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/HtgAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    MyrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MYR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Malaysian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: MABORUMMYYY
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: MYR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: MABORUMMYYY
+    PaymentSwiftAccountInfo:
+      title: SWIFT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SwiftAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Error400:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 400
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
+
+            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | LOOKUP_REQUEST_FAILED | Lookup request failed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - QUOTE_REQUEST_FAILED
+          - INVALID_PAYREQ_RESPONSE
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - LOOKUP_REQUEST_FAILED
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    HtgAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HTG_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: HTG_ACCOUNT
+        phoneNumber: '+1234567890'
+    IdrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - IDR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+          example: Bank Central Asia
+        accountNumber:
+          type: string
+          description: Indonesian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: CENAIDJA
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: Indonesian phone number for e-wallet payments
+          example: '+6281234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+62[0-9]{9,12}$
+      example:
+        accountType: IDR_ACCOUNT
+        bankName: Bank Central Asia
+        accountNumber: '1234567890'
+        swiftCode: CENAIDJA
+        phoneNumber: '+6281234567890'
+    PaymentThbAccountInfo:
+      title: THB Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ThbAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    RwfAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/RwfAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    HkdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HKD_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Hong Kong bank account number
+          minLength: 1
+          maxLength: 34
+          example: '123456789012'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: HSBCHKHHHKH
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: HKD_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '123456789012'
+        swiftCode: HSBCHKHHHKH
+    SwiftAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - swiftCode
+      - bankName
+      - country
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SWIFT_ACCOUNT
+        country:
+          type: string
+          description: The ISO 3166-1 alpha-2 country code of the bank account
+          example: NG
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        bankName:
+          type: string
+          description: The name of the bank
+          example: Deutsche Bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).
+          example: '1234567890'
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.
+          example: GB29NWBK60161331926819
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+      example:
+        accountType: SWIFT_ACCOUNT
+        country: NG
+        swiftCode: DEUTDEFF
+        bankName: Deutsche Bank
+        accountNumber: '1234567890'
+    EurAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/EurAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SEPA
+              - SEPA_INSTANT
+    PaymentZarAccountInfo:
+      title: ZAR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZarAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentInstructions:
+      type: object
+      required:
+      - accountOrWalletInfo
+      properties:
+        instructionsNotes:
+          type: string
+          description: Additional human-readable instructions for making the payment
+          example: Please ensure the reference code is included in the payment memo/description field
+        isPlatformAccount:
+          type: boolean
+          description: Indicates whether the account is a platform account or a customer account.
+          example: true
+        accountOrWalletInfo:
+          oneOf:
+          - $ref: '#/components/schemas/PaymentUsdAccountInfo'
+          - $ref: '#/components/schemas/PaymentBrlAccountInfo'
+          - $ref: '#/components/schemas/PaymentMxnAccountInfo'
+          - $ref: '#/components/schemas/PaymentDkkAccountInfo'
+          - $ref: '#/components/schemas/PaymentEurAccountInfo'
+          - $ref: '#/components/schemas/PaymentInrAccountInfo'
+          - $ref: '#/components/schemas/PaymentNgnAccountInfo'
+          - $ref: '#/components/schemas/PaymentCadAccountInfo'
+          - $ref: '#/components/schemas/PaymentGbpAccountInfo'
+          - $ref: '#/components/schemas/PaymentHkdAccountInfo'
+          - $ref: '#/components/schemas/PaymentIdrAccountInfo'
+          - $ref: '#/components/schemas/PaymentMyrAccountInfo'
+          - $ref: '#/components/schemas/PaymentPhpAccountInfo'
+          - $ref: '#/components/schemas/PaymentSgdAccountInfo'
+          - $ref: '#/components/schemas/PaymentThbAccountInfo'
+          - $ref: '#/components/schemas/PaymentVndAccountInfo'
+          - $ref: '#/components/schemas/PaymentAedAccountInfo'
+          - $ref: '#/components/schemas/PaymentKesAccountInfo'
+          - $ref: '#/components/schemas/PaymentMwkAccountInfo'
+          - $ref: '#/components/schemas/PaymentRwfAccountInfo'
+          - $ref: '#/components/schemas/PaymentTzsAccountInfo'
+          - $ref: '#/components/schemas/PaymentUgxAccountInfo'
+          - $ref: '#/components/schemas/PaymentXofAccountInfo'
+          - $ref: '#/components/schemas/PaymentZarAccountInfo'
+          - $ref: '#/components/schemas/PaymentZmwAccountInfo'
+          - $ref: '#/components/schemas/PaymentBwpAccountInfo'
+          - $ref: '#/components/schemas/PaymentXafAccountInfo'
+          - $ref: '#/components/schemas/PaymentBdtAccountInfo'
+          - $ref: '#/components/schemas/PaymentArsAccountInfo'
+          - $ref: '#/components/schemas/PaymentCopAccountInfo'
+          - $ref: '#/components/schemas/PaymentEgpAccountInfo'
+          - $ref: '#/components/schemas/PaymentGhsAccountInfo'
+          - $ref: '#/components/schemas/PaymentGtqAccountInfo'
+          - $ref: '#/components/schemas/PaymentHtgAccountInfo'
+          - $ref: '#/components/schemas/PaymentJmdAccountInfo'
+          - $ref: '#/components/schemas/PaymentPkrAccountInfo'
+          - $ref: '#/components/schemas/PaymentSlvAccountInfo'
+          - $ref: '#/components/schemas/PaymentSwiftAccountInfo'
+          - $ref: '#/components/schemas/PaymentCnyAccountInfo'
+          - $ref: '#/components/schemas/PaymentSparkWalletInfo'
+          - $ref: '#/components/schemas/PaymentLightningInvoiceInfo'
+          - $ref: '#/components/schemas/PaymentSolanaWalletInfo'
+          - $ref: '#/components/schemas/PaymentTronWalletInfo'
+          - $ref: '#/components/schemas/PaymentPolygonWalletInfo'
+          - $ref: '#/components/schemas/PaymentBaseWalletInfo'
+          - $ref: '#/components/schemas/PaymentEthereumWalletInfo'
+          - $ref: '#/components/schemas/PaymentEmbeddedWalletInfo'
+          discriminator:
+            propertyName: accountType
+            mapping:
+              USD_ACCOUNT: '#/components/schemas/PaymentUsdAccountInfo'
+              BRL_ACCOUNT: '#/components/schemas/PaymentBrlAccountInfo'
+              MXN_ACCOUNT: '#/components/schemas/PaymentMxnAccountInfo'
+              DKK_ACCOUNT: '#/components/schemas/PaymentDkkAccountInfo'
+              EUR_ACCOUNT: '#/components/schemas/PaymentEurAccountInfo'
+              INR_ACCOUNT: '#/components/schemas/PaymentInrAccountInfo'
+              NGN_ACCOUNT: '#/components/schemas/PaymentNgnAccountInfo'
+              CAD_ACCOUNT: '#/components/schemas/PaymentCadAccountInfo'
+              GBP_ACCOUNT: '#/components/schemas/PaymentGbpAccountInfo'
+              HKD_ACCOUNT: '#/components/schemas/PaymentHkdAccountInfo'
+              IDR_ACCOUNT: '#/components/schemas/PaymentIdrAccountInfo'
+              MYR_ACCOUNT: '#/components/schemas/PaymentMyrAccountInfo'
+              PHP_ACCOUNT: '#/components/schemas/PaymentPhpAccountInfo'
+              SGD_ACCOUNT: '#/components/schemas/PaymentSgdAccountInfo'
+              THB_ACCOUNT: '#/components/schemas/PaymentThbAccountInfo'
+              VND_ACCOUNT: '#/components/schemas/PaymentVndAccountInfo'
+              SPARK_WALLET: '#/components/schemas/PaymentSparkWalletInfo'
+              LIGHTNING: '#/components/schemas/PaymentLightningInvoiceInfo'
+              SOLANA_WALLET: '#/components/schemas/PaymentSolanaWalletInfo'
+              TRON_WALLET: '#/components/schemas/PaymentTronWalletInfo'
+              POLYGON_WALLET: '#/components/schemas/PaymentPolygonWalletInfo'
+              BASE_WALLET: '#/components/schemas/PaymentBaseWalletInfo'
+              ETHEREUM_WALLET: '#/components/schemas/PaymentEthereumWalletInfo'
+              AED_ACCOUNT: '#/components/schemas/PaymentAedAccountInfo'
+              KES_ACCOUNT: '#/components/schemas/PaymentKesAccountInfo'
+              MWK_ACCOUNT: '#/components/schemas/PaymentMwkAccountInfo'
+              RWF_ACCOUNT: '#/components/schemas/PaymentRwfAccountInfo'
+              TZS_ACCOUNT: '#/components/schemas/PaymentTzsAccountInfo'
+              UGX_ACCOUNT: '#/components/schemas/PaymentUgxAccountInfo'
+              XOF_ACCOUNT: '#/components/schemas/PaymentXofAccountInfo'
+              ZAR_ACCOUNT: '#/components/schemas/PaymentZarAccountInfo'
+              ZMW_ACCOUNT: '#/components/schemas/PaymentZmwAccountInfo'
+              BWP_ACCOUNT: '#/components/schemas/PaymentBwpAccountInfo'
+              XAF_ACCOUNT: '#/components/schemas/PaymentXafAccountInfo'
+              BDT_ACCOUNT: '#/components/schemas/PaymentBdtAccountInfo'
+              ARS_ACCOUNT: '#/components/schemas/PaymentArsAccountInfo'
+              COP_ACCOUNT: '#/components/schemas/PaymentCopAccountInfo'
+              EGP_ACCOUNT: '#/components/schemas/PaymentEgpAccountInfo'
+              GHS_ACCOUNT: '#/components/schemas/PaymentGhsAccountInfo'
+              GTQ_ACCOUNT: '#/components/schemas/PaymentGtqAccountInfo'
+              HTG_ACCOUNT: '#/components/schemas/PaymentHtgAccountInfo'
+              JMD_ACCOUNT: '#/components/schemas/PaymentJmdAccountInfo'
+              PKR_ACCOUNT: '#/components/schemas/PaymentPkrAccountInfo'
+              SLV_ACCOUNT: '#/components/schemas/PaymentSlvAccountInfo'
+              EMBEDDED_WALLET: '#/components/schemas/PaymentEmbeddedWalletInfo'
+              SWIFT_ACCOUNT: '#/components/schemas/PaymentSwiftAccountInfo'
+              CNY_ACCOUNT: '#/components/schemas/PaymentCnyAccountInfo'
+    BasePaymentAccountInfo:
+      type: object
+      required:
+      - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/PaymentAccountType'
+    ZarAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ZarAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    ZmwAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ZmwAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentXofAccountInfo:
+      title: XOF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XofAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BaseQuoteSource:
+      type: object
+      required:
+      - sourceType
+      properties:
+        sourceType:
+          $ref: '#/components/schemas/QuoteSourceType'
+    KesAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - KES_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Kenyan mobile money phone number
+          example: '+254712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+254[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: KES_ACCOUNT
+        phoneNumber: '+254712345678'
+        provider: Example Provider
+    PaymentSolanaWalletInfo:
+      title: Solana Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SolanaWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+            - USDT
+    ScaFactorEnrollStartOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/TotpEnrollmentStart'
+      - $ref: '#/components/schemas/PasskeyEnrollmentStart'
+      discriminator:
+        propertyName: type
+        mapping:
+          TOTP: '#/components/schemas/TotpEnrollmentStart'
+          PASSKEY: '#/components/schemas/PasskeyEnrollmentStart'
+      description: 'The factor-specific material needed to complete enrollment, keyed by `type`: a TOTP shared secret + provisioning URI, or the WebAuthn registration options for a passkey.'
+    TwoFactorResetStatus:
+      type: object
+      description: The status of an in-progress 2FA reset, polled until it reaches a terminal value.
+      required:
+      - status
+      - factor
+      - expiresAt
+      properties:
+        status:
+          type: string
+          enum:
+          - INITIATED
+          - PENDING_REVIEW
+          - LIVENESS_PASSED
+          - COMPLETED
+          - REJECTED
+          - EXPIRED
+          description: 'The reset status.
+
+            | Value | Terminal | Meaning | |-------|----------|---------| | `INITIATED` | no | Reset started; liveness not yet submitted. Keep polling. | | `PENDING_REVIEW` | no | Liveness submitted; under review. Keep polling. | | `LIVENESS_PASSED` | no | Liveness passed; call the complete endpoint to finish the reset. | | `COMPLETED` | **yes** | Reset finished; the lost factor is cleared and re-enrollment can begin. | | `REJECTED` | **yes** | Liveness failed. Stop polling; start a new reset. | | `EXPIRED` | **yes** | The reset window closed before it completed. Stop polling; start a new reset. |
+
+            Stop polling on any terminal value.'
+          example: INITIATED
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor being reset.
+        enrollmentStatus:
+          type:
+          - string
+          - 'null'
+          enum:
+          - PENDING
+          - COMPLETED
+          - null
+          description: The enrollment status of the replacement factor. `PENDING` until the customer finishes re-enrolling, then `COMPLETED`. Null for an `SMS_OTP` reset, where completing the reset enrolls the new number directly with no separate enrollment step.
+          example: PENDING
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the reset window closes. Poll no longer than this.
+          example: '2025-10-03T12:15:00Z'
+        completedAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the reset completed; null until then.
+          example: null
+    UgxAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - UGX_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: UGX_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    MxnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - clabeNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MXN_ACCOUNT
+        clabeNumber:
+          type: string
+          description: The CLABE number of the bank
+          example: '123456789012345678'
+          minLength: 18
+          maxLength: 18
+          pattern: ^[0-9]{18}$
+      example:
+        accountType: MXN_ACCOUNT
+        clabeNumber: '123456789012345678'
+    InrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      description: 'Required fields depend on the selected paymentRails:
+
+        - NEFT: accountNumber, ifsc, rail
+
+        - RTGS: accountNumber, ifsc, rail
+
+        - UPI: vpa'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - INR_ACCOUNT
+        vpa:
+          type: string
+          description: The UPI Virtual Payment Address
+          example: user@upi
+          minLength: 3
+          maxLength: 255
+          pattern: ^[a-zA-Z0-9.\-_]+@[a-zA-Z0-9]+$
+        accountNumber:
+          type: string
+          description: Indian bank account number (9–18 digits)
+          minLength: 9
+          maxLength: 18
+          example: '000111222333'
+          pattern: ^[0-9]{9,18}$
+        ifsc:
+          type: string
+          description: The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)
+          example: HDFC0001234
+          minLength: 11
+          maxLength: 11
+          pattern: ^[A-Z]{4}0[A-Z0-9]{6}$
+        rail:
+          type: string
+          description: The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).
+          example: NEFT
+          minLength: 1
+          maxLength: 32
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: INR_ACCOUNT
+        vpa: user@upi
+        accountNumber: '000111222333'
+        ifsc: HDFC0001234
+        rail: NEFT
+        bankName: Example Bank
+    PolygonWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - POLYGON_WALLET
+        address:
+          type: string
+          description: Polygon eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    PaymentTzsAccountInfo:
+      title: TZS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TzsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    Error429:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 429
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | RATE_LIMITED | Too many requests in a short window; retry after the interval indicated by the `Retry-After` response header |
+
+            '
+          enum:
+          - RATE_LIMITED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    IdrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/IdrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentCadAccountInfo:
+      title: CAD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CadAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BeneficiaryTrustConfirm:
+      type: object
+      description: The result of a confirm-trust / confirm-untrust call. `trusted` is `true` after a successful trust and `false` after a successful untrust.
+      required:
+      - trusted
+      properties:
+        trusted:
+          type: boolean
+          description: Whether the beneficiary is now trusted. `true` after a successful trust, `false` after a successful untrust.
+    PaymentZmwAccountInfo:
+      title: ZMW Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZmwAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentUsdAccountInfo:
+      title: USD Bank Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UsdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PasskeyEnrollmentConfirmResponse:
+      type: object
+      description: The enrolled passkey factor returned after a successful confirmation.
+      required:
+      - type
+      - factor
+      properties:
+        type:
+          type: string
+          enum:
+          - PASSKEY
+          description: Discriminator identifying this as the passkey enrollment result.
+        factor:
+          $ref: '#/components/schemas/ScaFactorView'
+    AccountDestination:
+      title: Account
+      allOf:
+      - $ref: '#/components/schemas/BaseDestination'
+      - type: object
+        required:
+        - accountId
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Destination account identifier
+            example: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+          paymentRail:
+            allOf:
+            - $ref: '#/components/schemas/PaymentRail'
+            - description: The payment rail to use for the transfer. Must be one of the rails supported by the destination account. If not specified, the system will select a default rail.
+        description: Destination account details
+    Quote:
+      type: object
+      required:
+      - id
+      - status
+      - expiresAt
+      - createdAt
+      - source
+      - destination
+      - sendingCurrency
+      - receivingCurrency
+      - totalSendingAmount
+      - totalReceivingAmount
+      - exchangeRate
+      - feesIncluded
+      - transactionId
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this quote
+          example: Quote:019542f5-b3e7-1d02-0000-000000000006
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PENDING_AUTHORIZATION
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          - EXPIRED
+          description: 'Current status of the quote. `PENDING_AUTHORIZATION` occurs only for customers in a region where Strong Customer Authentication is required (e.g. EU): the quote carries an `scaChallenge` that must be authorized before execution, and for realtime-funding sources `paymentInstructions` are withheld until it is satisfied.'
+          example: PENDING
+        createdAt:
+          type: string
+          format: date-time
+          description: When this quote was created
+          example: '2025-10-03T12:00:00Z'
+        expiresAt:
+          type: string
+          format: date-time
+          description: 'Absolute UTC timestamp when the rate locked in this quote becomes invalid and the quote can no longer be executed. The window depends on the rail and corridor: instant rails (Lightning, Spark, USDC on Solana/Base/Polygon, RTP, SEPA Instant) typically expire in 1–5 minutes; corridors with longer settlement guarantees may have longer windows. Always rely on this timestamp rather than assuming a fixed window.'
+          example: '2025-10-03T12:05:00Z'
+        source:
+          $ref: '#/components/schemas/QuoteSourceOneOf'
+        destination:
+          $ref: '#/components/schemas/QuoteDestinationOneOf'
+        sendingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the sending amount
+        receivingCurrency:
+          $ref: '#/components/schemas/Currency'
+          description: Currency for the receiving amount
+        totalSendingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be sent in the smallest unit of the sending currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 123010
+        totalReceivingAmount:
+          type: integer
+          format: int64
+          description: The total amount that will be received in the smallest unit of the receiving currency (eg. cents).
+          exclusiveMinimum: 0
+          example: 1000
+        exchangeRate:
+          type: number
+          description: Number of sending currency units per receiving currency unit.
+          exclusiveMinimum: 0
+        feesIncluded:
+          type: integer
+          format: int64
+          description: 'The fees associated with the quote in the smallest unit of the sending currency (eg. cents). Note: this value may fluctuate between quotes — some underlying fee components are defined in the receiving currency, so their equivalent in the sending currency moves with the FX rate. The fees shown here are locked only for the lifetime of this quote.'
+          minimum: 0
+          example: 10
+        paymentInstructions:
+          type: array
+          description: Payment instructions for executing the payment. This is not required when using an internal account source.
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+          example:
+          - accountOrWalletInfo:
+              accountType: USD_ACCOUNT
+              paymentRails:
+              - ACH
+              - WIRE
+              accountNumber: '1234567890'
+              routingNumber: '021000021'
+              bankName: Chase Bank
+              reference: UMA-Q12345-REF
+            instructionsNotes: Include reference UMA-Q12345-REF in memo
+          - accountOrWalletInfo:
+              accountType: SPARK_WALLET
+              assetType: BTC
+              address: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+              invoice: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+        transactionId:
+          type: string
+          description: The ID of the transaction created from this quote.
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000005
+        remittanceInformation:
+          type: string
+          maxLength: 80
+          description: 'Free-form information about the payment that travels with it to the recipient, as provided on the quote request. The field this populates depends on the payment rail: for ACH it populates the Addenda record, for FedNow and RTP it populates the remittanceInformation field, and for wires it populates the OBI (Originator to Beneficiary Information) / beneficiary information.'
+          example: '12345'
+        counterpartyInformation:
+          $ref: '#/components/schemas/CounterpartyInformation'
+          description: Additional information about the counterparty, if available and required by the platform in their configuration.
+        rateDetails:
+          $ref: '#/components/schemas/OutgoingRateDetails'
+          description: Details about the rate and fees for the transaction.
+        scaChallenge:
+          $ref: '#/components/schemas/ScaChallenge'
+          readOnly: true
+          description: 'Present only while `status` is `PENDING_AUTHORIZATION`: the Strong Customer Authentication challenge to satisfy before this quote can be executed (or, for realtime-funding sources, before `paymentInstructions` are issued). Omitted for customers outside SCA-regulated regions (non-EU).'
+    MwkAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MWK_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: MWK_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ScaLoginComplete:
+      type: object
+      description: The status of a completed SCA login session.
+      required:
+      - status
+      properties:
+        status:
+          type: string
+          description: The status of the login session, passed through verbatim (Grid does not normalize it). A successful login reports `SUCCESS`; other values indicate the login did not complete and should be surfaced to the caller.
+          example: SUCCESS
+    SolanaWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SOLANA_WALLET
+        address:
+          type: string
+          description: Solana wallet address
+          example: 4Nd1m6Qkq7RfKuE5vQ9qP9Tn6H94Ueqb4xXHzsAbd8Wg
+    ScaFactorConfirmResponseOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/TotpEnrollmentConfirmResponse'
+      - $ref: '#/components/schemas/PasskeyEnrollmentConfirmResponse'
+      discriminator:
+        propertyName: type
+        mapping:
+          TOTP: '#/components/schemas/TotpEnrollmentConfirmResponse'
+          PASSKEY: '#/components/schemas/PasskeyEnrollmentConfirmResponse'
+      description: The enrollment result, keyed by `type`.
+    RwfAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - RWF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Rwandan mobile money phone number
+          example: '+250781234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+250[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: RWF_ACCOUNT
+        phoneNumber: '+250781234567'
+        provider: Example Provider
+    PaymentAedAccountInfo:
+      title: AED Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/AedAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SlvAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: bankAccountType, accountNumber
+
+        - MOBILE_MONEY: phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SLV_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank (BANK_TRANSFER only)
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The account number of the bank (BANK_TRANSFER only)
+          minLength: 1
+          maxLength: 34
+        bankAccountType:
+          type: string
+          description: The bank account type (BANK_TRANSFER only)
+          enum:
+          - CHECKING
+          - SAVINGS
+        phoneNumber:
+          type: string
+          description: The phone number in international format (MOBILE_MONEY only — e.g. Tigo Money)
+          example: '+50312345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: SLV_ACCOUNT
+        bankName: Banco Cuscatlan
+        accountNumber: 0123456789
+        bankAccountType: CHECKING
+    TotpEnrollmentStart:
+      type: object
+      description: The shared secret a customer's authenticator app needs to enroll a TOTP factor. Returned by `POST /sca/factors` for a `TOTP` request; the customer scans `totpUri` (an `otpauth://` provisioning URI) and confirms with the first code their app produces.
+      required:
+      - type
+      - secret
+      - secretBase32Encoded
+      - totpUri
+      properties:
+        type:
+          type: string
+          enum:
+          - TOTP
+          description: Discriminator identifying this as the TOTP enrollment-start payload.
+        secret:
+          type: string
+          description: The raw TOTP shared secret.
+        secretBase32Encoded:
+          type: string
+          description: The Base32-encoded shared secret, suitable for manual entry into an authenticator app that does not scan QR codes.
+        totpUri:
+          type: string
+          description: The `otpauth://` provisioning URI (the QR-code payload) the customer's authenticator app scans to enroll the factor.
+          example: otpauth://totp/Grid:customer@example.com?secret=ABC123&issuer=Grid
+    JmdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/JmdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PhpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PHP_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+          example: BDO Unibank
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 8
+          maxLength: 16
+          example: 001234567890
+          pattern: ^[0-9]{8,16}$
+      example:
+        accountType: PHP_ACCOUNT
+        bankName: BDO Unibank
+        accountNumber: 001234567890
+    GhsAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GHS_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: GHS_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    AedAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - AED_ACCOUNT
+        iban:
+          type: string
+          description: UAE IBAN (23 characters, starting with AE)
+          example: AE070331234567890123456
+          minLength: 23
+          maxLength: 23
+          pattern: ^AE[0-9]{21}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: EBILAEAD
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: AED_ACCOUNT
+        iban: AE070331234567890123456
+        swiftCode: EBILAEAD
+    MxnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MxnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SPEI
+    ScaAuthorization:
+      type: object
+      description: Proof that satisfies an `ScaChallenge`. Provide exactly one of `code` (for `SMS_OTP` / `TOTP`) or `passkeyAssertion` (for `PASSKEY`). When supplying a `passkeyAssertion`, `origin` is **required** — the WebAuthn assertion is bound to the origin it was produced against, and a passkey confirmation is rejected without it.
+      properties:
+        code:
+          type:
+          - string
+          - 'null'
+          description: The one-time code the customer received by SMS, or read from their authenticator app. In sandbox, the code is always `123456`.
+          example: '123456'
+        passkeyAssertion:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion produced by the device from the challenge's `passkeyAssertionOptions`. Required when satisfying a `PASSKEY` challenge.
+        origin:
+          type:
+          - string
+          - 'null'
+          description: The WebAuthn origin the `passkeyAssertion` was produced against. **Required** alongside `passkeyAssertion`; omit it for the `code` path. When the challenge lists `passkeyAllowedOrigins` (enrollment / login challenges), it must be one of those. A per-transaction passkey challenge carries `passkeyAssertionOptions` but may omit `passkeyAllowedOrigins`; in that case supply the origin your app invoked the WebAuthn API from, which must match the relying party in `passkeyAssertionOptions`.
+          example: https://app.example.com
+    PaymentPolygonWalletInfo:
+      title: Polygon Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PolygonWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    TwoFactorResetStart:
+      type: object
+      description: The reset handle plus the opaque liveness handles a caller relays to the end-user device to complete the liveness check. `resetId` threads the ceremony together (status and complete reference it). `livenessAccessToken` and `verificationLink` are omitted when they are not returned.
+      required:
+      - resetId
+      properties:
+        resetId:
+          type: string
+          description: Identifier for this reset; pass it to the status and complete endpoints.
+        livenessAccessToken:
+          type:
+          - string
+          - 'null'
+          description: Access token for the embedded liveness/verification SDK, bound to this reset. Omitted when one is not returned.
+        verificationLink:
+          type:
+          - string
+          - 'null'
+          description: Hosted identity-verification page URL for completing liveness. Omitted when one is not returned.
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Absolute UTC timestamp at the end of the reset window. Omitted when one is not returned.
+          example: '2025-10-03T12:30:00Z'
+    GhsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GhsAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentRwfAccountInfo:
+      title: RWF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/RwfAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BdtAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BdtAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    EthereumWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ETHEREUM_WALLET
+        address:
+          type: string
+          description: Ethereum L1 wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    TronWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TRON_WALLET
+        address:
+          type: string
+          description: Tron wallet address
+          example: TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL
+    PaymentInrAccountInfo:
+      title: INR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/InrAccountInfo'
+    PaymentAccountType:
+      type: string
+      enum:
+      - USD_ACCOUNT
+      - BRL_ACCOUNT
+      - MXN_ACCOUNT
+      - DKK_ACCOUNT
+      - ARS_ACCOUNT
+      - COP_ACCOUNT
+      - EUR_ACCOUNT
+      - INR_ACCOUNT
+      - NGN_ACCOUNT
+      - CAD_ACCOUNT
+      - GBP_ACCOUNT
+      - HKD_ACCOUNT
+      - IDR_ACCOUNT
+      - MYR_ACCOUNT
+      - PHP_ACCOUNT
+      - SGD_ACCOUNT
+      - THB_ACCOUNT
+      - VND_ACCOUNT
+      - SPARK_WALLET
+      - LIGHTNING
+      - SOLANA_WALLET
+      - TRON_WALLET
+      - POLYGON_WALLET
+      - BASE_WALLET
+      - ETHEREUM_WALLET
+      - EMBEDDED_WALLET
+      description: Type of payment account or wallet
+      example: USD_ACCOUNT
+    UmaAddressDestination:
+      title: UMA Address
+      allOf:
+      - $ref: '#/components/schemas/BaseDestination'
+      - type: object
+        required:
+        - umaAddress
+        - destinationType
+        properties:
+          destinationType:
+            type: string
+            enum:
+            - UMA_ADDRESS
+          umaAddress:
+            type: string
+            description: UMA address of the recipient
+            example: $receiver@uma.domain.com
+          currency:
+            type: string
+            description: Currency code for the destination. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies.
+            example: EUR
+        description: UMA address destination details
+    TotpEnrollmentConfirmResponse:
+      type: object
+      description: The one-time recovery codes issued once a TOTP factor is enrolled. These are shown to the customer only once; store them somewhere safe to recover access if the authenticator device is lost.
+      required:
+      - type
+      - recoveryCodes
+      properties:
+        type:
+          type: string
+          enum:
+          - TOTP
+          description: Discriminator identifying this as the TOTP enrollment result.
+        recoveryCodes:
+          type: array
+          description: The one-time recovery codes for this TOTP factor.
+          items:
+            type: string
+          example:
+          - ABCD-EFGH-IJKL
+          - MNOP-QRST-UVWX
+    PaymentEurAccountInfo:
+      title: EUR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EurAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    CnyAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - CNY_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: CNY_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    CounterpartyInformation:
+      type: object
+      description: Additional information about the counterparty, if available and relevant to the transaction and platform.
+      additionalProperties: true
+      example:
+        FULL_NAME: John Sender
+        BIRTH_DATE: '1985-06-15'
+        NATIONALITY: DE
+    DestinationType:
+      type: string
+      enum:
+      - ACCOUNT
+      - UMA_ADDRESS
+      description: Type of payment destination
+      example: ACCOUNT
+    KesAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/KesAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    QuoteSourceOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/AccountQuoteSource'
+      - $ref: '#/components/schemas/RealtimeFundingQuoteSource'
+      discriminator:
+        propertyName: sourceType
+        mapping:
+          ACCOUNT: '#/components/schemas/AccountQuoteSource'
+          REALTIME_FUNDING: '#/components/schemas/RealtimeFundingQuoteSource'
+    GbpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GbpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - FASTER_PAYMENTS
+    BeneficiaryTrustConfirmRequest:
+      type: object
+      description: Confirms trusting or untrusting a beneficiary by submitting the SCA proof. Carries the same proof fields as an `ScaAuthorization` (`code` for `SMS_OTP` / `TOTP`, or `passkeyAssertion` + `origin` for `PASSKEY`) and, when the start issued one, the `challengeId`. The beneficiary is identified by the `externalAccountId` in the path — no separate handle is needed.
+      anyOf:
+      - required:
+        - code
+      - required:
+        - passkeyAssertion
+        - origin
+      properties:
+        challengeId:
+          type:
+          - string
+          - 'null'
+          description: The challenge handle from the trust start's `scaChallenge`, when one was issued. Omit when the start returned no challenge.
+        code:
+          type:
+          - string
+          - 'null'
+          description: The one-time code the customer received by SMS, or read from their authenticator app. Provide for `SMS_OTP` / `TOTP`. In sandbox, the code is always `123456`.
+          example: '123456'
+        passkeyAssertion:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion produced by the device from the challenge's assertion options. Required when satisfying a `PASSKEY` challenge.
+        origin:
+          type:
+          - string
+          - 'null'
+          description: The WebAuthn origin the `passkeyAssertion` was produced against. Required alongside `passkeyAssertion`; omit it for the `code` path.
+          example: https://app.example.com
+    JmdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - branchCode
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - JMD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: JMD_ACCOUNT
+        accountNumber: '1234567890'
+        branchCode: '11111'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    TwoFactorResetCompleteRequest:
+      type: object
+      description: Optional body for completing a 2FA reset. Only needed when resetting the `SMS_OTP` factor to a new phone number; omit the body entirely otherwise.
+      properties:
+        mobile:
+          type: object
+          description: For an `SMS_OTP` reset, the new mobile number to enroll as the customer completes the reset. Required for an `SMS_OTP` reset; ignored for `TOTP` / `PASSKEY` resets.
+          required:
+          - countryCode
+          - number
+          properties:
+            countryCode:
+              type: string
+              description: The country dialing code, including the leading `+`.
+              example: '+1'
+            number:
+              type: string
+              description: The national subscriber number, without the country code.
+              example: '4155550123'
+    CnyAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CnyAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    UgxAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UgxAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    SwiftAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SwiftAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SWIFT
+    BwpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BwpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentMwkAccountInfo:
+      title: MWK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MwkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    NgnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - NGN_ACCOUNT
+        accountNumber:
+          type: string
+          description: Nigerian bank account number
+          minLength: 10
+          maxLength: 10
+          example: 0123456789
+          pattern: ^[0-9]{10}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: NGN_ACCOUNT
+        accountNumber: 0123456789
+        bankName: Example Bank
+    BaseDestination:
+      type: object
+      required:
+      - destinationType
+      properties:
+        destinationType:
+          $ref: '#/components/schemas/DestinationType'
+    PaymentIdrAccountInfo:
+      title: IDR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/IdrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SlvAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SlvAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentLightningInvoiceInfo:
+      title: Lightning Invoice
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - invoice
+        properties:
+          accountType:
+            type: string
+            enum:
+            - LIGHTNING
+          invoice:
+            type: string
+            description: Invoice for the payment
+            example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+    BeneficiaryTrustStart:
+      type: object
+      description: The SCA challenge (if any) a caller authorizes to finish trusting (or untrusting) a beneficiary. The beneficiary is identified by its `externalAccountId`, so the confirm call needs no separate handle. `scaChallenge` is omitted when no challenge is issued; the caller then confirms without a `challengeId`.
+      properties:
+        scaChallenge:
+          $ref: '#/components/schemas/ScaChallenge'
+          description: The SCA challenge to satisfy on the confirm call. Omitted when no challenge is issued.
+    AedAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/AedAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    TzsAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TZS_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Tanzanian mobile money phone number
+          example: '+255712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+255[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: TZS_ACCOUNT
+        phoneNumber: '+255712345678'
+        provider: Example Provider
+    PaymentSgdAccountInfo:
+      title: SGD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SgdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PasskeyEnrollmentStart:
+      type: object
+      description: Opaque WebAuthn registration options relayed to the end user's device to enroll a passkey factor. Grid performs no crypto; pass `options` to the device's WebAuthn API to produce a credential, then submit that credential to the confirm endpoint unmodified.
+      required:
+      - type
+      - options
+      - allowedOrigins
+      - relyingPartyId
+      properties:
+        type:
+          type: string
+          enum:
+          - PASSKEY
+          description: Discriminator identifying this as the passkey enrollment-start payload.
+        options:
+          type: object
+          additionalProperties: true
+          description: Opaque WebAuthn `PublicKeyCredentialCreationOptions`. Pass to the device's WebAuthn registration API unmodified.
+        allowedOrigins:
+          type: array
+          description: The origins the WebAuthn registration ceremony may run against. The origin the credential is produced against must be one of these and must be echoed back on the confirm call.
+          items:
+            type: string
+          example:
+          - https://app.example.com
+        relyingPartyId:
+          type: string
+          description: The WebAuthn relying-party id the credential is bound to.
+          example: app.example.com
+    ThbAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - THB_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Thai bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: BKKBTHBK
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: THB_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: BKKBTHBK
+    PhpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/PhpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentCnyAccountInfo:
+      title: CNY Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CnyAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentGtqAccountInfo:
+      title: GTQ Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GtqAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    NgnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/NgnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    XafAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XAF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the Central African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - CM
+          - CG
+      example:
+        accountType: XAF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: CM
+    ScaChallenge:
+      type: object
+      description: 'A Strong Customer Authentication challenge that must be satisfied before a money-movement operation can complete. This object is **only present when the customer is in a region where SCA is required** (the EU); for customers outside SCA-regulated regions it is omitted entirely and no action is needed.
+
+
+        When present on a quote, authorize it by submitting an `ScaAuthorization` proof to `POST /quotes/{quoteId}/authorize`.
+
+
+        **A single operation may require more than one authorization, in sequence.** Treat `scaChallenge` as *the challenge to satisfy now*, not "the only one". After each authorize, re-inspect the returned quote/transaction: if it is still `PENDING_AUTHORIZATION`, it carries the **next** `scaChallenge` (a new `id`) — authorize that too, and repeat until it leaves `PENDING_AUTHORIZATION`. Do not assume one authorization releases the transfer. The number of authorizations is flow-dependent and **may decrease in future**: for example, a cross-currency send today authorizes the currency conversion and the payout as two separate challenges; a future update may collapse them into one. A client written to loop on status handles any count unchanged.'
+      required:
+      - id
+      - expiresAt
+      - factor
+      - availableFactors
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this challenge. The server resolves the active challenge from the quote or transaction being authorized, so this field need not be supplied back; it is informational (e.g. for logging or correlation).
+          example: ScaChallenge:019542f5-b3e7-1d02-0000-000000000007
+        expiresAt:
+          type: string
+          format: date-time
+          description: Absolute UTC timestamp after which this challenge can no longer be authorized.
+          example: '2025-10-03T12:05:00Z'
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor this challenge was issued for. Defaults to `SMS_OTP`.
+        availableFactors:
+          type: array
+          description: The factors the customer may use to satisfy this challenge.
+          items:
+            $ref: '#/components/schemas/ScaFactor'
+          example:
+          - SMS_OTP
+        purpose:
+          type:
+          - string
+          - 'null'
+          description: Optional, informational label for what this particular challenge in the sequence authorizes — useful for step UX (e.g. "Authorize the currency conversion" vs "Authorize the payout"). Known values include `CURRENCY_CONVERSION`, `PAYOUT`, and `TRANSFER`, but the set is **non-exhaustive and may grow** — treat unrecognized values as a generic authorization step and do not branch program logic on it. Omitted when steps are not distinguished (e.g. a single-authorization flow).
+          example: PAYOUT
+        passkeyAssertionOptions:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion request options (including the relying-party id, challenge, and allowed credentials), present only when `factor` is `PASSKEY`. Pass to the device's WebAuthn API to produce the assertion submitted back in `ScaAuthorization.passkeyAssertion`.
+        passkeyAllowedOrigins:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The origins the WebAuthn ceremony may run against. Populated for enrollment and login passkey challenges; the origin the assertion is produced against must be one of these and echoed back as `ScaAuthorization.origin`. Per-transaction passkey challenges omit this (they carry `passkeyAssertionOptions` only) — see `ScaAuthorization.origin` for how to source the origin in that case.
+          example:
+          - https://app.example.com
+    PaymentEthereumWalletInfo:
+      title: Ethereum Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EthereumWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    PaymentPkrAccountInfo:
+      title: PKR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PkrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BdtAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BDT_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: BDT_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        branchCode: '11111'
+        swiftCode: DEUTDEFF
+        phoneNumber: '+1234567890'
+    ScaLoginStart:
+      type: object
+      description: 'The factor-specific material a customer needs to complete an SCA login. Each factor surfaces only the fields it issues: `SMS_OTP` carries `challengeId` and `expiresAt`; `TOTP` carries neither (the customer reads the code from their authenticator app); `PASSKEY` carries the opaque WebAuthn `passkeyOptions` with `allowedOrigins` and `relyingPartyId`.'
+      required:
+      - factor
+      properties:
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor this login was started for.
+        challengeId:
+          type:
+          - string
+          - 'null'
+          description: The challenge handle for an `SMS_OTP` login, threaded back on the complete call. Present only for `SMS_OTP`.
+        expiresAt:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: Absolute UTC timestamp after which the `SMS_OTP` code expires. Present only for `SMS_OTP`.
+          example: '2025-10-03T12:05:00Z'
+        passkeyOptions:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion request options. Present only for `PASSKEY`; pass to the device's WebAuthn API to produce the assertion submitted on the complete call.
+        allowedOrigins:
+          type:
+          - array
+          - 'null'
+          items:
+            type: string
+          description: The origins the WebAuthn ceremony may run against. Present only for `PASSKEY`.
+          example:
+          - https://app.example.com
+        relyingPartyId:
+          type:
+          - string
+          - 'null'
+          description: The WebAuthn relying-party id. Present only for `PASSKEY`.
+          example: app.example.com
+    PaymentUgxAccountInfo:
+      title: UGX Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UgxAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    MyrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MyrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    RealtimeFundingQuoteSource:
+      title: Real-time Funding
+      allOf:
+      - $ref: '#/components/schemas/BaseQuoteSource'
+      - type: object
+        required:
+        - currency
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - REALTIME_FUNDING
+          customerId:
+            type: string
+            description: Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself.
+            example: Customer:019542f5-b3e7-1d02-0000-000000000009
+          currency:
+            type: string
+            description: Currency code for the funding source. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies.
+            example: USD
+          cryptoNetwork:
+            type: string
+            description: 'The crypto network to use for the funding source. Required when `currency` is a stablecoin (e.g. USDC, USDT). Specifies which network the customer will deposit on, so the correct deposit address can be generated. Example values: `SOLANA`, `ETHEREUM`, `BASE`, `POLYGON`, `SPARK`, `LIGHTNING`, `BITCOIN`.'
+            example: SOLANA
+        description: Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.).
+    UsdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - routingNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - USD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        routingNumber:
+          type: string
+          description: The ABA routing number
+          example: '021000021'
+          minLength: 9
+          maxLength: 9
+          pattern: ^[0-9]{9}$
+      example:
+        accountType: USD_ACCOUNT
+        accountNumber: '1234567890'
+        routingNumber: '021000021'
+    XofAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XOF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the West African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - BJ
+          - CI
+          - SN
+          - TG
+      example:
+        accountType: XOF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: BJ
+    PaymentBaseWalletInfo:
+      title: Base Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BaseWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    VndAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/VndAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PkrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/PkrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PkrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PKR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: Pakistani IBAN (24 characters, starting with PK)
+          example: PK36SCBL0000001123456702
+          minLength: 24
+          maxLength: 24
+          pattern: ^PK[0-9]{2}[A-Z]{4}[0-9]{16}$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: PKR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        iban: PK36SCBL0000001123456702
+        phoneNumber: '+1234567890'
+    PaymentMxnAccountInfo:
+      title: MXN Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MxnAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    EgpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: bankName, iban
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - EGP_ACCOUNT
+        iban:
+          type: string
+          description: Egyptian IBAN (29 characters, starting with EG)
+          example: EG380019000500000000263180002
+          minLength: 29
+          maxLength: 29
+          pattern: ^EG[0-9]{27}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: EGP_ACCOUNT
+        iban: EG380019000500000000263180002
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    ScaFactor:
+      type: string
+      enum:
+      - SMS_OTP
+      - TOTP
+      - PASSKEY
+      description: 'A Strong Customer Authentication factor.
+
+
+        | Factor | Description |
+
+        |--------|-------------|
+
+        | `SMS_OTP` | One-time code sent by SMS to the customer''s verified phone. Requires no prior enrollment. |
+
+        | `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |
+
+        | `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |
+
+        '
+    PaymentXafAccountInfo:
+      title: XAF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XafAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SparkWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SPARK_WALLET
+        address:
+          type: string
+          description: Spark wallet address
+          example: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+    DkkAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - DKK_ACCOUNT
+        iban:
+          type: string
+          description: Danish IBAN (18 characters, starting with DK)
+          example: DK5000400040116243
+          minLength: 18
+          maxLength: 18
+          pattern: ^DK[0-9]{16}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DABADKKK
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: DKK_ACCOUNT
+        iban: DK5000400040116243
+        swiftCode: DABADKKK
+    PaymentCopAccountInfo:
+      title: COP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - paymentUrl
+        properties:
+          accountType:
+            type: string
+            enum:
+            - COP_ACCOUNT
+          paymentUrl:
+            type: string
+            format: uri
+            description: A payment URL where the customer can complete their COP deposit.
+            example: https://payments.example.com/t/abc123
+    ZmwAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZMW_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Zambian mobile money phone number
+          example: '+260971234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+260[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZMW_ACCOUNT
+        phoneNumber: '+260971234567'
+        provider: Example Provider
+    VndAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - VND_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Vietnamese bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: BFTVVNVX
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: VND_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: BFTVVNVX
+    PaymentGhsAccountInfo:
+      title: GHS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GhsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentDkkAccountInfo:
+      title: DKK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/DkkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentMyrAccountInfo:
+      title: MYR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MyrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AccountQuoteSource:
+      title: Account
+      allOf:
+      - $ref: '#/components/schemas/BaseQuoteSource'
+      - type: object
+        required:
+        - accountId
+        - sourceType
+        properties:
+          sourceType:
+            type: string
+            enum:
+            - ACCOUNT
+          accountId:
+            type: string
+            description: Source account identifier
+            example: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+          customerId:
+            type: string
+            description: Required when funding from an FBO account to identify the customer on whose behalf the transaction is being initiated.  Otherwise, will default to the customerId of the account owner.
+            example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        description: Source account details
+    PaymentGbpAccountInfo:
+      title: GBP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GbpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    HkdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/HkdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    ScaLoginCompleteRequest:
+      type: object
+      description: Completes an SCA login by submitting the proof for the started factor. Carries the same proof fields as an `ScaAuthorization` (`code` for `SMS_OTP` / `TOTP`, or `passkeyAssertion` + `origin` for `PASSKEY`), plus the `factor` being completed and, for `SMS_OTP`, the `challengeId` returned by the login start.
+      required:
+      - factor
+      anyOf:
+      - required:
+        - code
+      - required:
+        - passkeyAssertion
+        - origin
+      properties:
+        factor:
+          $ref: '#/components/schemas/ScaFactor'
+          description: The factor being completed; must match the started login.
+        challengeId:
+          type:
+          - string
+          - 'null'
+          description: The challenge handle returned by the login start, required for `SMS_OTP` and omitted for other factors.
+        code:
+          type:
+          - string
+          - 'null'
+          description: The one-time code the customer received by SMS, or read from their authenticator app. Provide for `SMS_OTP` / `TOTP`. In sandbox, the code is always `123456`.
+          example: '123456'
+        passkeyAssertion:
+          type:
+          - object
+          - 'null'
+          additionalProperties: true
+          description: Opaque WebAuthn assertion produced by the device from the login start's `passkeyOptions`. Required when completing a `PASSKEY` login.
+        origin:
+          type:
+          - string
+          - 'null'
+          description: The WebAuthn origin the `passkeyAssertion` was produced against (one of the login start's `allowedOrigins`). Required alongside `passkeyAssertion`; omit it for the `code` path.
+          example: https://app.example.com
+    ScaFactorEnrollRequestOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/TotpFactorEnrollRequest'
+      - $ref: '#/components/schemas/PasskeyFactorEnrollRequest'
+      discriminator:
+        propertyName: type
+        mapping:
+          TOTP: '#/components/schemas/TotpFactorEnrollRequest'
+          PASSKEY: '#/components/schemas/PasskeyFactorEnrollRequest'
+      description: Which SCA factor to begin enrolling, selected by `type`. `SMS_OTP` is not enrollable (it uses the customer's verified phone), so only `TOTP` and `PASSKEY` are valid here.
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    Error423:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 423
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | ACCOUNT_LOCKED | The customer''s login is temporarily locked (or suspended) after too many failed attempts. Inspect `details.lockedUntil` for when the customer may retry, and `details.failedAttempts` for the current count. |
+
+            '
+          enum:
+          - ACCOUNT_LOCKED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Lockout detail. `lockedUntil` is the UTC timestamp the customer may retry after (absent when suspended indefinitely); `failedAttempts` is the current cumulative failed-login count; `suspended` is true when the account is locked with no automatic expiry.
+          properties:
+            suspended:
+              type: boolean
+            lockedUntil:
+              type:
+              - string
+              - 'null'
+              format: date-time
+            failedAttempts:
+              type: integer
+          additionalProperties: true
+    BwpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BWP_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: BWP_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    PasskeyFactorEnrollRequest:
+      type: object
+      title: Passkey Factor Enroll Request
+      description: Start enrolling a WebAuthn passkey factor.
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - PASSKEY
+          description: Discriminator selecting the passkey factor. Passkey enrollment needs no other input at start.
+    ScaFactorConfirmRequestOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/TotpEnrollmentConfirmRequest'
+      - $ref: '#/components/schemas/PasskeyEnrollmentConfirmRequest'
+      discriminator:
+        propertyName: type
+        mapping:
+          TOTP: '#/components/schemas/TotpEnrollmentConfirmRequest'
+          PASSKEY: '#/components/schemas/PasskeyEnrollmentConfirmRequest'
+      description: 'The proof that finalizes enrollment, keyed by `type`: the TOTP shared secret + code, or the passkey `origin` + `credential`.'
+    SgdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SgdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - PAYNOW
+              - FAST
+              - BANK_TRANSFER
+    PasskeyEnrollmentConfirmRequest:
+      type: object
+      description: The WebAuthn credential a device produced for a passkey registration challenge, submitted to enroll the passkey factor.
+      required:
+      - type
+      - origin
+      - credential
+      properties:
+        type:
+          type: string
+          enum:
+          - PASSKEY
+          description: Discriminator selecting the passkey confirm variant.
+        origin:
+          type: string
+          description: The WebAuthn origin the `credential` was produced against (one of the enrollment start's `allowedOrigins`).
+          example: https://app.example.com
+        credential:
+          type: object
+          additionalProperties: true
+          description: Opaque WebAuthn credential the device produced from the enrollment start's `options`.
+    ZarAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZAR_ACCOUNT
+        accountNumber:
+          type: string
+          description: South African bank account number
+          minLength: 9
+          maxLength: 13
+          example: '1234567890'
+          pattern: ^[0-9]{9,13}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZAR_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+    ScaFactorList:
+      type: object
+      description: The Strong Customer Authentication factors a customer has enrolled.
+      required:
+      - factors
+      properties:
+        factors:
+          type: array
+          description: The customer's enrolled SCA factors.
+          items:
+            $ref: '#/components/schemas/ScaFactorView'
+    PaymentArsAccountInfo:
+      title: ARS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountNumber
+        properties:
+          accountType:
+            type: string
+            enum:
+            - ARS_ACCOUNT
+          accountNumber:
+            type: string
+            description: The static CVU (Clave Virtual Uniforme) bank account number to pay to.
+            minLength: 22
+            maxLength: 22
+            pattern: ^\d{22}$
+            example: '0000003100074052501434'
+    RecordSecurityEventResponse:
+      type: object
+      description: The customer's login-security state after recording the event, so the integrator can surface a lockout to the end user.
+      required:
+      - eventType
+      - suspended
+      - failedAttempts
+      properties:
+        eventType:
+          type: string
+          enum:
+          - RESET_PASSWORD_COMPLETED
+          - FAILED_LOGIN_ATTEMPT
+          description: The event that was recorded.
+          example: FAILED_LOGIN_ATTEMPT
+        suspended:
+          type: boolean
+          description: Whether the customer's login is currently suspended (locked with no automatic expiry). A suspended customer must go through a password reset (`RESET_PASSWORD_COMPLETED`) to clear the lockout.
+        lockedUntil:
+          type:
+          - string
+          - 'null'
+          format: date-time
+          description: When the customer may attempt to log in again, if temporarily locked. Null when not locked, or when `suspended` is true (no automatic expiry).
+          example: '2025-10-03T12:15:00Z'
+        failedAttempts:
+          type: integer
+          description: The customer's current cumulative failed-login count.
+          example: 5
+    SgdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SGD_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.
+          minLength: 1
+          maxLength: 255
+          example: DBS Bank Ltd
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 1
+          maxLength: 34
+          example: 0123456789
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DBSSSGSG
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: SGD_ACCOUNT
+        bankName: DBS Bank Ltd
+        accountNumber: 0123456789
+        swiftCode: DBSSSGSG
+    CadAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CadAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    UsdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UsdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - ACH
+              - WIRE
+              - RTP
+              - FEDNOW
+    XofAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/XofAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    GtqAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GtqAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentTronWalletInfo:
+      title: Tron Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TronWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDT
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
