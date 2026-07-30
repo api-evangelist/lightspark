@@ -1,0 +1,45 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Lightspark Grid API
+  version: 1.0.0
+extends: openapi/lightspark-grid-openapi-original.yml
+actions:
+- target: $.info
+  update:
+    x-apievangelist-slug: lightspark
+    x-apievangelist-enriched: '2026-07-19'
+    x-apievangelist-source: https://github.com/lightsparkdev/grid-api/blob/main/openapi.yaml
+    x-api-catalog: https://apis.io/providers/lightspark
+- target: $.info
+  update:
+    x-conventions:
+      idempotency-header: Idempotency-Key
+      pagination: cursor
+      request-id-header: Request-Id
+      wallet-signature-header: Grid-Wallet-Signature
+      error-envelope: '{status, code, message, details}'
+      rfc9457: false
+      artifact: conventions/lightspark-conventions.yml
+- target: $.info
+  update:
+    x-artifacts:
+      errors: errors/lightspark-error-codes.yml
+      conventions: conventions/lightspark-conventions.yml
+      lifecycle: lifecycle/lightspark-lifecycle.yml
+      sandbox: sandbox/lightspark-sandbox.yml
+      webhooks: asyncapi/lightspark-grid-webhooks.yml
+      data-model: data-model/lightspark-data-model.yml
+      mcp: mcp/lightspark-mcp.yml
+      skills: skills/_index.yml
+      packages: packages/lightspark-packages.yml
+      cli: cli/lightspark-cli.yml
+- target: $.servers
+  update:
+  - url: https://api.lightspark.com/grid/2025-10-13
+    description: Production server
+  - url: https://api.lightspark.com/grid/2025-10-13
+    description: Sandbox - same base URL; the environment is selected by the API token used
+    x-environment: sandbox
+- target: $.info
+  update:
+    x-agentic-access-profile: agentic-access/lightspark-agentic-access.yml

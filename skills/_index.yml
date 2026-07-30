@@ -1,0 +1,101 @@
+generated: '2026-07-19'
+method: generated
+api: openapi/lightspark-grid-openapi-original.yml
+note: >-
+  Lightspark publishes its own agent skill for the Grid API — installable with
+  `npx skills add lightsparkdev/grid-api` — saved verbatim here as
+  lightspark-grid-api-SKILL.md. The remaining skills are packaged by API Evangelist per marquee
+  flow, grounded in operationIds verified against the published OpenAPI.
+skills:
+- file: lightspark-grid-api-SKILL.md
+  name: grid-api
+  description: >-
+    Lightspark's own published Claude/agent skill for the Grid API — payment operations, docs
+    questions, and workflow guidance via the Grid CLI.
+  method: searched
+  source: https://github.com/lightsparkdev/grid-api/blob/main/.claude/skills/grid-api/SKILL.md
+  install: npx skills add lightsparkdev/grid-api
+  official: true
+- file: lightspark-cross-border-payout.md
+  name: lightspark-cross-border-payout
+  description: Quote, execute and reconcile a cross-currency payout to an external bank account or wallet.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - createCustomer
+  - createCustomerExternalAccount
+  - lookupExternalAccount
+  - createQuote
+  - executeQuote
+  - getQuoteById
+  - listTransactions
+  - getTransactionById
+- file: lightspark-uma-payment.md
+  name: lightspark-uma-payment
+  description: Send and receive payments to a Universal Money Address, including UMA protocol error handling.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - lookupUma
+  - getAvailableUmaProviders
+  - getExchangeRates
+  - createQuote
+  - executeQuote
+  - getTransactionById
+  - sandboxReceive
+- file: lightspark-customer-onboarding-kyc.md
+  name: lightspark-customer-onboarding-kyc
+  description: Onboard individual or business customers through contact verification, beneficial owners, documents and KYC/KYB.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - createCustomer
+  - sendCustomerEmailVerification
+  - confirmCustomerEmailVerification
+  - sendCustomerPhoneVerification
+  - confirmCustomerPhoneVerification
+  - createBeneficialOwner
+  - uploadDocument
+  - createVerification
+  - getVerification
+  - createCustomerKycLink
+- file: lightspark-agent-payments.md
+  name: lightspark-agent-payments
+  description: Provision a policy-bound AI agent with scoped payment access, and approve or reject the actions that need a human.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - createAgent
+  - redeemAgentDeviceCode
+  - getAgentMe
+  - agentCreateQuote
+  - agentExecuteQuote
+  - agentListActions
+  - listAgentApprovals
+  - approveAgentAction
+  - rejectAgentAction
+  - updateAgentPolicy
+  - deleteAgent
+- file: lightspark-webhook-verification.md
+  name: lightspark-webhook-verification
+  description: Verify the X-Grid-Signature P-256 webhook signature and route the twelve Grid event types.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - sendTestWebhook
+  - getPlatformConfig
+  - updatePlatformConfig
+- file: lightspark-card-issuing.md
+  name: lightspark-card-issuing
+  description: Issue, fund, reveal and manage cards, and simulate the authorization/clearing/return lifecycle in sandbox.
+  method: generated
+  api: openapi/lightspark-grid-openapi-original.yml
+  operations:
+  - createCard
+  - listCards
+  - getCardById
+  - updateCardById
+  - revealCard
+  - sandboxSimulateCardAuthorization
+  - sandboxSimulateCardClearing
+  - sandboxSimulateCardReturn

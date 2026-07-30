@@ -1,0 +1,2157 @@
+{
+  "info": {
+    "_postman_id": "a33eb9cb-f1f9-465c-97ed-7ccd6c9019fa",
+    "name": "Grid Agent Management Transactions API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:08:00.000Z",
+    "updatedAt": "2026-07-28T02:08:00.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-a33eb9cb-f1f9-465c-97ed-7ccd6c9019fa"
+  },
+  "item": [
+    {
+      "name": "transactions",
+      "item": [
+        {
+          "name": "{transactionId}",
+          "item": [
+            {
+              "name": "confirm",
+              "item": [
+                {
+                  "name": "Confirm receipt delivery",
+                  "id": "061980d8-aa5c-4b39-96b8-286339cc9de6",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId",
+                        "confirm"
+                      ],
+                      "variable": [
+                        {
+                          "id": "6b852c8f-e5ef-4e82-b775-4fb1c46c436b",
+                          "key": "transactionId",
+                          "value": "<string>",
+                          "description": "(Required) Unique identifier of the transaction to confirm receipt delivery for"
+                        }
+                      ]
+                    },
+                    "description": "Confirm that the platform delivered the transaction receipt to its customer. This confirmation is only necessary when the platform is contractually required to send a receipt. If `receiptDeliveryConfirmedAt` is omitted, the confirmation time is set to the current server time. Calling this endpoint again for the same transaction updates the stored confirmation time.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "a9989938-43dc-4406-ba24-b489c25d3202",
+                      "name": "Receipt delivery confirmation recorded successfully",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"customerId\": \"<string>\",\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"SOLANA\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"receivedAmount\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"status\": \"REJECTED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"<dateTime>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n  \"agentId\": \"<string>\",\n  \"description\": \"<string>\",\n  \"counterpartyInformation\": {\n    \"anim2c\": -78108743,\n    \"in9d2\": -30661204,\n    \"laborum_d2\": -59005658.063508905\n  },\n  \"source\": {\n    \"accountId\": \"<string>\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"BASE\"\n    }\n  },\n  \"fees\": \"<long>\",\n  \"reconciliationInstructions\": {\n    \"reference\": \"<string>\",\n    \"transactionHash\": \"<string>\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": \"<double>\",\n    \"gridApiFixedFee\": \"<long>\",\n    \"gridApiVariableFeeRate\": \"<double>\",\n    \"gridApiVariableFeeAmount\": \"<number>\"\n  },\n  \"failureReason\": \"MISSING_MANDATORY_PAYEE_DATA\"\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-a9989938-43dc-4406-ba24-b489c25d3202"
+                    },
+                    {
+                      "id": "ea5fabfd-05c1-43ed-adc9-dca336bf9285",
+                      "name": "Bad request - Invalid parameters",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"SUSPECTED_FRAUD\",\n  \"details\": {\n    \"amet_69\": \"in\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-ea5fabfd-05c1-43ed-adc9-dca336bf9285"
+                    },
+                    {
+                      "id": "4b0e0b58-6fa7-4ece-a122-00510943d475",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"quis_b1f\": \"min\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-4b0e0b58-6fa7-4ece-a122-00510943d475"
+                    },
+                    {
+                      "id": "627b08e5-7fc4-4c42-932d-c90568082514",
+                      "name": "Transaction not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"commodod\": 85552750.75766745,\n    \"qui5b\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-627b08e5-7fc4-4c42-932d-c90568082514"
+                    },
+                    {
+                      "id": "bf99329f-dc50-4d86-b10e-afaa48421268",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eiusmod_9d6\": -71888703.02238394\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-bf99329f-dc50-4d86-b10e-afaa48421268"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-061980d8-aa5c-4b39-96b8-286339cc9de6"
+                }
+              ],
+              "id": "e1611dbe-1e57-440d-898e-c0d6ef70affc",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-e1611dbe-1e57-440d-898e-c0d6ef70affc"
+            },
+            {
+              "name": "approve",
+              "item": [
+                {
+                  "name": "Approve a pending incoming payment",
+                  "id": "7a3db8db-9613-48b9-a507-ab1cd16037d5",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId",
+                        "approve"
+                      ],
+                      "variable": [
+                        {
+                          "id": "4b203112-e8de-4cf1-bcc5-3f60aefe4c23",
+                          "key": "transactionId",
+                          "value": "<string>",
+                          "description": "(Required) Unique identifier of the transaction to approve"
+                        }
+                      ]
+                    },
+                    "description": "Approve a pending incoming payment that was previously acknowledged with a 202 response.\nThis endpoint allows platforms to asynchronously approve payments after async processing.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "6e22e429-8905-4348-879a-1b58003c163c",
+                      "name": "Payment approved successfully",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"customerId\": \"<string>\",\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"SOLANA\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"receivedAmount\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"status\": \"REJECTED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"<dateTime>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n  \"agentId\": \"<string>\",\n  \"description\": \"<string>\",\n  \"counterpartyInformation\": {\n    \"anim2c\": -78108743,\n    \"in9d2\": -30661204,\n    \"laborum_d2\": -59005658.063508905\n  },\n  \"source\": {\n    \"accountId\": \"<string>\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"BASE\"\n    }\n  },\n  \"fees\": \"<long>\",\n  \"reconciliationInstructions\": {\n    \"reference\": \"<string>\",\n    \"transactionHash\": \"<string>\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": \"<double>\",\n    \"gridApiFixedFee\": \"<long>\",\n    \"gridApiVariableFeeRate\": \"<double>\",\n    \"gridApiVariableFeeAmount\": \"<number>\"\n  },\n  \"failureReason\": \"MISSING_MANDATORY_PAYEE_DATA\"\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-6e22e429-8905-4348-879a-1b58003c163c"
+                    },
+                    {
+                      "id": "d7ad7213-8091-44c3-9fc7-b14394b27d5c",
+                      "name": "Bad request - Invalid parameters or payment cannot be approved",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"SUSPECTED_FRAUD\",\n  \"details\": {\n    \"amet_69\": \"in\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-d7ad7213-8091-44c3-9fc7-b14394b27d5c"
+                    },
+                    {
+                      "id": "90e7ed7c-8913-48d3-aa12-df68dc92c62a",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"quis_b1f\": \"min\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-90e7ed7c-8913-48d3-aa12-df68dc92c62a"
+                    },
+                    {
+                      "id": "7324ad15-ba66-4577-8617-eb61227a18f0",
+                      "name": "Transaction not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"commodod\": 85552750.75766745,\n    \"qui5b\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-7324ad15-ba66-4577-8617-eb61227a18f0"
+                    },
+                    {
+                      "id": "65473138-6bff-4335-8477-93610f7c031e",
+                      "name": "Conflict - Payment is not in a pending state or has already been processed or timed out.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"in_25\": 1361596.740012765,\n    \"proident_9df\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-65473138-6bff-4335-8477-93610f7c031e"
+                    },
+                    {
+                      "id": "27cd9c53-af8c-4be5-8f10-9e12d1515263",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"receiverCustomerInfo\": {\n    \"aliqua__4\": false\n  }\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/approve",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "approve"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eiusmod_9d6\": -71888703.02238394\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-27cd9c53-af8c-4be5-8f10-9e12d1515263"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-7a3db8db-9613-48b9-a507-ab1cd16037d5"
+                }
+              ],
+              "id": "4381a8df-bfab-4a90-a2a2-8e16c765db50",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-4381a8df-bfab-4a90-a2a2-8e16c765db50"
+            },
+            {
+              "name": "reject",
+              "item": [
+                {
+                  "name": "Reject a pending incoming payment",
+                  "id": "24ec9d8f-6a17-42b4-a8be-2bfc04bb48a6",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"reason\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId",
+                        "reject"
+                      ],
+                      "variable": [
+                        {
+                          "id": "fa15cbbb-6317-4155-bf46-eede104dcf32",
+                          "key": "transactionId",
+                          "value": "<string>",
+                          "description": "(Required) Unique identifier of the transaction to reject"
+                        }
+                      ]
+                    },
+                    "description": "Reject a pending incoming payment that was previously acknowledged with a 202 response.\nThis endpoint allows platforms to asynchronously reject payments after additional processing.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "acd210fe-619e-49b5-83b3-5e06b0380b07",
+                      "name": "Payment rejected successfully",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"customerId\": \"<string>\",\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"SOLANA\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"receivedAmount\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"status\": \"REJECTED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"<dateTime>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n  \"agentId\": \"<string>\",\n  \"description\": \"<string>\",\n  \"counterpartyInformation\": {\n    \"anim2c\": -78108743,\n    \"in9d2\": -30661204,\n    \"laborum_d2\": -59005658.063508905\n  },\n  \"source\": {\n    \"accountId\": \"<string>\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"BASE\"\n    }\n  },\n  \"fees\": \"<long>\",\n  \"reconciliationInstructions\": {\n    \"reference\": \"<string>\",\n    \"transactionHash\": \"<string>\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": \"<double>\",\n    \"gridApiFixedFee\": \"<long>\",\n    \"gridApiVariableFeeRate\": \"<double>\",\n    \"gridApiVariableFeeAmount\": \"<number>\"\n  },\n  \"failureReason\": \"MISSING_MANDATORY_PAYEE_DATA\"\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-acd210fe-619e-49b5-83b3-5e06b0380b07"
+                    },
+                    {
+                      "id": "71817bf8-9874-45d3-926a-bb9b458d0401",
+                      "name": "Bad request - Invalid parameters or payment cannot be rejected",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"SUSPECTED_FRAUD\",\n  \"details\": {\n    \"amet_69\": \"in\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-71817bf8-9874-45d3-926a-bb9b458d0401"
+                    },
+                    {
+                      "id": "8671ce16-81a8-4fa1-b09a-ad6f29ae1e4e",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"quis_b1f\": \"min\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-8671ce16-81a8-4fa1-b09a-ad6f29ae1e4e"
+                    },
+                    {
+                      "id": "1662e771-a528-40ca-a33f-10c9537e87af",
+                      "name": "Transaction not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"commodod\": 85552750.75766745,\n    \"qui5b\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-1662e771-a528-40ca-a33f-10c9537e87af"
+                    },
+                    {
+                      "id": "69f4a43f-bd1f-4d07-830e-fbf0706d9f46",
+                      "name": "Conflict - Payment is not in a pending state or has already been processed or timed out.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"in_25\": 1361596.740012765,\n    \"proident_9df\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-69f4a43f-bd1f-4d07-830e-fbf0706d9f46"
+                    },
+                    {
+                      "id": "0c7adb5c-873c-4519-9db6-9887a573bc44",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"reason\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/transactions/:transactionId/reject",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "transactions",
+                            ":transactionId",
+                            "reject"
+                          ],
+                          "variable": [
+                            {
+                              "key": "transactionId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eiusmod_9d6\": -71888703.02238394\n  }\n}",
+                      "createdAt": "2026-07-28T02:08:00.000Z",
+                      "updatedAt": "2026-07-28T02:08:00.000Z",
+                      "uid": "35240-0c7adb5c-873c-4519-9db6-9887a573bc44"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-24ec9d8f-6a17-42b4-a8be-2bfc04bb48a6"
+                }
+              ],
+              "id": "e8c13391-d216-48e5-a2bd-8a11ad477548",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-e8c13391-d216-48e5-a2bd-8a11ad477548"
+            },
+            {
+              "name": "Get transaction by ID",
+              "id": "934dc3d6-58a1-461e-a816-d15199aac0c5",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions/:transactionId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transactions",
+                    ":transactionId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "ee95559c-4081-4236-9314-b9a90fb6d2a5",
+                      "key": "transactionId",
+                      "value": "<string>",
+                      "description": "(Required) Unique identifier of the transaction"
+                    }
+                  ]
+                },
+                "description": "Retrieve detailed information about a specific transaction."
+              },
+              "response": [
+                {
+                  "id": "647b9c72-fbe0-42ab-96ed-1926f93ca539",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "transactionId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"customerId\": \"<string>\",\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"SOLANA\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"receivedAmount\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"status\": \"REJECTED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"<dateTime>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n  \"agentId\": \"<string>\",\n  \"description\": \"<string>\",\n  \"counterpartyInformation\": {\n    \"anim2c\": -78108743,\n    \"in9d2\": -30661204,\n    \"laborum_d2\": -59005658.063508905\n  },\n  \"source\": {\n    \"accountId\": \"<string>\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"<string>\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"<string>\",\n      \"network\": \"BASE\"\n    }\n  },\n  \"fees\": \"<long>\",\n  \"reconciliationInstructions\": {\n    \"reference\": \"<string>\",\n    \"transactionHash\": \"<string>\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": \"<double>\",\n    \"gridApiFixedFee\": \"<long>\",\n    \"gridApiVariableFeeRate\": \"<double>\",\n    \"gridApiVariableFeeAmount\": \"<number>\"\n  },\n  \"failureReason\": \"MISSING_MANDATORY_PAYEE_DATA\"\n}",
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-647b9c72-fbe0-42ab-96ed-1926f93ca539"
+                },
+                {
+                  "id": "228b1eb9-33ec-4db9-94ca-5aae885fa4ba",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "transactionId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"quis_b1f\": \"min\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-228b1eb9-33ec-4db9-94ca-5aae885fa4ba"
+                },
+                {
+                  "id": "674202d0-077e-4ce7-84f9-bed353628af3",
+                  "name": "Transaction not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "transactionId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"commodod\": 85552750.75766745,\n    \"qui5b\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-674202d0-077e-4ce7-84f9-bed353628af3"
+                },
+                {
+                  "id": "ba01eb76-7b02-4c01-9d5a-3f7048a9d034",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/transactions/:transactionId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "transactions",
+                        ":transactionId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "transactionId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eiusmod_9d6\": -71888703.02238394\n  }\n}",
+                  "createdAt": "2026-07-28T02:08:00.000Z",
+                  "updatedAt": "2026-07-28T02:08:00.000Z",
+                  "uid": "35240-ba01eb76-7b02-4c01-9d5a-3f7048a9d034"
+                }
+              ],
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-934dc3d6-58a1-461e-a816-d15199aac0c5"
+            }
+          ],
+          "id": "91249c4e-c828-4070-a7f5-a353122cd723",
+          "createdAt": "2026-07-28T02:08:00.000Z",
+          "updatedAt": "2026-07-28T02:08:00.000Z",
+          "uid": "35240-91249c4e-c828-4070-a7f5-a353122cd723"
+        },
+        {
+          "name": "List transactions",
+          "id": "ab1bb004-b7f2-4a88-ab16-3ab54d81a12f",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/transactions?customerId=<string>&platformCustomerId=<string>&accountIdentifier=<string>&senderAccountIdentifier=<string>&receiverAccountIdentifier=<string>&status=EXPIRED&type=INCOMING&reference=<string>&startDate=<dateTime>&endDate=<dateTime>&limit=20&cursor=<string>&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "transactions"
+              ],
+              "query": [
+                {
+                  "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID.",
+                  "key": "customerId",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by platform-specific customer ID",
+                  "key": "platformCustomerId",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by account identifier (matches either sender or receiver)",
+                  "key": "accountIdentifier",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by sender account identifier",
+                  "key": "senderAccountIdentifier",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by receiver account identifier",
+                  "key": "receiverAccountIdentifier",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by transaction status",
+                  "key": "status",
+                  "value": "EXPIRED"
+                },
+                {
+                  "description": "Filter by transaction type",
+                  "key": "type",
+                  "value": "INCOMING"
+                },
+                {
+                  "description": "Filter by reference",
+                  "key": "reference",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by start date (inclusive) in ISO 8601 format",
+                  "key": "startDate",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter by end date (inclusive) in ISO 8601 format",
+                  "key": "endDate",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Order to sort results in",
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            },
+            "description": "Retrieve a paginated list of transactions with optional filtering.\nThe transactions can be filtered by customer ID, platform customer ID, UMA address,\ndate range, status, and transaction type.\n\nCard transactions are included and identified by `type: CARD`. In Sandbox this is how\nyou discover a `CardTransaction` id after simulating an authorization \u2014 list the\ntransactions, take the card transaction's `id`, and pass it as the `cardTransactionId`\nto the clearing and return simulate endpoints.\n"
+          },
+          "response": [
+            {
+              "id": "43c95b89-0d13-4a32-9d62-6ec233273d9e",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions?customerId=<string>&platformCustomerId=<string>&accountIdentifier=<string>&senderAccountIdentifier=<string>&receiverAccountIdentifier=<string>&status=EXPIRED&type=INCOMING&reference=<string>&startDate=<dateTime>&endDate=<dateTime>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID.",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by platform-specific customer ID",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by account identifier (matches either sender or receiver)",
+                      "key": "accountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by sender account identifier",
+                      "key": "senderAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by receiver account identifier",
+                      "key": "receiverAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by transaction status",
+                      "key": "status",
+                      "value": "EXPIRED"
+                    },
+                    {
+                      "description": "Filter by transaction type",
+                      "key": "type",
+                      "value": "INCOMING"
+                    },
+                    {
+                      "description": "Filter by reference",
+                      "key": "reference",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by start date (inclusive) in ISO 8601 format",
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter by end date (inclusive) in ISO 8601 format",
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"customerId\": \"<string>\",\n      \"destination\": {\n        \"accountId\": \"<string>\",\n        \"destinationType\": \"ACCOUNT\",\n        \"currency\": \"<string>\",\n        \"onChainTransaction\": {\n          \"transactionHash\": \"<string>\",\n          \"network\": \"SPARK\"\n        }\n      },\n      \"direction\": \"CREDIT\",\n      \"id\": \"<string>\",\n      \"platformCustomerId\": \"<string>\",\n      \"receivedAmount\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"status\": \"REJECTED\",\n      \"type\": \"INCOMING\",\n      \"settledAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n      \"agentId\": \"<string>\",\n      \"description\": \"<string>\",\n      \"counterpartyInformation\": {\n        \"minim_355\": \"aliqua minim\",\n        \"consectetur_74\": 16202523.29028155,\n        \"dolor4ea\": \"culpa ut aliquip\"\n      },\n      \"source\": {\n        \"accountId\": \"<string>\",\n        \"sourceType\": \"UMA_ADDRESS\",\n        \"currency\": \"<string>\",\n        \"onChainTransaction\": {\n          \"transactionHash\": \"<string>\",\n          \"network\": \"POLYGON\"\n        }\n      },\n      \"fees\": \"<long>\",\n      \"reconciliationInstructions\": {\n        \"reference\": \"<string>\",\n        \"transactionHash\": \"<string>\"\n      },\n      \"rateDetails\": {\n        \"gridApiMultiplier\": \"<double>\",\n        \"gridApiFixedFee\": \"<long>\",\n        \"gridApiVariableFeeRate\": \"<double>\",\n        \"gridApiVariableFeeAmount\": \"<number>\"\n      },\n      \"failureReason\": \"OFFRAMP_FAILED\"\n    },\n    {\n      \"customerId\": \"<string>\",\n      \"destination\": {\n        \"accountId\": \"<string>\",\n        \"destinationType\": \"UMA_ADDRESS\",\n        \"currency\": \"<string>\",\n        \"onChainTransaction\": {\n          \"transactionHash\": \"<string>\",\n          \"network\": \"TRON\"\n        }\n      },\n      \"direction\": \"CREDIT\",\n      \"id\": \"<string>\",\n      \"platformCustomerId\": \"<string>\",\n      \"receivedAmount\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"status\": \"PENDING_AUTHORIZATION\",\n      \"type\": \"OUTGOING\",\n      \"settledAt\": \"<dateTime>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"receiptDeliveryConfirmedAt\": \"<dateTime>\",\n      \"agentId\": \"<string>\",\n      \"description\": \"<string>\",\n      \"counterpartyInformation\": {\n        \"deserunt_e\": -59683310\n      },\n      \"source\": {\n        \"accountId\": \"<string>\",\n        \"sourceType\": \"REALTIME_FUNDING\",\n        \"currency\": \"<string>\",\n        \"onChainTransaction\": {\n          \"transactionHash\": \"<string>\",\n          \"network\": \"BITCOIN\"\n        }\n      },\n      \"fees\": \"<long>\",\n      \"reconciliationInstructions\": {\n        \"reference\": \"<string>\",\n        \"transactionHash\": \"<string>\"\n      },\n      \"rateDetails\": {\n        \"gridApiMultiplier\": \"<double>\",\n        \"gridApiFixedFee\": \"<long>\",\n        \"gridApiVariableFeeRate\": \"<double>\",\n        \"gridApiVariableFeeAmount\": \"<number>\"\n      },\n      \"failureReason\": \"PAY_REQUEST_FAILED\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-43c95b89-0d13-4a32-9d62-6ec233273d9e"
+            },
+            {
+              "id": "1b6f40ae-ff2d-4d95-981c-017b169714b0",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions?customerId=<string>&platformCustomerId=<string>&accountIdentifier=<string>&senderAccountIdentifier=<string>&receiverAccountIdentifier=<string>&status=EXPIRED&type=INCOMING&reference=<string>&startDate=<dateTime>&endDate=<dateTime>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID.",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by platform-specific customer ID",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by account identifier (matches either sender or receiver)",
+                      "key": "accountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by sender account identifier",
+                      "key": "senderAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by receiver account identifier",
+                      "key": "receiverAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by transaction status",
+                      "key": "status",
+                      "value": "EXPIRED"
+                    },
+                    {
+                      "description": "Filter by transaction type",
+                      "key": "type",
+                      "value": "INCOMING"
+                    },
+                    {
+                      "description": "Filter by reference",
+                      "key": "reference",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by start date (inclusive) in ISO 8601 format",
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter by end date (inclusive) in ISO 8601 format",
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"SUSPECTED_FRAUD\",\n  \"details\": {\n    \"amet_69\": \"in\"\n  }\n}",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-1b6f40ae-ff2d-4d95-981c-017b169714b0"
+            },
+            {
+              "id": "73c410f8-d0a3-47df-85d6-ca4a270c435a",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions?customerId=<string>&platformCustomerId=<string>&accountIdentifier=<string>&senderAccountIdentifier=<string>&receiverAccountIdentifier=<string>&status=EXPIRED&type=INCOMING&reference=<string>&startDate=<dateTime>&endDate=<dateTime>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID.",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by platform-specific customer ID",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by account identifier (matches either sender or receiver)",
+                      "key": "accountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by sender account identifier",
+                      "key": "senderAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by receiver account identifier",
+                      "key": "receiverAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by transaction status",
+                      "key": "status",
+                      "value": "EXPIRED"
+                    },
+                    {
+                      "description": "Filter by transaction type",
+                      "key": "type",
+                      "value": "INCOMING"
+                    },
+                    {
+                      "description": "Filter by reference",
+                      "key": "reference",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by start date (inclusive) in ISO 8601 format",
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter by end date (inclusive) in ISO 8601 format",
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"quis_b1f\": \"min\"\n  }\n}",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-73c410f8-d0a3-47df-85d6-ca4a270c435a"
+            },
+            {
+              "id": "5432f97e-282b-4a2a-ad8f-afd5645fa262",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/transactions?customerId=<string>&platformCustomerId=<string>&accountIdentifier=<string>&senderAccountIdentifier=<string>&receiverAccountIdentifier=<string>&status=EXPIRED&type=INCOMING&reference=<string>&startDate=<dateTime>&endDate=<dateTime>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "transactions"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID.",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by platform-specific customer ID",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by account identifier (matches either sender or receiver)",
+                      "key": "accountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by sender account identifier",
+                      "key": "senderAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by receiver account identifier",
+                      "key": "receiverAccountIdentifier",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by transaction status",
+                      "key": "status",
+                      "value": "EXPIRED"
+                    },
+                    {
+                      "description": "Filter by transaction type",
+                      "key": "type",
+                      "value": "INCOMING"
+                    },
+                    {
+                      "description": "Filter by reference",
+                      "key": "reference",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by start date (inclusive) in ISO 8601 format",
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter by end date (inclusive) in ISO 8601 format",
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eiusmod_9d6\": -71888703.02238394\n  }\n}",
+              "createdAt": "2026-07-28T02:08:00.000Z",
+              "updatedAt": "2026-07-28T02:08:00.000Z",
+              "uid": "35240-5432f97e-282b-4a2a-ad8f-afd5645fa262"
+            }
+          ],
+          "createdAt": "2026-07-28T02:08:00.000Z",
+          "updatedAt": "2026-07-28T02:08:00.000Z",
+          "uid": "35240-ab1bb004-b7f2-4a88-ab16-3ab54d81a12f"
+        }
+      ],
+      "id": "355e4adf-3133-4315-a5f3-aa88a0d61b4b",
+      "createdAt": "2026-07-28T02:08:00.000Z",
+      "updatedAt": "2026-07-28T02:08:00.000Z",
+      "uid": "35240-355e4adf-3133-4315-a5f3-aa88a0d61b4b"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

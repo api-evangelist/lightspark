@@ -1,0 +1,625 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lightspark-grid-openapi-original.yml
+docs: https://docs.lightspark.com/api-reference/terminology
+id_convention: Grid resource ids are prefixed and typed, e.g. `Quote:019542f5-b3e7-1d02-0000-000000000006`,
+  `AuthMethod:abc123`, `Request:<uuid>` — a type name, a colon, then a UUID.
+core_entities:
+- Platform
+- Customer
+- InternalAccount
+- ExternalAccount
+- Quote
+- Transaction
+- Verification
+- Agent
+- Card
+entity_count: 58
+entities:
+- entity: Agent
+  field_count: 9
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: AgentPolicy
+    via: policy
+  - kind: has_one
+    target: AgentUsage
+    via: usage
+- entity: AgentAccountRestrictions
+  field_count: 2
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: AgentAccountRule
+    via: accountRules
+- entity: AgentAccountRule
+  field_count: 3
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Account
+    via: accountId
+  - kind: has_one
+    target: AgentExecutionMode
+    via: executionMode
+- entity: AgentAction
+  field_count: 12
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Agent
+    via: agentId
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: AgentActionStatus
+    via: status
+  - kind: has_one
+    target: AgentActionType
+    via: type
+- entity: AgentActionListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: AgentAction
+    via: data
+- entity: AgentCreateRequest
+  field_count: 3
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: AgentPolicy
+    via: policy
+- entity: AgentCreateResponse
+  field_count: 2
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: Agent
+    via: agent
+  - kind: has_one
+    target: AgentDeviceCode
+    via: deviceCode
+- entity: AgentDeviceCode
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Agent
+    via: agentId
+- entity: AgentDeviceCodeRedeemResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Agent
+    via: agentId
+  - kind: has_one
+    target: AgentPolicy
+    via: policy
+- entity: AgentListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: Agent
+    via: data
+- entity: AgentPolicy
+  field_count: 5
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: AgentPermission
+    via: permissions
+  - kind: has_one
+    target: AgentExecutionMode
+    via: defaultExecutionMode
+  - kind: has_one
+    target: AgentSpendingLimits
+    via: spendingLimits
+  - kind: has_one
+    target: AgentAccountRestrictions
+    via: accountRestrictions
+  - kind: has_one
+    target: AgentApprovalThresholds
+    via: approvalThresholds
+- entity: AgentPolicyUpdateRequest
+  field_count: 5
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: AgentPermission
+    via: permissions
+  - kind: has_one
+    target: AgentExecutionMode
+    via: defaultExecutionMode
+  - kind: has_one
+    target: AgentSpendingLimitsUpdate
+    via: spendingLimits
+  - kind: has_one
+    target: AgentAccountRestrictions
+    via: accountRestrictions
+  - kind: has_one
+    target: AgentApprovalThresholds
+    via: approvalThresholds
+- entity: AgentSpendingLimits
+  field_count: 5
+  id_field: null
+  relationships: []
+- entity: AgentSpendingLimitsUpdate
+  field_count: 5
+  id_field: null
+  relationships: []
+- entity: AgentTransferDetails
+  field_count: 4
+  id_field: null
+  relationships: []
+- entity: AgentUsage
+  field_count: 5
+  id_field: null
+  relationships: []
+- entity: ApiToken
+  field_count: 7
+  id_field: id
+  relationships:
+  - kind: has_many
+    target: Permission
+    via: permissions
+- entity: ApiTokenCreateRequest
+  field_count: 2
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: Permission
+    via: permissions
+- entity: AuthCredentialCreateRequest
+  field_count: 2
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: AuthMethodType
+    via: type
+  - kind: belongs_to
+    target: Account
+    via: accountId
+- entity: AuthCredentialListResponse
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: AuthMethod
+    via: data
+- entity: AuthCredentialVerifyRequest
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: AuthMethodType
+    via: type
+- entity: BeneficialOwner
+  field_count: 8
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_many
+    target: BeneficialOwnerRole
+    via: roles
+  - kind: has_one
+    target: BeneficialOwnerPersonalInfo
+    via: personalInfo
+  - kind: has_one
+    target: KycStatus
+    via: kycStatus
+- entity: BeneficialOwnerCreateRequest
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_many
+    target: BeneficialOwnerRole
+    via: roles
+  - kind: has_one
+    target: BeneficialOwnerPersonalInfo
+    via: personalInfo
+- entity: BeneficialOwnerListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: BeneficialOwner
+    via: data
+- entity: BeneficialOwnerPersonalInfo
+  field_count: 11
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: Address
+    via: address
+  - kind: has_one
+    target: IdentificationType
+    via: idType
+- entity: BeneficialOwnerPersonalInfoUpdate
+  field_count: 11
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: Address
+    via: address
+  - kind: has_one
+    target: IdentificationType
+    via: idType
+- entity: BeneficialOwnerUpdateRequest
+  field_count: 3
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: BeneficialOwnerRole
+    via: roles
+  - kind: has_one
+    target: BeneficialOwnerPersonalInfoUpdate
+    via: personalInfo
+- entity: Card
+  field_count: 16
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: CardState
+    via: state
+  - kind: has_one
+    target: CardBrand
+    via: brand
+  - kind: has_one
+    target: CardForm
+    via: form
+- entity: CardCreateRequest
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: CardForm
+    via: form
+- entity: CardListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: Card
+    via: data
+- entity: CardTransaction
+  field_count: 20
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Card
+    via: cardId
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: CardTransactionStatus
+    via: status
+  - kind: has_one
+    target: TransactionDirection
+    via: direction
+  - kind: has_one
+    target: CardMerchant
+    via: merchant
+  - kind: has_one
+    target: CurrencyAmount
+    via: authorizedAmount
+  - kind: has_one
+    target: CurrencyAmount
+    via: settledAmount
+  - kind: has_one
+    target: CurrencyAmount
+    via: refundedAmount
+  - kind: belongs_to
+    target: Account
+    via: accountId
+  - kind: has_one
+    target: CardPullSummary
+    via: pullSummary
+  - kind: has_one
+    target: CardRefundSummary
+    via: refundSummary
+  - kind: has_one
+    target: CardSettlementSummary
+    via: settlementSummary
+- entity: Customer
+  field_count: 12
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: CustomerType
+    via: customerType
+- entity: CustomerCreateRequest
+  field_count: 7
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: CustomerType
+    via: customerType
+- entity: CustomerListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: CustomerOneOf
+    via: data
+- entity: CustomerUpdateRequest
+  field_count: 5
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: CustomerType
+    via: customerType
+- entity: Document
+  field_count: 10
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: DocumentType
+    via: documentType
+- entity: DocumentListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: Document
+    via: data
+- entity: ExchangeRate
+  field_count: 10
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: Currency
+    via: sourceCurrency
+  - kind: has_one
+    target: Currency
+    via: destinationCurrency
+  - kind: has_one
+    target: ExchangeRateFees
+    via: fees
+- entity: ExchangeRateListResponse
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: ExchangeRate
+    via: data
+- entity: ExternalAccountDestinationReference
+  field_count: 2
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Account
+    via: accountId
+- entity: ExternalAccountListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: ExternalAccount
+    via: data
+- entity: ExternalAccountReference
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Account
+    via: accountId
+- entity: InternalAccount
+  field_count: 10
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: InternalAccountType
+    via: type
+  - kind: has_one
+    target: InternalAccountStatus
+    via: status
+  - kind: has_one
+    target: CurrencyAmount
+    via: balance
+  - kind: has_one
+    target: CurrencyAmount
+    via: totalBalance
+  - kind: has_many
+    target: PaymentInstructions
+    via: fundingPaymentInstructions
+- entity: InternalAccountListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: InternalAccount
+    via: data
+- entity: InternalAccountReference
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Account
+    via: accountId
+- entity: Quote
+  field_count: 18
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: QuoteSourceOneOf
+    via: source
+  - kind: has_one
+    target: QuoteDestinationOneOf
+    via: destination
+  - kind: has_one
+    target: Currency
+    via: sendingCurrency
+  - kind: has_one
+    target: Currency
+    via: receivingCurrency
+  - kind: has_many
+    target: PaymentInstructions
+    via: paymentInstructions
+  - kind: belongs_to
+    target: Transaction
+    via: transactionId
+  - kind: has_one
+    target: CounterpartyInformation
+    via: counterpartyInformation
+  - kind: has_one
+    target: OutgoingRateDetails
+    via: rateDetails
+  - kind: has_one
+    target: ScaChallenge
+    via: scaChallenge
+- entity: QuoteRequest
+  field_count: 11
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: QuoteSourceOneOf
+    via: source
+  - kind: has_one
+    target: QuoteDestinationOneOf
+    via: destination
+  - kind: has_one
+    target: QuoteLockSide
+    via: lockedCurrencySide
+  - kind: has_one
+    target: PurposeOfPayment
+    via: purposeOfPayment
+  - kind: has_one
+    target: ScaFactor
+    via: scaFactor
+- entity: StablecoinProviderAccount
+  field_count: 8
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: StablecoinProvider
+    via: provider
+  - kind: has_one
+    target: StablecoinProviderEnvironment
+    via: providerEnvironment
+  - kind: has_one
+    target: StablecoinProviderAccountStatus
+    via: status
+- entity: StablecoinProviderAccountLinkRequest
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: StablecoinProvider
+    via: provider
+- entity: StablecoinProviderAccountListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: StablecoinProviderAccount
+    via: data
+- entity: Transaction
+  field_count: 14
+  id_field: id
+  relationships:
+  - kind: has_one
+    target: TransactionStatus
+    via: status
+  - kind: has_one
+    target: TransactionType
+    via: type
+  - kind: has_one
+    target: TransactionDirection
+    via: direction
+  - kind: has_one
+    target: TransactionDestinationOneOf
+    via: destination
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: belongs_to
+    target: Agent
+    via: agentId
+  - kind: has_one
+    target: CounterpartyInformation
+    via: counterpartyInformation
+- entity: TransactionListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: TransactionOneOf
+    via: data
+- entity: TransferInRequest
+  field_count: 3
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: ExternalAccountReference
+    via: source
+  - kind: has_one
+    target: InternalAccountReference
+    via: destination
+- entity: TransferOutRequest
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: InternalAccountReference
+    via: source
+  - kind: has_one
+    target: ExternalAccountDestinationReference
+    via: destination
+- entity: Verification
+  field_count: 6
+  id_field: id
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId
+  - kind: has_one
+    target: VerificationStatus
+    via: verificationStatus
+  - kind: has_many
+    target: VerificationError
+    via: errors
+- entity: VerificationError
+  field_count: 5
+  id_field: null
+  relationships:
+  - kind: has_one
+    target: VerificationErrorType
+    via: type
+  - kind: has_many
+    target: DocumentType
+    via: acceptedDocumentTypes
+- entity: VerificationListResponse
+  field_count: 4
+  id_field: null
+  relationships:
+  - kind: has_many
+    target: Verification
+    via: data
+- entity: VerificationRequest
+  field_count: 1
+  id_field: null
+  relationships:
+  - kind: belongs_to
+    target: Customer
+    via: customerId

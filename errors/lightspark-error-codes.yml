@@ -1,0 +1,282 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lightspark-grid-openapi-original.yml
+docs: https://docs.lightspark.com/api-reference/terminology
+api: Grid API
+format: grid-error-envelope
+envelope:
+  media_type: application/json
+  fields:
+  - name: status
+    type: integer
+    description: HTTP status code, echoed in the body
+  - name: code
+    type: string
+    description: Stable machine-readable Grid error code
+  - name: message
+    type: string
+    description: Human-readable error message
+  - name: details
+    type: object
+    description: Additional error details (free-form)
+  required:
+  - status
+  - code
+  - message
+notes:
+- Grid does not use RFC 9457 application/problem+json; it uses a proprietary JSON error envelope keyed
+  on a stable `code` enum.
+- Every error code is enumerated per-status in the OpenAPI components.schemas.Error<status> schemas.
+code_count: 80
+codes:
+- code: INVALID_INPUT
+  status: 400
+  description: Invalid input provided
+- code: MISSING_MANDATORY_USER_INFO
+  status: 400
+  description: Required customer information is missing
+- code: INVITATION_ALREADY_CLAIMED
+  status: 400
+  description: Invitation has already been claimed
+- code: INVITATIONS_NOT_CONFIGURED
+  status: 400
+  description: Invitations are not configured
+- code: INVALID_UMA_ADDRESS
+  status: 400
+  description: UMA address format is invalid
+- code: INVITATION_CANCELLED
+  status: 400
+  description: Invitation has been cancelled
+- code: QUOTE_REQUEST_FAILED
+  status: 400
+  description: An issue occurred during the quote process; this is retryable
+- code: INVALID_PAYREQ_RESPONSE
+  status: 400
+  description: Counterparty Payreq response was invalid
+- code: INVALID_RECEIVER
+  status: 400
+  description: Receiver is invalid
+- code: PARSE_PAYREQ_RESPONSE_ERROR
+  status: 400
+  description: Error parsing receiver PayReq response
+- code: CERT_CHAIN_INVALID
+  status: 400
+  description: Counterparty certificate chain is invalid
+- code: CERT_CHAIN_EXPIRED
+  status: 400
+  description: Counterparty certificate chain has expired
+- code: INVALID_PUBKEY_FORMAT
+  status: 400
+  description: Counterparty Public key format is invalid
+- code: MISSING_REQUIRED_UMA_PARAMETERS
+  status: 400
+  description: Counterparty required UMA parameters are missing
+- code: SENDER_NOT_ACCEPTED
+  status: 400
+  description: Sender is not accepted
+- code: AMOUNT_OUT_OF_RANGE
+  status: 400
+  description: Amount is out of range
+- code: INVALID_CURRENCY
+  status: 400
+  description: Currency is invalid
+- code: INVALID_TIMESTAMP
+  status: 400
+  description: Timestamp is invalid
+- code: INVALID_NONCE
+  status: 400
+  description: Nonce is invalid
+- code: INVALID_REQUEST_FORMAT
+  status: 400
+  description: Request format is invalid
+- code: INVALID_BANK_ACCOUNT
+  status: 400
+  description: Bank account is invalid
+- code: SELF_PAYMENT
+  status: 400
+  description: Self payment not allowed
+- code: LOOKUP_REQUEST_FAILED
+  status: 400
+  description: Lookup request failed
+- code: PARSE_LNURLP_RESPONSE_ERROR
+  status: 400
+  description: Error parsing LNURLP response
+- code: INVALID_AMOUNT
+  status: 400
+  description: Amount is invalid
+- code: WEBHOOK_ENDPOINT_NOT_SET
+  status: 400
+  description: Webhook endpoint is not set
+- code: WEBHOOK_DELIVERY_ERROR
+  status: 400
+  description: Webhook delivery error
+- code: LOW_QUALITY
+  status: 400
+  description: Document quality too low to process
+- code: DATA_MISMATCH
+  status: 400
+  description: Document details don't match provided information
+- code: EXPIRED
+  status: 400
+  description: Document has expired
+- code: SUSPECTED_FRAUD
+  status: 400
+  description: Document suspected of being forged or edited
+- code: UNSUITABLE_DOCUMENT
+  status: 400
+  description: Document type is not accepted or not supported
+- code: INCOMPLETE
+  status: 400
+  description: Document is missing pages or sides
+- code: EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+  status: 400
+  description: An EMAIL_OTP credential is already registered on the target internal account; only one
+    email OTP credential is supported per internal account at this time
+- code: SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+  status: 400
+  description: An SMS_OTP credential is already registered on the target internal account; only one SMS
+    OTP credential is supported per internal account at this time
+- code: PASSKEY_CREDENTIAL_ALREADY_EXISTS
+  status: 400
+  description: A PASSKEY credential with the same WebAuthn credentialId is already registered on the target
+    internal account
+- code: STABLECOIN_PROVIDER_ACCOUNT_INVALID
+  status: 400
+  description: The stablecoin provider account link is not usable
+- code: STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+  status: 400
+  description: The stablecoin provider account link has been revoked
+- code: STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+  status: 400
+  description: Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select
+    one
+- code: UNAUTHORIZED
+  status: 401
+  description: Issue with API credentials
+- code: INVALID_SIGNATURE
+  status: 401
+  description: Signature header is invalid
+- code: WALLET_SIGNATURE_MISSING
+  status: 401
+  description: The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was
+    not supplied
+- code: WALLET_SIGNATURE_MALFORMED
+  status: 401
+  description: The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields)
+- code: WALLET_SIGNATURE_BODY_MISMATCH
+  status: 401
+  description: The `Grid-Wallet-Signature` was computed over a different request body than the one received
+- code: WALLET_SIGNATURE_INVALID
+  status: 401
+  description: The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential
+- code: REQUEST_ID_MISSING
+  status: 401
+  description: The `Request-Id` header is required on the signed retry but was not supplied (paired with
+    `Grid-Wallet-Signature`)
+- code: FORBIDDEN
+  status: 403
+  description: Insufficient permissions
+- code: USER_NOT_READY
+  status: 403
+  description: Customer exists but is not ready for operation
+- code: COUNTERPARTY_NOT_ALLOWED
+  status: 403
+  description: Counterparty has not been enabled for your account
+- code: VELOCITY_LIMIT_EXCEEDED
+  status: 403
+  description: Counterparty has exceeded velocity limits
+- code: TRANSACTION_NOT_FOUND
+  status: 404
+  description: Transaction not found
+- code: INVITATION_NOT_FOUND
+  status: 404
+  description: Invitation not found
+- code: USER_NOT_FOUND
+  status: 404
+  description: Customer not found
+- code: QUOTE_NOT_FOUND
+  status: 404
+  description: Quote not found
+- code: LOOKUP_REQUEST_NOT_FOUND
+  status: 404
+  description: Lookup request not found
+- code: TOKEN_NOT_FOUND
+  status: 404
+  description: Token not found
+- code: BULK_UPLOAD_JOB_NOT_FOUND
+  status: 404
+  description: Bulk upload job not found
+- code: REFERENCE_NOT_FOUND
+  status: 404
+  description: Reference not found
+- code: UMA_NOT_FOUND
+  status: 404
+  description: The UMA address is well-formed but no receiver exists at the counterparty VASP
+- code: STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+  status: 404
+  description: Stablecoin provider account link not found
+- code: METHOD_NOT_ALLOWED
+  status: 405
+  description: The HTTP method is not supported for this endpoint
+- code: TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+  status: 409
+  description: Transaction is not pending platform approval
+- code: UMA_ADDRESS_EXISTS
+  status: 409
+  description: UMA address already exists
+- code: EMAIL_OTP_EMAIL_ALREADY_EXISTS
+  status: 409
+  description: Email address is already associated with an EMAIL_OTP credential
+- code: EMAIL_OTP_CREDENTIAL_SET_CHANGED
+  status: 409
+  description: Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued
+- code: PASSKEY_ALREADY_ENROLLED
+  status: 409
+  description: The customer already has an enrolled passkey factor; only one passkey per customer is supported.
+    Delete the existing one before enrolling another
+- code: CONFLICT
+  status: 409
+  description: Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a
+    customer create call collides with an existing active customer on the same platform
+- code: CUSTOMER_DELETED
+  status: 410
+  description: Customer has been permanently deleted
+- code: UNSUPPORTED_UMA_VERSION
+  status: 412
+  description: Counterparty doesn't support the Grid UMA version
+- code: ACCOUNT_LOCKED
+  status: 423
+  description: The customer's login is temporarily locked (or suspended) after too many failed attempts.
+    Inspect `details.lockedUntil` for when the customer may retry, and `details.failedAttempts` for the
+    current count.
+- code: PAYREQ_REQUEST_FAILED
+  status: 424
+  description: Payment request failed
+- code: COUNTERPARTY_PUBKEY_FETCH_ERROR
+  status: 424
+  description: Error fetching counterparty public key
+- code: NO_COMPATIBLE_UMA_VERSION
+  status: 424
+  description: No compatible UMA version
+- code: LNURLP_REQUEST_FAILED
+  status: 424
+  description: LNURLP request failed
+- code: EMAIL_OTP_CREDENTIAL_SYNC_FAILED
+  status: 424
+  description: Failed to update one or more tied EMAIL_OTP credentials
+- code: RATE_LIMITED
+  status: 429
+  description: Too many requests in a short window; retry after the interval indicated by the `Retry-After`
+    response header
+- code: GRID_SWITCH_ERROR
+  status: 500
+  description: Grid switch error
+- code: INTERNAL_ERROR
+  status: 500
+  description: Internal server or UMA error
+- code: UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+  status: 501
+  description: Unrecognized mandatory payee data key
+- code: NOT_IMPLEMENTED
+  status: 501
+  description: Feature not implemented

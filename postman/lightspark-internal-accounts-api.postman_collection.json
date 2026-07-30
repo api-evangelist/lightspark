@@ -1,0 +1,1760 @@
+{
+  "info": {
+    "_postman_id": "577c1344-66ba-4016-bab6-3f27d5fb1883",
+    "name": "Grid Agent Management Internal Accounts API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:46.000Z",
+    "updatedAt": "2026-07-28T02:07:47.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-577c1344-66ba-4016-bab6-3f27d5fb1883"
+  },
+  "item": [
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "internal-accounts",
+          "item": [
+            {
+              "name": "List Customer internal accounts",
+              "id": "8f71133a-01c0-4e2a-9077-6b09a9256a07",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/internal-accounts?currency=<string>&customerId=<string>&type=EMBEDDED_WALLET&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    "internal-accounts"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by currency code",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by internal accounts associated with a specific customer",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                      "key": "type",
+                      "value": "EMBEDDED_WALLET"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                },
+                "description": "Retrieve a list of internal accounts with optional filtering parameters. Returns all\ninternal accounts that match the specified filters. If no filters are provided, returns all internal accounts\n(paginated).\n\nInternal accounts are created automatically when a customer is created based on the platform configuration.\n"
+              },
+              "response": [
+                {
+                  "id": "c8e828b4-5f4c-4df1-83dd-e89e3ee7fcad",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/internal-accounts?currency=<string>&customerId=<string>&type=EMBEDDED_WALLET&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"type\": \"INTERNAL_FIAT\",\n      \"status\": \"FROZEN\",\n      \"balance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"totalBalance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"fundingPaymentInstructions\": [\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"SOLANA_WALLET\",\n            \"paymentRails\": [\n              \"WIRE\",\n              \"FEDNOW\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"169984706\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        },\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"LIGHTNING\",\n            \"paymentRails\": [\n              \"FEDNOW\",\n              \"WIRE\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"850058131\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"customerId\": \"<string>\",\n      \"privateEnabled\": \"<boolean>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"type\": \"EMBEDDED_WALLET\",\n      \"status\": \"FAILED\",\n      \"balance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"totalBalance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"fundingPaymentInstructions\": [\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"PHP_ACCOUNT\",\n            \"paymentRails\": [\n              \"RTP\",\n              \"ACH\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"356567790\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        },\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"USD_ACCOUNT\",\n            \"paymentRails\": [\n              \"ACH\",\n              \"FEDNOW\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"957757620\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"customerId\": \"<string>\",\n      \"privateEnabled\": \"<boolean>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-c8e828b4-5f4c-4df1-83dd-e89e3ee7fcad"
+                },
+                {
+                  "id": "1504b037-b7a3-4480-a8a4-1f2970babdec",
+                  "name": "Bad request - Invalid parameters",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/internal-accounts?currency=<string>&customerId=<string>&type=EMBEDDED_WALLET&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED\",\n  \"details\": {\n    \"elit__c1\": 93324462.2021415,\n    \"pariatur_167\": 54498216,\n    \"officia_ade\": 72227903.72381532\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-1504b037-b7a3-4480-a8a4-1f2970babdec"
+                },
+                {
+                  "id": "ea759161-6f96-46ae-b02e-0fddddfb5de7",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/internal-accounts?currency=<string>&customerId=<string>&type=EMBEDDED_WALLET&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"dolore_5cc\": \"aliquip sed ea occaecat consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-ea759161-6f96-46ae-b02e-0fddddfb5de7"
+                },
+                {
+                  "id": "879e6d94-8c6c-4088-8d97-5fe4e7b0977d",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/internal-accounts?currency=<string>&customerId=<string>&type=EMBEDDED_WALLET&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliquipb\": 13064588.252365142\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-879e6d94-8c6c-4088-8d97-5fe4e7b0977d"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:47.000Z",
+              "updatedAt": "2026-07-28T02:07:47.000Z",
+              "uid": "35240-8f71133a-01c0-4e2a-9077-6b09a9256a07"
+            }
+          ],
+          "id": "a778d102-1743-445e-9581-70a1a0c647e7",
+          "createdAt": "2026-07-28T02:07:47.000Z",
+          "updatedAt": "2026-07-28T02:07:47.000Z",
+          "uid": "35240-a778d102-1743-445e-9581-70a1a0c647e7"
+        }
+      ],
+      "id": "63fed52f-6e83-4ba1-8ba7-876f00dd5953",
+      "createdAt": "2026-07-28T02:07:47.000Z",
+      "updatedAt": "2026-07-28T02:07:47.000Z",
+      "uid": "35240-63fed52f-6e83-4ba1-8ba7-876f00dd5953"
+    },
+    {
+      "name": "platform",
+      "item": [
+        {
+          "name": "internal-accounts",
+          "item": [
+            {
+              "name": "List platform internal accounts",
+              "id": "6b8310c9-61f6-4622-b129-560831b888bf",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/platform/internal-accounts?currency=<string>&type=EMBEDDED_WALLET",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "platform",
+                    "internal-accounts"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by currency code",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                      "key": "type",
+                      "value": "EMBEDDED_WALLET"
+                    }
+                  ]
+                },
+                "description": "Retrieve a list of all internal accounts that belong to the platform, as opposed to an individual customer.\n\nThese accounts are created automatically when the platform is configured for each supported currency. They can be used for things like distributing bitcoin rewards to customers, or for other platform-wide purposes.\n"
+              },
+              "response": [
+                {
+                  "id": "f743a6f5-e18b-4d84-9c41-d3fe9af6cab5",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/internal-accounts?currency=<string>&type=EMBEDDED_WALLET",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"type\": \"EMBEDDED_WALLET\",\n      \"status\": \"ACTIVE\",\n      \"balance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"totalBalance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"fundingPaymentInstructions\": [\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"INR_ACCOUNT\",\n            \"paymentRails\": [\n              \"RTP\",\n              \"ACH\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"777469737\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        },\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"MXN_ACCOUNT\",\n            \"paymentRails\": [\n              \"RTP\",\n              \"WIRE\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"743539684\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"customerId\": \"<string>\",\n      \"privateEnabled\": \"<boolean>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"type\": \"INTERNAL_CRYPTO\",\n      \"status\": \"FAILED\",\n      \"balance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"totalBalance\": {\n        \"amount\": \"<long>\",\n        \"currency\": {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      },\n      \"fundingPaymentInstructions\": [\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"GBP_ACCOUNT\",\n            \"paymentRails\": [\n              \"RTP\",\n              \"FEDNOW\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"890341383\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        },\n        {\n          \"accountOrWalletInfo\": {\n            \"accountNumber\": \"<string>\",\n            \"accountType\": \"EUR_ACCOUNT\",\n            \"paymentRails\": [\n              \"WIRE\",\n              \"ACH\"\n            ],\n            \"reference\": \"<string>\",\n            \"routingNumber\": \"183547861\"\n          },\n          \"instructionsNotes\": \"<string>\",\n          \"isPlatformAccount\": \"<boolean>\"\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"customerId\": \"<string>\",\n      \"privateEnabled\": \"<boolean>\"\n    }\n  ]\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-f743a6f5-e18b-4d84-9c41-d3fe9af6cab5"
+                },
+                {
+                  "id": "29e59134-9f3b-4b35-99a4-363e16a55fa7",
+                  "name": "Bad request - Invalid parameters",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/internal-accounts?currency=<string>&type=EMBEDDED_WALLET",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED\",\n  \"details\": {\n    \"elit__c1\": 93324462.2021415,\n    \"pariatur_167\": 54498216,\n    \"officia_ade\": 72227903.72381532\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-29e59134-9f3b-4b35-99a4-363e16a55fa7"
+                },
+                {
+                  "id": "ace87a14-a030-438a-a1d6-8d116ddbaa5d",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/internal-accounts?currency=<string>&type=EMBEDDED_WALLET",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"dolore_5cc\": \"aliquip sed ea occaecat consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-ace87a14-a030-438a-a1d6-8d116ddbaa5d"
+                },
+                {
+                  "id": "031c1eb5-a238-4168-a6f8-536a07499c91",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/internal-accounts?currency=<string>&type=EMBEDDED_WALLET",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "internal-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts.",
+                          "key": "type",
+                          "value": "EMBEDDED_WALLET"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliquipb\": 13064588.252365142\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-031c1eb5-a238-4168-a6f8-536a07499c91"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:47.000Z",
+              "updatedAt": "2026-07-28T02:07:47.000Z",
+              "uid": "35240-6b8310c9-61f6-4622-b129-560831b888bf"
+            }
+          ],
+          "id": "c416503d-300d-47c4-a0d8-53dcaac969d2",
+          "createdAt": "2026-07-28T02:07:47.000Z",
+          "updatedAt": "2026-07-28T02:07:47.000Z",
+          "uid": "35240-c416503d-300d-47c4-a0d8-53dcaac969d2"
+        }
+      ],
+      "id": "c0636005-ad18-49b7-a7d6-2846d3ca3d7d",
+      "createdAt": "2026-07-28T02:07:47.000Z",
+      "updatedAt": "2026-07-28T02:07:47.000Z",
+      "uid": "35240-c0636005-ad18-49b7-a7d6-2846d3ca3d7d"
+    },
+    {
+      "name": "internal-accounts",
+      "item": [
+        {
+          "name": "{id}",
+          "item": [
+            {
+              "name": "export",
+              "item": [
+                {
+                  "name": "Export internal account wallet credentials",
+                  "id": "210d996a-ce67-4192-ba1f-4be01646ba0f",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id",
+                        "export"
+                      ],
+                      "variable": [
+                        {
+                          "id": "53f88bb2-b2e7-42bc-ad23-9d1a4fb5b62c",
+                          "key": "id",
+                          "value": "<string>",
+                          "description": "(Required) The id of the internal account to export."
+                        }
+                      ]
+                    },
+                    "description": "Export the wallet credentials of an Embedded Wallet internal account. The returned wallet credentials are HPKE-encrypted to the `clientPublicKey` supplied in the request body.\n\nExport is a two-step signed-retry flow (same pattern as add-additional credential, revoke credential, and revoke session):\n\n1. Call `POST /internal-accounts/{id}/export` with the request body `{ \"clientPublicKey\": \"...\" }` and no signature headers. Grid binds the `clientPublicKey` into the `payloadToSign` it returns, so the subsequent stamp in `Grid-Wallet-Signature` commits to the target encryption key. The response is `202` with `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Use the session API keypair of a verified authentication credential on the same internal account to build an API-key stamp over `payloadToSign`, then retry with that full stamp as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The retry body must carry the **same** `clientPublicKey` submitted in step 1 \u2014 Grid rejects the retry with `401` if it disagrees with what was bound into `payloadToSign`. The signed retry returns `200` with `encryptedWalletCredentials`, which the client decrypts with the matching private key.\n\nThe `clientPublicKey` is ephemeral: generate a fresh P-256 keypair for this export and discard the private key after decrypting. Do not reuse the keypair from any prior verify call \u2014 that private key was already discarded after decrypting the session signing key it was issued against.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "9016e7c5-0026-401b-b7e3-4379fe404db1",
+                      "name": "Signed retry accepted. Returns the encrypted wallet credentials.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"id\": \"<string>\",\n  \"encryptedWalletCredentials\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-9016e7c5-0026-401b-b7e3-4379fe404db1"
+                    },
+                    {
+                      "id": "e22529da-22d6-438f-9feb-2b1f5e52469e",
+                      "name": "Challenge issued. The response contains `payloadToSign` (which binds the submitted `clientPublicKey`) plus a `requestId`. Build an API-key stamp over `payloadToSign` with the session API keypair and echo `requestId` on the retry.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"payloadToSign\": \"<string>\",\n  \"requestId\": \"<string>\",\n  \"expiresAt\": \"<dateTime>\"\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-e22529da-22d6-438f-9feb-2b1f5e52469e"
+                    },
+                    {
+                      "id": "fe0280a2-80fa-4201-bc60-63cb8c591514",
+                      "name": "Bad request",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED\",\n  \"details\": {\n    \"elit__c1\": 93324462.2021415,\n    \"pariatur_167\": 54498216,\n    \"officia_ade\": 72227903.72381532\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-fe0280a2-80fa-4201-bc60-63cb8c591514"
+                    },
+                    {
+                      "id": "87021b54-a1f6-4826-b5ab-8ad9d21751d2",
+                      "name": "Unauthorized. Returned when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match a pending export challenge for this internal account, when the `Request-Id` does not match an unexpired pending challenge, or when the retry's `clien",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"dolore_5cc\": \"aliquip sed ea occaecat consequat\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-87021b54-a1f6-4826-b5ab-8ad9d21751d2"
+                    },
+                    {
+                      "id": "70c02ca1-cc7d-4254-9ee9-c36a5d57f7cc",
+                      "name": "Internal account not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"consecteturf\": \"dolor sit nisi\",\n    \"Lorem_2\": \"esse\",\n    \"irure2\": -30976874.69826536\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-70c02ca1-cc7d-4254-9ee9-c36a5d57f7cc"
+                    },
+                    {
+                      "id": "53d039be-3ffa-4436-9772-bf4b0f9fb56b",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                            "key": "Grid-Wallet-Signature",
+                            "value": "<string>"
+                          },
+                          {
+                            "description": "The `requestId` returned in a prior `202` response, echoed back exactly on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                            "key": "Request-Id",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"clientPublicKey\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/internal-accounts/:id/export",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "internal-accounts",
+                            ":id",
+                            "export"
+                          ],
+                          "variable": [
+                            {
+                              "key": "id"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliquipb\": 13064588.252365142\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:47.000Z",
+                      "updatedAt": "2026-07-28T02:07:47.000Z",
+                      "uid": "35240-53d039be-3ffa-4436-9772-bf4b0f9fb56b"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-210d996a-ce67-4192-ba1f-4be01646ba0f"
+                }
+              ],
+              "id": "45c7d68a-5d95-4d95-96db-9d15625f49e7",
+              "createdAt": "2026-07-28T02:07:47.000Z",
+              "updatedAt": "2026-07-28T02:07:47.000Z",
+              "uid": "35240-45c7d68a-5d95-4d95-96db-9d15625f49e7"
+            },
+            {
+              "name": "Update internal account",
+              "id": "c4a0917c-b9e2-42c6-b0d7-a626aa20e01a",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "<string>"
+                  },
+                  {
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/internal-accounts/:id",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "internal-accounts",
+                    ":id"
+                  ],
+                  "variable": [
+                    {
+                      "id": "23b396fe-a296-4656-b492-0397d7a59343",
+                      "key": "id",
+                      "value": "<string>",
+                      "description": "(Required) The id of the internal account to update."
+                    }
+                  ]
+                },
+                "description": "Update mutable fields on an internal account. Today this supports updating the wallet privacy setting for an Embedded Wallet internal account.\n\nUpdating wallet privacy is a two-step signed-retry flow:\n\n1. Call `PATCH /internal-accounts/{id}` with the request body `{ \"privateEnabled\": true }` and no signature headers. Grid returns `202` with `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Use the session API keypair of a verified authentication credential on the same internal account to build an API-key stamp over `payloadToSign`, then retry with that full stamp as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The retry body must carry the same update fields submitted in step 1. The signed retry returns `200` with the updated internal account.\n"
+              },
+              "response": [
+                {
+                  "id": "5833d4b1-9e9d-4fef-b457-421183a5aa09",
+                  "name": "Signed retry accepted. Returns the updated internal account.",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"type\": \"INTERNAL_FIAT\",\n  \"status\": \"CLOSED\",\n  \"balance\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"totalBalance\": {\n    \"amount\": \"<long>\",\n    \"currency\": {\n      \"code\": \"<string>\",\n      \"name\": \"<string>\",\n      \"symbol\": \"<string>\",\n      \"decimals\": \"<integer>\"\n    }\n  },\n  \"fundingPaymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountNumber\": \"<string>\",\n        \"accountType\": \"THB_ACCOUNT\",\n        \"paymentRails\": [\n          \"RTP\",\n          \"FEDNOW\"\n        ],\n        \"reference\": \"<string>\",\n        \"routingNumber\": \"538483397\"\n      },\n      \"instructionsNotes\": \"<string>\",\n      \"isPlatformAccount\": \"<boolean>\"\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountNumber\": \"<string>\",\n        \"accountType\": \"SOLANA_WALLET\",\n        \"paymentRails\": [\n          \"RTP\",\n          \"ACH\"\n        ],\n        \"reference\": \"<string>\",\n        \"routingNumber\": \"153286195\"\n      },\n      \"instructionsNotes\": \"<string>\",\n      \"isPlatformAccount\": \"<boolean>\"\n    }\n  ],\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"customerId\": \"<string>\",\n  \"privateEnabled\": \"<boolean>\"\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-5833d4b1-9e9d-4fef-b457-421183a5aa09"
+                },
+                {
+                  "id": "0b635d25-8d8a-4c60-a739-1f185f9f8e79",
+                  "name": "Challenge issued. The response contains `payloadToSign` (which binds the submitted update fields) plus a `requestId`. Build an API-key stamp over `payloadToSign` with the session API keypair and echo `requestId` on the retry.",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Accepted",
+                  "code": 202,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"payloadToSign\": \"<string>\",\n  \"requestId\": \"<string>\",\n  \"expiresAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-0b635d25-8d8a-4c60-a739-1f185f9f8e79"
+                },
+                {
+                  "id": "c3509ca4-d272-4a1f-abe2-489f1d0df25c",
+                  "name": "Bad request",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED\",\n  \"details\": {\n    \"elit__c1\": 93324462.2021415,\n    \"pariatur_167\": 54498216,\n    \"officia_ade\": 72227903.72381532\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-c3509ca4-d272-4a1f-abe2-489f1d0df25c"
+                },
+                {
+                  "id": "9e3d0762-6578-4d78-ab0c-3e7fabd3c119",
+                  "name": "Unauthorized. Returned when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match a pending internal account update challenge, when the `Request-Id` does not match an unexpired pending challenge, or when the retry body does not mat",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"dolore_5cc\": \"aliquip sed ea occaecat consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-9e3d0762-6578-4d78-ab0c-3e7fabd3c119"
+                },
+                {
+                  "id": "1f82f18d-2486-4975-8c8f-9acd910c222b",
+                  "name": "Internal account not found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"consecteturf\": \"dolor sit nisi\",\n    \"Lorem_2\": \"esse\",\n    \"irure2\": -30976874.69826536\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-1f82f18d-2486-4975-8c8f-9acd910c222b"
+                },
+                {
+                  "id": "5a06f2c1-cfab-472d-94e3-7197e4a685ff",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on the target internal account. Required on the signed retry; ignored on the initial call.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"privateEnabled\": \"<boolean>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/internal-accounts/:id",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "internal-accounts",
+                        ":id"
+                      ],
+                      "variable": [
+                        {
+                          "key": "id"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliquipb\": 13064588.252365142\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:47.000Z",
+                  "updatedAt": "2026-07-28T02:07:47.000Z",
+                  "uid": "35240-5a06f2c1-cfab-472d-94e3-7197e4a685ff"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:47.000Z",
+              "updatedAt": "2026-07-28T02:07:47.000Z",
+              "uid": "35240-c4a0917c-b9e2-42c6-b0d7-a626aa20e01a"
+            }
+          ],
+          "id": "974bf44d-5388-4289-92f0-50f419ffc652",
+          "createdAt": "2026-07-28T02:07:47.000Z",
+          "updatedAt": "2026-07-28T02:07:47.000Z",
+          "uid": "35240-974bf44d-5388-4289-92f0-50f419ffc652"
+        }
+      ],
+      "id": "4132159a-1ee0-42c6-b30a-71fed0156465",
+      "createdAt": "2026-07-28T02:07:47.000Z",
+      "updatedAt": "2026-07-28T02:07:47.000Z",
+      "uid": "35240-4132159a-1ee0-42c6-b30a-71fed0156465"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

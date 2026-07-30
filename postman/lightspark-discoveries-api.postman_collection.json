@@ -1,0 +1,318 @@
+{
+  "info": {
+    "_postman_id": "b49e48db-e561-4702-9f7c-0797af1a6b35",
+    "name": "Grid Agent Management Discoveries API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:33.000Z",
+    "updatedAt": "2026-07-28T02:07:33.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-b49e48db-e561-4702-9f7c-0797af1a6b35"
+  },
+  "item": [
+    {
+      "name": "discoveries",
+      "item": [
+        {
+          "name": "List available receiving institution names",
+          "id": "304916c2-0d2e-47df-b7b8-6d41c4ca364c",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/discoveries?country=<string>&currency=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "discoveries"
+              ],
+              "query": [
+                {
+                  "description": "ISO 3166-1 alpha-2 country code (e.g. PH)",
+                  "key": "country",
+                  "value": "<string>"
+                },
+                {
+                  "description": "ISO 4217 currency code (e.g. PHP)",
+                  "key": "currency",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve available payment institution names for a given country and currency. Use this endpoint\nto look up supported banks and payment providers for a specific corridor.\nIf no country and currency parameter are provided, all payment institutions will be returned\n\nThe `bankName` field in each result is the value to pass as `bankName` when\ncreating an external account via `POST /customers/external-accounts`.\n"
+          },
+          "response": [
+            {
+              "id": "d91c99a4-4c58-4244-82e6-02f185b6380f",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/discoveries?country=<string>&currency=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "discoveries"
+                  ],
+                  "query": [
+                    {
+                      "description": "ISO 3166-1 alpha-2 country code (e.g. PH)",
+                      "key": "country",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "ISO 4217 currency code (e.g. PHP)",
+                      "key": "currency",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"bankName\": \"<string>\",\n      \"displayName\": \"<string>\",\n      \"country\": \"<string>\",\n      \"currency\": \"<string>\"\n    },\n    {\n      \"bankName\": \"<string>\",\n      \"displayName\": \"<string>\",\n      \"country\": \"<string>\",\n      \"currency\": \"<string>\"\n    }\n  ]\n}",
+              "createdAt": "2026-07-28T02:07:34.000Z",
+              "updatedAt": "2026-07-28T02:07:34.000Z",
+              "uid": "35240-d91c99a4-4c58-4244-82e6-02f185b6380f"
+            },
+            {
+              "id": "59fb10aa-5733-4c3a-904c-ed7c806eb044",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/discoveries?country=<string>&currency=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "discoveries"
+                  ],
+                  "query": [
+                    {
+                      "description": "ISO 3166-1 alpha-2 country code (e.g. PH)",
+                      "key": "country",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "ISO 4217 currency code (e.g. PHP)",
+                      "key": "currency",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_UMA_ADDRESS\",\n  \"details\": {\n    \"cillum7\": \"Lorem tem\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:34.000Z",
+              "updatedAt": "2026-07-28T02:07:34.000Z",
+              "uid": "35240-59fb10aa-5733-4c3a-904c-ed7c806eb044"
+            },
+            {
+              "id": "dcf8dd51-a75f-4c84-b90b-6e58a0df3727",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/discoveries?country=<string>&currency=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "discoveries"
+                  ],
+                  "query": [
+                    {
+                      "description": "ISO 3166-1 alpha-2 country code (e.g. PH)",
+                      "key": "country",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "ISO 4217 currency code (e.g. PHP)",
+                      "key": "currency",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"sint9\": -4039439.3794318587,\n    \"ad_7\": 81692629\n  }\n}",
+              "createdAt": "2026-07-28T02:07:34.000Z",
+              "updatedAt": "2026-07-28T02:07:34.000Z",
+              "uid": "35240-dcf8dd51-a75f-4c84-b90b-6e58a0df3727"
+            },
+            {
+              "id": "88ff033e-cdd3-4b5a-b74f-e9b3f4246f0f",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/discoveries?country=<string>&currency=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "discoveries"
+                  ],
+                  "query": [
+                    {
+                      "description": "ISO 3166-1 alpha-2 country code (e.g. PH)",
+                      "key": "country",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "ISO 4217 currency code (e.g. PHP)",
+                      "key": "currency",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aute_43\": -675154.700871557,\n    \"esse_e\": 38802889,\n    \"sint_c\": -26555708\n  }\n}",
+              "createdAt": "2026-07-28T02:07:34.000Z",
+              "updatedAt": "2026-07-28T02:07:34.000Z",
+              "uid": "35240-88ff033e-cdd3-4b5a-b74f-e9b3f4246f0f"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:34.000Z",
+          "updatedAt": "2026-07-28T02:07:34.000Z",
+          "uid": "35240-304916c2-0d2e-47df-b7b8-6d41c4ca364c"
+        }
+      ],
+      "id": "61597f72-5ae6-4acf-85c9-3d74e80b6413",
+      "createdAt": "2026-07-28T02:07:34.000Z",
+      "updatedAt": "2026-07-28T02:07:34.000Z",
+      "uid": "35240-61597f72-5ae6-4acf-85c9-3d74e80b6413"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

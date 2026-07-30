@@ -1,0 +1,65 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/api-reference/sdks
+name: grid
+api: Grid API
+official: true
+language: Node.js / TypeScript
+repo: https://github.com/lightsparkdev/grid-api/tree/main/cli
+prerequisites: Node.js v20 or v22
+install:
+- method: source
+  commands:
+  - git clone https://github.com/lightsparkdev/grid-api.git
+  - cd grid-api/cli
+  - npm install
+  - npm run build
+  - npm link
+configuration:
+  interactive: grid configure
+  credentials_file: ~/.grid-credentials
+  env:
+  - GRID_API_TOKEN_ID
+  - GRID_API_CLIENT_SECRET
+aliases:
+  cust: customers
+  tx: transactions
+  acct: accounts
+commands:
+- command: grid configure
+  description: Set up API credentials
+- command: grid config get
+  description: View platform configuration
+- command: grid customers list
+  description: List customers
+- command: grid customers create
+  description: Create a customer
+- command: grid accounts internal list
+  description: List internal accounts
+- command: grid accounts external create
+  description: Create an external bank account or wallet
+- command: grid quotes create
+  description: Create a payment quote
+- command: grid quotes execute
+  description: Execute a pending quote
+- command: grid transfers in
+  description: Transfer funds in (external to internal)
+- command: grid transfers out
+  description: Transfer funds out (internal to external)
+- command: grid transactions list
+  description: List transactions
+- command: grid transactions get
+  description: Get transaction details
+- command: grid receiver lookup-uma
+  description: Look up a UMA address
+- command: grid sandbox fund
+  description: Fund a sandbox account
+- command: grid sandbox send
+  description: Simulate sending funds to a JIT quote
+- command: grid sandbox receive
+  description: Simulate receiving a UMA payment
+other_clis:
+- name: lightspark-cli
+  package: '@lightsparkdev/lightspark-cli'
+  url: https://www.npmjs.com/package/@lightsparkdev/lightspark-cli
+  api: Lightspark (Lightning) API

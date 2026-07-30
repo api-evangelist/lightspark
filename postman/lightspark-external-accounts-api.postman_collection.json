@@ -1,0 +1,2404 @@
+{
+  "info": {
+    "_postman_id": "399ecd3a-0c07-4111-81ab-7393b4c4bad2",
+    "name": "Grid Agent Management External Accounts API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:39.000Z",
+    "updatedAt": "2026-07-28T02:07:40.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-399ecd3a-0c07-4111-81ab-7393b4c4bad2"
+  },
+  "item": [
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "external-accounts",
+          "item": [
+            {
+              "name": "{externalAccountId}",
+              "item": [
+                {
+                  "name": "Get customer external account by ID",
+                  "id": "7dec8d88-a4a0-4f02-b84f-1633ba20dcea",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts",
+                        ":externalAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "id": "22e656f0-ae52-42f4-b652-3d41951a3ca9",
+                          "key": "externalAccountId",
+                          "value": "<string>",
+                          "description": "(Required) System-generated unique external account identifier"
+                        }
+                      ]
+                    },
+                    "description": "Retrieve a customer external account by its system-generated ID"
+                  },
+                  "response": [
+                    {
+                      "id": "32bacc85-91a2-4a91-ba7c-1eb18d428eac",
+                      "name": "Successful operation",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"id\": \"<string>\",\n  \"status\": \"INACTIVE\",\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"VND_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE537878901926433789886\",\n    \"paymentRails\": [\n      \"BANK_TRANSFER\",\n      \"BANK_TRANSFER\"\n    ],\n    \"swiftCode\": \"CQCNTC31N2U\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": \"<boolean>\",\n  \"beneficiaryVerificationStatus\": \"PARTIAL_MATCH\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"<string>\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-32bacc85-91a2-4a91-ba7c-1eb18d428eac"
+                    },
+                    {
+                      "id": "2fb6b149-3107-4448-af06-0d1260402f97",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-2fb6b149-3107-4448-af06-0d1260402f97"
+                    },
+                    {
+                      "id": "773d0250-b50e-4ad8-9314-e4645aeff642",
+                      "name": "External account not found",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"eiusmodf8\": \"incididunt ad\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-773d0250-b50e-4ad8-9314-e4645aeff642"
+                    },
+                    {
+                      "id": "90a62091-1971-4231-a823-ff9d6b2314cc",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-90a62091-1971-4231-a823-ff9d6b2314cc"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-7dec8d88-a4a0-4f02-b84f-1633ba20dcea"
+                },
+                {
+                  "name": "Delete customer external account by ID",
+                  "id": "359e4501-e1df-4591-b391-8480f805e8d1",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts",
+                        ":externalAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "id": "9f57e39b-e626-4ea6-8ca6-f792bcf695ca",
+                          "key": "externalAccountId",
+                          "value": "<string>",
+                          "description": "(Required) System-generated unique external account identifier"
+                        }
+                      ]
+                    },
+                    "description": "Delete a customer external account by its system-generated ID"
+                  },
+                  "response": [
+                    {
+                      "id": "cd5bde3d-ff1e-47db-b875-505670cd8c70",
+                      "name": "External account deleted successfully",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-cd5bde3d-ff1e-47db-b875-505670cd8c70"
+                    },
+                    {
+                      "id": "21424b60-276e-477d-bce3-38cb19c47502",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-21424b60-276e-477d-bce3-38cb19c47502"
+                    },
+                    {
+                      "id": "c215ce69-7a78-4f9e-bd7b-545088c6a3e3",
+                      "name": "External account not found",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"eiusmodf8\": \"incididunt ad\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-c215ce69-7a78-4f9e-bd7b-545088c6a3e3"
+                    },
+                    {
+                      "id": "e8e5cbe3-fa2c-43c1-a0f1-87867453f259",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-e8e5cbe3-fa2c-43c1-a0f1-87867453f259"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-359e4501-e1df-4591-b391-8480f805e8d1"
+                }
+              ],
+              "id": "5bdac1f3-eee3-4d6d-82cd-0122053f590a",
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-5bdac1f3-eee3-4d6d-82cd-0122053f590a"
+            },
+            {
+              "name": "List Customer external accounts",
+              "id": "1fdbcaf0-d6dc-45f6-b1b6-6a280b958543",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/external-accounts?currency=<string>&customerId=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by currency code",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by external accounts associated with a specific customer",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                },
+                "description": "Retrieve a list of external accounts with optional filtering parameters. Returns all\nexternal accounts that match the specified filters. If no filters are provided, returns all external accounts\n(paginated).\n\nExternal accounts are bank accounts, cryptocurrency wallets, or other payment destinations that customers can use to receive funds from the platform.\n"
+              },
+              "response": [
+                {
+                  "id": "72e6a301-2caa-440f-9147-0de4d5b84662",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts?currency=<string>&customerId=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by external accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"PENDING\",\n      \"currency\": \"<string>\",\n      \"accountInfo\": {\n        \"accountType\": \"BWP_ACCOUNT\",\n        \"beneficiary\": {\n          \"beneficiaryType\": \"INDIVIDUAL\",\n          \"address\": {\n            \"line1\": \"<string>\",\n            \"postalCode\": \"<string>\",\n            \"country\": \"<string>\",\n            \"line2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"state\": \"<string>\"\n          },\n          \"fullName\": \"<string>\",\n          \"birthDate\": \"<string>\",\n          \"nationality\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phoneNumber\": \"<string>\",\n          \"countryOfResidence\": \"<string>\"\n        },\n        \"iban\": \"AE762655758741401556456\",\n        \"paymentRails\": [\n          \"BANK_TRANSFER\",\n          \"BANK_TRANSFER\"\n        ],\n        \"swiftCode\": \"YJIPFM6O\"\n      },\n      \"customerId\": \"<string>\",\n      \"platformAccountId\": \"<string>\",\n      \"defaultUmaDepositAccount\": \"<boolean>\",\n      \"beneficiaryVerificationStatus\": \"CHECKED_BY_RECEIVING_FI\",\n      \"beneficiaryVerifiedData\": {\n        \"fullName\": \"<string>\"\n      }\n    },\n    {\n      \"id\": \"<string>\",\n      \"status\": \"ACTIVE\",\n      \"currency\": \"<string>\",\n      \"accountInfo\": {\n        \"accountType\": \"JMD_ACCOUNT\",\n        \"beneficiary\": {\n          \"beneficiaryType\": \"INDIVIDUAL\",\n          \"address\": {\n            \"line1\": \"<string>\",\n            \"postalCode\": \"<string>\",\n            \"country\": \"<string>\",\n            \"line2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"state\": \"<string>\"\n          },\n          \"fullName\": \"<string>\",\n          \"birthDate\": \"<string>\",\n          \"nationality\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phoneNumber\": \"<string>\",\n          \"countryOfResidence\": \"<string>\"\n        },\n        \"iban\": \"AE403003554132989163606\",\n        \"paymentRails\": [\n          \"BANK_TRANSFER\",\n          \"BANK_TRANSFER\"\n        ],\n        \"swiftCode\": \"BGKORAO3\"\n      },\n      \"customerId\": \"<string>\",\n      \"platformAccountId\": \"<string>\",\n      \"defaultUmaDepositAccount\": \"<boolean>\",\n      \"beneficiaryVerificationStatus\": \"NOT_MATCHED\",\n      \"beneficiaryVerifiedData\": {\n        \"fullName\": \"<string>\"\n      }\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-72e6a301-2caa-440f-9147-0de4d5b84662"
+                },
+                {
+                  "id": "9deea51a-8c3d-4497-94f6-321a1163be3c",
+                  "name": "Bad request - Invalid parameters",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts?currency=<string>&customerId=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by external accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"LOOKUP_REQUEST_FAILED\",\n  \"details\": {\n    \"aute11\": 69515642\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-9deea51a-8c3d-4497-94f6-321a1163be3c"
+                },
+                {
+                  "id": "119f74bf-284c-4e3d-adf7-504ecb9ebe3a",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts?currency=<string>&customerId=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by external accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-119f74bf-284c-4e3d-adf7-504ecb9ebe3a"
+                },
+                {
+                  "id": "5f23747b-c02d-4a32-a984-ec2fe618168c",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts?currency=<string>&customerId=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Filter by external accounts associated with a specific customer",
+                          "key": "customerId",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-5f23747b-c02d-4a32-a984-ec2fe618168c"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-1fdbcaf0-d6dc-45f6-b1b6-6a280b958543"
+            },
+            {
+              "name": "Add a new external account",
+              "id": "95102545-fc9c-4a27-a9b7-dafbf50ff379",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers/external-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ]
+                },
+                "description": "Register a new external bank account for a customer."
+              },
+              "response": [
+                {
+                  "id": "093a9090-e1e0-45ae-9628-f1df7c0cd67f",
+                  "name": "External account created successfully",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"status\": \"INACTIVE\",\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"VND_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE537878901926433789886\",\n    \"paymentRails\": [\n      \"BANK_TRANSFER\",\n      \"BANK_TRANSFER\"\n    ],\n    \"swiftCode\": \"CQCNTC31N2U\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": \"<boolean>\",\n  \"beneficiaryVerificationStatus\": \"PARTIAL_MATCH\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-093a9090-e1e0-45ae-9628-f1df7c0cd67f"
+                },
+                {
+                  "id": "ce242edc-bc0c-4bfb-bbea-1c8931a4e37a",
+                  "name": "Bad request",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"LOOKUP_REQUEST_FAILED\",\n  \"details\": {\n    \"aute11\": 69515642\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-ce242edc-bc0c-4bfb-bbea-1c8931a4e37a"
+                },
+                {
+                  "id": "4485db02-83af-41ee-bcb1-06a8de091dda",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-4485db02-83af-41ee-bcb1-06a8de091dda"
+                },
+                {
+                  "id": "0565dff0-f265-4f58-b4f2-45a2bf4d58f0",
+                  "name": "Conflict - External account already exists",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"ut89e\": true,\n    \"incc\": 32315745\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-0565dff0-f265-4f58-b4f2-45a2bf4d58f0"
+                },
+                {
+                  "id": "1234fc0b-221b-4e2b-89b9-6455eb405cad",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"CAD_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE991099043474887226556\",\n    \"swiftCode\": \"SVXION55OC1\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-1234fc0b-221b-4e2b-89b9-6455eb405cad"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-95102545-fc9c-4a27-a9b7-dafbf50ff379"
+            }
+          ],
+          "id": "af6ed9fc-b82c-4338-8ce6-55cffc66b7b9",
+          "createdAt": "2026-07-28T02:07:40.000Z",
+          "updatedAt": "2026-07-28T02:07:40.000Z",
+          "uid": "35240-af6ed9fc-b82c-4338-8ce6-55cffc66b7b9"
+        }
+      ],
+      "id": "26c1a521-2a5c-4da0-bb2e-d7f356451f5d",
+      "createdAt": "2026-07-28T02:07:40.000Z",
+      "updatedAt": "2026-07-28T02:07:40.000Z",
+      "uid": "35240-26c1a521-2a5c-4da0-bb2e-d7f356451f5d"
+    },
+    {
+      "name": "platform",
+      "item": [
+        {
+          "name": "external-accounts",
+          "item": [
+            {
+              "name": "{externalAccountId}",
+              "item": [
+                {
+                  "name": "Get platform external account by ID",
+                  "id": "9ffd2e5a-93c5-4f18-825f-c04d362b828f",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts",
+                        ":externalAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "id": "8a4ef79c-4419-48cc-be0c-67076192c283",
+                          "key": "externalAccountId",
+                          "value": "<string>",
+                          "description": "(Required) System-generated unique external account identifier"
+                        }
+                      ]
+                    },
+                    "description": "Retrieve a platform external account by its system-generated ID"
+                  },
+                  "response": [
+                    {
+                      "id": "fef545a7-16c7-47a0-88a7-9f2515dd9579",
+                      "name": "Successful operation",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "OK",
+                      "code": 200,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"id\": \"<string>\",\n  \"status\": \"INACTIVE\",\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"VND_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE537878901926433789886\",\n    \"paymentRails\": [\n      \"BANK_TRANSFER\",\n      \"BANK_TRANSFER\"\n    ],\n    \"swiftCode\": \"CQCNTC31N2U\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": \"<boolean>\",\n  \"beneficiaryVerificationStatus\": \"PARTIAL_MATCH\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"<string>\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-fef545a7-16c7-47a0-88a7-9f2515dd9579"
+                    },
+                    {
+                      "id": "9ce40c0c-731d-448a-838e-dc2e2b8fe858",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-9ce40c0c-731d-448a-838e-dc2e2b8fe858"
+                    },
+                    {
+                      "id": "04ded33d-5429-49cf-9404-5e5a7f5f5b85",
+                      "name": "External account not found",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"eiusmodf8\": \"incididunt ad\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-04ded33d-5429-49cf-9404-5e5a7f5f5b85"
+                    },
+                    {
+                      "id": "b5fd40dc-556a-4ed4-9cdc-807111e4bf95",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-b5fd40dc-556a-4ed4-9cdc-807111e4bf95"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-9ffd2e5a-93c5-4f18-825f-c04d362b828f"
+                },
+                {
+                  "name": "Delete platform external account by ID",
+                  "id": "d8f66e17-7bb2-4966-ae9f-2fdc32d0d7f9",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts",
+                        ":externalAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "id": "20ecf7d3-601b-4d3f-a5d4-960f9bbf3c14",
+                          "key": "externalAccountId",
+                          "value": "<string>",
+                          "description": "(Required) System-generated unique external account identifier"
+                        }
+                      ]
+                    },
+                    "description": "Delete a platform external account by its system-generated ID"
+                  },
+                  "response": [
+                    {
+                      "id": "d361fa03-d91c-49f9-beb3-8dcecf8c3f17",
+                      "name": "External account deleted successfully",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-d361fa03-d91c-49f9-beb3-8dcecf8c3f17"
+                    },
+                    {
+                      "id": "aa6d57da-3e91-429a-ae31-9bf4aa65194f",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-aa6d57da-3e91-429a-ae31-9bf4aa65194f"
+                    },
+                    {
+                      "id": "056c333d-0815-4353-8114-90ef89f39d18",
+                      "name": "External account not found",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"eiusmodf8\": \"incididunt ad\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-056c333d-0815-4353-8114-90ef89f39d18"
+                    },
+                    {
+                      "id": "d3239f7d-c178-4773-a673-53f9af16e955",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "DELETE",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/platform/external-accounts/:externalAccountId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "platform",
+                            "external-accounts",
+                            ":externalAccountId"
+                          ],
+                          "variable": [
+                            {
+                              "key": "externalAccountId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:40.000Z",
+                      "updatedAt": "2026-07-28T02:07:40.000Z",
+                      "uid": "35240-d3239f7d-c178-4773-a673-53f9af16e955"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-d8f66e17-7bb2-4966-ae9f-2fdc32d0d7f9"
+                }
+              ],
+              "id": "fefc2ef8-8612-47e2-b2e7-b2a890db761a",
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-fefc2ef8-8612-47e2-b2e7-b2a890db761a"
+            },
+            {
+              "name": "List platform external accounts",
+              "id": "45fbbd6b-330a-4647-b985-497f0d672c7e",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/platform/external-accounts?currency=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by currency code",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                },
+                "description": "Retrieve a list of all external accounts that belong to the platform, as opposed to an individual customer.\n\nThese accounts are used for platform-wide operations such as receiving funds from external sources or managing platform-level payment destinations.\n"
+              },
+              "response": [
+                {
+                  "id": "4163ca17-2fe6-4852-adbf-5e3aae999972",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts?currency=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"status\": \"PENDING\",\n      \"currency\": \"<string>\",\n      \"accountInfo\": {\n        \"accountType\": \"BWP_ACCOUNT\",\n        \"beneficiary\": {\n          \"beneficiaryType\": \"INDIVIDUAL\",\n          \"address\": {\n            \"line1\": \"<string>\",\n            \"postalCode\": \"<string>\",\n            \"country\": \"<string>\",\n            \"line2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"state\": \"<string>\"\n          },\n          \"fullName\": \"<string>\",\n          \"birthDate\": \"<string>\",\n          \"nationality\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phoneNumber\": \"<string>\",\n          \"countryOfResidence\": \"<string>\"\n        },\n        \"iban\": \"AE762655758741401556456\",\n        \"paymentRails\": [\n          \"BANK_TRANSFER\",\n          \"BANK_TRANSFER\"\n        ],\n        \"swiftCode\": \"YJIPFM6O\"\n      },\n      \"customerId\": \"<string>\",\n      \"platformAccountId\": \"<string>\",\n      \"defaultUmaDepositAccount\": \"<boolean>\",\n      \"beneficiaryVerificationStatus\": \"CHECKED_BY_RECEIVING_FI\",\n      \"beneficiaryVerifiedData\": {\n        \"fullName\": \"<string>\"\n      }\n    },\n    {\n      \"id\": \"<string>\",\n      \"status\": \"ACTIVE\",\n      \"currency\": \"<string>\",\n      \"accountInfo\": {\n        \"accountType\": \"JMD_ACCOUNT\",\n        \"beneficiary\": {\n          \"beneficiaryType\": \"INDIVIDUAL\",\n          \"address\": {\n            \"line1\": \"<string>\",\n            \"postalCode\": \"<string>\",\n            \"country\": \"<string>\",\n            \"line2\": \"<string>\",\n            \"city\": \"<string>\",\n            \"state\": \"<string>\"\n          },\n          \"fullName\": \"<string>\",\n          \"birthDate\": \"<string>\",\n          \"nationality\": \"<string>\",\n          \"email\": \"<string>\",\n          \"phoneNumber\": \"<string>\",\n          \"countryOfResidence\": \"<string>\"\n        },\n        \"iban\": \"AE403003554132989163606\",\n        \"paymentRails\": [\n          \"BANK_TRANSFER\",\n          \"BANK_TRANSFER\"\n        ],\n        \"swiftCode\": \"BGKORAO3\"\n      },\n      \"customerId\": \"<string>\",\n      \"platformAccountId\": \"<string>\",\n      \"defaultUmaDepositAccount\": \"<boolean>\",\n      \"beneficiaryVerificationStatus\": \"NOT_MATCHED\",\n      \"beneficiaryVerifiedData\": {\n        \"fullName\": \"<string>\"\n      }\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-4163ca17-2fe6-4852-adbf-5e3aae999972"
+                },
+                {
+                  "id": "68a7cca9-bcae-424f-b611-7876248625d4",
+                  "name": "Bad request - Invalid parameters",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts?currency=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"LOOKUP_REQUEST_FAILED\",\n  \"details\": {\n    \"aute11\": 69515642\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-68a7cca9-bcae-424f-b611-7876248625d4"
+                },
+                {
+                  "id": "4300ebe4-47d1-47aa-9fad-e1ecb4aac882",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts?currency=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-4300ebe4-47d1-47aa-9fad-e1ecb4aac882"
+                },
+                {
+                  "id": "cf1f53fb-4cef-4cb7-845d-ef6cb4147017",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts?currency=<string>&limit=20&cursor=<string>",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ],
+                      "query": [
+                        {
+                          "description": "Filter by currency code",
+                          "key": "currency",
+                          "value": "<string>"
+                        },
+                        {
+                          "description": "Maximum number of results to return (default 20, max 100)",
+                          "key": "limit",
+                          "value": "20"
+                        },
+                        {
+                          "description": "Cursor for pagination (returned from previous request)",
+                          "key": "cursor",
+                          "value": "<string>"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-cf1f53fb-4cef-4cb7-845d-ef6cb4147017"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-45fbbd6b-330a-4647-b985-497f0d672c7e"
+            },
+            {
+              "name": "Add a new platform external account",
+              "id": "78f1889f-0990-4316-b627-daee8044a031",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/platform/external-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ]
+                },
+                "description": "Register a new external bank account for the platform."
+              },
+              "response": [
+                {
+                  "id": "0b2d220a-63c5-405b-bd1a-5bcd36377cd4",
+                  "name": "External account created successfully",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"status\": \"INACTIVE\",\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"VND_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE537878901926433789886\",\n    \"paymentRails\": [\n      \"BANK_TRANSFER\",\n      \"BANK_TRANSFER\"\n    ],\n    \"swiftCode\": \"CQCNTC31N2U\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": \"<boolean>\",\n  \"beneficiaryVerificationStatus\": \"PARTIAL_MATCH\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-0b2d220a-63c5-405b-bd1a-5bcd36377cd4"
+                },
+                {
+                  "id": "8b5f359b-346b-42d8-8244-2e686aae5616",
+                  "name": "Bad request",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"LOOKUP_REQUEST_FAILED\",\n  \"details\": {\n    \"aute11\": 69515642\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-8b5f359b-346b-42d8-8244-2e686aae5616"
+                },
+                {
+                  "id": "7a8a6ed6-7fea-416b-8075-2b0a181543c1",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"quisc\": 89075465.21924984\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-7a8a6ed6-7fea-416b-8075-2b0a181543c1"
+                },
+                {
+                  "id": "18702703-e08f-40cd-947a-9dc87ea72f13",
+                  "name": "Conflict - External account already exists",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"ut89e\": true,\n    \"incc\": 32315745\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-18702703-e08f-40cd-947a-9dc87ea72f13"
+                },
+                {
+                  "id": "98f928b4-806a-4cb7-b66b-fb38b2527868",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"accountType\": \"MXN_ACCOUNT\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      },\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<string>\",\n      \"nationality\": \"<string>\",\n      \"email\": \"<string>\",\n      \"phoneNumber\": \"<string>\",\n      \"countryOfResidence\": \"<string>\"\n    },\n    \"iban\": \"AE088307070657279136840\",\n    \"swiftCode\": \"GCOTNJLK\"\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/platform/external-accounts",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "platform",
+                        "external-accounts"
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"quiscf\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:40.000Z",
+                  "updatedAt": "2026-07-28T02:07:40.000Z",
+                  "uid": "35240-98f928b4-806a-4cb7-b66b-fb38b2527868"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:40.000Z",
+              "updatedAt": "2026-07-28T02:07:40.000Z",
+              "uid": "35240-78f1889f-0990-4316-b627-daee8044a031"
+            }
+          ],
+          "id": "d5b10d4f-1f0e-47ec-82a3-e98cbdf3a2dd",
+          "createdAt": "2026-07-28T02:07:40.000Z",
+          "updatedAt": "2026-07-28T02:07:40.000Z",
+          "uid": "35240-d5b10d4f-1f0e-47ec-82a3-e98cbdf3a2dd"
+        }
+      ],
+      "id": "ab8b329b-df7a-454f-90fa-8b051d5472b1",
+      "createdAt": "2026-07-28T02:07:40.000Z",
+      "updatedAt": "2026-07-28T02:07:40.000Z",
+      "uid": "35240-ab8b329b-df7a-454f-90fa-8b051d5472b1"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

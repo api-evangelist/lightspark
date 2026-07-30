@@ -1,0 +1,2002 @@
+{
+  "info": {
+    "_postman_id": "fd410b9e-5f75-4358-9f32-f4074633e548",
+    "name": "Grid Agent Management Documents API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:34.000Z",
+    "updatedAt": "2026-07-28T02:07:34.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-fd410b9e-5f75-4358-9f32-f4074633e548"
+  },
+  "item": [
+    {
+      "name": "documents",
+      "item": [
+        {
+          "name": "{documentId}",
+          "item": [
+            {
+              "name": "Get a document by ID",
+              "id": "afb5263e-1096-406e-a2ee-7d698600966e",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/:documentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":documentId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "8b06bf6f-b94c-4f49-b6e6-9d2ee794bc0a",
+                      "key": "documentId",
+                      "value": "<string>",
+                      "description": "(Required) Document ID"
+                    }
+                  ]
+                },
+                "description": "Retrieve details and metadata of a specific document by ID."
+              },
+              "response": [
+                {
+                  "id": "d4bdd46e-2bdd-4c4a-ba7e-1b8e1616139f",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"documentHolder\": \"<string>\",\n  \"documentType\": \"SHAREHOLDER_REGISTER\",\n  \"country\": \"<string>\",\n  \"fileName\": \"<string>\",\n  \"createdAt\": \"<dateTime>\",\n  \"side\": \"BACK\",\n  \"documentNumber\": \"<string>\",\n  \"issuingAuthority\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-d4bdd46e-2bdd-4c4a-ba7e-1b8e1616139f"
+                },
+                {
+                  "id": "8ee1e1c5-c617-4446-826a-8cca9e160c59",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"cupidatat_c\": 87623865.5878923\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-8ee1e1c5-c617-4446-826a-8cca9e160c59"
+                },
+                {
+                  "id": "b284ce77-85a9-45df-a337-27358262d963",
+                  "name": "Document not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"sedf6\": 88207519,\n    \"exercitation_0\": \"veniam\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-b284ce77-85a9-45df-a337-27358262d963"
+                },
+                {
+                  "id": "d9ef8a48-ae44-40a6-8492-5e680cd62efd",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum_803\": true,\n    \"ipsum_5a9\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-d9ef8a48-ae44-40a6-8492-5e680cd62efd"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-afb5263e-1096-406e-a2ee-7d698600966e"
+            },
+            {
+              "name": "Replace a document",
+              "id": "ee457db6-35d8-47c4-ab5f-4413db92da8b",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file",
+                      "value": null
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "ARTICLES_OF_INCORPORATION",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "FRONT",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents/:documentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":documentId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "f32a7fe3-fc34-428f-8ffa-8e8edf60b82f",
+                      "key": "documentId",
+                      "value": "<string>",
+                      "description": "(Required) Document ID"
+                    }
+                  ]
+                },
+                "description": "Replace an existing document with a new file and/or updated metadata. This is useful when a document was rejected and needs to be re-uploaded. The request must use multipart/form-data.\n"
+              },
+              "response": [
+                {
+                  "id": "d9763dec-3449-4d75-9a0d-f8ab73429f0a",
+                  "name": "Document replaced successfully",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                          "key": "file",
+                          "type": "file"
+                        },
+                        {
+                          "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                          "key": "documentType",
+                          "value": "ARTICLES_OF_INCORPORATION",
+                          "type": "text"
+                        },
+                        {
+                          "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                          "key": "country",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                          "key": "side",
+                          "value": "FRONT",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Document identification number (e.g., passport number)",
+                          "key": "documentNumber",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Name of the government agency or organization that issued the document",
+                          "key": "issuingAuthority",
+                          "value": "<string>",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"documentHolder\": \"<string>\",\n  \"documentType\": \"SHAREHOLDER_REGISTER\",\n  \"country\": \"<string>\",\n  \"fileName\": \"<string>\",\n  \"createdAt\": \"<dateTime>\",\n  \"side\": \"BACK\",\n  \"documentNumber\": \"<string>\",\n  \"issuingAuthority\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-d9763dec-3449-4d75-9a0d-f8ab73429f0a"
+                },
+                {
+                  "id": "a1f628b2-a6ba-479d-beac-e7eddc6e49d0",
+                  "name": "Bad request - Invalid file type, size, or parameters",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                          "key": "file",
+                          "type": "file"
+                        },
+                        {
+                          "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                          "key": "documentType",
+                          "value": "ARTICLES_OF_INCORPORATION",
+                          "type": "text"
+                        },
+                        {
+                          "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                          "key": "country",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                          "key": "side",
+                          "value": "FRONT",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Document identification number (e.g., passport number)",
+                          "key": "documentNumber",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Name of the government agency or organization that issued the document",
+                          "key": "issuingAuthority",
+                          "value": "<string>",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"Excepteur9e5\": true,\n    \"nisid\": -51983348,\n    \"consequate63\": 40344101.406096876\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-a1f628b2-a6ba-479d-beac-e7eddc6e49d0"
+                },
+                {
+                  "id": "e37d295f-e520-46e0-bef9-83478839cbdc",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                          "key": "file",
+                          "type": "file"
+                        },
+                        {
+                          "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                          "key": "documentType",
+                          "value": "ARTICLES_OF_INCORPORATION",
+                          "type": "text"
+                        },
+                        {
+                          "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                          "key": "country",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                          "key": "side",
+                          "value": "FRONT",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Document identification number (e.g., passport number)",
+                          "key": "documentNumber",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Name of the government agency or organization that issued the document",
+                          "key": "issuingAuthority",
+                          "value": "<string>",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"cupidatat_c\": 87623865.5878923\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-e37d295f-e520-46e0-bef9-83478839cbdc"
+                },
+                {
+                  "id": "f99fc50b-268d-4db0-8fdd-350834c29ffd",
+                  "name": "Document not found",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                          "key": "file",
+                          "type": "file"
+                        },
+                        {
+                          "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                          "key": "documentType",
+                          "value": "ARTICLES_OF_INCORPORATION",
+                          "type": "text"
+                        },
+                        {
+                          "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                          "key": "country",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                          "key": "side",
+                          "value": "FRONT",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Document identification number (e.g., passport number)",
+                          "key": "documentNumber",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Name of the government agency or organization that issued the document",
+                          "key": "issuingAuthority",
+                          "value": "<string>",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"sedf6\": 88207519,\n    \"exercitation_0\": \"veniam\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-f99fc50b-268d-4db0-8fdd-350834c29ffd"
+                },
+                {
+                  "id": "86414b2a-4dda-4b87-b4a6-66b0d5500524",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                          "key": "file",
+                          "type": "file"
+                        },
+                        {
+                          "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                          "key": "documentType",
+                          "value": "ARTICLES_OF_INCORPORATION",
+                          "type": "text"
+                        },
+                        {
+                          "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                          "key": "country",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                          "key": "side",
+                          "value": "FRONT",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Document identification number (e.g., passport number)",
+                          "key": "documentNumber",
+                          "value": "<string>",
+                          "type": "text"
+                        },
+                        {
+                          "description": "Name of the government agency or organization that issued the document",
+                          "key": "issuingAuthority",
+                          "value": "<string>",
+                          "type": "text"
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum_803\": true,\n    \"ipsum_5a9\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-86414b2a-4dda-4b87-b4a6-66b0d5500524"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-ee457db6-35d8-47c4-ab5f-4413db92da8b"
+            },
+            {
+              "name": "Delete a document",
+              "id": "6f89b514-7fb9-4529-b30a-acc91964b956",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents/:documentId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents",
+                    ":documentId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "2b5cab63-5d86-4db5-8447-1ce24877dec9",
+                      "key": "documentId",
+                      "value": "<string>",
+                      "description": "(Required) Document ID"
+                    }
+                  ]
+                },
+                "description": "Delete an uploaded document. This cannot be undone. Documents that have already been submitted for verification may not be deletable.\n"
+              },
+              "response": [
+                {
+                  "id": "6318b3e9-017a-437f-ac24-93e12f1fa8bd",
+                  "name": "Document deleted successfully",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "No Content",
+                  "code": 204,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-6318b3e9-017a-437f-ac24-93e12f1fa8bd"
+                },
+                {
+                  "id": "89977020-4b7c-4db6-a39f-173829aca5c5",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"cupidatat_c\": 87623865.5878923\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-89977020-4b7c-4db6-a39f-173829aca5c5"
+                },
+                {
+                  "id": "2359748a-5021-49dc-a00e-df3f9982d0b1",
+                  "name": "Document not found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"sedf6\": 88207519,\n    \"exercitation_0\": \"veniam\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-2359748a-5021-49dc-a00e-df3f9982d0b1"
+                },
+                {
+                  "id": "af9a1417-268d-4e7e-90b0-e13bcb6d21da",
+                  "name": "Conflict - Document cannot be deleted (already submitted for verification)",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"EMAIL_OTP_CREDENTIAL_SET_CHANGED\",\n  \"details\": {\n    \"sunt_22\": 14050203.708062321\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-af9a1417-268d-4e7e-90b0-e13bcb6d21da"
+                },
+                {
+                  "id": "02b0eda6-4d7e-4a1b-8180-5f614714fd58",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/documents/:documentId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "documents",
+                        ":documentId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "documentId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum_803\": true,\n    \"ipsum_5a9\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:35.000Z",
+                  "updatedAt": "2026-07-28T02:07:35.000Z",
+                  "uid": "35240-02b0eda6-4d7e-4a1b-8180-5f614714fd58"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-6f89b514-7fb9-4529-b30a-acc91964b956"
+            }
+          ],
+          "id": "270a6e0d-4075-4a80-847b-2c34343e476e",
+          "createdAt": "2026-07-28T02:07:35.000Z",
+          "updatedAt": "2026-07-28T02:07:35.000Z",
+          "uid": "35240-270a6e0d-4075-4a80-847b-2c34343e476e"
+        },
+        {
+          "name": "Upload a document",
+          "id": "bd7dd75d-fa2e-4be2-a931-3ce9fb3e43df",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                  "key": "country",
+                  "value": "<string>",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                  "key": "documentHolder",
+                  "value": "<string>",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                  "key": "documentType",
+                  "value": "STATE_COMPANY_REGISTRY",
+                  "type": "text"
+                },
+                {
+                  "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                  "key": "file",
+                  "type": "file",
+                  "value": null
+                },
+                {
+                  "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                  "key": "side",
+                  "value": "BACK",
+                  "type": "text"
+                },
+                {
+                  "description": "Document identification number (e.g., passport number)",
+                  "key": "documentNumber",
+                  "value": "<string>",
+                  "type": "text"
+                },
+                {
+                  "description": "Name of the government agency or organization that issued the document",
+                  "key": "issuingAuthority",
+                  "value": "<string>",
+                  "type": "text"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/documents",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "documents"
+              ]
+            },
+            "description": "Upload a verification document for a customer or beneficial owner. The request must use multipart/form-data with the file in the `file` field and metadata in the remaining fields.\n\nSupported file types: PDF, JPEG, PNG. Maximum file size: 10 MB.\n"
+          },
+          "response": [
+            {
+              "id": "90a86362-c1a0-4d1e-bcb8-dea6b32b91ef",
+              "name": "Document uploaded successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                      "key": "documentHolder",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "STATE_COMPANY_REGISTRY",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "BACK",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"documentHolder\": \"<string>\",\n  \"documentType\": \"SHAREHOLDER_REGISTER\",\n  \"country\": \"<string>\",\n  \"fileName\": \"<string>\",\n  \"createdAt\": \"<dateTime>\",\n  \"side\": \"BACK\",\n  \"documentNumber\": \"<string>\",\n  \"issuingAuthority\": \"<string>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-90a86362-c1a0-4d1e-bcb8-dea6b32b91ef"
+            },
+            {
+              "id": "f6f65b67-4794-4beb-9df1-26878d78072e",
+              "name": "Bad request - Invalid file type, size, or parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                      "key": "documentHolder",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "STATE_COMPANY_REGISTRY",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "BACK",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"Excepteur9e5\": true,\n    \"nisid\": -51983348,\n    \"consequate63\": 40344101.406096876\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-f6f65b67-4794-4beb-9df1-26878d78072e"
+            },
+            {
+              "id": "158888b3-ab05-4dd1-9893-5d5b4d89ba23",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                      "key": "documentHolder",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "STATE_COMPANY_REGISTRY",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "BACK",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"cupidatat_c\": 87623865.5878923\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-158888b3-ab05-4dd1-9893-5d5b4d89ba23"
+            },
+            {
+              "id": "f62ae2eb-caf8-4af1-8301-ed01743d5616",
+              "name": "Document holder not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                      "key": "documentHolder",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "STATE_COMPANY_REGISTRY",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "BACK",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"sedf6\": 88207519,\n    \"exercitation_0\": \"veniam\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-f62ae2eb-caf8-4af1-8301-ed01743d5616"
+            },
+            {
+              "id": "90e83a89-3a92-4511-809e-44eccdaa67cb",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "multipart/form-data"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": "(Required) Country that issued the document (ISO 3166-1 alpha-2)",
+                      "key": "country",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.",
+                      "key": "documentHolder",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) Type of identity or business verification document. Document types are grouped by verification category:\n**Identity** \u2014 PASSPORT, DRIVERS_LICENSE, NATIONAL_ID\n**Business \u2014 Legal presence** \u2014 CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT\n**Business \u2014 Control structure** \u2014 DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT\n**Business \u2014 Ownership structure** \u2014 SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT\n**Proof of address** \u2014 UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN (This can only be one of PASSPORT,DRIVERS_LICENSE,NATIONAL_ID,PROOF_OF_ADDRESS,BANK_STATEMENT,TAX_RETURN,CERTIFICATE_OF_INCORPORATION,ARTICLES_OF_INCORPORATION,ARTICLES_OF_ASSOCIATION,STATE_REGISTRY_EXCERPT,GOOD_STANDING_CERTIFICATE,INFORMATION_STATEMENT,INCUMBENCY_CERTIFICATE,BUSINESS_LICENSE,SHAREHOLDER_REGISTER,POWER_OF_ATTORNEY,UTILITY_BILL,ELECTRICITY_BILL,RENT_OR_LEASE_AGREEMENT,DIRECTOR_REGISTRY,TRUST_AGREEMENT,STATE_COMPANY_REGISTRY,PARTNERSHIP_CONTROL_AGREEMENT,PARTNERSHIP_AGREEMENT,SELFIE,OTHER)",
+                      "key": "documentType",
+                      "value": "STATE_COMPANY_REGISTRY",
+                      "type": "text"
+                    },
+                    {
+                      "description": "(Required) The document file (PDF, JPEG, or PNG, max 10 MB)",
+                      "key": "file",
+                      "type": "file"
+                    },
+                    {
+                      "description": "Which side of the document (for two-sided documents like driver's licenses) (This can only be one of FRONT,BACK)",
+                      "key": "side",
+                      "value": "BACK",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Document identification number (e.g., passport number)",
+                      "key": "documentNumber",
+                      "value": "<string>",
+                      "type": "text"
+                    },
+                    {
+                      "description": "Name of the government agency or organization that issued the document",
+                      "key": "issuingAuthority",
+                      "value": "<string>",
+                      "type": "text"
+                    }
+                  ]
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/documents",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum_803\": true,\n    \"ipsum_5a9\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-90e83a89-3a92-4511-809e-44eccdaa67cb"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:35.000Z",
+          "updatedAt": "2026-07-28T02:07:35.000Z",
+          "uid": "35240-bd7dd75d-fa2e-4be2-a931-3ce9fb3e43df"
+        },
+        {
+          "name": "List documents",
+          "id": "23c9ca81-8748-462a-afe1-f2f9cf4ca6dd",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/documents?documentHolder=<string>&limit=20&cursor=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "documents"
+              ],
+              "query": [
+                {
+                  "description": "Filter by document holder ID (Customer or BeneficialOwner)",
+                  "key": "documentHolder",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve a list of documents with optional filtering by document holder.\n"
+          },
+          "response": [
+            {
+              "id": "f6b8d9d5-be13-486e-a1e4-6a421c71414d",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents?documentHolder=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by document holder ID (Customer or BeneficialOwner)",
+                      "key": "documentHolder",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"documentHolder\": \"<string>\",\n      \"documentType\": \"TRUST_AGREEMENT\",\n      \"country\": \"<string>\",\n      \"fileName\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"side\": \"FRONT\",\n      \"documentNumber\": \"<string>\",\n      \"issuingAuthority\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"documentHolder\": \"<string>\",\n      \"documentType\": \"ARTICLES_OF_ASSOCIATION\",\n      \"country\": \"<string>\",\n      \"fileName\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"side\": \"FRONT\",\n      \"documentNumber\": \"<string>\",\n      \"issuingAuthority\": \"<string>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-f6b8d9d5-be13-486e-a1e4-6a421c71414d"
+            },
+            {
+              "id": "bb0f28d1-ad37-42e4-893c-5393ae38b462",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents?documentHolder=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by document holder ID (Customer or BeneficialOwner)",
+                      "key": "documentHolder",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"Excepteur9e5\": true,\n    \"nisid\": -51983348,\n    \"consequate63\": 40344101.406096876\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-bb0f28d1-ad37-42e4-893c-5393ae38b462"
+            },
+            {
+              "id": "a71f7a5f-f974-423e-a782-6b579b4e55e6",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents?documentHolder=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by document holder ID (Customer or BeneficialOwner)",
+                      "key": "documentHolder",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"cupidatat_c\": 87623865.5878923\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-a71f7a5f-f974-423e-a782-6b579b4e55e6"
+            },
+            {
+              "id": "0da64825-5ea2-4c1c-9bf6-0549e2d3f7fd",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/documents?documentHolder=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "documents"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by document holder ID (Customer or BeneficialOwner)",
+                      "key": "documentHolder",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum_803\": true,\n    \"ipsum_5a9\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:35.000Z",
+              "updatedAt": "2026-07-28T02:07:35.000Z",
+              "uid": "35240-0da64825-5ea2-4c1c-9bf6-0549e2d3f7fd"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:35.000Z",
+          "updatedAt": "2026-07-28T02:07:35.000Z",
+          "uid": "35240-23c9ca81-8748-462a-afe1-f2f9cf4ca6dd"
+        }
+      ],
+      "id": "bb80a17a-a575-4051-8832-2784714d96b7",
+      "createdAt": "2026-07-28T02:07:35.000Z",
+      "updatedAt": "2026-07-28T02:07:35.000Z",
+      "uid": "35240-bb80a17a-a575-4051-8832-2784714d96b7"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

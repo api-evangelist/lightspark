@@ -1,0 +1,72 @@
+generated: '2026-07-19'
+method: searched
+source: live probe 2026-07-19
+result: none
+note: 'No /.well-known documents are published on any Lightspark host. app.lightspark.com returns HTTP
+  200 for every /.well-known path, but the body is an AWS Cognito HTML sign-in page (content-type: text/html),
+  i.e. a catch-all, not a discovery document - recorded here so a later run does not mistake it for a
+  real hit.'
+hosts:
+- host: https://api.lightspark.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://www.lightspark.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://docs.lightspark.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://app.lightspark.com
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    valid: false
+    content_type: text/html
+    note: Cognito sign-in catch-all, not RFC 9116
+  - path: /.well-known/openid-configuration
+    status: 200
+    valid: false
+    content_type: text/html
+    note: Cognito sign-in catch-all, not OIDC discovery
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    valid: false
+    content_type: text/html
+    note: Cognito sign-in catch-all
+  - path: /.well-known/api-catalog
+    status: 200
+    valid: false
+    content_type: text/html
+    note: Cognito sign-in catch-all
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    valid: false
+    content_type: text/html
+    note: Cognito sign-in catch-all

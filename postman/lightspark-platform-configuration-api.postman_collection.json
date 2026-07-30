@@ -1,0 +1,556 @@
+{
+  "info": {
+    "_postman_id": "d7875fc2-3099-4479-970b-6489dbb03f8e",
+    "name": "Grid Agent Management Platform Configuration API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:51.000Z",
+    "updatedAt": "2026-07-28T02:07:51.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-d7875fc2-3099-4479-970b-6489dbb03f8e"
+  },
+  "item": [
+    {
+      "name": "config",
+      "item": [
+        {
+          "name": "Get platform configuration",
+          "id": "9a02154c-d143-4076-a3a1-708c212a5ca0",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "config"
+              ]
+            },
+            "description": "Retrieve the current platform configuration"
+          },
+          "response": [
+            {
+              "id": "46906db5-f1dd-49be-8aea-1d7997d3e073",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"umaDomain\": \"<string>\",\n  \"proxyUmaSubdomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ACCOUNT_IDENTIFIER\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"COMPANY_LEGAL_NAME\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"INCOMING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"COUNTRY_OF_RESIDENCE\",\n        \"COMPANY_LEGAL_NAME\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ID_NUMBER\",\n        \"COMPANY_LEGAL_NAME\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ID_TYPE\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"USER_TYPE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"INCOMING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"COUNTRY_OF_RESIDENCE\",\n        \"EMAIL\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ID_TYPE\",\n        \"COMPANY_LEGAL_NAME\"\n      ]\n    }\n  ],\n  \"isRegulatedFinancialInstitution\": \"<boolean>\",\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  },\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-46906db5-f1dd-49be-8aea-1d7997d3e073"
+            },
+            {
+              "id": "7ab3dc8e-2a81-4a46-958e-9221ed13a937",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"anim_0\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-7ab3dc8e-2a81-4a46-958e-9221ed13a937"
+            },
+            {
+              "id": "677773b8-50f6-4a27-83af-ce4762969e04",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"Lorem03\": -32630746.90766628\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-677773b8-50f6-4a27-83af-ce4762969e04"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:52.000Z",
+          "updatedAt": "2026-07-28T02:07:52.000Z",
+          "uid": "35240-9a02154c-d143-4076-a3a1-708c212a5ca0"
+        },
+        {
+          "name": "Update platform configuration",
+          "id": "dc83d0c5-5b2e-4f05-ac10-9d6150652c7b",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/config",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "config"
+              ]
+            },
+            "description": "Update the platform configuration settings"
+          },
+          "response": [
+            {
+              "id": "0562a31b-1db5-4193-aa9e-918044056a36",
+              "name": "Configuration updated successfully",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"umaDomain\": \"<string>\",\n  \"proxyUmaSubdomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ACCOUNT_IDENTIFIER\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"COMPANY_LEGAL_NAME\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"INCOMING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"COUNTRY_OF_RESIDENCE\",\n        \"COMPANY_LEGAL_NAME\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ID_NUMBER\",\n        \"COMPANY_LEGAL_NAME\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ID_TYPE\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"USER_TYPE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"INCOMING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"COUNTRY_OF_RESIDENCE\",\n        \"EMAIL\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ID_TYPE\",\n        \"COMPANY_LEGAL_NAME\"\n      ]\n    }\n  ],\n  \"isRegulatedFinancialInstitution\": \"<boolean>\",\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  },\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-0562a31b-1db5-4193-aa9e-918044056a36"
+            },
+            {
+              "id": "87f8f20c-72c5-4ab5-8182-1e1ad3dca498",
+              "name": "Bad request",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"exercitation_540\": 49169601,\n    \"ullamcod\": 59969793.54691893,\n    \"ex_0a\": \"repre\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-87f8f20c-72c5-4ab5-8182-1e1ad3dca498"
+            },
+            {
+              "id": "8b7c892e-aa97-4e9b-8262-8f262f8ab597",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"anim_0\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-8b7c892e-aa97-4e9b-8262-8f262f8ab597"
+            },
+            {
+              "id": "fb7f3010-cfff-4722-85e5-3d2cb7ce8112",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"Lorem03\": -32630746.90766628\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-fb7f3010-cfff-4722-85e5-3d2cb7ce8112"
+            },
+            {
+              "id": "52f3cacb-b424-4b1c-b2c4-4a4992c66bc7",
+              "name": "Not implemented",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"ACCOUNT_IDENTIFIER\",\n        \"NATIONALITY\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"ULTIMATE_INSTITUTION_COUNTRY\",\n        \"REGISTRATION_NUMBER\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"PURPOSE_OF_PAYMENT\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"ULTIMATE_INSTITUTION_COUNTRY\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"OUTGOING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"USER_TYPE\",\n        \"ID_TYPE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"POSTAL_ADDRESS\",\n        \"EMAIL\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/config",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "config"
+                  ]
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 501,\n  \"code\": \"UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY\",\n  \"details\": {\n    \"proidentba\": -79581015,\n    \"labore_8\": -88778725.68933514,\n    \"in_411\": 40864493.73526487,\n    \"aliqua12\": true,\n    \"esse_027\": 99490899.0378125\n  }\n}",
+              "createdAt": "2026-07-28T02:07:52.000Z",
+              "updatedAt": "2026-07-28T02:07:52.000Z",
+              "uid": "35240-52f3cacb-b424-4b1c-b2c4-4a4992c66bc7"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:52.000Z",
+          "updatedAt": "2026-07-28T02:07:52.000Z",
+          "uid": "35240-dc83d0c5-5b2e-4f05-ac10-9d6150652c7b"
+        }
+      ],
+      "id": "0903d6aa-cbe9-45e7-8e5c-78959a7020e2",
+      "createdAt": "2026-07-28T02:07:52.000Z",
+      "updatedAt": "2026-07-28T02:07:52.000Z",
+      "uid": "35240-0903d6aa-cbe9-45e7-8e5c-78959a7020e2"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

@@ -1,0 +1,99 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/api-reference/sdks
+packages:
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/grid'
+  version: 1.8.0
+  url: https://www.npmjs.com/package/@lightsparkdev/grid
+  install: npm install @lightsparkdev/grid
+  repo: https://github.com/lightsparkdev/grid-js-sdk
+  api: Grid API
+  official: true
+  description: The official TypeScript library for the Lightspark Grid API
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/grid-mcp'
+  version: 1.8.0
+  url: https://www.npmjs.com/package/@lightsparkdev/grid-mcp
+  install: npx -y @lightsparkdev/grid-mcp@latest
+  api: Grid API
+  official: true
+  kind: mcp-server
+  description: The official MCP Server for the Lightspark Grid API
+- language: kotlin
+  registry: maven-central
+  name: grid-kotlin-sdk
+  url: https://github.com/lightsparkdev/grid-kotlin-sdk
+  api: Grid API
+  official: true
+  description: Generated Kotlin SDK for the Grid API, for JVM and Android applications
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/lightspark-sdk'
+  version: 1.9.19
+  url: https://www.npmjs.com/package/@lightsparkdev/lightspark-sdk
+  install: npm install @lightsparkdev/lightspark-sdk
+  repo: https://github.com/lightsparkdev/js-sdk
+  api: Lightspark (Lightning) API
+  official: true
+  description: Lightspark JS SDK
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/core'
+  version: 1.5.2
+  url: https://www.npmjs.com/package/@lightsparkdev/core
+  install: npm install @lightsparkdev/core
+  official: true
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/lightspark-cli'
+  version: 0.1.19
+  url: https://www.npmjs.com/package/@lightsparkdev/lightspark-cli
+  install: npm install -g @lightsparkdev/lightspark-cli
+  official: true
+  kind: cli
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/uma'
+  version: 0.0.10
+  url: https://www.npmjs.com/package/@lightsparkdev/uma
+  install: npm install @lightsparkdev/uma
+  official: true
+  description: UMA SDK for JavaScript
+- language: javascript
+  registry: npm
+  name: '@lightsparkdev/crypto-wasm'
+  version: 0.1.26
+  url: https://www.npmjs.com/package/@lightsparkdev/crypto-wasm
+  official: true
+- language: python
+  registry: github
+  name: lightspark-python-sdk
+  url: https://github.com/lightsparkdev/python-sdk
+  official: true
+  description: Lightspark Python SDK
+- language: go
+  registry: github
+  name: lightsparkdev/go-sdk
+  url: https://github.com/lightsparkdev/go-sdk
+  install: go get github.com/lightsparkdev/go-sdk
+  official: true
+- language: rust
+  registry: github
+  name: lightspark-rs
+  url: https://github.com/lightsparkdev/lightspark-rs
+  official: true
+- language: kotlin
+  registry: github
+  name: lightsparkdev/kotlin-sdk
+  url: https://github.com/lightsparkdev/kotlin-sdk
+  official: true
+  description: Lightspark Kotlin multiplatform SDK
+- language: dart
+  registry: github
+  name: lightsparkdev/flutter-sdk
+  url: https://github.com/lightsparkdev/flutter-sdk
+  official: true
+  description: Lightspark Dart and Flutter SDKs

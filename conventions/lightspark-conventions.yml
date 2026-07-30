@@ -1,0 +1,93 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/api-reference/environments
+api: Grid API
+authentication:
+  style: 'HTTP Basic (client id : client secret) for platform calls; HTTP Bearer for agent-scoped calls'
+  docs: https://docs.lightspark.com/api-reference/authentication
+  artifact: authentication/lightspark-authentication.yml
+  wallet_signature:
+    header: Grid-Wallet-Signature
+    description: P-256 session-key signature over the exact `payloadToSign` returned by Grid; required
+      on embedded-wallet actions (credential add/revoke, session revoke, wallet export, wallet privacy
+      update, and quote execution from an embedded wallet).
+    paired_header: Request-Id
+idempotency:
+  supported: true
+  header: Idempotency-Key
+  required: false
+  value: client-generated UUID
+  operation_count: 10
+  semantics: If the same key is sent multiple times, the server returns the same response as the first
+    request.
+  source: openapi/lightspark-grid-openapi-original.yml
+  docs: https://docs.lightspark.com/api-reference/sandbox-testing
+pagination:
+  style: cursor
+  request_params:
+  - name: cursor
+    in: query
+  - name: limit
+    in: query
+  response_fields:
+  - name: data
+    description: page of results
+  - name: hasMore
+    description: boolean, more results available
+  - name: nextCursor
+    description: cursor for the next page (present only when hasMore is true)
+  - name: totalCount
+    description: total matching records, excluding pagination
+  paginated_operation_count: 18
+  source: openapi/lightspark-grid-openapi-original.yml
+filtering:
+  common_params:
+  - customerId
+  - status
+  - type
+  - currency
+  - createdAfter
+  - createdBefore
+  - updatedAfter
+  - updatedBefore
+  - sortOrder
+request_tracing:
+  header: Request-Id
+  format: Request:<uuid>
+  description: Echoed on signed-retry flows; returned by challenge responses and replayed on the signed
+    request.
+versioning:
+  scheme: dated-path
+  current: '2025-10-13'
+  base_url: https://api.lightspark.com/grid/2025-10-13
+  docs: https://docs.lightspark.com/api-reference/environments
+  policy: The date in the base URL is the major version and is pinned by the caller. Backwards-compatible
+    changes (new endpoints, optional params, response fields, enum values, webhook event types) ship into
+    the current version; breaking changes only ship in a new dated version.
+error_envelope:
+  media_type: application/json
+  rfc9457: false
+  fields:
+  - status
+  - code
+  - message
+  - details
+  artifact: errors/lightspark-error-codes.yml
+rate_limits:
+  signal: Retry-After response header on 429
+  error_code: RATE_LIMITED
+  notes:
+  - No RateLimit/X-RateLimit quota headers are declared in the OpenAPI.
+  - Documented per-flow limits include SCA two-factor reset initiation at 5 per 24 hours per customer.
+ip_allowlist:
+  description: Grid APIs and webhooks are served from a published set of egress IPs.
+  ips:
+  - 52.42.15.30
+  - 34.216.87.164
+  - 44.226.21.146
+  docs: https://docs.lightspark.com/api-reference/environments
+see_also:
+- errors/lightspark-error-codes.yml
+- lifecycle/lightspark-lifecycle.yml
+- authentication/lightspark-authentication.yml
+- sandbox/lightspark-sandbox.yml

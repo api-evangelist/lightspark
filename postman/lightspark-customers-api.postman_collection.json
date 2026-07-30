@@ -1,0 +1,2860 @@
+{
+  "info": {
+    "_postman_id": "85737e18-e083-4a86-b517-c42a8177fedf",
+    "name": "Grid Agent Management Customers API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:30.000Z",
+    "updatedAt": "2026-07-28T02:07:31.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-85737e18-e083-4a86-b517-c42a8177fedf"
+  },
+  "item": [
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "{customerId}",
+          "item": [
+            {
+              "name": "Get customer by ID",
+              "id": "54791377-012f-414d-a998-07505bb214e4",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/:customerId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "bb35f8d9-1736-403c-b316-246dab0fa6a8",
+                      "key": "customerId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "description": "Retrieve a customer by their system-generated ID"
+              },
+              "response": [
+                {
+                  "id": "e4c613c3-a317-41ce-bee6-608483149f23",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+385\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"UNVERIFIED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-e4c613c3-a317-41ce-bee6-608483149f23"
+                },
+                {
+                  "id": "2e8d8b76-c953-4cd0-93e0-8d7e01796fe9",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-2e8d8b76-c953-4cd0-93e0-8d7e01796fe9"
+                },
+                {
+                  "id": "79f8eb71-cbb0-4884-9b31-a7f7839bdc9a",
+                  "name": "Customer not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"irure3\": -72762619,\n    \"id_75c\": 26180477.067633808\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-79f8eb71-cbb0-4884-9b31-a7f7839bdc9a"
+                },
+                {
+                  "id": "2ea5c760-2c13-4f11-8361-51fddc75eefc",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-2ea5c760-2c13-4f11-8361-51fddc75eefc"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-54791377-012f-414d-a998-07505bb214e4"
+            },
+            {
+              "name": "Update customer by ID",
+              "id": "ba1deb69-bb57-459d-93fd-484c15259a29",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "<string>"
+                  },
+                  {
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers/:customerId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "e821a726-f0ec-4f00-a5f8-54f0027e8fdd",
+                      "key": "customerId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "description": "Update a customer's metadata by their system-generated ID.\n\nMost customer updates complete synchronously and return `200` with the updated customer. If the request changes `email` for a customer that has one or more tied Embedded Wallet internal accounts with `EMAIL_OTP` credentials, or changes `phoneNumber` for a customer that has one or more tied Embedded Wallet internal accounts with `SMS_OTP` credentials, the contact update uses the two-step signed-retry flow so the customer's wallet session authorizes the authentication credential update. On the signed retry, Grid updates the customer contact field and every tied matching OTP credential across all tied Embedded Wallets as one logical operation. If any tied credential cannot be updated, the customer contact field is not changed.\n\nUpdate `email` and `phoneNumber` in separate PATCH calls. A request that includes both fields is rejected.\n\nFor an Embedded Wallet email or SMS auth phone update:\n\n1. Call `PATCH /customers/{customerId}` with the full update body and no signature headers. Grid returns `202` with `payloadToSign`, `requestId`, and `expiresAt`. The pending challenge binds the submitted update fields and the set of tied Embedded Wallet OTP credentials that must be updated.\n\n2. Use the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets to build an API-key stamp over `payloadToSign`, then retry the same request with that full stamp as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The retry body must carry the same update fields submitted in step 1. The signed retry returns `200` with the updated customer.\n"
+              },
+              "response": [
+                {
+                  "id": "db713f4f-b19d-45cc-9f05-86d7a5a3bbc2",
+                  "name": "Customer updated successfully. For Embedded Wallet email or SMS auth phone updates, this is returned only on the signed retry after the customer contact field and all tied matching OTP credentials have been updated.",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+385\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"UNVERIFIED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-db713f4f-b19d-45cc-9f05-86d7a5a3bbc2"
+                },
+                {
+                  "id": "211090c0-3c8f-487b-a37e-bba4204bedc0",
+                  "name": "Challenge issued for an Embedded Wallet email or SMS auth phone update. The response contains `payloadToSign` plus a `requestId`. Build an API-key stamp over `payloadToSign` with the session API keypair from a verified authentication credential on one of ",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Accepted",
+                  "code": 202,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"payloadToSign\": \"<string>\",\n  \"requestId\": \"<string>\",\n  \"expiresAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-211090c0-3c8f-487b-a37e-bba4204bedc0"
+                },
+                {
+                  "id": "480d0ad5-51ac-494e-a164-04b43813c64e",
+                  "name": "Bad request",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_AMOUNT\",\n  \"details\": {\n    \"sunt_619\": false,\n    \"in_b\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-480d0ad5-51ac-494e-a164-04b43813c64e"
+                },
+                {
+                  "id": "d4fbaede-b6df-4e95-888d-7cd0fb237e25",
+                  "name": "Unauthorized. Also returned for Embedded Wallet email or SMS auth phone update retries when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match the pending customer update challenge, when the `Request-Id` does not match an unexpi",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-d4fbaede-b6df-4e95-888d-7cd0fb237e25"
+                },
+                {
+                  "id": "0b06e226-61ba-4d76-8d3e-dbf1af4255f2",
+                  "name": "Customer not found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"irure3\": -72762619,\n    \"id_75c\": 26180477.067633808\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-0b06e226-61ba-4d76-8d3e-dbf1af4255f2"
+                },
+                {
+                  "id": "14989ef6-adf2-43e6-9b81-a01bc2d7893f",
+                  "name": "Conflict. Returned when the supplied email address is already associated with an `EMAIL_OTP` credential, or the supplied phone number is already associated with an `SMS_OTP` credential, on this or another internal account, or when the tied Embedded Wallet",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Conflict",
+                  "code": 409,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"EMAIL_OTP_CREDENTIAL_SET_CHANGED\",\n  \"details\": {\n    \"laboris_7\": 79350398,\n    \"exercitation_dc0\": 58114353.21763399\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-14989ef6-adf2-43e6-9b81-a01bc2d7893f"
+                },
+                {
+                  "id": "42696b1b-a817-411d-a912-e89972c9e081",
+                  "name": "Failed dependency. Returned when Grid cannot update one or more tied Embedded Wallet OTP credentials. The customer contact field is not changed unless all tied credentials are updated successfully.",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Failed Dependency (WebDAV) (RFC 4918)",
+                  "code": 424,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 424,\n  \"code\": \"NO_COMPATIBLE_UMA_VERSION\",\n  \"details\": {\n    \"commodo_d\": 9617303.502895117\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-42696b1b-a817-411d-a912-e89972c9e081"
+                },
+                {
+                  "id": "a8d2b88d-9aee-4d5e-9303-ada5439e812e",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                        "key": "Grid-Wallet-Signature",
+                        "value": "<string>"
+                      },
+                      {
+                        "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                        "key": "Request-Id",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+2039\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"REJECTED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-a8d2b88d-9aee-4d5e-9303-ada5439e812e"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-ba1deb69-bb57-459d-93fd-484c15259a29"
+            },
+            {
+              "name": "Delete customer by ID",
+              "id": "761f4216-99d7-401e-b50d-c6cb1859c441",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers/:customerId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "76af3c4c-f9ca-46c8-9109-1cbbf218e05c",
+                      "key": "customerId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "description": "Delete a customer by their system-generated ID"
+              },
+              "response": [
+                {
+                  "id": "acb85d65-8351-4435-8452-f8b4400e0bdd",
+                  "name": "Customer deleted successfully",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+385\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"UNVERIFIED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-acb85d65-8351-4435-8452-f8b4400e0bdd"
+                },
+                {
+                  "id": "8c4dc1df-ad62-4953-b6f5-8341d96d12b1",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-8c4dc1df-ad62-4953-b6f5-8341d96d12b1"
+                },
+                {
+                  "id": "4710e8fd-1bbe-444e-ad84-62bad04d9dfa",
+                  "name": "Customer not found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"irure3\": -72762619,\n    \"id_75c\": 26180477.067633808\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-4710e8fd-1bbe-444e-ad84-62bad04d9dfa"
+                },
+                {
+                  "id": "9c1cb47a-a407-4894-a7d6-318c85ed785e",
+                  "name": "Customer deleted already",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Gone",
+                  "code": 410,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 410,\n  \"code\": \"CUSTOMER_DELETED\",\n  \"details\": {\n    \"id21f\": \"Ut tempor dolor est exercitation\",\n    \"est_d81\": \"et Duis\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-9c1cb47a-a407-4894-a7d6-318c85ed785e"
+                },
+                {
+                  "id": "87e17998-ea3e-49f9-ba41-490298615d7f",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "customerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-87e17998-ea3e-49f9-ba41-490298615d7f"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-761f4216-99d7-401e-b50d-c6cb1859c441"
+            }
+          ],
+          "id": "8b2fd720-dfa7-4095-a3fc-9e38bade56e0",
+          "createdAt": "2026-07-28T02:07:31.000Z",
+          "updatedAt": "2026-07-28T02:07:31.000Z",
+          "uid": "35240-8b2fd720-dfa7-4095-a3fc-9e38bade56e0"
+        },
+        {
+          "name": "bulk",
+          "item": [
+            {
+              "name": "csv",
+              "item": [
+                {
+                  "name": "Upload customers via CSV file",
+                  "id": "bcc923d1-2f30-4476-8766-104ade5971cc",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "multipart/form-data"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "formdata",
+                      "formdata": [
+                        {
+                          "description": "(Required) CSV file containing customer information",
+                          "key": "file",
+                          "type": "file",
+                          "value": null
+                        }
+                      ]
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/bulk/csv",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        "bulk",
+                        "csv"
+                      ]
+                    },
+                    "description": "Upload a CSV file containing customer information for bulk creation. The CSV file should follow\na specific format with required and optional columns based on customer type.\n\n### CSV Format\nThe CSV file should have the following columns:\n\nRequired columns for all customers:\n- umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)\n- platformCustomerId: Your platform's unique identifier for the customer\n- customerType: Either \"INDIVIDUAL\" or \"BUSINESS\"\n\nRequired columns for individual customers:\n- fullName: Individual's full name\n- birthDate: Date of birth in YYYY-MM-DD format\n- addressLine1: Street address line 1\n- city: City\n- state: State/Province/Region\n- postalCode: Postal/ZIP code\n- country: Country code (ISO 3166-1 alpha-2)\n\nRequired columns for business customers:\n- businessLegalName: Legal name of the business\n- addressLine1: Street address line 1\n- city: City\n- state: State/Province/Region\n- postalCode: Postal/ZIP code\n- country: Country code (ISO 3166-1 alpha-2)\n\nOptional columns for all customers:\n- addressLine2: Street address line 2\n- platformAccountId: Your platform's identifier for the bank account\n- description: Optional description for the customer\n\nOptional columns for individual customers:\n- email: Customer's email address\n\nOptional columns for business customers:\n- businessRegistrationNumber: Business registration number\n- businessTaxId: Tax identification number\n\n### Example CSV\n```csv\numaAddress,platformCustomerId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,platformAccountId,businessLegalName\njohn.doe@uma.domain.com,customer123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US\nacme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US\n```\n\nThe upload process is asynchronous and will return a job ID that can be used to track progress.\nYou can monitor the job status using the `/customers/bulk/jobs/{jobId}` endpoint.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "551aae9c-a1a0-4435-8aac-6aa0ac120782",
+                      "name": "CSV upload accepted for processing",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "multipart/form-data"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "formdata",
+                          "formdata": [
+                            {
+                              "description": "(Required) CSV file containing customer information",
+                              "key": "file",
+                              "type": "file"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/bulk/csv",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "bulk",
+                            "csv"
+                          ]
+                        }
+                      },
+                      "status": "Accepted",
+                      "code": 202,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"jobId\": \"<string>\",\n  \"status\": \"PROCESSING\"\n}",
+                      "createdAt": "2026-07-28T02:07:31.000Z",
+                      "updatedAt": "2026-07-28T02:07:31.000Z",
+                      "uid": "35240-551aae9c-a1a0-4435-8aac-6aa0ac120782"
+                    },
+                    {
+                      "id": "f49f31b5-ba8e-4eec-aece-22b44b6ce03c",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "multipart/form-data"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "formdata",
+                          "formdata": [
+                            {
+                              "description": "(Required) CSV file containing customer information",
+                              "key": "file",
+                              "type": "file"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/bulk/csv",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "bulk",
+                            "csv"
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:31.000Z",
+                      "updatedAt": "2026-07-28T02:07:31.000Z",
+                      "uid": "35240-f49f31b5-ba8e-4eec-aece-22b44b6ce03c"
+                    },
+                    {
+                      "id": "8fd2fa0b-b095-41cd-8098-88251b6bd3ed",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "multipart/form-data"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "formdata",
+                          "formdata": [
+                            {
+                              "description": "(Required) CSV file containing customer information",
+                              "key": "file",
+                              "type": "file"
+                            }
+                          ]
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/bulk/csv",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "bulk",
+                            "csv"
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:31.000Z",
+                      "updatedAt": "2026-07-28T02:07:31.000Z",
+                      "uid": "35240-8fd2fa0b-b095-41cd-8098-88251b6bd3ed"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-bcc923d1-2f30-4476-8766-104ade5971cc"
+                }
+              ],
+              "id": "f811bc8b-bf14-433e-8ca1-2763a49db09a",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-f811bc8b-bf14-433e-8ca1-2763a49db09a"
+            },
+            {
+              "name": "jobs",
+              "item": [
+                {
+                  "name": "{jobId}",
+                  "item": [
+                    {
+                      "name": "Get bulk import job status",
+                      "id": "ac763dfc-2938-4189-96ce-6178e7a64a35",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "auth": {
+                          "type": "basic",
+                          "basic": [
+                            {
+                              "key": "username",
+                              "value": "{{basicAuthUsername}}",
+                              "type": "string"
+                            },
+                            {
+                              "key": "password",
+                              "value": "{{basicAuthPassword}}",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "method": "GET",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/bulk/jobs/:jobId",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            "bulk",
+                            "jobs",
+                            ":jobId"
+                          ],
+                          "variable": [
+                            {
+                              "id": "094aad20-1f75-4869-95e9-7d457b635bc6",
+                              "key": "jobId",
+                              "value": "<string>",
+                              "description": "(Required) ID of the bulk import job to retrieve"
+                            }
+                          ]
+                        },
+                        "description": "Retrieve the current status and results of a bulk customer import job. This endpoint can be used\nto track the progress of both CSV uploads.\n\nThe response includes:\n- Overall job status\n- Progress statistics\n- Detailed error information for failed entries\n- Completion timestamp when finished\n"
+                      },
+                      "response": [
+                        {
+                          "id": "d9f3a664-8f19-42c6-89a9-db3a5636f033",
+                          "name": "Job status retrieved successfully",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/bulk/jobs/:jobId",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                "bulk",
+                                "jobs",
+                                ":jobId"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "jobId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"id\": \"<string>\",\n  \"status\": \"COMPLETED\",\n  \"progress\": {\n    \"total\": \"<integer>\",\n    \"processed\": \"<integer>\",\n    \"successful\": \"<integer>\",\n    \"failed\": \"<integer>\"\n  },\n  \"errors\": [\n    {\n      \"correlationId\": \"<string>\",\n      \"code\": \"<string>\",\n      \"message\": \"<string>\",\n      \"details\": {\n        \"mollit_ba2\": \"enim\",\n        \"dolor268\": -72089767.41042417\n      }\n    },\n    {\n      \"correlationId\": \"<string>\",\n      \"code\": \"<string>\",\n      \"message\": \"<string>\",\n      \"details\": {\n        \"dolore6\": \"cupidatat irure anim veniam\",\n        \"eu_9\": \"nostrud incididunt aute\",\n        \"Duis_65\": false\n      }\n    }\n  ],\n  \"completedAt\": \"<dateTime>\"\n}",
+                          "createdAt": "2026-07-28T02:07:31.000Z",
+                          "updatedAt": "2026-07-28T02:07:31.000Z",
+                          "uid": "35240-d9f3a664-8f19-42c6-89a9-db3a5636f033"
+                        },
+                        {
+                          "id": "d2beccaf-95db-4ad7-9318-9c9441eeceb8",
+                          "name": "Unauthorized",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/bulk/jobs/:jobId",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                "bulk",
+                                "jobs",
+                                ":jobId"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "jobId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:31.000Z",
+                          "updatedAt": "2026-07-28T02:07:31.000Z",
+                          "uid": "35240-d2beccaf-95db-4ad7-9318-9c9441eeceb8"
+                        },
+                        {
+                          "id": "ed06932e-510b-4389-b396-2af0f1b6f7c3",
+                          "name": "Job not found",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/bulk/jobs/:jobId",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                "bulk",
+                                "jobs",
+                                ":jobId"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "jobId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"INVITATION_NOT_FOUND\",\n  \"details\": {\n    \"irure3\": -72762619,\n    \"id_75c\": 26180477.067633808\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:31.000Z",
+                          "updatedAt": "2026-07-28T02:07:31.000Z",
+                          "uid": "35240-ed06932e-510b-4389-b396-2af0f1b6f7c3"
+                        },
+                        {
+                          "id": "47335911-b1a2-4bcd-a183-7e6f29118dfd",
+                          "name": "Internal service error",
+                          "originalRequest": {
+                            "method": "GET",
+                            "header": [
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/bulk/jobs/:jobId",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                "bulk",
+                                "jobs",
+                                ":jobId"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "jobId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:31.000Z",
+                          "updatedAt": "2026-07-28T02:07:31.000Z",
+                          "uid": "35240-47335911-b1a2-4bcd-a183-7e6f29118dfd"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T02:07:31.000Z",
+                      "updatedAt": "2026-07-28T02:07:31.000Z",
+                      "uid": "35240-ac763dfc-2938-4189-96ce-6178e7a64a35"
+                    }
+                  ],
+                  "id": "74442563-d5b5-4947-a1cb-8521cc87e4f3",
+                  "createdAt": "2026-07-28T02:07:31.000Z",
+                  "updatedAt": "2026-07-28T02:07:31.000Z",
+                  "uid": "35240-74442563-d5b5-4947-a1cb-8521cc87e4f3"
+                }
+              ],
+              "id": "b1adf02f-f497-4766-957a-d7d7c085d4a9",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-b1adf02f-f497-4766-957a-d7d7c085d4a9"
+            }
+          ],
+          "id": "0ddba9b6-e74c-4ed4-b24e-267e8320ff41",
+          "createdAt": "2026-07-28T02:07:31.000Z",
+          "updatedAt": "2026-07-28T02:07:31.000Z",
+          "uid": "35240-0ddba9b6-e74c-4ed4-b24e-267e8320ff41"
+        },
+        {
+          "name": "Add a new customer",
+          "id": "2eb09bf1-371b-4cec-ad85-0f75a104887b",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "customers"
+              ]
+            },
+            "description": "Register a new customer in the system with an account identifier and bank account information"
+          },
+          "response": [
+            {
+              "id": "6085dffa-fdef-4992-9095-9ce36aecb1ee",
+              "name": "Customer created successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+385\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"UNVERIFIED\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-6085dffa-fdef-4992-9095-9ce36aecb1ee"
+            },
+            {
+              "id": "3befaff1-6624-45bf-bfcf-a3de45531dbf",
+              "name": "Bad request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_AMOUNT\",\n  \"details\": {\n    \"sunt_619\": false,\n    \"in_b\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-3befaff1-6624-45bf-bfcf-a3de45531dbf"
+            },
+            {
+              "id": "63ae7f36-a018-479d-960e-8b9c47614351",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-63ae7f36-a018-479d-960e-8b9c47614351"
+            },
+            {
+              "id": "cc8279b9-c6a6-48ec-b487-ee385ebafa3d",
+              "name": "Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 405,\n  \"code\": \"METHOD_NOT_ALLOWED\",\n  \"details\": {\n    \"eu_de7\": 17768406\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-cc8279b9-c6a6-48ec-b487-ee385ebafa3d"
+            },
+            {
+              "id": "8905c9b3-c046-4eb4-8e2f-39732a725ac5",
+              "name": "Conflict. `UMA_ADDRESS_EXISTS` when the requested UMA address is already taken; `CONFLICT` when `platformCustomerId` collides with an existing active customer on the same platform.",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"EMAIL_OTP_CREDENTIAL_SET_CHANGED\",\n  \"details\": {\n    \"laboris_7\": 79350398,\n    \"exercitation_dc0\": 58114353.21763399\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-8905c9b3-c046-4eb4-8e2f-39732a725ac5"
+            },
+            {
+              "id": "348ebc27-8786-438a-9214-67967ed94aab",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-348ebc27-8786-438a-9214-67967ed94aab"
+            },
+            {
+              "id": "08d7ce0c-b321-4163-9a7a-a53210a7af79",
+              "name": "Not implemented",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"BUSINESS\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+470036623\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"PENDING\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"SSN\",\n  \"identifier\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/customers",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ]
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 501,\n  \"code\": \"UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY\",\n  \"details\": {\n    \"ex_d\": \"proident adipisicing deserunt voluptate laborum\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-08d7ce0c-b321-4163-9a7a-a53210a7af79"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:31.000Z",
+          "updatedAt": "2026-07-28T02:07:31.000Z",
+          "uid": "35240-2eb09bf1-371b-4cec-ad85-0f75a104887b"
+        },
+        {
+          "name": "List customers",
+          "id": "45d06cdc-11f4-4c03-81f1-8f5a6380f7b9",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "customers"
+              ],
+              "query": [
+                {
+                  "description": "Filter by platform-specific customer identifier",
+                  "key": "platformCustomerId",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by customer type",
+                  "key": "customerType",
+                  "value": "BUSINESS"
+                },
+                {
+                  "description": "Filter customers created after this timestamp (inclusive)",
+                  "key": "createdAfter",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers created before this timestamp (inclusive)",
+                  "key": "createdBefore",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers updated after this timestamp (inclusive)",
+                  "key": "updatedAfter",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers updated before this timestamp (inclusive)",
+                  "key": "updatedBefore",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                  "key": "region",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                  "key": "currency",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by uma address",
+                  "key": "umaAddress",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Whether to include deleted customers in the results. Default is false.",
+                  "key": "isIncludingDeleted",
+                  "value": "<boolean>"
+                }
+              ]
+            },
+            "description": "Retrieve a list of customers with optional filtering parameters. Returns all customers that match\nthe specified filters. If no filters are provided, returns all customers (paginated).\n"
+          },
+          "response": [
+            {
+              "id": "71b5aaaa-8b86-4ea6-8867-b9eae3658783",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by platform-specific customer identifier",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer type",
+                      "key": "customerType",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by uma address",
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include deleted customers in the results. Default is false.",
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"customerType\": \"INDIVIDUAL\",\n      \"platformCustomerId\": \"<string>\",\n      \"umaAddress\": \"<string>\",\n      \"id\": \"<string>\",\n      \"region\": \"<string>\",\n      \"currencies\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"email\": \"<email>\",\n      \"phoneNumber\": \"+6962398702\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"isDeleted\": \"<boolean>\",\n      \"contactVerification\": {\n        \"email\": \"VERIFIED\",\n        \"phone\": \"VERIFIED\"\n      },\n      \"kycStatus\": \"REJECTED\",\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<date>\",\n      \"nationality\": \"<string>\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      }\n    },\n    {\n      \"customerType\": \"BUSINESS\",\n      \"platformCustomerId\": \"<string>\",\n      \"umaAddress\": \"<string>\",\n      \"id\": \"<string>\",\n      \"region\": \"<string>\",\n      \"currencies\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"email\": \"<email>\",\n      \"phoneNumber\": \"+9356\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"isDeleted\": \"<boolean>\",\n      \"contactVerification\": {\n        \"email\": \"VERIFIED\",\n        \"phone\": \"VERIFIED\"\n      },\n      \"kycStatus\": \"HOLD\",\n      \"fullName\": \"<string>\",\n      \"birthDate\": \"<date>\",\n      \"nationality\": \"<string>\",\n      \"address\": {\n        \"line1\": \"<string>\",\n        \"postalCode\": \"<string>\",\n        \"country\": \"<string>\",\n        \"line2\": \"<string>\",\n        \"city\": \"<string>\",\n        \"state\": \"<string>\"\n      }\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-71b5aaaa-8b86-4ea6-8867-b9eae3658783"
+            },
+            {
+              "id": "3098d3ca-1df3-4523-a8de-4d6a4f74c8bb",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by platform-specific customer identifier",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer type",
+                      "key": "customerType",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by uma address",
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include deleted customers in the results. Default is false.",
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_AMOUNT\",\n  \"details\": {\n    \"sunt_619\": false,\n    \"in_b\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-3098d3ca-1df3-4523-a8de-4d6a4f74c8bb"
+            },
+            {
+              "id": "9682ca07-9a92-4936-89f3-9caabec57ebd",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by platform-specific customer identifier",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer type",
+                      "key": "customerType",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by uma address",
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include deleted customers in the results. Default is false.",
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_BODY_MISMATCH\",\n  \"details\": {\n    \"laborum_1\": 99865041.40184596,\n    \"sitad\": \"velit ut deserunt\",\n    \"exercitation_a\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-9682ca07-9a92-4936-89f3-9caabec57ebd"
+            },
+            {
+              "id": "c6674242-bfd7-4352-b327-9a8c7e071665",
+              "name": "Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by platform-specific customer identifier",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer type",
+                      "key": "customerType",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by uma address",
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include deleted customers in the results. Default is false.",
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ]
+                }
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 405,\n  \"code\": \"METHOD_NOT_ALLOWED\",\n  \"details\": {\n    \"eu_de7\": 17768406\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-c6674242-bfd7-4352-b327-9a8c7e071665"
+            },
+            {
+              "id": "6d2d7223-207a-4fa3-a76b-4ffd35527968",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/customers?platformCustomerId=<string>&customerType=BUSINESS&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>&region=<string>&currency=<string>&umaAddress=<string>&isIncludingDeleted=<boolean>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "customers"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by platform-specific customer identifier",
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer type",
+                      "key": "customerType",
+                      "value": "BUSINESS"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)",
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list.",
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by uma address",
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include deleted customers in the results. Default is false.",
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"ipsum6\": -77144479.92043008,\n    \"cupidatat5_7\": true\n  }\n}",
+              "createdAt": "2026-07-28T02:07:31.000Z",
+              "updatedAt": "2026-07-28T02:07:31.000Z",
+              "uid": "35240-6d2d7223-207a-4fa3-a76b-4ffd35527968"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:31.000Z",
+          "updatedAt": "2026-07-28T02:07:31.000Z",
+          "uid": "35240-45d06cdc-11f4-4c03-81f1-8f5a6380f7b9"
+        }
+      ],
+      "id": "6be5431a-a165-44b6-bf3d-32497014a52e",
+      "createdAt": "2026-07-28T02:07:31.000Z",
+      "updatedAt": "2026-07-28T02:07:31.000Z",
+      "uid": "35240-6be5431a-a165-44b6-bf3d-32497014a52e"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

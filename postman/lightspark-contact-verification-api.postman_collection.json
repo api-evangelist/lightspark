@@ -1,0 +1,1583 @@
+{
+  "info": {
+    "_postman_id": "497ced3d-529b-48e2-a8b1-c38fa724d5b1",
+    "name": "Grid Agent Management Contact Verification API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:27.000Z",
+    "updatedAt": "2026-07-28T02:07:27.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-497ced3d-529b-48e2-a8b1-c38fa724d5b1"
+  },
+  "item": [
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "{customerId}",
+          "item": [
+            {
+              "name": "verify-email",
+              "item": [
+                {
+                  "name": "confirm",
+                  "item": [
+                    {
+                      "name": "Confirm a customer's email verification code",
+                      "id": "751caa9a-486d-45e2-9478-14a97946e1db",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "auth": {
+                          "type": "basic",
+                          "basic": [
+                            {
+                              "key": "username",
+                              "value": "{{basicAuthUsername}}",
+                              "type": "string"
+                            },
+                            {
+                              "key": "password",
+                              "value": "{{basicAuthPassword}}",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"code\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "id": "e47a25b2-d5bb-4733-a053-0559a80d28ff",
+                              "key": "customerId",
+                              "value": "<string>",
+                              "description": "(Required) The Grid customer ID whose email is being verified."
+                            }
+                          ]
+                        },
+                        "description": "Submit the one-time code the customer received by email to mark their email\nas `VERIFIED`. On success, `contactVerification.email` becomes `VERIFIED`.\n\nBoth email and phone must be `VERIFIED` before the customer can begin KYC.\n\nIn sandbox, the code is always `123456`.\n"
+                      },
+                      "response": [
+                        {
+                          "id": "beb9ddb7-42ad-4e92-97a5-ddb5d766d78d",
+                          "name": "Email verified.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"umaAddress\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"customerType\": \"BUSINESS\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+78150\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"PENDING\"\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-beb9ddb7-42ad-4e92-97a5-ddb5d766d78d"
+                        },
+                        {
+                          "id": "4d08c13f-15aa-4b41-9c55-d644327ff4bd",
+                          "name": "Invalid or expired code",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"WEBHOOK_DELIVERY_ERROR\",\n  \"details\": {\n    \"sit0\": 88580322,\n    \"ullamco_321\": \"ut sint cupidatat\",\n    \"dolore977\": \"nisi nulla culpa\",\n    \"eiusmod0\": -70742824.55650178\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-4d08c13f-15aa-4b41-9c55-d644327ff4bd"
+                        },
+                        {
+                          "id": "9adac81b-e279-4793-a332-1cf511edaa04",
+                          "name": "Unauthorized",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"utc\": -68946233.66509175,\n    \"eu_efb\": true\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-9adac81b-e279-4793-a332-1cf511edaa04"
+                        },
+                        {
+                          "id": "0e65d8b4-38b3-4023-a2a3-d30390182355",
+                          "name": "Customer not found",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"elit_21\": \"dolor eiusmod veniam sit\",\n    \"ipsum9b0\": 91777169.54859641,\n    \"exercitatione47\": \"magna p\",\n    \"cupidatat_57b\": -6284198.116686344\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-0e65d8b4-38b3-4023-a2a3-d30390182355"
+                        },
+                        {
+                          "id": "2d9f89dc-2089-4a7d-bb90-975595248b7a",
+                          "name": "The customer's payment provider does not require contact verification, or the email is already verified.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Conflict",
+                          "code": 409,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"CONFLICT\",\n  \"details\": {\n    \"ad6\": \"pariatur occaecat\",\n    \"eu7\": true\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-2d9f89dc-2089-4a7d-bb90-975595248b7a"
+                        },
+                        {
+                          "id": "a92a0eda-44ae-4bfc-b771-86962df8f0e3",
+                          "name": "Internal service error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-email/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-email",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eac6\": -64634007.85842879\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-a92a0eda-44ae-4bfc-b771-86962df8f0e3"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-751caa9a-486d-45e2-9478-14a97946e1db"
+                    }
+                  ],
+                  "id": "a758400e-8c5d-44fe-9382-c39506d5a0dd",
+                  "createdAt": "2026-07-28T02:07:28.000Z",
+                  "updatedAt": "2026-07-28T02:07:28.000Z",
+                  "uid": "35240-a758400e-8c5d-44fe-9382-c39506d5a0dd"
+                },
+                {
+                  "name": "Send an email verification code to a customer",
+                  "id": "7afb6c49-23f8-45d5-97ae-ffa7046ced20",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId",
+                        "verify-email"
+                      ],
+                      "variable": [
+                        {
+                          "id": "a949263e-ecb3-404c-8e3b-32c2d4f25a4c",
+                          "key": "customerId",
+                          "value": "<string>",
+                          "description": "(Required) The Grid customer ID to send an email verification code to."
+                        }
+                      ]
+                    },
+                    "description": "Send (or resend) a one-time code to the customer's email address to begin\nemail verification.\n\nThis endpoint is only meaningful for customers whose payment provider\nrequires contact verification (e.g. EU customers); the customer's\n`contactVerification.email` status reflects progress. For customers whose\nprovider has no such requirement, this returns `409`.\n\nCall `POST /customers/{customerId}/verify-email/confirm` with the received\ncode to complete verification. Re-POST this endpoint to resend the code.\n\nIn sandbox, no email is sent and the code is always `123456`.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "0e0ecc2d-6a2d-48d6-8f5c-3ed4de09552b",
+                      "name": "Verification code sent.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-0e0ecc2d-6a2d-48d6-8f5c-3ed4de09552b"
+                    },
+                    {
+                      "id": "8702b8b1-24ca-43f4-a7d7-1aa157dce715",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"utc\": -68946233.66509175,\n    \"eu_efb\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-8702b8b1-24ca-43f4-a7d7-1aa157dce715"
+                    },
+                    {
+                      "id": "f9545bc9-f5f8-43eb-97a3-7581f03301f5",
+                      "name": "Customer not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"elit_21\": \"dolor eiusmod veniam sit\",\n    \"ipsum9b0\": 91777169.54859641,\n    \"exercitatione47\": \"magna p\",\n    \"cupidatat_57b\": -6284198.116686344\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-f9545bc9-f5f8-43eb-97a3-7581f03301f5"
+                    },
+                    {
+                      "id": "e1d79910-2596-4057-ab6f-a1b7a78f4037",
+                      "name": "The customer's payment provider does not require contact verification, or the email is already verified.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"CONFLICT\",\n  \"details\": {\n    \"ad6\": \"pariatur occaecat\",\n    \"eu7\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-e1d79910-2596-4057-ab6f-a1b7a78f4037"
+                    },
+                    {
+                      "id": "ba0a6293-7338-4b60-b58a-efca7c8e1763",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-email",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-email"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eac6\": -64634007.85842879\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-ba0a6293-7338-4b60-b58a-efca7c8e1763"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:28.000Z",
+                  "updatedAt": "2026-07-28T02:07:28.000Z",
+                  "uid": "35240-7afb6c49-23f8-45d5-97ae-ffa7046ced20"
+                }
+              ],
+              "id": "60cbc169-ad31-4aba-ac86-42e50b5ea71b",
+              "createdAt": "2026-07-28T02:07:28.000Z",
+              "updatedAt": "2026-07-28T02:07:28.000Z",
+              "uid": "35240-60cbc169-ad31-4aba-ac86-42e50b5ea71b"
+            },
+            {
+              "name": "verify-phone",
+              "item": [
+                {
+                  "name": "confirm",
+                  "item": [
+                    {
+                      "name": "Confirm a customer's phone verification code",
+                      "id": "20218438-3e17-4d01-bd1b-617f5157d695",
+                      "protocolProfileBehavior": {
+                        "disableBodyPruning": true
+                      },
+                      "request": {
+                        "auth": {
+                          "type": "basic",
+                          "basic": [
+                            {
+                              "key": "username",
+                              "value": "{{basicAuthUsername}}",
+                              "type": "string"
+                            },
+                            {
+                              "key": "password",
+                              "value": "{{basicAuthPassword}}",
+                              "type": "string"
+                            }
+                          ]
+                        },
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"code\": \"<string>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone",
+                            "confirm"
+                          ],
+                          "variable": [
+                            {
+                              "id": "b8073c8a-1aa5-4c67-82eb-06a3c3c2c2e2",
+                              "key": "customerId",
+                              "value": "<string>",
+                              "description": "(Required) The Grid customer ID whose phone is being verified."
+                            }
+                          ]
+                        },
+                        "description": "Submit the one-time code the customer received via SMS to mark their phone\nas `VERIFIED`. On success, `contactVerification.phone` becomes `VERIFIED`.\n\nBoth email and phone must be `VERIFIED` before the customer can begin KYC.\n\nIn sandbox, the code is always `123456`.\n"
+                      },
+                      "response": [
+                        {
+                          "id": "595399f2-6efe-4f2b-b758-04a8397c88b9",
+                          "name": "Phone verified.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "OK",
+                          "code": 200,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"umaAddress\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"customerType\": \"BUSINESS\",\n  \"id\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"+78150\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"isDeleted\": \"<boolean>\",\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"PENDING\"\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-595399f2-6efe-4f2b-b758-04a8397c88b9"
+                        },
+                        {
+                          "id": "b67c844d-0fdf-43fc-a761-f46be13ae61e",
+                          "name": "Invalid or expired code",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Bad Request",
+                          "code": 400,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"WEBHOOK_DELIVERY_ERROR\",\n  \"details\": {\n    \"sit0\": 88580322,\n    \"ullamco_321\": \"ut sint cupidatat\",\n    \"dolore977\": \"nisi nulla culpa\",\n    \"eiusmod0\": -70742824.55650178\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-b67c844d-0fdf-43fc-a761-f46be13ae61e"
+                        },
+                        {
+                          "id": "94e1a051-f0b6-4fdf-bc5d-605b3a9df92c",
+                          "name": "Unauthorized",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Unauthorized",
+                          "code": 401,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"utc\": -68946233.66509175,\n    \"eu_efb\": true\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-94e1a051-f0b6-4fdf-bc5d-605b3a9df92c"
+                        },
+                        {
+                          "id": "beb0f60f-772f-45d2-ae4c-9775ba2b7fb3",
+                          "name": "Customer not found",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Not Found",
+                          "code": 404,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"elit_21\": \"dolor eiusmod veniam sit\",\n    \"ipsum9b0\": 91777169.54859641,\n    \"exercitatione47\": \"magna p\",\n    \"cupidatat_57b\": -6284198.116686344\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-beb0f60f-772f-45d2-ae4c-9775ba2b7fb3"
+                        },
+                        {
+                          "id": "6910b8b5-2a02-4432-aa14-7aacb14cd9ce",
+                          "name": "The customer's payment provider does not require contact verification, or the phone is already verified.",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Conflict",
+                          "code": 409,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"CONFLICT\",\n  \"details\": {\n    \"ad6\": \"pariatur occaecat\",\n    \"eu7\": true\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-6910b8b5-2a02-4432-aa14-7aacb14cd9ce"
+                        },
+                        {
+                          "id": "619b2f12-f9e0-49d1-b3d4-3f88f35c2798",
+                          "name": "Internal service error",
+                          "originalRequest": {
+                            "method": "POST",
+                            "header": [
+                              {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                              },
+                              {
+                                "key": "Accept",
+                                "value": "application/json"
+                              },
+                              {
+                                "description": "Added as a part of security scheme: basic",
+                                "key": "Authorization",
+                                "value": "Basic <credentials>"
+                              }
+                            ],
+                            "body": {
+                              "mode": "raw",
+                              "raw": "{\n  \"code\": \"<string>\"\n}",
+                              "options": {
+                                "raw": {
+                                  "headerFamily": "json",
+                                  "language": "json"
+                                }
+                              }
+                            },
+                            "url": {
+                              "raw": "{{baseUrl}}/customers/:customerId/verify-phone/confirm",
+                              "host": [
+                                "{{baseUrl}}"
+                              ],
+                              "path": [
+                                "customers",
+                                ":customerId",
+                                "verify-phone",
+                                "confirm"
+                              ],
+                              "variable": [
+                                {
+                                  "key": "customerId"
+                                }
+                              ]
+                            }
+                          },
+                          "status": "Internal Server Error",
+                          "code": 500,
+                          "_postman_previewlanguage": "json",
+                          "header": [
+                            {
+                              "key": "Content-Type",
+                              "value": "application/json"
+                            }
+                          ],
+                          "cookie": [],
+                          "responseTime": null,
+                          "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eac6\": -64634007.85842879\n  }\n}",
+                          "createdAt": "2026-07-28T02:07:28.000Z",
+                          "updatedAt": "2026-07-28T02:07:28.000Z",
+                          "uid": "35240-619b2f12-f9e0-49d1-b3d4-3f88f35c2798"
+                        }
+                      ],
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-20218438-3e17-4d01-bd1b-617f5157d695"
+                    }
+                  ],
+                  "id": "9d9d0981-93ac-4adc-b381-944c99cd4580",
+                  "createdAt": "2026-07-28T02:07:28.000Z",
+                  "updatedAt": "2026-07-28T02:07:28.000Z",
+                  "uid": "35240-9d9d0981-93ac-4adc-b381-944c99cd4580"
+                },
+                {
+                  "name": "Send a phone verification code to a customer",
+                  "id": "5a67dece-8de7-4f1f-9f92-ca79e3bc79fc",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId",
+                        "verify-phone"
+                      ],
+                      "variable": [
+                        {
+                          "id": "cf6ea713-1cda-4a5b-94d3-207ee9e27fe0",
+                          "key": "customerId",
+                          "value": "<string>",
+                          "description": "(Required) The Grid customer ID to send a phone verification code to."
+                        }
+                      ]
+                    },
+                    "description": "Send (or resend) a one-time code via SMS to the customer's phone number to\nbegin phone verification.\n\nThis endpoint is only meaningful for customers whose payment provider\nrequires contact verification (e.g. EU customers); the customer's\n`contactVerification.phone` status reflects progress. For customers whose\nprovider has no such requirement, this returns `409`.\n\nCall `POST /customers/{customerId}/verify-phone/confirm` with the received\ncode to complete verification. Re-POST this endpoint to resend the code.\n\nIn sandbox, no SMS is sent and the code is always `123456`.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "5c2dcb99-a016-4a4f-ae87-8f2c819f5c60",
+                      "name": "Verification code sent.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "No Content",
+                      "code": 204,
+                      "_postman_previewlanguage": "text",
+                      "header": [],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": null,
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-5c2dcb99-a016-4a4f-ae87-8f2c819f5c60"
+                    },
+                    {
+                      "id": "30748e67-90a0-4ff0-9a86-ddf07f861892",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"utc\": -68946233.66509175,\n    \"eu_efb\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-30748e67-90a0-4ff0-9a86-ddf07f861892"
+                    },
+                    {
+                      "id": "1944ef9b-29c0-40d4-b627-e8f371658ea2",
+                      "name": "Customer not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"elit_21\": \"dolor eiusmod veniam sit\",\n    \"ipsum9b0\": 91777169.54859641,\n    \"exercitatione47\": \"magna p\",\n    \"cupidatat_57b\": -6284198.116686344\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-1944ef9b-29c0-40d4-b627-e8f371658ea2"
+                    },
+                    {
+                      "id": "73dd703a-f4f9-4b4f-9f13-b3da55dd5d7a",
+                      "name": "The customer's payment provider does not require contact verification, or the phone is already verified.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"CONFLICT\",\n  \"details\": {\n    \"ad6\": \"pariatur occaecat\",\n    \"eu7\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-73dd703a-f4f9-4b4f-9f13-b3da55dd5d7a"
+                    },
+                    {
+                      "id": "946b0ba0-4d81-49be-aab1-d60c36422a95",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/verify-phone",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "verify-phone"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"eac6\": -64634007.85842879\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:28.000Z",
+                      "updatedAt": "2026-07-28T02:07:28.000Z",
+                      "uid": "35240-946b0ba0-4d81-49be-aab1-d60c36422a95"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:28.000Z",
+                  "updatedAt": "2026-07-28T02:07:28.000Z",
+                  "uid": "35240-5a67dece-8de7-4f1f-9f92-ca79e3bc79fc"
+                }
+              ],
+              "id": "42ca39c6-3e45-4399-a9b9-6b365b9d9812",
+              "createdAt": "2026-07-28T02:07:28.000Z",
+              "updatedAt": "2026-07-28T02:07:28.000Z",
+              "uid": "35240-42ca39c6-3e45-4399-a9b9-6b365b9d9812"
+            }
+          ],
+          "id": "8fca21bc-7b00-4338-abe8-17c01ae14c11",
+          "createdAt": "2026-07-28T02:07:28.000Z",
+          "updatedAt": "2026-07-28T02:07:28.000Z",
+          "uid": "35240-8fca21bc-7b00-4338-abe8-17c01ae14c11"
+        }
+      ],
+      "id": "5488d92a-9428-4729-ac08-a90033bc2204",
+      "createdAt": "2026-07-28T02:07:28.000Z",
+      "updatedAt": "2026-07-28T02:07:28.000Z",
+      "uid": "35240-5488d92a-9428-4729-ac08-a90033bc2204"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

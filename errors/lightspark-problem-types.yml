@@ -1,0 +1,167 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lightspark-grid-openapi-original.yml
+format: grid-error-envelope
+rfc9457: false
+note: Grid returns application/json with a {status, code, message, details} envelope rather than RFC 9457
+  problem+json.
+problems:
+- status: 400
+  title: Bad Request
+  schema: '#/components/schemas/Error400'
+  media_type: application/json
+  operation_count: 93
+  codes:
+  - INVALID_INPUT
+  - MISSING_MANDATORY_USER_INFO
+  - INVITATION_ALREADY_CLAIMED
+  - INVITATIONS_NOT_CONFIGURED
+  - INVALID_UMA_ADDRESS
+  - INVITATION_CANCELLED
+  - QUOTE_REQUEST_FAILED
+  - INVALID_PAYREQ_RESPONSE
+  - INVALID_RECEIVER
+  - PARSE_PAYREQ_RESPONSE_ERROR
+  - CERT_CHAIN_INVALID
+  - CERT_CHAIN_EXPIRED
+  - INVALID_PUBKEY_FORMAT
+  - MISSING_REQUIRED_UMA_PARAMETERS
+  - SENDER_NOT_ACCEPTED
+  - AMOUNT_OUT_OF_RANGE
+  - INVALID_CURRENCY
+  - INVALID_TIMESTAMP
+  - INVALID_NONCE
+  - INVALID_REQUEST_FORMAT
+  - INVALID_BANK_ACCOUNT
+  - SELF_PAYMENT
+  - LOOKUP_REQUEST_FAILED
+  - PARSE_LNURLP_RESPONSE_ERROR
+  - INVALID_AMOUNT
+  - WEBHOOK_ENDPOINT_NOT_SET
+  - WEBHOOK_DELIVERY_ERROR
+  - LOW_QUALITY
+  - DATA_MISMATCH
+  - EXPIRED
+  - SUSPECTED_FRAUD
+  - UNSUITABLE_DOCUMENT
+  - INCOMPLETE
+  - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+  - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+  - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+  - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+  - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+  - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+- status: 401
+  title: Unauthorized
+  schema: '#/components/schemas/Error401'
+  media_type: application/json
+  operation_count: 131
+  codes:
+  - UNAUTHORIZED
+  - INVALID_SIGNATURE
+  - WALLET_SIGNATURE_MISSING
+  - WALLET_SIGNATURE_MALFORMED
+  - WALLET_SIGNATURE_BODY_MISMATCH
+  - WALLET_SIGNATURE_INVALID
+  - REQUEST_ID_MISSING
+- status: 403
+  title: Forbidden
+  schema: '#/components/schemas/Error403'
+  media_type: application/json
+  operation_count: 12
+  codes:
+  - FORBIDDEN
+  - USER_NOT_READY
+  - COUNTERPARTY_NOT_ALLOWED
+  - VELOCITY_LIMIT_EXCEEDED
+- status: 404
+  title: Not Found
+  schema: '#/components/schemas/Error404'
+  media_type: application/json
+  operation_count: 92
+  codes:
+  - TRANSACTION_NOT_FOUND
+  - INVITATION_NOT_FOUND
+  - USER_NOT_FOUND
+  - QUOTE_NOT_FOUND
+  - LOOKUP_REQUEST_NOT_FOUND
+  - TOKEN_NOT_FOUND
+  - BULK_UPLOAD_JOB_NOT_FOUND
+  - REFERENCE_NOT_FOUND
+  - UMA_NOT_FOUND
+  - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+- status: 405
+  title: Method Not Allowed
+  schema: '#/components/schemas/Error405'
+  media_type: application/json
+  operation_count: 2
+  codes:
+  - METHOD_NOT_ALLOWED
+- status: 409
+  title: Conflict
+  schema: '#/components/schemas/Error409'
+  media_type: application/json
+  operation_count: 37
+  codes:
+  - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+  - UMA_ADDRESS_EXISTS
+  - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+  - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+  - PASSKEY_ALREADY_ENROLLED
+  - CONFLICT
+- status: 410
+  title: Gone
+  schema: '#/components/schemas/Error410'
+  media_type: application/json
+  operation_count: 1
+  codes:
+  - CUSTOMER_DELETED
+- status: 412
+  title: Precondition Failed
+  schema: '#/components/schemas/Error412'
+  media_type: application/json
+  operation_count: 4
+  codes:
+  - UNSUPPORTED_UMA_VERSION
+- status: 423
+  title: Locked
+  schema: '#/components/schemas/Error423'
+  media_type: application/json
+  operation_count: 2
+  codes:
+  - ACCOUNT_LOCKED
+- status: 424
+  title: Failed Dependency
+  schema: '#/components/schemas/Error424'
+  media_type: application/json
+  operation_count: 5
+  codes:
+  - PAYREQ_REQUEST_FAILED
+  - COUNTERPARTY_PUBKEY_FETCH_ERROR
+  - NO_COMPATIBLE_UMA_VERSION
+  - LNURLP_REQUEST_FAILED
+  - EMAIL_OTP_CREDENTIAL_SYNC_FAILED
+- status: 429
+  title: Too Many Requests
+  schema: '#/components/schemas/Error429'
+  media_type: application/json
+  operation_count: 5
+  codes:
+  - RATE_LIMITED
+- status: 500
+  title: Internal Server Error
+  schema: '#/components/schemas/Error500'
+  media_type: application/json
+  operation_count: 132
+  codes:
+  - GRID_SWITCH_ERROR
+  - INTERNAL_ERROR
+- status: 501
+  title: Not Implemented
+  schema: '#/components/schemas/Error501'
+  media_type: application/json
+  operation_count: 8
+  codes:
+  - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+  - NOT_IMPLEMENTED
+see_also: errors/lightspark-error-codes.yml

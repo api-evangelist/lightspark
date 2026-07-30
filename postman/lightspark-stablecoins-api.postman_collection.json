@@ -1,0 +1,984 @@
+{
+  "info": {
+    "_postman_id": "228a8c1f-f773-4323-8fb0-221427d92221",
+    "name": "Grid Agent Management Stablecoins API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:55.000Z",
+    "updatedAt": "2026-07-28T02:07:56.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-228a8c1f-f773-4323-8fb0-221427d92221"
+  },
+  "item": [
+    {
+      "name": "stablecoin-provider-accounts",
+      "item": [
+        {
+          "name": "{stablecoinProviderAccountId}",
+          "item": [
+            {
+              "name": "Get a stablecoin provider account link",
+              "id": "8b00221b-1f20-4739-8762-7cf1317213e7",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts",
+                    ":stablecoinProviderAccountId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "74090a78-4927-4e1d-b718-92e7c510f73c",
+                      "key": "stablecoinProviderAccountId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated stablecoin provider account link identifier"
+                    }
+                  ]
+                },
+                "description": "Retrieve a stablecoin provider account link by id for the authenticated platform."
+              },
+              "response": [
+                {
+                  "id": "943c58dd-312d-4ee1-9b71-c06fe313e3ed",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "stablecoin-provider-accounts",
+                        ":stablecoinProviderAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "stablecoinProviderAccountId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"provider\": \"BRALE\",\n  \"providerAccountId\": \"<string>\",\n  \"providerEnvironment\": \"PRODUCTION\",\n  \"status\": \"ACTIVE\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"lastVerifiedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:56.000Z",
+                  "updatedAt": "2026-07-28T02:07:56.000Z",
+                  "uid": "35240-943c58dd-312d-4ee1-9b71-c06fe313e3ed"
+                },
+                {
+                  "id": "dfefbfc6-dd89-4cf8-b735-0e574c4c8fdd",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "stablecoin-provider-accounts",
+                        ":stablecoinProviderAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "stablecoinProviderAccountId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_INVALID\",\n  \"details\": {\n    \"aliquip_2_\": \"fugiat ullamco\",\n    \"occaecat7\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:56.000Z",
+                  "updatedAt": "2026-07-28T02:07:56.000Z",
+                  "uid": "35240-dfefbfc6-dd89-4cf8-b735-0e574c4c8fdd"
+                },
+                {
+                  "id": "cec0873f-470d-4d6e-abc8-9c750b5d170f",
+                  "name": "Stablecoin provider account link not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "stablecoin-provider-accounts",
+                        ":stablecoinProviderAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "stablecoinProviderAccountId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"QUOTE_NOT_FOUND\",\n  \"details\": {\n    \"nulla_6\": 20909863.13256304\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:56.000Z",
+                  "updatedAt": "2026-07-28T02:07:56.000Z",
+                  "uid": "35240-cec0873f-470d-4d6e-abc8-9c750b5d170f"
+                },
+                {
+                  "id": "8aa1fd73-6473-48a3-80e4-0a0d69818caa",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "stablecoin-provider-accounts",
+                        ":stablecoinProviderAccountId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "stablecoinProviderAccountId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliqua_5\": -57519176.80444199\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:56.000Z",
+                  "updatedAt": "2026-07-28T02:07:56.000Z",
+                  "uid": "35240-8aa1fd73-6473-48a3-80e4-0a0d69818caa"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-8b00221b-1f20-4739-8762-7cf1317213e7"
+            }
+          ],
+          "id": "618f41af-2b37-4924-877d-5e62bd570169",
+          "createdAt": "2026-07-28T02:07:56.000Z",
+          "updatedAt": "2026-07-28T02:07:56.000Z",
+          "uid": "35240-618f41af-2b37-4924-877d-5e62bd570169"
+        },
+        {
+          "name": "Link a stablecoin provider account",
+          "id": "17ec2e4f-166e-4ccb-9fcb-e865cebad47d",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stablecoin-provider-accounts"
+              ]
+            },
+            "description": "Link provider API credentials for the authenticated platform. Provider credentials are account-scoped and can be reused for multiple stablecoins. Currently, the only supported provider is `BRALE`; the provider environment is derived from the authenticated Grid platform mode.\n"
+          },
+          "response": [
+            {
+              "id": "d531be34-fba0-4c1f-9c57-76df791a5067",
+              "name": "Stablecoin provider account linked",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"provider\": \"BRALE\",\n  \"providerAccountId\": \"<string>\",\n  \"providerEnvironment\": \"PRODUCTION\",\n  \"status\": \"ACTIVE\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"lastVerifiedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-d531be34-fba0-4c1f-9c57-76df791a5067"
+            },
+            {
+              "id": "9441de01-9b37-4c64-95aa-bca8718cfb38",
+              "name": "Bad request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_REQUEST_FORMAT\",\n  \"details\": {\n    \"ad4_\": 8731999,\n    \"elit0_\": false,\n    \"cupidatat_566\": 32646209.508481532\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-9441de01-9b37-4c64-95aa-bca8718cfb38"
+            },
+            {
+              "id": "c432d262-3362-4a8c-9dc2-255303476816",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_INVALID\",\n  \"details\": {\n    \"aliquip_2_\": \"fugiat ullamco\",\n    \"occaecat7\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-c432d262-3362-4a8c-9dc2-255303476816"
+            },
+            {
+              "id": "5038d6b6-9f88-4d41-9e27-d7adbd4389f4",
+              "name": "Conflict",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"CONFLICT\",\n  \"details\": {\n    \"aute_1ce\": true,\n    \"laboris9\": -16108569.993242085\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-5038d6b6-9f88-4d41-9e27-d7adbd4389f4"
+            },
+            {
+              "id": "262f4969-59f9-467a-9811-125d8cc03ee3",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "description": "(Required) Idempotency key for retrying this request safely. Replays return the prior result; conflicting payloads are rejected.",
+                    "key": "Idempotency-Key",
+                    "value": "<string>"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"provider\": \"BRALE\",\n  \"apiClientId\": \"<string>\",\n  \"apiClientSecret\": \"<string>\",\n  \"providerAccountId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliqua_5\": -57519176.80444199\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-262f4969-59f9-467a-9811-125d8cc03ee3"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:56.000Z",
+          "updatedAt": "2026-07-28T02:07:56.000Z",
+          "uid": "35240-17ec2e4f-166e-4ccb-9fcb-e865cebad47d"
+        },
+        {
+          "name": "List stablecoin provider account links",
+          "id": "f1018492-7190-4298-8215-7cbe67e26bc5",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/stablecoin-provider-accounts?provider=BRALE&status=REVOKED&limit=20&cursor=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "stablecoin-provider-accounts"
+              ],
+              "query": [
+                {
+                  "key": "provider",
+                  "value": "BRALE"
+                },
+                {
+                  "key": "status",
+                  "value": "REVOKED"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve stablecoin provider account links for the authenticated platform."
+          },
+          "response": [
+            {
+              "id": "7faa2103-bba3-4af9-b649-123f0915872c",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts?provider=BRALE&status=REVOKED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ],
+                  "query": [
+                    {
+                      "key": "provider",
+                      "value": "BRALE"
+                    },
+                    {
+                      "key": "status",
+                      "value": "REVOKED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"provider\": \"BRALE\",\n      \"providerAccountId\": \"<string>\",\n      \"providerEnvironment\": \"PRODUCTION\",\n      \"status\": \"ACTIVE\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"lastVerifiedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"provider\": \"BRALE\",\n      \"providerAccountId\": \"<string>\",\n      \"providerEnvironment\": \"PRODUCTION\",\n      \"status\": \"INVALID\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"lastVerifiedAt\": \"<dateTime>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-7faa2103-bba3-4af9-b649-123f0915872c"
+            },
+            {
+              "id": "f9dc88d2-2676-4cf5-b1f9-c00cfd827890",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts?provider=BRALE&status=REVOKED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ],
+                  "query": [
+                    {
+                      "key": "provider",
+                      "value": "BRALE"
+                    },
+                    {
+                      "key": "status",
+                      "value": "REVOKED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVALID_REQUEST_FORMAT\",\n  \"details\": {\n    \"ad4_\": 8731999,\n    \"elit0_\": false,\n    \"cupidatat_566\": 32646209.508481532\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-f9dc88d2-2676-4cf5-b1f9-c00cfd827890"
+            },
+            {
+              "id": "b62d589b-7fba-4207-9e6a-d9328d624ee6",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts?provider=BRALE&status=REVOKED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ],
+                  "query": [
+                    {
+                      "key": "provider",
+                      "value": "BRALE"
+                    },
+                    {
+                      "key": "status",
+                      "value": "REVOKED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_INVALID\",\n  \"details\": {\n    \"aliquip_2_\": \"fugiat ullamco\",\n    \"occaecat7\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-b62d589b-7fba-4207-9e6a-d9328d624ee6"
+            },
+            {
+              "id": "601e1ac9-f8a5-4ef9-9f49-1bbcf5c48291",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/stablecoin-provider-accounts?provider=BRALE&status=REVOKED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "stablecoin-provider-accounts"
+                  ],
+                  "query": [
+                    {
+                      "key": "provider",
+                      "value": "BRALE"
+                    },
+                    {
+                      "key": "status",
+                      "value": "REVOKED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"aliqua_5\": -57519176.80444199\n  }\n}",
+              "createdAt": "2026-07-28T02:07:56.000Z",
+              "updatedAt": "2026-07-28T02:07:56.000Z",
+              "uid": "35240-601e1ac9-f8a5-4ef9-9f49-1bbcf5c48291"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:56.000Z",
+          "updatedAt": "2026-07-28T02:07:56.000Z",
+          "uid": "35240-f1018492-7190-4298-8215-7cbe67e26bc5"
+        }
+      ],
+      "id": "82299cbd-275a-4413-b59c-730a57d64bf3",
+      "createdAt": "2026-07-28T02:07:56.000Z",
+      "updatedAt": "2026-07-28T02:07:56.000Z",
+      "uid": "35240-82299cbd-275a-4413-b59c-730a57d64bf3"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

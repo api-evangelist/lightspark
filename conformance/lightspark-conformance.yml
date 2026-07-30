@@ -1,0 +1,55 @@
+generated: '2026-07-19'
+method: searched
+source: openapi/lightspark-grid-openapi-original.yml
+standards:
+- id: openapi-3.1
+  conforms: true
+  evidence: 'openapi: 3.1.0 with 104 paths, 564 component schemas and 12 declared webhooks'
+- id: http-basic-auth
+  conforms: true
+  evidence: components.securitySchemes.BasicAuth type http scheme basic
+- id: http-bearer-auth
+  conforms: true
+  evidence: components.securitySchemes.AgentAuth type http scheme bearer (agent device-code access tokens)
+- id: oauth2
+  conforms: false
+  evidence: no oauth2 securityScheme; OIDC id_tokens are accepted as an embedded-wallet credential type
+    but Grid is not an OAuth2 authorization server
+- id: oidc
+  conforms: partial
+  evidence: OAUTH credential type accepts OIDC ID tokens from supported issuers (Google, Apple) for embedded
+    wallet auth; validates iss/aud/sub/iat/exp and nonce=sha256(clientPublicKey)
+- id: webauthn-passkeys
+  conforms: true
+  evidence: PASSKEY credential type runs a full WebAuthn registration/assertion ceremony; validates challenge,
+    origin/RP binding, user-presence bit, assertion signature and signature counter
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: errors are application/json with a proprietary {status, code, message, details} envelope,
+    not application/problem+json
+- id: idempotency-key
+  conforms: true
+  evidence: Idempotency-Key request header on 10 mutating operations
+- id: cursor-pagination
+  conforms: true
+  evidence: cursor/limit query params with data/hasMore/nextCursor/totalCount envelope on 18 list operations
+- id: rfc8594-sunset
+  conforms: false
+  evidence: no Sunset or Deprecation headers declared; deprecation is communicated by email
+- id: uma
+  conforms: true
+  evidence: Universal Money Address lookup, payreq and LNURLP operations; UMA version negotiation errors
+    (UNSUPPORTED_UMA_VERSION, NO_COMPATIBLE_UMA_VERSION)
+- id: hpke
+  conforms: true
+  evidence: HPKE-encrypted OTP bundles (encryptedOtpBundle / otpEncryptionTargetBundle) in the embedded
+    wallet auth flow
+- id: kyc-kyb
+  conforms: true
+  evidence: KYC/KYB Verifications tag with verification, beneficial-owner and document operations
+- id: soc2-type-1
+  conforms: true
+  evidence: https://www.lightspark.com/news/lightspark/soc2-announcement
+- id: mica
+  conforms: true
+  evidence: https://www.lightspark.com/news/lightspark/lightspark-mica-license-estonia

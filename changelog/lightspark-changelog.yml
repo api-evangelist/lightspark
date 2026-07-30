@@ -1,0 +1,19 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/changelog
+url: https://docs.lightspark.com/changelog
+scheme: dated-major-version
+current_version: '2025-10-13'
+format: dated update entries, not semver releases
+entries:
+- date: 2026-07
+  label: July 2026
+  breaking: false
+  highlights:
+  - Card issuance in sandbox - the full card lifecycle (cardholder setup, issuing, funding sources, freezing
+    and closing) can now be tested end to end in sandbox.
+  - Expanded country coverage, including China, broadening the corridors available for global payments.
+notes:
+- The published changelog page carries a recent window only; the live page is the source of truth.
+- For upcoming changes and roadmap Lightspark directs developers to a live demo or support@lightspark.com
+  - no public roadmap page is published.

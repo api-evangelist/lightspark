@@ -1,0 +1,1269 @@
+{
+  "info": {
+    "_postman_id": "08e77c94-430b-465f-a350-3787db88fb7f",
+    "name": "Grid Agent Management API Tokens API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:02.000Z",
+    "updatedAt": "2026-07-28T02:07:02.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-08e77c94-430b-465f-a350-3787db88fb7f"
+  },
+  "item": [
+    {
+      "name": "tokens",
+      "item": [
+        {
+          "name": "{tokenId}",
+          "item": [
+            {
+              "name": "Get API token by ID",
+              "id": "9e4df466-3cb9-499c-a02d-fc5c7f002714",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens/:tokenId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens",
+                    ":tokenId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "922577b0-61da-478a-bb0e-5d5081715023",
+                      "key": "tokenId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated unique token identifier"
+                    }
+                  ]
+                },
+                "description": "Retrieve an API token by their system-generated ID"
+              },
+              "response": [
+                {
+                  "id": "b0320276-ab45-41d3-a024-f2a631d1749c",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"MANAGE\",\n    \"MANAGE\"\n  ],\n  \"clientId\": \"<string>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"clientSecret\": \"<string>\"\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-b0320276-ab45-41d3-a024-f2a631d1749c"
+                },
+                {
+                  "id": "eaf47250-163b-491b-bcfa-8c5429545ca8",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"qui_f96\": -68670113\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-eaf47250-163b-491b-bcfa-8c5429545ca8"
+                },
+                {
+                  "id": "b52cedab-4556-4f92-989a-9fb0754cb138",
+                  "name": "Token not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"incididunt_81\": \"dolore in adipisicing\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-b52cedab-4556-4f92-989a-9fb0754cb138"
+                },
+                {
+                  "id": "2d3c8ec7-48b2-4b2a-aee4-e0bc9e850cb2",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"esse4\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-2d3c8ec7-48b2-4b2a-aee4-e0bc9e850cb2"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-9e4df466-3cb9-499c-a02d-fc5c7f002714"
+            },
+            {
+              "name": "Delete API token by ID",
+              "id": "f75c323e-01c6-4dc9-8f29-530d5e07c8f7",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens/:tokenId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens",
+                    ":tokenId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "8d3b438b-cde1-4214-ab6e-179e78ff8375",
+                      "key": "tokenId",
+                      "value": "<string>",
+                      "description": "(Required) System-generated unique token identifier"
+                    }
+                  ]
+                },
+                "description": "Delete an API token by their system-generated ID"
+              },
+              "response": [
+                {
+                  "id": "9568672d-34e7-4575-b8ed-0257f245ae25",
+                  "name": "API token deleted successfully",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "No Content",
+                  "code": 204,
+                  "_postman_previewlanguage": "text",
+                  "header": [],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": null,
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-9568672d-34e7-4575-b8ed-0257f245ae25"
+                },
+                {
+                  "id": "6289af02-0176-465f-a572-acd32efcf015",
+                  "name": "Bad request",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_CANCELLED\",\n  \"details\": {\n    \"ut_3d7\": true,\n    \"proident_8\": 42754934.10415465\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-6289af02-0176-465f-a572-acd32efcf015"
+                },
+                {
+                  "id": "419517c1-7efb-477c-baea-d3ca08264274",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"qui_f96\": -68670113\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-419517c1-7efb-477c-baea-d3ca08264274"
+                },
+                {
+                  "id": "b16ebcf2-6fd2-4e52-8079-08cb2b64c67b",
+                  "name": "Token not found",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"incididunt_81\": \"dolore in adipisicing\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-b16ebcf2-6fd2-4e52-8079-08cb2b64c67b"
+                },
+                {
+                  "id": "ead82ea8-a61b-4a3e-ae04-06e65e1edeb3",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/tokens/:tokenId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "tokens",
+                        ":tokenId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "tokenId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"esse4\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:02.000Z",
+                  "updatedAt": "2026-07-28T02:07:02.000Z",
+                  "uid": "35240-ead82ea8-a61b-4a3e-ae04-06e65e1edeb3"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-f75c323e-01c6-4dc9-8f29-530d5e07c8f7"
+            }
+          ],
+          "id": "6fcad71b-5af7-4167-9b1f-e7b627731d27",
+          "createdAt": "2026-07-28T02:07:02.000Z",
+          "updatedAt": "2026-07-28T02:07:02.000Z",
+          "uid": "35240-6fcad71b-5af7-4167-9b1f-e7b627731d27"
+        },
+        {
+          "name": "Create a new API token",
+          "id": "103efadc-5ffb-48da-8f08-193ebe334be1",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"VIEW\",\n    \"TRANSACT\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tokens",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tokens"
+              ]
+            },
+            "description": "Create a new API token to access the Grid APIs."
+          },
+          "response": [
+            {
+              "id": "13d6a3c1-48ee-468a-8356-c1597816424a",
+              "name": "API token created successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"VIEW\",\n    \"TRANSACT\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"MANAGE\",\n    \"MANAGE\"\n  ],\n  \"clientId\": \"<string>\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\",\n  \"clientSecret\": \"<string>\"\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-13d6a3c1-48ee-468a-8356-c1597816424a"
+            },
+            {
+              "id": "6b8ec600-b10a-4211-a0f5-d5b33e278c8d",
+              "name": "Bad request",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"VIEW\",\n    \"TRANSACT\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_CANCELLED\",\n  \"details\": {\n    \"ut_3d7\": true,\n    \"proident_8\": 42754934.10415465\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-6b8ec600-b10a-4211-a0f5-d5b33e278c8d"
+            },
+            {
+              "id": "03684ede-97ec-4746-ad68-ee1d074bbf3d",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"VIEW\",\n    \"TRANSACT\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"qui_f96\": -68670113\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-03684ede-97ec-4746-ad68-ee1d074bbf3d"
+            },
+            {
+              "id": "64c617c3-46e0-40f7-bd10-5296850e5dd2",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"<string>\",\n  \"permissions\": [\n    \"VIEW\",\n    \"TRANSACT\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/tokens",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"esse4\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-64c617c3-46e0-40f7-bd10-5296850e5dd2"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:02.000Z",
+          "updatedAt": "2026-07-28T02:07:02.000Z",
+          "uid": "35240-103efadc-5ffb-48da-8f08-193ebe334be1"
+        },
+        {
+          "name": "List tokens",
+          "id": "b240c683-7d50-4a58-afc1-5bd03a541129",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/tokens?name=<string>&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "tokens"
+              ],
+              "query": [
+                {
+                  "description": "Filter by name of the token",
+                  "key": "name",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter customers created after this timestamp (inclusive)",
+                  "key": "createdAfter",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers created before this timestamp (inclusive)",
+                  "key": "createdBefore",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers updated after this timestamp (inclusive)",
+                  "key": "updatedAfter",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Filter customers updated before this timestamp (inclusive)",
+                  "key": "updatedBefore",
+                  "value": "<dateTime>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve a list of API tokens with optional filtering parameters. Returns all tokens that match\nthe specified filters. If no filters are provided, returns all tokens (paginated).\n"
+          },
+          "response": [
+            {
+              "id": "125ccfc1-83ce-49c8-8ea7-243e7c472543",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens?name=<string>&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by name of the token",
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"permissions\": [\n        \"MANAGE\",\n        \"MANAGE\"\n      ],\n      \"clientId\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"clientSecret\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"permissions\": [\n        \"TRANSACT\",\n        \"TRANSACT\"\n      ],\n      \"clientId\": \"<string>\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\",\n      \"clientSecret\": \"<string>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-125ccfc1-83ce-49c8-8ea7-243e7c472543"
+            },
+            {
+              "id": "aae16483-9654-405e-ab31-490e11372742",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens?name=<string>&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by name of the token",
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"INVITATION_CANCELLED\",\n  \"details\": {\n    \"ut_3d7\": true,\n    \"proident_8\": 42754934.10415465\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-aae16483-9654-405e-ab31-490e11372742"
+            },
+            {
+              "id": "36af9c67-bb58-48d1-8263-56d495b9fb94",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens?name=<string>&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by name of the token",
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"qui_f96\": -68670113\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-36af9c67-bb58-48d1-8263-56d495b9fb94"
+            },
+            {
+              "id": "afae6916-c214-4043-82c6-c7eee010d576",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/tokens?name=<string>&createdAfter=<dateTime>&createdBefore=<dateTime>&updatedAfter=<dateTime>&updatedBefore=<dateTime>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "tokens"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by name of the token",
+                      "key": "name",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter customers created after this timestamp (inclusive)",
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers created before this timestamp (inclusive)",
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated after this timestamp (inclusive)",
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Filter customers updated before this timestamp (inclusive)",
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"esse4\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:02.000Z",
+              "updatedAt": "2026-07-28T02:07:02.000Z",
+              "uid": "35240-afae6916-c214-4043-82c6-c7eee010d576"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:02.000Z",
+          "updatedAt": "2026-07-28T02:07:02.000Z",
+          "uid": "35240-b240c683-7d50-4a58-afc1-5bd03a541129"
+        }
+      ],
+      "id": "38ce3236-76e8-458f-aad3-15184891abcc",
+      "createdAt": "2026-07-28T02:07:02.000Z",
+      "updatedAt": "2026-07-28T02:07:02.000Z",
+      "uid": "35240-38ce3236-76e8-458f-aad3-15184891abcc"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

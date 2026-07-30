@@ -1,0 +1,344 @@
+{
+  "info": {
+    "_postman_id": "46605eb9-a70d-42e4-ae32-86618892904a",
+    "name": "Grid Agent Management Available UMA Providers API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:22.000Z",
+    "updatedAt": "2026-07-28T02:07:22.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-46605eb9-a70d-42e4-ae32-86618892904a"
+  },
+  "item": [
+    {
+      "name": "uma-providers",
+      "item": [
+        {
+          "name": "List available Counterparty Providers",
+          "id": "a520d5db-9fb1-47fa-bbce-0ed95b20c1d4",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/uma-providers?countryCode=<string>&currencyCode=<string>&hasBlockedProviders=<boolean>&limit=20&cursor=<string>&sortOrder=desc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "uma-providers"
+              ],
+              "query": [
+                {
+                  "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.",
+                  "key": "countryCode",
+                  "value": "<string>"
+                },
+                {
+                  "description": "The ISO 4217 currency code to filter providers by supported currency.",
+                  "key": "currencyCode",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.",
+                  "key": "hasBlockedProviders",
+                  "value": "<boolean>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Order to sort results in",
+                  "key": "sortOrder",
+                  "value": "desc"
+                }
+              ]
+            },
+            "description": "Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.\n"
+          },
+          "response": [
+            {
+              "id": "2c3fac92-9d1a-4335-91ce-0689a1954583",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/uma-providers?countryCode=<string>&currencyCode=<string>&hasBlockedProviders=<boolean>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "query": [
+                    {
+                      "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.",
+                      "key": "countryCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "The ISO 4217 currency code to filter providers by supported currency.",
+                      "key": "currencyCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.",
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"<string>\",\n      \"supportedRegions\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"domain\": \"<string>\",\n      \"logoUrl\": \"<uri>\",\n      \"supportedCurrencies\": [\n        {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        },\n        {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      ],\n      \"lei\": \"<string>\",\n      \"allowListStatus\": \"<boolean>\"\n    },\n    {\n      \"name\": \"<string>\",\n      \"supportedRegions\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"domain\": \"<string>\",\n      \"logoUrl\": \"<uri>\",\n      \"supportedCurrencies\": [\n        {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        },\n        {\n          \"code\": \"<string>\",\n          \"name\": \"<string>\",\n          \"symbol\": \"<string>\",\n          \"decimals\": \"<integer>\"\n        }\n      ],\n      \"lei\": \"<string>\",\n      \"allowListStatus\": \"<boolean>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:23.000Z",
+              "updatedAt": "2026-07-28T02:07:23.000Z",
+              "uid": "35240-2c3fac92-9d1a-4335-91ce-0689a1954583"
+            },
+            {
+              "id": "735af295-4f4f-44f6-955e-ca5e5c4ff48b",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/uma-providers?countryCode=<string>&currencyCode=<string>&hasBlockedProviders=<boolean>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "query": [
+                    {
+                      "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.",
+                      "key": "countryCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "The ISO 4217 currency code to filter providers by supported currency.",
+                      "key": "currencyCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.",
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"ea__\": \"laborum esse ullamco nulla\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:23.000Z",
+              "updatedAt": "2026-07-28T02:07:23.000Z",
+              "uid": "35240-735af295-4f4f-44f6-955e-ca5e5c4ff48b"
+            },
+            {
+              "id": "c44698d1-f7fe-4071-9731-0a3f8a1e4f5d",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/uma-providers?countryCode=<string>&currencyCode=<string>&hasBlockedProviders=<boolean>&limit=20&cursor=<string>&sortOrder=desc",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "query": [
+                    {
+                      "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard.",
+                      "key": "countryCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "The ISO 4217 currency code to filter providers by supported currency.",
+                      "key": "currencyCode",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers.",
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Order to sort results in",
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"et___c\": 18685650.939523146,\n    \"in_d_8\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:23.000Z",
+              "updatedAt": "2026-07-28T02:07:23.000Z",
+              "uid": "35240-c44698d1-f7fe-4071-9731-0a3f8a1e4f5d"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:23.000Z",
+          "updatedAt": "2026-07-28T02:07:23.000Z",
+          "uid": "35240-a520d5db-9fb1-47fa-bbce-0ed95b20c1d4"
+        }
+      ],
+      "id": "7f9f7998-d963-4380-8635-4a365e41c158",
+      "createdAt": "2026-07-28T02:07:23.000Z",
+      "updatedAt": "2026-07-28T02:07:23.000Z",
+      "uid": "35240-7f9f7998-d963-4380-8635-4a365e41c158"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

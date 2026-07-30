@@ -1,0 +1,25 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/api-reference/environments
+versioning:
+  scheme: dated-path
+  current: '2025-10-13'
+  docs: https://docs.lightspark.com/api-reference/environments
+  pinning: Callers pin a version through the dated path segment in the base URL; that version's behavior
+    does not change underneath them.
+deprecation:
+  policy_url: https://docs.lightspark.com/api-reference/environments
+  sunset_header: false
+  deprecation_header: false
+  notification_channel: account contact email
+  migration_window: normally at least three months
+  policy: When a version is deprecated, Lightspark notifies the account contact email with migration steps
+    and a deadline. Security- or compliance-critical updates may require faster action. After the window,
+    deprecated versions are no longer supported.
+status_page: https://status.lightspark.com/
+changelog: https://docs.lightspark.com/changelog
+sla: null
+deprecated_operations: []
+notes:
+- No Sunset or Deprecation response headers (RFC 8594) are declared in the published OpenAPI.
+- No deprecated operations are marked in the current dated version (2025-10-13).

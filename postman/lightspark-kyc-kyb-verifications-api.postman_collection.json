@@ -1,0 +1,2757 @@
+{
+  "info": {
+    "_postman_id": "df058d42-0a0b-48cd-af00-083e47b18152",
+    "name": "Grid Agent Management KYC/KYB Verifications API",
+    "description": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "createdAt": "2026-07-28T02:07:50.000Z",
+    "updatedAt": "2026-07-28T02:07:50.000Z",
+    "lastUpdatedBy": "35240",
+    "uid": "35240-df058d42-0a0b-48cd-af00-083e47b18152"
+  },
+  "item": [
+    {
+      "name": "customers",
+      "item": [
+        {
+          "name": "{customerId}",
+          "item": [
+            {
+              "name": "kyc-link",
+              "item": [
+                {
+                  "name": "Generate a hosted KYC link for an existing customer",
+                  "id": "c4f24c90-d037-4572-aff1-7980149201dd",
+                  "protocolProfileBehavior": {
+                    "disableBodyPruning": true
+                  },
+                  "request": {
+                    "auth": {
+                      "type": "basic",
+                      "basic": [
+                        {
+                          "key": "username",
+                          "value": "{{basicAuthUsername}}",
+                          "type": "string"
+                        },
+                        {
+                          "key": "password",
+                          "value": "{{basicAuthPassword}}",
+                          "type": "string"
+                        }
+                      ]
+                    },
+                    "method": "POST",
+                    "header": [
+                      {
+                        "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                        "key": "Idempotency-Key",
+                        "value": "<string>"
+                      },
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "customers",
+                        ":customerId",
+                        "kyc-link"
+                      ],
+                      "variable": [
+                        {
+                          "id": "e49fe322-7488-4f21-89c7-ecc23b8d4a38",
+                          "key": "customerId",
+                          "value": "<string>",
+                          "description": "(Required) The Grid customer ID to generate a KYC link for."
+                        }
+                      ]
+                    },
+                    "description": "Generate a single-use hosted URL the customer can complete to verify their identity, and (where supported) a provider-specific `token` for embedding the verification flow directly via the provider's SDK.\n\nThe customer must already exist \u2014 create them with `POST /customers` first. Calling this endpoint does not change the customer's `kycStatus`; the customer remains `PENDING` until they complete (or fail) the hosted flow.\n\nEach call returns a fresh link. Previously-issued links are not invalidated, but they remain single-use and will expire on their own. For request-level retry safety, include an `Idempotency-Key` header.\n"
+                  },
+                  "response": [
+                    {
+                      "id": "12e36f2f-15ed-4011-9fe1-89ba59a75746",
+                      "name": "KYC link generated",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Created",
+                      "code": 201,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"kycUrl\": \"<string>\",\n  \"expiresAt\": \"<dateTime>\",\n  \"provider\": \"SUMSUB\",\n  \"token\": \"<string>\"\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-12e36f2f-15ed-4011-9fe1-89ba59a75746"
+                    },
+                    {
+                      "id": "5c22b3f2-a8b3-4f92-9dc4-ea52a73483b1",
+                      "name": "Bad request",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Bad Request",
+                      "code": 400,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-5c22b3f2-a8b3-4f92-9dc4-ea52a73483b1"
+                    },
+                    {
+                      "id": "50bdd9b7-0175-43a4-a3c9-99c22f168a20",
+                      "name": "Unauthorized",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Unauthorized",
+                      "code": 401,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-50bdd9b7-0175-43a4-a3c9-99c22f168a20"
+                    },
+                    {
+                      "id": "412d189d-cfbd-4703-8838-83782942ca96",
+                      "name": "Customer not found",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Not Found",
+                      "code": 404,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-412d189d-cfbd-4703-8838-83782942ca96"
+                    },
+                    {
+                      "id": "8e0a2015-d859-4b94-863e-007525e8acae",
+                      "name": "The customer's payment provider requires contact verification and the customer's email and phone are not both `VERIFIED` yet. Complete contact verification (see `verify-email` and `verify-phone`) before generating a KYC link.",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Conflict",
+                      "code": 409,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"excba\": \"tempor est aliqua\"\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-8e0a2015-d859-4b94-863e-007525e8acae"
+                    },
+                    {
+                      "id": "01cbf8a1-0d4e-474d-a604-c32a051d5039",
+                      "name": "Internal service error",
+                      "originalRequest": {
+                        "method": "POST",
+                        "header": [
+                          {
+                            "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                            "key": "Idempotency-Key",
+                            "value": "<string>"
+                          },
+                          {
+                            "key": "Content-Type",
+                            "value": "application/json"
+                          },
+                          {
+                            "key": "Accept",
+                            "value": "application/json"
+                          },
+                          {
+                            "description": "Added as a part of security scheme: basic",
+                            "key": "Authorization",
+                            "value": "Basic <credentials>"
+                          }
+                        ],
+                        "body": {
+                          "mode": "raw",
+                          "raw": "{\n  \"redirectUri\": \"<uri>\"\n}",
+                          "options": {
+                            "raw": {
+                              "headerFamily": "json",
+                              "language": "json"
+                            }
+                          }
+                        },
+                        "url": {
+                          "raw": "{{baseUrl}}/customers/:customerId/kyc-link",
+                          "host": [
+                            "{{baseUrl}}"
+                          ],
+                          "path": [
+                            "customers",
+                            ":customerId",
+                            "kyc-link"
+                          ],
+                          "variable": [
+                            {
+                              "key": "customerId"
+                            }
+                          ]
+                        }
+                      },
+                      "status": "Internal Server Error",
+                      "code": 500,
+                      "_postman_previewlanguage": "json",
+                      "header": [
+                        {
+                          "key": "Content-Type",
+                          "value": "application/json"
+                        }
+                      ],
+                      "cookie": [],
+                      "responseTime": null,
+                      "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+                      "createdAt": "2026-07-28T02:07:51.000Z",
+                      "updatedAt": "2026-07-28T02:07:51.000Z",
+                      "uid": "35240-01cbf8a1-0d4e-474d-a604-c32a051d5039"
+                    }
+                  ],
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-c4f24c90-d037-4572-aff1-7980149201dd"
+                }
+              ],
+              "id": "dad1752c-fdf3-40ae-88ac-bf348c3b2fc6",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-dad1752c-fdf3-40ae-88ac-bf348c3b2fc6"
+            }
+          ],
+          "id": "c02189cc-103b-460d-b908-3cffcdd909df",
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-c02189cc-103b-460d-b908-3cffcdd909df"
+        }
+      ],
+      "id": "46092e29-1f3b-4837-9033-86ab38ba46fe",
+      "createdAt": "2026-07-28T02:07:51.000Z",
+      "updatedAt": "2026-07-28T02:07:51.000Z",
+      "uid": "35240-46092e29-1f3b-4837-9033-86ab38ba46fe"
+    },
+    {
+      "name": "beneficial-owners",
+      "item": [
+        {
+          "name": "{beneficialOwnerId}",
+          "item": [
+            {
+              "name": "Get a beneficial owner",
+              "id": "398fa6cd-aeeb-4870-958a-10a63b73ca64",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners",
+                    ":beneficialOwnerId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "a3cde0e0-a514-4b7f-b147-764d6810aaf8",
+                      "key": "beneficialOwnerId",
+                      "value": "<string>",
+                      "description": "(Required) Beneficial owner ID"
+                    }
+                  ]
+                },
+                "description": "Retrieve details of a specific beneficial owner by ID."
+              },
+              "response": [
+                {
+                  "id": "68d5cc88-dd88-48d0-8927-a0ac15ada659",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"CONTROL_PERSON\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+993985126349\",\n    \"countryOfIssuance\": \"<string>\"\n  },\n  \"kycStatus\": \"PENDING\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-68d5cc88-dd88-48d0-8927-a0ac15ada659"
+                },
+                {
+                  "id": "799c7094-6938-4a68-9811-e1f1d6e47d16",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-799c7094-6938-4a68-9811-e1f1d6e47d16"
+                },
+                {
+                  "id": "fa6bbc35-aa71-48f5-a6a8-4c7bc6e33b55",
+                  "name": "Beneficial owner not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-fa6bbc35-aa71-48f5-a6a8-4c7bc6e33b55"
+                },
+                {
+                  "id": "700f4f30-b6fe-4c00-9cc2-702ad295ead7",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-700f4f30-b6fe-4c00-9cc2-702ad295ead7"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-398fa6cd-aeeb-4870-958a-10a63b73ca64"
+            },
+            {
+              "name": "Update a beneficial owner",
+              "id": "b7badc68-4a81-4787-aa57-194d74fdd574",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners",
+                    ":beneficialOwnerId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "56c26e4e-2573-4654-92de-738e03fd7346",
+                      "key": "beneficialOwnerId",
+                      "value": "<string>",
+                      "description": "(Required) Beneficial owner ID"
+                    }
+                  ]
+                },
+                "description": "Update details of a specific beneficial owner. Only provided fields are updated."
+              },
+              "response": [
+                {
+                  "id": "193a4a07-7dcd-4d8b-847a-1ddde3a1db1b",
+                  "name": "Beneficial owner updated successfully",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"CONTROL_PERSON\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+993985126349\",\n    \"countryOfIssuance\": \"<string>\"\n  },\n  \"kycStatus\": \"PENDING\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-193a4a07-7dcd-4d8b-847a-1ddde3a1db1b"
+                },
+                {
+                  "id": "9cbfbb3a-f3f8-42a2-b073-fe16eceeaf5b",
+                  "name": "Bad request - Invalid parameters",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Bad Request",
+                  "code": 400,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-9cbfbb3a-f3f8-42a2-b073-fe16eceeaf5b"
+                },
+                {
+                  "id": "d47def06-f5ac-4feb-9bd5-73660071c55c",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-d47def06-f5ac-4feb-9bd5-73660071c55c"
+                },
+                {
+                  "id": "e8dfa33c-5626-4ac3-81ff-ed630d057b0f",
+                  "name": "Beneficial owner not found",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-e8dfa33c-5626-4ac3-81ff-ed630d057b0f"
+                },
+                {
+                  "id": "c5d8a306-20ca-4305-a099-2887ce909573",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "PATCH",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      },
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n  \"roles\": [\n    \"DIRECTOR\",\n    \"GENERAL_PARTNER\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+34373977395846\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"ITIN\",\n    \"identifier\": \"<string>\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                      "options": {
+                        "raw": {
+                          "headerFamily": "json",
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{baseUrl}}/beneficial-owners/:beneficialOwnerId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "beneficial-owners",
+                        ":beneficialOwnerId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "beneficialOwnerId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-c5d8a306-20ca-4305-a099-2887ce909573"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-b7badc68-4a81-4787-aa57-194d74fdd574"
+            }
+          ],
+          "id": "c81e4569-6ac5-42cc-be6c-37609ecc4588",
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-c81e4569-6ac5-42cc-be6c-37609ecc4588"
+        },
+        {
+          "name": "Create a beneficial owner",
+          "id": "1fcbeee7-4bd5-4092-9bc6-a3bd9ac42d1a",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/beneficial-owners",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "beneficial-owners"
+              ]
+            },
+            "description": "Add a beneficial owner, director, or company officer to a business customer. The beneficial owner will go through KYC verification automatically.\n"
+          },
+          "response": [
+            {
+              "id": "96a366a2-f4b4-46b1-b0ed-d8a80dfb2294",
+              "name": "Beneficial owner created successfully",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ]
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"CONTROL_PERSON\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+993985126349\",\n    \"countryOfIssuance\": \"<string>\"\n  },\n  \"kycStatus\": \"PENDING\",\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-96a366a2-f4b4-46b1-b0ed-d8a80dfb2294"
+            },
+            {
+              "id": "7bf1c3a1-d667-45b6-8fd0-919d5c055abd",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-7bf1c3a1-d667-45b6-8fd0-919d5c055abd"
+            },
+            {
+              "id": "a35b5a68-b896-484e-808c-e589794e7c98",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-a35b5a68-b896-484e-808c-e589794e7c98"
+            },
+            {
+              "id": "095dd6d1-346f-4f76-bdf7-f7aea8e3acce",
+              "name": "Customer not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-095dd6d1-346f-4f76-bdf7-f7aea8e3acce"
+            },
+            {
+              "id": "12721eec-046c-46e8-ae4c-f1d1bc9e4cf9",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\",\n  \"roles\": [\n    \"COMPANY_OFFICER\",\n    \"TRUSTEE\"\n  ],\n  \"ownershipPercentage\": \"<integer>\",\n  \"personalInfo\": {\n    \"firstName\": \"<string>\",\n    \"lastName\": \"<string>\",\n    \"birthDate\": \"<date>\",\n    \"nationality\": \"<string>\",\n    \"address\": {\n      \"line1\": \"<string>\",\n      \"postalCode\": \"<string>\",\n      \"country\": \"<string>\",\n      \"line2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\"\n    },\n    \"idType\": \"NON_US_TAX_ID\",\n    \"identifier\": \"<string>\",\n    \"middleName\": \"<string>\",\n    \"email\": \"<email>\",\n    \"phoneNumber\": \"+9674746668\",\n    \"countryOfIssuance\": \"<string>\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-12721eec-046c-46e8-ae4c-f1d1bc9e4cf9"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-1fcbeee7-4bd5-4092-9bc6-a3bd9ac42d1a"
+        },
+        {
+          "name": "List beneficial owners",
+          "id": "48d2a9ae-b1c0-4a16-8897-20767a11f37a",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/beneficial-owners?customerId=<string>&limit=20&cursor=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "beneficial-owners"
+              ],
+              "query": [
+                {
+                  "description": "(Required) The business customer ID",
+                  "key": "customerId",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve a list of beneficial owners for a business customer.\n"
+          },
+          "response": [
+            {
+              "id": "05518b26-ce8b-4770-a4c4-e4c7032fabd0",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners?customerId=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) The business customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"customerId\": \"<string>\",\n      \"roles\": [\n        \"COMPANY_OFFICER\",\n        \"DIRECTOR\"\n      ],\n      \"ownershipPercentage\": \"<integer>\",\n      \"personalInfo\": {\n        \"firstName\": \"<string>\",\n        \"lastName\": \"<string>\",\n        \"birthDate\": \"<date>\",\n        \"nationality\": \"<string>\",\n        \"address\": {\n          \"line1\": \"<string>\",\n          \"postalCode\": \"<string>\",\n          \"country\": \"<string>\",\n          \"line2\": \"<string>\",\n          \"city\": \"<string>\",\n          \"state\": \"<string>\"\n        },\n        \"idType\": \"SSN\",\n        \"identifier\": \"<string>\",\n        \"middleName\": \"<string>\",\n        \"email\": \"<email>\",\n        \"phoneNumber\": \"+424\",\n        \"countryOfIssuance\": \"<string>\"\n      },\n      \"kycStatus\": \"HOLD\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"customerId\": \"<string>\",\n      \"roles\": [\n        \"GENERAL_PARTNER\",\n        \"COMPANY_OFFICER\"\n      ],\n      \"ownershipPercentage\": \"<integer>\",\n      \"personalInfo\": {\n        \"firstName\": \"<string>\",\n        \"lastName\": \"<string>\",\n        \"birthDate\": \"<date>\",\n        \"nationality\": \"<string>\",\n        \"address\": {\n          \"line1\": \"<string>\",\n          \"postalCode\": \"<string>\",\n          \"country\": \"<string>\",\n          \"line2\": \"<string>\",\n          \"city\": \"<string>\",\n          \"state\": \"<string>\"\n        },\n        \"idType\": \"EIN\",\n        \"identifier\": \"<string>\",\n        \"middleName\": \"<string>\",\n        \"email\": \"<email>\",\n        \"phoneNumber\": \"+3402752\",\n        \"countryOfIssuance\": \"<string>\"\n      },\n      \"kycStatus\": \"REJECTED\",\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-05518b26-ce8b-4770-a4c4-e4c7032fabd0"
+            },
+            {
+              "id": "fb8dc235-4b4b-4804-9cee-34df4f45eae9",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners?customerId=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) The business customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-fb8dc235-4b4b-4804-9cee-34df4f45eae9"
+            },
+            {
+              "id": "352fd2a1-213e-479d-80c7-cfed8cbfc21c",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners?customerId=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) The business customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-352fd2a1-213e-479d-80c7-cfed8cbfc21c"
+            },
+            {
+              "id": "1b0319bf-bcf1-47bd-8072-efd6607fbbcb",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/beneficial-owners?customerId=<string>&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "beneficial-owners"
+                  ],
+                  "query": [
+                    {
+                      "description": "(Required) The business customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-1b0319bf-bcf1-47bd-8072-efd6607fbbcb"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-48d2a9ae-b1c0-4a16-8897-20767a11f37a"
+        }
+      ],
+      "id": "c13479b9-57a2-481c-8767-b68eab7729ff",
+      "createdAt": "2026-07-28T02:07:51.000Z",
+      "updatedAt": "2026-07-28T02:07:51.000Z",
+      "uid": "35240-c13479b9-57a2-481c-8767-b68eab7729ff"
+    },
+    {
+      "name": "verifications",
+      "item": [
+        {
+          "name": "{verificationId}",
+          "item": [
+            {
+              "name": "Get a verification",
+              "id": "44040f88-4217-469e-94f2-bebf73efa62f",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "{{basicAuthUsername}}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{basicAuthPassword}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/verifications/:verificationId",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications",
+                    ":verificationId"
+                  ],
+                  "variable": [
+                    {
+                      "id": "72eeff38-fe8d-4103-b24d-35cd332bf2cc",
+                      "key": "verificationId",
+                      "value": "<string>",
+                      "description": "(Required) Verification ID"
+                    }
+                  ]
+                },
+                "description": "Retrieve details of a specific verification by ID."
+              },
+              "response": [
+                {
+                  "id": "0a0a0c3b-d110-497a-99b4-c435735dedd8",
+                  "name": "Successful operation",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/verifications/:verificationId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "verifications",
+                        ":verificationId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "verificationId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"id\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"verificationStatus\": \"IN_PROGRESS\",\n  \"errors\": [\n    {\n      \"resourceId\": \"<string>\",\n      \"type\": \"DOCUMENT_VERIFICATION_FAILED\",\n      \"reason\": \"<string>\",\n      \"field\": \"<string>\",\n      \"acceptedDocumentTypes\": [\n        \"PASSPORT\",\n        \"POWER_OF_ATTORNEY\"\n      ]\n    },\n    {\n      \"resourceId\": \"<string>\",\n      \"type\": \"MISSING_BENEFICIAL_OWNER\",\n      \"reason\": \"<string>\",\n      \"field\": \"<string>\",\n      \"acceptedDocumentTypes\": [\n        \"TAX_RETURN\",\n        \"DRIVERS_LICENSE\"\n      ]\n    }\n  ],\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-0a0a0c3b-d110-497a-99b4-c435735dedd8"
+                },
+                {
+                  "id": "23741dac-4d74-411e-a409-4068ed8be0a8",
+                  "name": "Unauthorized",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/verifications/:verificationId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "verifications",
+                        ":verificationId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "verificationId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Unauthorized",
+                  "code": 401,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-23741dac-4d74-411e-a409-4068ed8be0a8"
+                },
+                {
+                  "id": "e280d816-536f-4393-8cda-9af2f929bb02",
+                  "name": "Verification not found",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/verifications/:verificationId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "verifications",
+                        ":verificationId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "verificationId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Not Found",
+                  "code": 404,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-e280d816-536f-4393-8cda-9af2f929bb02"
+                },
+                {
+                  "id": "cb0ae672-b269-4804-9563-8c14d65fbc5c",
+                  "name": "Internal service error",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Accept",
+                        "value": "application/json"
+                      },
+                      {
+                        "description": "Added as a part of security scheme: basic",
+                        "key": "Authorization",
+                        "value": "Basic <credentials>"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{baseUrl}}/verifications/:verificationId",
+                      "host": [
+                        "{{baseUrl}}"
+                      ],
+                      "path": [
+                        "verifications",
+                        ":verificationId"
+                      ],
+                      "variable": [
+                        {
+                          "key": "verificationId"
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Internal Server Error",
+                  "code": 500,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "cookie": [],
+                  "responseTime": null,
+                  "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+                  "createdAt": "2026-07-28T02:07:51.000Z",
+                  "updatedAt": "2026-07-28T02:07:51.000Z",
+                  "uid": "35240-cb0ae672-b269-4804-9563-8c14d65fbc5c"
+                }
+              ],
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-44040f88-4217-469e-94f2-bebf73efa62f"
+            }
+          ],
+          "id": "98774925-02af-4dcf-8d6a-035087f06c6e",
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-98774925-02af-4dcf-8d6a-035087f06c6e"
+        },
+        {
+          "name": "Submit customer for verification",
+          "id": "20ed76b4-7a90-4b5b-83b5-40622c0b3146",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "headerFamily": "json",
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/verifications",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifications"
+              ]
+            },
+            "description": "Trigger KYC (individual) or KYB (business) verification for a customer.\nThe response indicates whether all required information has been provided.\nIf data is missing, the `errors` array describes exactly what needs to be\nsupplied before verification can proceed.\n\nCall this endpoint again after resolving errors to re-submit.\n\n### What to collect for KYB\n\nBefore submitting a `BUSINESS` customer, collect the following via\n`POST /customers`, `POST /beneficial-owners`, and `POST /documents`:\n\n**Business identifying information**\n- Entity full legal name\n- Doing Business As (DBA) name, if applicable\n- Physical address \u2014 principal place of business\n- Countries of operation\n- Identification number \u2014 U.S. taxpayer identification number, or, for a\n  foreign business without one, alternative government-issued documentation\n  certifying the existence of the business\n\n**Ownership and control structure** \u2014 collected for **one control person**\n(an individual with significant responsibility to control, manage, or\ndirect the legal entity) **and all beneficial owners** (every individual\nwho owns 25% or more, directly or indirectly). For each, provide:\n- Full name\n- Date of birth\n- Address\n- Identification number:\n  - U.S. persons \u2014 SSN or ITIN\n  - Non-U.S. persons \u2014 one or more of: ITIN, passport (with country of\n    issuance), alien identification card, or another government-issued\n    photo ID evidencing nationality or residence\n\n**Required documents**\n- Company formation and existence documents (certificate of incorporation,\n  articles of association, etc.)\n- Proof of ownership and control structure (organization and ownership\n  chart, shareholder agreements, operating agreements, register of members,\n  or certification of controlling person and beneficial owners)\n- Proof of address dated within the last 3 months (utility bill, bank\n  statement, lease agreement, or official correspondence)\n- Tax ID or equivalent identifying-number documents\n- For non-U.S. beneficial owners \u2014 passport plus one additional\n  government-issued ID\n"
+          },
+          "response": [
+            {
+              "id": "e728538e-9407-4ada-830e-e4e20e2c0914",
+              "name": "Verification status returned. Check `verificationStatus` and `errors` to determine next steps.\n",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/verifications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"id\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"verificationStatus\": \"IN_PROGRESS\",\n  \"errors\": [\n    {\n      \"resourceId\": \"<string>\",\n      \"type\": \"DOCUMENT_VERIFICATION_FAILED\",\n      \"reason\": \"<string>\",\n      \"field\": \"<string>\",\n      \"acceptedDocumentTypes\": [\n        \"PASSPORT\",\n        \"POWER_OF_ATTORNEY\"\n      ]\n    },\n    {\n      \"resourceId\": \"<string>\",\n      \"type\": \"MISSING_BENEFICIAL_OWNER\",\n      \"reason\": \"<string>\",\n      \"field\": \"<string>\",\n      \"acceptedDocumentTypes\": [\n        \"TAX_RETURN\",\n        \"DRIVERS_LICENSE\"\n      ]\n    }\n  ],\n  \"createdAt\": \"<dateTime>\",\n  \"updatedAt\": \"<dateTime>\"\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-e728538e-9407-4ada-830e-e4e20e2c0914"
+            },
+            {
+              "id": "d46455f8-f09a-4162-8968-bdf70942359e",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/verifications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-d46455f8-f09a-4162-8968-bdf70942359e"
+            },
+            {
+              "id": "66e30e1f-7176-4d85-92d5-be1f427d7a96",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/verifications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-66e30e1f-7176-4d85-92d5-be1f427d7a96"
+            },
+            {
+              "id": "9f597c11-d57a-4d9e-a2c6-d786cef39af2",
+              "name": "Customer not found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/verifications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"sed_0e\": \"mollit ut fugiat\",\n    \"sinta7b\": -96532149.64610197,\n    \"velite06\": true\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-9f597c11-d57a-4d9e-a2c6-d786cef39af2"
+            },
+            {
+              "id": "74a3ed0f-ab8f-4caa-88d6-af0ded72fe05",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"<string>\"\n}",
+                  "options": {
+                    "raw": {
+                      "headerFamily": "json",
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/verifications",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-74a3ed0f-ab8f-4caa-88d6-af0ded72fe05"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-20ed76b4-7a90-4b5b-83b5-40622c0b3146"
+        },
+        {
+          "name": "List verifications",
+          "id": "2a65c58f-0607-433a-95fb-b14d64361707",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/verifications?customerId=<string>&verificationStatus=APPROVED&limit=20&cursor=<string>",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "verifications"
+              ],
+              "query": [
+                {
+                  "description": "Filter by customer ID",
+                  "key": "customerId",
+                  "value": "<string>"
+                },
+                {
+                  "description": "Filter by verification status",
+                  "key": "verificationStatus",
+                  "value": "APPROVED"
+                },
+                {
+                  "description": "Maximum number of results to return (default 20, max 100)",
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "description": "Cursor for pagination (returned from previous request)",
+                  "key": "cursor",
+                  "value": "<string>"
+                }
+              ]
+            },
+            "description": "Retrieve a list of verifications with optional filtering by customer ID and status.\n"
+          },
+          "response": [
+            {
+              "id": "9b1bcd7f-96e5-4718-8b21-275dc68efe22",
+              "name": "Successful operation",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/verifications?customerId=<string>&verificationStatus=APPROVED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by verification status",
+                      "key": "verificationStatus",
+                      "value": "APPROVED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"<string>\",\n      \"customerId\": \"<string>\",\n      \"verificationStatus\": \"REJECTED\",\n      \"errors\": [\n        {\n          \"resourceId\": \"<string>\",\n          \"type\": \"APPLICANT_SANCTIONED\",\n          \"reason\": \"<string>\",\n          \"field\": \"<string>\",\n          \"acceptedDocumentTypes\": [\n            \"OTHER\",\n            \"NATIONAL_ID\"\n          ]\n        },\n        {\n          \"resourceId\": \"<string>\",\n          \"type\": \"MISSING_GOOD_STANDING_DOCUMENT\",\n          \"reason\": \"<string>\",\n          \"field\": \"<string>\",\n          \"acceptedDocumentTypes\": [\n            \"GOOD_STANDING_CERTIFICATE\",\n            \"ELECTRICITY_BILL\"\n          ]\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"customerId\": \"<string>\",\n      \"verificationStatus\": \"PENDING_MANUAL_REVIEW\",\n      \"errors\": [\n        {\n          \"resourceId\": \"<string>\",\n          \"type\": \"MISSING_FIELD\",\n          \"reason\": \"<string>\",\n          \"field\": \"<string>\",\n          \"acceptedDocumentTypes\": [\n            \"PARTNERSHIP_CONTROL_AGREEMENT\",\n            \"POWER_OF_ATTORNEY\"\n          ]\n        },\n        {\n          \"resourceId\": \"<string>\",\n          \"type\": \"MISSING_LEGAL_PRESENCE_DOCUMENT\",\n          \"reason\": \"<string>\",\n          \"field\": \"<string>\",\n          \"acceptedDocumentTypes\": [\n            \"BANK_STATEMENT\",\n            \"ARTICLES_OF_INCORPORATION\"\n          ]\n        }\n      ],\n      \"createdAt\": \"<dateTime>\",\n      \"updatedAt\": \"<dateTime>\"\n    }\n  ],\n  \"hasMore\": \"<boolean>\",\n  \"nextCursor\": \"<string>\",\n  \"totalCount\": \"<integer>\"\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-9b1bcd7f-96e5-4718-8b21-275dc68efe22"
+            },
+            {
+              "id": "78d57758-12f1-4859-93ec-00f1f123e32c",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/verifications?customerId=<string>&verificationStatus=APPROVED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by verification status",
+                      "key": "verificationStatus",
+                      "value": "APPROVED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 400,\n  \"code\": \"PASSKEY_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"dolore_6\": -39823281,\n    \"sunt_9a\": \"Excepteur dolor aute amet\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-78d57758-12f1-4859-93ec-00f1f123e32c"
+            },
+            {
+              "id": "4723db85-9820-4357-a22a-285875c0681f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/verifications?customerId=<string>&verificationStatus=APPROVED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by verification status",
+                      "key": "verificationStatus",
+                      "value": "APPROVED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"enim_de3\": false,\n    \"veniam_5c\": \"esse eiusmod sed Duis consequat\"\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-4723db85-9820-4357-a22a-285875c0681f"
+            },
+            {
+              "id": "2a2b0ced-d229-47d3-b73f-7545128f5c4c",
+              "name": "Internal service error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "description": "Added as a part of security scheme: basic",
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/verifications?customerId=<string>&verificationStatus=APPROVED&limit=20&cursor=<string>",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "verifications"
+                  ],
+                  "query": [
+                    {
+                      "description": "Filter by customer ID",
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "description": "Filter by verification status",
+                      "key": "verificationStatus",
+                      "value": "APPROVED"
+                    },
+                    {
+                      "description": "Maximum number of results to return (default 20, max 100)",
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "description": "Cursor for pagination (returned from previous request)",
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "responseTime": null,
+              "body": "{\n  \"message\": \"<string>\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"id348\": false\n  }\n}",
+              "createdAt": "2026-07-28T02:07:51.000Z",
+              "updatedAt": "2026-07-28T02:07:51.000Z",
+              "uid": "35240-2a2b0ced-d229-47d3-b73f-7545128f5c4c"
+            }
+          ],
+          "createdAt": "2026-07-28T02:07:51.000Z",
+          "updatedAt": "2026-07-28T02:07:51.000Z",
+          "uid": "35240-2a65c58f-0607-433a-95fb-b14d64361707"
+        }
+      ],
+      "id": "3b8cf8d7-6246-4472-8144-a67ca91f761b",
+      "createdAt": "2026-07-28T02:07:51.000Z",
+      "updatedAt": "2026-07-28T02:07:51.000Z",
+      "uid": "35240-3b8cf8d7-6246-4472-8144-a67ca91f761b"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.lightspark.com/grid/2025-10-13"
+    }
+  ]
+}

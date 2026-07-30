@@ -1,0 +1,46 @@
+generated: '2026-07-19'
+method: searched
+status: published
+source: https://docs.lightspark.com/platform-overview/building-with-ai
+servers:
+- name: grid_mcp
+  transport: http
+  url: https://mcp.docs.lightspark.com/
+  auth:
+    style: headers
+    headers:
+    - x-grid-client-id
+    - x-grid-client-secret
+  official: true
+  tools:
+  - name: search_docs
+    description: Search Grid SDK documentation for methods, parameters, and usage examples across HTTP,
+      TypeScript, JavaScript, Python, Go, Java, Kotlin, Ruby and Terraform.
+  - name: execute
+    description: Interact with the Grid API - create customers, manage accounts, generate and execute
+      quotes, send transfers, look up receivers, and call any other Grid API operation.
+  notes: execute calls the live Grid API with the supplied credentials; Lightspark recommends a read-only
+    sandbox token for first-time setup.
+- name: lightsparkdev_grid_api
+  transport: stdio
+  package: '@lightsparkdev/grid-mcp'
+  url: https://www.npmjs.com/package/@lightsparkdev/grid-mcp
+  install: npx -y @lightsparkdev/grid-mcp@latest
+  official: true
+  generator: Stainless
+  remote_url: https://grid-mcp.stlmcp.com
+  env:
+  - GRID_CLIENT_ID
+  - GRID_CLIENT_SECRET
+  - GRID_AGENT_ACCESS_TOKEN
+  - GRID_WEBHOOK_PUBKEY
+  source_repo: https://github.com/lightsparkdev/grid-js-sdk/tree/main/packages/mcp-server
+clients_documented:
+- Claude Code
+- Claude desktop app
+- Cursor
+- VS Code
+- ChatGPT
+- Windsurf
+- Zed
+- Cline

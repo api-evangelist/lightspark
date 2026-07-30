@@ -1,0 +1,86 @@
+generated: '2026-07-19'
+method: derived
+source: openapi/lightspark-grid-openapi-original.yml
+spec_type: Webhooks
+note: Lightspark publishes no AsyncAPI document. The Grid API declares its event surface natively in OpenAPI
+  3.1 `webhooks`; this artifact is the catalog derived from those declarations plus the published webhook
+  security doc.
+docs: https://docs.lightspark.com/api-reference/webhooks
+transport: HTTP POST to a platform-configured endpoint
+security:
+  header: X-Grid-Signature
+  scheme: Secp256r1 (P-256) asymmetric signature over a SHA-256 hash of the raw request body
+  header_format: '{"v": "1", "s": "<base64 signature>"} (a bare base64 signature is also accepted)'
+  key_distribution: Grid webhook public key (PEM) from the dashboard under Developers > webhook settings
+  docs: https://docs.lightspark.com/api-reference/webhooks
+source_ips:
+- 52.42.15.30
+- 34.216.87.164
+- 44.226.21.146
+event_count: 12
+events:
+- name: agent-action
+  operationId: agentActionWebhook
+  summary: Agent action pending approval webhook
+  payload_schema: '#/components/schemas/AgentActionWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/agent-action
+- name: incoming-payment
+  operationId: incomingPaymentWebhook
+  summary: Incoming payment webhook and approval mechanism
+  payload_schema: '#/components/schemas/IncomingPaymentWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/incoming-payment
+- name: outgoing-payment
+  operationId: outgoingPaymentWebhook
+  summary: Outgoing payment status webhook
+  payload_schema: '#/components/schemas/OutgoingPaymentWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/outgoing-payment
+- name: test-webhook
+  operationId: testWebhook
+  summary: Test webhook for integration verification
+  payload_schema: '#/components/schemas/TestWebhookRequest'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/test-webhook
+- name: bulk-upload
+  operationId: bulkUploadWebhook
+  summary: Bulk upload status webhook
+  payload_schema: '#/components/schemas/BulkUploadWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/bulk-upload
+- name: invitation-claimed
+  operationId: invitationClaimedWebhook
+  summary: Invitation claimed webhook
+  payload_schema: '#/components/schemas/InvitationClaimedWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/invitation-claimed
+- name: customer-update
+  operationId: customerStatusWebhook
+  summary: Customer status change
+  payload_schema: '#/components/schemas/CustomerWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/customer-update
+- name: internal-account-status
+  operationId: internalAccountStatusWebhook
+  summary: Internal account status webhook
+  payload_schema: '#/components/schemas/InternalAccountStatusWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/internal-account-status
+- name: verification-update
+  operationId: verificationStatusWebhook
+  summary: Verification status change
+  payload_schema: '#/components/schemas/VerificationWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/verification-update
+- name: card-state-change
+  operationId: cardStateChangeWebhook
+  summary: Card state change
+  payload_schema: '#/components/schemas/CardStateChangeWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/card-state-change
+- name: card-funding-source-change
+  operationId: cardFundingSourceChangeWebhook
+  summary: Card funding source change
+  payload_schema: '#/components/schemas/CardFundingSourceChangeWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/card-funding-source-change
+- name: card-transaction
+  operationId: cardTransactionWebhook
+  summary: Card transaction
+  payload_schema: '#/components/schemas/CardTransactionWebhook'
+  source: openapi/lightspark-grid-openapi-original.yml#/webhooks/card-transaction
+event_type_prefixes:
+- INCOMING_PAYMENT.
+- OUTGOING_PAYMENT.
+testing: POST /sandbox/webhooks/test (operationId sendTestWebhook) delivers a test webhook to the configured
+  endpoint.

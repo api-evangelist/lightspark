@@ -1,0 +1,159 @@
+generated: '2026-07-19'
+method: searched
+source: https://docs.lightspark.com/api-reference/sandbox-testing
+docs: https://docs.lightspark.com/api-reference/sandbox-testing
+api: Grid API
+model:
+  environments:
+  - production
+  - sandbox
+  separation: Both environments share the same base URL (https://api.lightspark.com/grid/2025-10-13);
+    API tokens are scoped to one environment.
+  production_access: Production access is granted by a Lightspark contact, not self-serve.
+magic_values:
+- family: KYB business verification
+  field: businessInfo.registrationNumber
+  rule: last 3 digits
+  operation: POST /verifications
+  values:
+  - suffix: '001'
+    result: kybStatus PENDING
+  - suffix: '002'
+    result: kybStatus REJECTED
+  - suffix: any other
+    result: kybStatus APPROVED
+- family: KYC beneficial owner
+  field: personalInfo.lastName
+  rule: last 3 characters
+  values:
+  - suffix: '001'
+    result: kycStatus PENDING
+  - suffix: '002'
+    result: kycStatus REJECTED
+  - suffix: any other
+    result: kycStatus APPROVED
+- family: Beneficiary name verification
+  field: external account primary identifier
+  rule: 1xx suffix range reserved for name verification
+  values:
+  - suffix: '102'
+    result: NOT_MATCHED - account valid, name does not match
+  - suffix: '103'
+    result: PARTIAL_MATCH - account valid, name is a fuzzy match
+  - suffix: '104'
+    result: PENDING - verification still in progress
+  - suffix: '105'
+    result: 400 error - invalid account
+  - suffix: '106'
+    result: UNSUPPORTED - payment rail does not support name verification
+  - suffix: '107'
+    result: CHECKED_BY_RECEIVING_FI - deferred to receiving FI (e.g. ACH)
+  - suffix: any other
+    result: MATCHED - account valid, name matches exactly
+- family: Transfer in / transfer out
+  field: external account number
+  rule: last 3 digits
+  operations:
+  - POST /transfer-in
+  - POST /transfer-out
+  values:
+  - suffix: '002'
+    result: Insufficient funds - transfer fails immediately
+  - suffix: '003'
+    result: Account closed/invalid - transfer fails immediately
+  - suffix: '004'
+    result: Transfer rejected by bank
+  - suffix: '005'
+    result: Timeout/delayed failure - pending ~30s, then fails
+  - suffix: any other
+    result: Success
+- family: Quote execution (cross-currency)
+  field: destination external account number
+  rule: last 3 digits
+  operations:
+  - POST /quotes
+  - POST /quotes/{quoteId}/execute
+  values:
+  - suffix: '002'
+    result: Quote execution failed
+  - suffix: '003'
+    result: Long payment - completes after approximately 6 minutes
+  - suffix: '004'
+    result: Counterparty delivery failed
+  - suffix: '005'
+    result: Receiving bank returned payment (completes then transitions to failed)
+  - suffix: '006'
+    result: User cancellation
+  - suffix: '007'
+    result: Payout and refund failed
+  - suffix: any other
+    result: Successful payment
+- family: UMA test addresses
+  field: receiverUmaAddress
+  values:
+  - value: $success.usd@sandbox.uma.money
+    result: Payment succeeds (USD)
+  - value: $success.eur@sandbox.uma.money
+    result: Payment succeeds (EUR)
+  - value: $success.mxn@sandbox.uma.money
+    result: Payment succeeds (MXN)
+  - value: $pending.long.usd@sandbox.uma.money
+    result: Simulates a long-pending payment
+  - value: $fail.compliance.usd@sandbox.uma.money
+    result: Simulates a compliance check failure
+- family: Global Account auth OTP
+  field: encryptedOtpBundle otp_code
+  values:
+  - value: '000000'
+    result: Fixed sandbox OTP code for EMAIL_OTP and SMS_OTP; must still be HPKE-encrypted as in production.
+      Any other code returns 401 UNAUTHORIZED with reason "Invalid OTP code".
+- family: Legacy sandbox shortcuts (still accepted, discouraged)
+  values:
+  - value: sandbox-valid-passkey-signature
+    result: Skips WebAuthn verification
+  - value: 'Grid-Wallet-Signature: sandbox-valid-signature'
+    result: Skips wallet signature verification
+  - value: sandbox-valid-oidc-token
+    result: No longer accepted - use a freshly generated sandbox JWT
+fixture_endpoints:
+- operationId: sandboxFundInternalAccount
+  method: POST
+  path: /sandbox/internal-accounts/{accountId}/fund
+  description: Instantly add funds to any internal account
+- operationId: sandboxSend
+  method: POST
+  path: /sandbox/send
+  description: Simulate real-time funding of a JIT quote
+- operationId: sandboxReceive
+  method: POST
+  path: /sandbox/uma/receive
+  description: Simulate an incoming UMA payment
+- operationId: sendTestWebhook
+  method: POST
+  path: /sandbox/webhooks/test
+  description: Send a test webhook for integration verification
+- operationId: sandboxSimulateCardAuthorization
+  method: POST
+  path: /sandbox/cards/{id}/simulate/authorization
+  description: Simulate a card authorization
+- operationId: sandboxSimulateCardClearing
+  method: POST
+  path: /sandbox/cards/{id}/simulate/clearing
+  description: Simulate a card clearing
+- operationId: sandboxSimulateCardReturn
+  method: POST
+  path: /sandbox/cards/{id}/simulate/return
+  description: Simulate a card return
+cli_support:
+- grid sandbox fund
+- grid sandbox send
+- grid sandbox receive
+oidc_sandbox:
+  description: OAuth credentials accept a JWT-shaped sandbox OIDC token; the signature segment may be
+    a dummy value but iss/aud/sub/iat/exp claims and the nonce=sha256(clientPublicKey) binding are validated.
+  supported_issuers:
+  - https://accounts.google.com
+  - accounts.google.com
+  - https://appleid.apple.com
+notes:
+- All values above are published verbatim by Lightspark in the Sandbox Testing doc; none are invented.
