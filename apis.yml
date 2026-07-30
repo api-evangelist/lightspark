@@ -1,8 +1,27 @@
 aid: lightspark
 name: Lightspark
-description: Lightspark is a company surfaced as a portfolio company of a16z, matrix-partners, paradigm,
-  ribbit-capital and added to the API Evangelist network as a stub for enrichment. This profile is a lead
-  awaiting the enrichment pipeline.
+description: >-
+  Lightspark builds global money-movement infrastructure on open payment networks. Its developer
+  product is the Grid API — a dated-version REST API (OpenAPI 3.1, 104 paths, 564 schemas, 12
+  webhooks) for cross-border payouts, on/off-ramps, stablecoins, embedded wallets, card issuing,
+  KYC/KYB verification and payments to Universal Money Addresses ($user@domain). Grid is unusually
+  agent-native: it ships a first-class agent surface with device-code credentials, per-agent policy
+  and human-in-the-loop approvals, a hosted MCP server, a published Claude agent skill, an
+  open-source CLI, and generated TypeScript and Kotlin SDKs. Lightspark also operates the Spark and
+  UMA protocol stacks and is backed by a16z, Matrix Partners, Paradigm and Ribbit Capital.
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
+image: https://images.prismic.io/lightspark-web/ageHhqYofJOwHSa5_og-05-2026.png?auto=format,compress
 url: https://raw.githubusercontent.com/api-evangelist/lightspark/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -11,19 +30,585 @@ x-backed-by:
 - matrix-partners
 - paradigm
 - ribbit-capital
-x-tier: stub
-x-tier-reason: portfolio-lead
+x-tier: enriched
+x-tier-reason: full-openapi-and-agent-surface
 specificationVersion: '0.20'
 created: '2026-07-17'
-modified: '2026-07-17'
+modified: '2026-07-19'
 tags:
 - Company
-apis: []
+- Payments
+- Cross-Border Payments
+- Stablecoins
+- Bitcoin
+- Lightning Network
+- Embedded Finance
+- Agentic Payments
+- Cards
+- KYC
+- Financial Services
+- Foreign Exchange
+apis:
+- aid: lightspark:lightspark-agent-management-api
+  name: Lightspark Agent Management API
+  description: >-
+    Endpoints for creating and managing agents (experimental), called by the partner's backend using platform
+    credentials. Covers the full agent lifecycle: creation, policy configuration, pausing, deletion, the
+    device code installation flow, and approving or rejecting transactions initiated by agents.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Agent Management
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-agent-management-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-agent-operations-api
+  name: Lightspark Agent Operations API
+  description: >-
+    Endpoints called by the agent itself using its own credentials (obtained via device code redemption).
+    Scoped to the agent's associated customer — all requests automatically operate on behalf of that customer
+    and are subject to the agent's policy. When an action requires approval, the resulting transaction
+    enters a pending state and must be approved by the platform via `POST /transactions/{transactionId}/approve`.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Agent Operations
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-agent-operations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-api-tokens-api
+  name: Lightspark API Tokens API
+  description: Endpoints to programmatically manage API tokens
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - API Tokens
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-api-tokens-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-available-uma-providers-api
+  name: Lightspark Available UMA Providers API
+  description: >-
+    The Available UMA Providers API from Lightspark — 1 operation(s) for available uma providers.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Available UMA Providers
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-available-uma-providers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-cards-api
+  name: Lightspark Cards API
+  description: >-
+    Card management endpoints. Issue debit cards against an internal account, freeze / unfreeze, close,
+    manage card funding sources, and list card transactions.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Cards
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-cards-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-contact-verification-api
+  name: Lightspark Contact Verification API
+  description: >-
+    Endpoints for verifying a customer's email and phone via one-time codes. Required only for customers
+    whose payment provider mandates contact verification (e.g. EU customers); other providers return 409.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Contact Verification
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-contact-verification-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-cross-currency-transfers-api
+  name: Lightspark Cross-Currency Transfers API
+  description: Endpoints for creating and confirming quotes for cross-currency transfers
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Cross-Currency Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-cross-currency-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-customers-api
+  name: Lightspark Customers API
+  description: Customer management endpoints for creating and updating customer information
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Customers
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-customers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-discoveries-api
+  name: Lightspark Discoveries API
+  description: >-
+    Endpoints for discovering available payment rails, banks, and providers for a given country and currency
+    corridor.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Discoveries
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-discoveries-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-documents-api
+  name: Lightspark Documents API
+  description: >-
+    Endpoints for uploading and managing verification documents for customers and beneficial owners. Supports
+    KYC and KYB document requirements.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Documents
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-documents-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-embedded-wallet-auth-api
+  name: Lightspark Embedded Wallet Auth API
+  description: >-
+    Endpoints for registering and verifying end-user authentication credentials (email OTP, OAuth, passkey)
+    used to sign Embedded Wallet actions.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Embedded Wallet Auth
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-embedded-wallet-auth-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-exchange-rates-api
+  name: Lightspark Exchange Rates API
+  description: >-
+    Endpoints for retrieving cached foreign exchange rates. Rates are cached for approximately 5 minutes
+    and include platform-specific fees.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Exchange Rates
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-exchange-rates-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-external-accounts-api
+  name: Lightspark External Accounts API
+  description: External account management endpoints for creating and managing external bank accounts
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - External Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-external-accounts-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-internal-accounts-api
+  name: Lightspark Internal Accounts API
+  description: Internal account management endpoints for creating and managing internal accounts
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Internal Accounts
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-internal-accounts-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-invitations-api
+  name: Lightspark Invitations API
+  description: Endpoints for creating, claiming and managing UMA invitations
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Invitations
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-invitations-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-kyc-kyb-verifications-api
+  name: Lightspark KYC/KYB Verifications API
+  description: >-
+    Endpoints for Know Your Customer (KYC) and Know Your Business (KYB) verification, including managing
+    beneficial owners and triggering verification for customers.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - KYC/KYB Verifications
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-kyc-kyb-verifications-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-platform-configuration-api
+  name: Lightspark Platform Configuration API
+  description: >-
+    Platform configuration endpoints for managing global settings. You can also configure these settings
+    in the Grid dashboard.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Platform Configuration
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-platform-configuration-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-same-currency-transfers-api
+  name: Lightspark Same-Currency Transfers API
+  description: >-
+    Endpoints for transferring funds between internal and external accounts with the same currency
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Same-Currency Transfers
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-same-currency-transfers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-sandbox-api
+  name: Lightspark Sandbox API
+  description: Endpoints to trigger test cases in sandbox
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Sandbox
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-sandbox-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-stablecoins-api
+  name: Lightspark Stablecoins API
+  description: >-
+    Stablecoin issuance endpoints. Link provider accounts, register provider-created stablecoins, create
+    mint/burn quotes, execute them, and track the resulting operations.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Stablecoins
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-stablecoins-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-strong-customer-authentication-api
+  name: Lightspark Strong Customer Authentication API
+  description: >-
+    Endpoints for authorizing money-movement operations that require Strong Customer Authentication. Relevant
+    only for customers in a region where SCA is required (e.g. EU); customers outside SCA-regulated regions
+    never see an SCA challenge and these endpoints return 409.
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Strong Customer Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-strong-customer-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-transactions-api
+  name: Lightspark Transactions API
+  description: Endpoints for retrieving transaction information
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Transactions
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-transactions-api-openapi.yml
+  - type: Documentation
+    url: https://docs.lightspark.com/
+  - type: APIReference
+    url: https://docs.lightspark.com/api-reference/authentication
+  - type: Spectral
+    url: rules/lightspark-grid-spectral.yaml
+  - type: Webhooks
+    url: asyncapi/lightspark-grid-webhooks.yml
+  - type: SourceCode
+    url: https://github.com/lightsparkdev/grid-api
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: PostmanWorkspace
+  url: https://www.postman.com/kinlaneapi/lightspark/overview
 - type: Website
   url: https://lightspark.com
+- type: DeveloperPortal
+  url: https://docs.lightspark.com/
+- type: Documentation
+  url: https://docs.lightspark.com/
+- type: APIReference
+  url: https://docs.lightspark.com/api-reference/authentication
+- type: GettingStarted
+  url: https://docs.lightspark.com/global-p2p/quickstart
+- type: Support
+  url: https://www.lightspark.com/contact
+- type: HelpCenter
+  url: https://www.lightspark.com/faq
+- type: Blog
+  url: https://www.lightspark.com/news
+- type: GitHubOrganization
+  url: https://github.com/lightsparkdev
+- type: SignUp
+  url: https://app.lightspark.com
+- type: Login
+  url: https://app.lightspark.com
+- type: TermsOfService
+  url: https://www.lightspark.com/terms-of-use
+- type: PrivacyPolicy
+  url: https://www.lightspark.com/privacy-policy
+- type: StatusPage
+  url: https://status.lightspark.com/
+- type: ChangeLog
+  url: https://docs.lightspark.com/changelog
+- type: ChangeLogArtifact
+  url: changelog/lightspark-changelog.yml
+- type: Deprecation
+  url: https://docs.lightspark.com/api-reference/environments
+- type: Lifecycle
+  url: lifecycle/lightspark-lifecycle.yml
+- type: Security
+  url: https://www.lightspark.com/news/lightspark/expanding-our-bug-bounty-program
+- type: VulnerabilityDisclosure
+  url: security/lightspark-vulnerability-disclosure.yml
+- type: TrustCenter
+  url: security/lightspark-trust-center.yml
+- type: Compliance
+  url: security/lightspark-trust-center.yml
+- type: DomainSecurity
+  url: security/lightspark-domain-security.yml
+- type: Conformance
+  url: conformance/lightspark-conformance.yml
+- type: Authentication
+  url: authentication/lightspark-authentication.yml
+- type: AgenticAccess
+  url: agentic-access/lightspark-agentic-access.yml
+- type: MCPServer
+  url: mcp/lightspark-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/lightspark-llms.txt
+- type: Packages
+  url: packages/lightspark-packages.yml
+- type: SDKs
+  url: packages/lightspark-packages.yml
+- type: CLI
+  url: cli/lightspark-cli.yml
+- type: Sandbox
+  url: sandbox/lightspark-sandbox.yml
+- type: Conventions
+  url: conventions/lightspark-conventions.yml
+- type: Idempotency
+  url: conventions/lightspark-conventions.yml
+- type: ErrorCatalog
+  url: errors/lightspark-error-codes.yml
+- type: ProblemTypes
+  url: errors/lightspark-problem-types.yml
+- type: DataModel
+  url: data-model/lightspark-data-model.yml
+- type: Webhooks
+  url: asyncapi/lightspark-grid-webhooks.yml
+- type: WellKnown
+  url: well-known/lightspark-well-known.yml
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence
