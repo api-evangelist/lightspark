@@ -525,6 +525,13 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/lightspark-grid-overlay.yaml
+- type: IssueTracker
+  url: https://github.com/lightsparkdev/grid-api/issues
+- type: License
+  name: Apache-2.0
+  url: https://github.com/lightsparkdev/grid-api/blob/main/LICENSE
 - type: PostmanWorkspace
   url: https://www.postman.com/kinlaneapi/lightspark/overview
 - type: Website
