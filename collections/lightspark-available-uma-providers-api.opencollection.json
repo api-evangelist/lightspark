@@ -1,0 +1,79 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Available UMA Providers API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Available UMA Providers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available Counterparty Providers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/uma-providers",
+            "params": [
+              {
+                "name": "countryCode",
+                "value": "",
+                "type": "query",
+                "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard."
+              },
+              {
+                "name": "currencyCode",
+                "value": "",
+                "type": "query",
+                "description": "The ISO 4217 currency code to filter providers by supported currency."
+              },
+              {
+                "name": "hasBlockedProviders",
+                "value": "",
+                "type": "query",
+                "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Order to sort results in"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

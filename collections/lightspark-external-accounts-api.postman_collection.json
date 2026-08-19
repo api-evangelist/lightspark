@@ -1,0 +1,2367 @@
+{
+  "item": [
+    {
+      "id": "2d966433-3608-44fb-9ada-4cfade396f13",
+      "name": "External Accounts",
+      "description": {
+        "content": "External account management endpoints for creating and managing external bank accounts",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "63ce493e-2f86-4439-a4bc-acf452838b0b",
+          "name": "List Customer external accounts",
+          "request": {
+            "name": "List Customer external accounts",
+            "description": {
+              "content": "Retrieve a list of external accounts with optional filtering parameters. Returns all\nexternal accounts that match the specified filters. If no filters are provided, returns all external accounts\n(paginated).\n\nExternal accounts are bank accounts, cryptocurrency wallets, or other payment destinations that customers can use to receive funds from the platform.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "external-accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "Filter by currency code"
+                },
+                {
+                  "disabled": false,
+                  "key": "customerId",
+                  "value": "<string>",
+                  "description": "Filter by external accounts associated with a specific customer"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "ec398b7d-0abf-48a5-93eb-26b6a662e17d",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"status\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"currency\": \"USD\",\n      \"accountInfo\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n      \"platformAccountId\": \"acc_123456789\",\n      \"defaultUmaDepositAccount\": false,\n      \"beneficiaryVerificationStatus\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"beneficiaryVerifiedData\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    {\n      \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"status\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"currency\": \"USD\",\n      \"accountInfo\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n      \"platformAccountId\": \"acc_123456789\",\n      \"defaultUmaDepositAccount\": false,\n      \"beneficiaryVerificationStatus\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"beneficiaryVerifiedData\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  ],\n  \"hasMore\": true,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 517\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b4bb86ce-3916-44c0-8bbc-a4d3cd81294c",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"key_0\": 1928.2529541013826\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8a0b0d64-02e8-4ab9-8b83-47402805e8f5",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3331e654-abcc-44c9-8b60-654ef3488187",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "f811b2bf-6667-4707-91f5-e9d94e02f5de",
+          "name": "Add a new external account",
+          "request": {
+            "name": "Add a new external account",
+            "description": {
+              "content": "Register a new external bank account for a customer.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "external-accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"customerId\": \"<string>\",\n  \"platformAccountId\": \"<string>\",\n  \"defaultUmaDepositAccount\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "202723d2-635b-47c2-89d6-0ed497f4275a",
+              "name": "External account created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n  \"status\": \"ACTIVE\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n  \"platformAccountId\": \"acc_123456789\",\n  \"defaultUmaDepositAccount\": false,\n  \"beneficiaryVerificationStatus\": \"PENDING\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"John Doe\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "63ed4264-0e99-49a6-8b0b-4621a039d5e3",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"key_0\": 1928.2529541013826\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7c6f79d6-fdda-437b-9efa-befe30ebcc8c",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "61a6d606-d8a9-4508-842a-7c04f256317c",
+              "name": "Conflict - External account already exists",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"key_0\": 5803\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5f4e99d8-5c9f-40b5-bda7-ed58f66270d1",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "50a218cc-9ea7-4983-9ebb-9a3812b4374f",
+          "name": "Get customer external account by ID",
+          "request": {
+            "name": "Get customer external account by ID",
+            "description": {
+              "content": "Retrieve a customer external account by its system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "external-accounts",
+                ":externalAccountId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "externalAccountId",
+                  "description": "(Required) System-generated unique external account identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "d4b7ede6-09ad-43d5-90a5-01fae624c18b",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n  \"status\": \"ACTIVE\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n  \"platformAccountId\": \"acc_123456789\",\n  \"defaultUmaDepositAccount\": false,\n  \"beneficiaryVerificationStatus\": \"PENDING\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"John Doe\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fafab271-0ecb-4e81-ae6f-0d25d26717af",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1cfdf0c1-dcb9-49af-8d4d-959d4e7fc445",
+              "name": "External account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0f770fea-c5fe-4638-80cd-c0142ae89af6",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "05faeaac-2c79-44db-882b-7ec124eb6710",
+          "name": "Delete customer external account by ID",
+          "request": {
+            "name": "Delete customer external account by ID",
+            "description": {
+              "content": "Delete a customer external account by its system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "external-accounts",
+                ":externalAccountId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "externalAccountId",
+                  "description": "(Required) System-generated unique external account identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "95bcc38b-67ff-4cb1-bd00-57b77c5ffa78",
+              "name": "External account deleted successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "3376d619-639b-44c0-919f-12cb150dd0c3",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c50cf72-b578-468a-b7b8-fc9f0df82667",
+              "name": "External account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cfc4cde7-5df3-47e0-9b55-4f8b3e0aaf38",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "4c968e31-73c5-45e1-9749-8d173b99ebce",
+          "name": "List platform external accounts",
+          "request": {
+            "name": "List platform external accounts",
+            "description": {
+              "content": "Retrieve a list of all external accounts that belong to the platform, as opposed to an individual customer.\n\nThese accounts are used for platform-wide operations such as receiving funds from external sources or managing platform-level payment destinations.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "platform",
+                "external-accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "Filter by currency code"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "b1fccd12-de61-4e2b-8ef6-b46830e15572",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"status\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"currency\": \"USD\",\n      \"accountInfo\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n      \"platformAccountId\": \"acc_123456789\",\n      \"defaultUmaDepositAccount\": false,\n      \"beneficiaryVerificationStatus\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"beneficiaryVerifiedData\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    {\n      \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"status\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"currency\": \"USD\",\n      \"accountInfo\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n      \"platformAccountId\": \"acc_123456789\",\n      \"defaultUmaDepositAccount\": false,\n      \"beneficiaryVerificationStatus\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"beneficiaryVerifiedData\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  ],\n  \"hasMore\": true,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 517\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "72f0502c-aa66-4307-ba5d-1bd0401e6742",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"key_0\": 1928.2529541013826\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "549f6442-def0-45c3-b5ae-4ee1b0afb761",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "15f9c720-46c7-4ed3-935f-026f0835a5e1",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9aa12309-61b9-4e8b-9fab-7ef036a5d6d3",
+          "name": "Add a new platform external account",
+          "request": {
+            "name": "Add a new platform external account",
+            "description": {
+              "content": "Register a new external bank account for the platform.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "platform",
+                "external-accounts"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currency\": \"<string>\",\n  \"accountInfo\": {\n    \"beneficiary\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"platformAccountId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "0b61dd10-812a-424a-a877-f5104df366e0",
+              "name": "External account created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n  \"status\": \"ACTIVE\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n  \"platformAccountId\": \"acc_123456789\",\n  \"defaultUmaDepositAccount\": false,\n  \"beneficiaryVerificationStatus\": \"PENDING\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"John Doe\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b76b0d3-6bf5-4a3a-96fc-3cb76eafd009",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVITATION_ALREADY_CLAIMED\",\n  \"details\": {\n    \"key_0\": 1928.2529541013826\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f9496e9-9606-45b5-bdc6-15b10c65419b",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a707ca14-2cb0-400e-93d0-320cb31c6829",
+              "name": "Conflict - External account already exists",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"UMA_ADDRESS_EXISTS\",\n  \"details\": {\n    \"key_0\": 5803\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9dc3fc18-1ae8-4d43-ba3d-149aea5298e6",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"accountType\": \"USD_ACCOUNT\",\n    \"accountNumber\": \"12345678901\",\n    \"routingNumber\": \"123456789\",\n    \"bankAccountType\": \"CHECKING\",\n    \"bankName\": \"Chase Bank\",\n    \"platformAccountId\": \"ext_acc_123456\",\n    \"beneficiary\": {\n      \"beneficiaryType\": \"INDIVIDUAL\",\n      \"fullName\": \"John Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": \"123 Main Street\",\n        \"city\": \"San Francisco\",\n        \"state\": \"CA\",\n        \"postalCode\": \"94105\",\n        \"country\": \"US\"\n      }\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "48aa4b2c-d195-45cf-923d-8992ed50ef2d",
+          "name": "Get platform external account by ID",
+          "request": {
+            "name": "Get platform external account by ID",
+            "description": {
+              "content": "Retrieve a platform external account by its system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "platform",
+                "external-accounts",
+                ":externalAccountId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "externalAccountId",
+                  "description": "(Required) System-generated unique external account identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4dac027d-da70-4ad8-a1df-2a2a5d2eb708",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n  \"status\": \"ACTIVE\",\n  \"currency\": \"USD\",\n  \"accountInfo\": {\n    \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n  },\n  \"customerId\": \"Customer:da459a29-1fb7-41ce-a4cb-eb3a3c9fd7a7\",\n  \"platformAccountId\": \"acc_123456789\",\n  \"defaultUmaDepositAccount\": false,\n  \"beneficiaryVerificationStatus\": \"PENDING\",\n  \"beneficiaryVerifiedData\": {\n    \"fullName\": \"John Doe\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aeaa4dc3-0c91-4955-b4ee-89787f64224b",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8f90c7c6-9989-428f-b779-518b4e7d69f8",
+              "name": "External account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83d18f9c-04a4-4fc9-8ef1-fe56e399f53a",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "af73fcc2-acba-4cb4-9b4e-594d495f8e85",
+          "name": "Delete platform external account by ID",
+          "request": {
+            "name": "Delete platform external account by ID",
+            "description": {
+              "content": "Delete a platform external account by its system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "platform",
+                "external-accounts",
+                ":externalAccountId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "externalAccountId",
+                  "description": "(Required) System-generated unique external account identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "3fc4234b-30d5-4336-a2fc-fa546bd83575",
+              "name": "External account deleted successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "008005e5-f724-4aaa-974b-675f24235346",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 8654.648551570801,\n    \"key_3\": 4359\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0419d998-20e2-41c4-b222-ffdae3039f1c",
+              "name": "External account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a0d604f4-acd0-475c-827b-0b9ae1e0046b",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "platform",
+                    "external-accounts",
+                    ":externalAccountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "externalAccountId",
+                      "description": "(Required) System-generated unique external account identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "3e4f92a4-614b-45f8-aaf6-580002ff7955",
+    "name": "Grid Agent Management External Accounts API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

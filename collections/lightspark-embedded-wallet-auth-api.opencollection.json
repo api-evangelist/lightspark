@@ -1,0 +1,383 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Embedded Wallet Auth API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Embedded Wallet Auth",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List authentication credentials",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/credentials",
+            "params": [
+              {
+                "name": "accountId",
+                "value": "InternalAccount:019542f5-b3e7-1d02-0000-000000000002",
+                "type": "query",
+                "description": "Internal account id whose authentication credentials to list."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve all authentication credentials registered on an Embedded Wallet internal account.\n\nThe response is not paginated: an internal account is expected to have a small, bounded number of credentials (typically 1–5), so all results are returned inline. Additional per-credential detail (such as active session expiry) is available on `GET /auth/sessions`."
+        },
+        {
+          "info": {
+            "name": "Create an authentication credential",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/credentials",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Register an authentication credential for an Embedded Wallet customer.\n\nEmbedded Wallet internal accounts are initialized with an `EMAIL_OTP` credential tied to the customer email on the account. Use this endpoint to add another credential (`SMS_OTP`, `OAUTH`, or `PASSKEY`), or to add `EMAIL_OTP` / `SMS_OTP` back after it has been removed. Only one `EMAIL_OTP` and one `SMS_OTP` credential are supported per internal account; multiple distinct `PASSKEY` credentials may be registered.\n\nAdding a cre"
+        },
+        {
+          "info": {
+            "name": "Revoke an authentication credential",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/credentials/:id",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the authentication credential to revoke (the `id` field of the `AuthMethod` returned from `POST /auth/credentials`)."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Revoke an authentication credential on an Embedded Wallet internal account.\n\nRevocation is a two-step flow because it must be authorized by a session on a *different* credential on the same internal account:\n\n1. Call `DELETE /auth/credentials/{id}` with no headers. The response is `202` with a `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Use the session API keypair of an existing verified credential on the same internal account — other than the one being revoked — to build an API-key stamp"
+        },
+        {
+          "info": {
+            "name": "Verify an authentication credential",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/credentials/:id/verify",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the authentication credential to verify (the `id` field of the `AuthMethod` returned from `POST /auth/credentials`)."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Complete the verification step for a previously created authentication credential and issue a session.\n\nFor `EMAIL_OTP` and `SMS_OTP` credentials, submit the `encryptedOtpBundle` produced by HPKE-encrypting `{otp_code, public_key}` under the `otpEncryptionTargetBundle` returned from registration when present, or from `POST /auth/credentials/{id}/challenge` when registration omitted it or the OTP must be reissued. The server is a pass-through and never sees the plaintext OTP code. On success the "
+        },
+        {
+          "info": {
+            "name": "Re-issue an authentication credential challenge",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/credentials/:id/challenge",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the authentication credential to re-challenge (the `id` field of the `AuthMethod` returned from `POST /auth/credentials`)."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Re-issue the challenge for an existing authentication credential.\n\nFor `EMAIL_OTP` and `SMS_OTP` credentials, this triggers a new one-time password to the contact on file and returns a fresh `otpEncryptionTargetBundle` for the client to HPKE-encrypt the OTP attempt against. After the user receives the new OTP, build the `encryptedOtpBundle` under the new target bundle and call `POST /auth/credentials/{id}/verify` to begin the secure OTP login flow.\n\n`OAUTH` credentials do not have a challenge st"
+        },
+        {
+          "info": {
+            "name": "List active sessions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/sessions",
+            "params": [
+              {
+                "name": "accountId",
+                "value": "InternalAccount:019542f5-b3e7-1d02-0000-000000000002",
+                "type": "query",
+                "description": "Internal account id whose sessions to list."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve all active authentication sessions on an Embedded Wallet internal account. A session is created each time a credential is verified via `POST /auth/credentials/{id}/verify`, and remains active until its `expiresAt` passes or it is revoked via `DELETE /auth/sessions/{id}`.\n\nThe response is not paginated: an internal account is expected to have a small, bounded number of concurrent sessions (one per signed-in device, typically 1–4), so all results are returned inline."
+        },
+        {
+          "info": {
+            "name": "Revoke an authentication session",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/sessions/:id",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the session to revoke."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Revoke an authentication session on an Embedded Wallet internal account. Revocation is a two-step signed-retry flow:\n\n1. Call `DELETE /auth/sessions/{id}` with no headers. The response is `202` with a `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Use the session API keypair of a verified session on the same internal account (this can be the session being revoked, for self-logout) to build an API-key stamp over `payloadToSign`, then retry the same `DELETE` request with that full stamp as the"
+        },
+        {
+          "info": {
+            "name": "Refresh an authentication session",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/sessions/:id/refresh",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "Session:019542f5-b3e7-1d02-0000-000000000003",
+                "type": "path",
+                "description": "The id of the active session to refresh."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Refresh an active Embedded Wallet auth session and create a new session signing key. Session refresh is a two-step signed-retry flow:\n\n1. Call `POST /auth/sessions/{id}/refresh` with the request body `{ \"clientPublicKey\": \"04...\" }` and no signature headers. Grid builds a Grid session-refresh payload, binds the supplied `clientPublicKey` into that payload, persists it as a pending request, and returns `202` with `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Sign `payloadToSign` with the cur"
+        },
+        {
+          "info": {
+            "name": "List delegated signing keys",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/delegated-keys",
+            "params": [
+              {
+                "name": "accountId",
+                "value": "InternalAccount:019542f5-b3e7-1d02-0000-000000000002",
+                "type": "query",
+                "description": "The id of the internal account whose delegated keys to list."
+              },
+              {
+                "name": "fundingSourceId",
+                "value": "CardFundingSource:019542f5-b3e7-1d02-0000-000000000011",
+                "type": "query",
+                "description": "The id of the card funding source whose delegated keys to list."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "List delegated signing keys for an Embedded Wallet internal account, a card funding source, or both, including `PENDING` keys (user created but policy leg never completed) and `REVOKED` keys. At least one of `accountId` or `fundingSourceId` must be supplied."
+        },
+        {
+          "info": {
+            "name": "Create a delegated signing key",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/delegated-keys",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Delegate Spark token-transaction signing authority for a card funding source backed by an Embedded Wallet internal account to a Grid-custodied P-256 API key. Grid uses the requested card and internal account to identify the wallet funding source, generates the keypair server-side, creates an isolated signer identity holding the public key, then policies granting that identity signing and self-revocation authority. The private key is custodied by Grid and never returned. Both activities must be a"
+        },
+        {
+          "info": {
+            "name": "Get a delegated signing key",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/delegated-keys/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "DelegatedKey:019542f5-b3e7-1d02-0000-000000000021",
+                "type": "path",
+                "description": "The id of the delegated key to retrieve (the `id` field of the `DelegatedKey` returned from `POST /auth/delegated-keys` or `GET /auth/delegated-keys`)."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a delegated signing key by its system-generated id."
+        },
+        {
+          "info": {
+            "name": "Revoke a delegated signing key",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/auth/delegated-keys/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "DelegatedKey:019542f5-b3e7-1d02-0000-000000000021",
+                "type": "path",
+                "description": "The id of the delegated key to revoke (the `id` field of the `DelegatedKey` returned from `POST /auth/delegated-keys`)."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Revoke an `ACTIVE` delegated signing key. Grid uses the custodied delegated key to authorize deleting its own signer identity. Deleting the identity also removes its API key, after which the delegated key can no longer sign. The response is `204` when revocation completes.\n\nThe underlying signing policies are left in place. Their consensus references the now-deleted signer identity, so they can never authorize anything, and deleting them is unnecessary for correctness or security.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

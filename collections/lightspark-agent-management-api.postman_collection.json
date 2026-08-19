@@ -1,0 +1,4230 @@
+{
+  "item": [
+    {
+      "id": "464b75df-8580-4837-a55c-7399a9ecdfb2",
+      "name": "Agent Management",
+      "description": {
+        "content": "Endpoints for creating and managing agents (experimental), called by the partner's backend using platform credentials. Covers the full agent lifecycle: creation, policy configuration, pausing, deletion, the device code installation flow, and approving or rejecting transactions initiated by agents.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "e3880ca7-152a-470e-98fd-90cf1360c9bc",
+          "name": "Create an agent",
+          "request": {
+            "name": "Create an agent",
+            "description": {
+              "content": "Create a new agent with a specified policy. Returns the created agent and a device code that must be redeemed by the agent software to complete installation.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"customerId\": \"<string>\",\n  \"policy\": {\n    \"permissions\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"defaultExecutionMode\": \"<string>\",\n    \"spendingLimits\": {\n      \"currency\": \"<string>\",\n      \"perTransactionLimit\": \"<integer>\",\n      \"dailyLimit\": \"<integer,null>\",\n      \"dailyTransactionLimit\": \"<integer>\",\n      \"monthlyLimit\": \"<integer,null>\"\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"<string>\",\n        \"<string>\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"<string>\",\n          \"executionMode\": \"<string>\",\n          \"perTransactionLimit\": \"<integer,null>\"\n        },\n        {\n          \"accountId\": \"<string>\",\n          \"executionMode\": \"<string>\",\n          \"perTransactionLimit\": \"<integer,null>\"\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"<string>\",\n      \"amount\": \"<integer,null>\"\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "056bb56f-ac24-4a78-a67f-ebac15245a34",
+              "name": "Agent created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"policy\": {\n    \"permissions\": [\n      \"VIEW_TRANSACTIONS\",\n      \"CREATE_QUOTES\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"APPROVAL_REQUIRED\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"agent\": {\n    \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n    \"name\": \"Payroll Automation Agent\",\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n    \"isPaused\": false,\n    \"isConnected\": true,\n    \"policy\": {\n      \"permissions\": [\n        \"MANAGE_EXTERNAL_ACCOUNTS\",\n        \"EXECUTE_QUOTES\"\n      ],\n      \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n      \"spendingLimits\": {\n        \"currency\": \"USD\",\n        \"perTransactionLimit\": 50000,\n        \"dailyLimit\": 500000,\n        \"dailyTransactionLimit\": 10,\n        \"monthlyLimit\": 5000000\n      },\n      \"accountRestrictions\": {\n        \"allowedAccountIds\": [\n          \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n        ],\n        \"accountRules\": [\n          {\n            \"accountId\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"executionMode\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"perTransactionLimit\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          },\n          {\n            \"accountId\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"executionMode\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            \"perTransactionLimit\": {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          }\n        ]\n      },\n      \"approvalThresholds\": {\n        \"currency\": \"USD\",\n        \"amount\": 100000\n      }\n    },\n    \"usage\": {\n      \"dailyTransactionCount\": 3,\n      \"dailySpend\": 150000,\n      \"monthlySpend\": 750000,\n      \"dailyResetDate\": \"2025-07-22\",\n      \"monthlyResetMonth\": \"2025-08\"\n    },\n    \"createdAt\": \"2025-07-21T17:32:28Z\",\n    \"updatedAt\": \"2025-07-21T17:32:28Z\"\n  },\n  \"deviceCode\": {\n    \"code\": \"GRID-AGENT-X7K9-M2P4\",\n    \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n    \"expiresAt\": \"2025-07-22T17:32:28Z\",\n    \"redeemed\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e25566d4-9044-47be-8341-01af6445ec3c",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"policy\": {\n    \"permissions\": [\n      \"VIEW_TRANSACTIONS\",\n      \"CREATE_QUOTES\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"APPROVAL_REQUIRED\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "66b3c71c-ea50-4fb8-9e3f-48085b2b9771",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"policy\": {\n    \"permissions\": [\n      \"VIEW_TRANSACTIONS\",\n      \"CREATE_QUOTES\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"APPROVAL_REQUIRED\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce23890e-b18d-4535-9871-a503e1c9b081",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"policy\": {\n    \"permissions\": [\n      \"VIEW_TRANSACTIONS\",\n      \"CREATE_QUOTES\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"APPROVAL_REQUIRED\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "575c0841-a36f-4717-a429-53fde6aa88c6",
+          "name": "List agents",
+          "request": {
+            "name": "List agents",
+            "description": {
+              "content": "Retrieve a paginated list of agents for the authenticated platform.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "customerId",
+                  "value": "<string>",
+                  "description": "Filter by customer ID"
+                },
+                {
+                  "disabled": false,
+                  "key": "isPaused",
+                  "value": "<boolean>",
+                  "description": "Filter by paused status"
+                },
+                {
+                  "disabled": false,
+                  "key": "isConnected",
+                  "value": "<boolean>",
+                  "description": "Filter by connection status (whether the device code has been redeemed)"
+                },
+                {
+                  "disabled": false,
+                  "key": "createdAfter",
+                  "value": "<dateTime>",
+                  "description": "Filter agents created after this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "createdBefore",
+                  "value": "<dateTime>",
+                  "description": "Filter agents created before this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "updatedAfter",
+                  "value": "<dateTime>",
+                  "description": "Filter agents updated after this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "updatedBefore",
+                  "value": "<dateTime>",
+                  "description": "Filter agents updated before this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "8ddb9746-24f5-4c3a-bc08-e935a13e0ca8",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isPaused",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "isConnected",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n      \"name\": \"Payroll Automation Agent\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"isPaused\": false,\n      \"isConnected\": true,\n      \"policy\": {\n        \"permissions\": [\n          \"EXECUTE_QUOTES\",\n          \"VIEW_TRANSACTIONS\"\n        ],\n        \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n        \"spendingLimits\": {\n          \"currency\": \"USD\",\n          \"perTransactionLimit\": 50000,\n          \"dailyLimit\": 500000,\n          \"dailyTransactionLimit\": 10,\n          \"monthlyLimit\": 5000000\n        },\n        \"accountRestrictions\": {\n          \"allowedAccountIds\": [\n            \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n            \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n          ],\n          \"accountRules\": [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ]\n        },\n        \"approvalThresholds\": {\n          \"currency\": \"USD\",\n          \"amount\": 100000\n        }\n      },\n      \"usage\": {\n        \"dailyTransactionCount\": 3,\n        \"dailySpend\": 150000,\n        \"monthlySpend\": 750000,\n        \"dailyResetDate\": \"2025-07-22\",\n        \"monthlyResetMonth\": \"2025-08\"\n      },\n      \"createdAt\": \"2025-07-21T17:32:28Z\",\n      \"updatedAt\": \"2025-07-21T17:32:28Z\"\n    },\n    {\n      \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n      \"name\": \"Payroll Automation Agent\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"isPaused\": false,\n      \"isConnected\": true,\n      \"policy\": {\n        \"permissions\": [\n          \"CREATE_TRANSFERS\",\n          \"CREATE_QUOTES\"\n        ],\n        \"defaultExecutionMode\": \"AUTO\",\n        \"spendingLimits\": {\n          \"currency\": \"USD\",\n          \"perTransactionLimit\": 50000,\n          \"dailyLimit\": 500000,\n          \"dailyTransactionLimit\": 10,\n          \"monthlyLimit\": 5000000\n        },\n        \"accountRestrictions\": {\n          \"allowedAccountIds\": [\n            \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n            \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n          ],\n          \"accountRules\": [\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            },\n            {\n              \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n            }\n          ]\n        },\n        \"approvalThresholds\": {\n          \"currency\": \"USD\",\n          \"amount\": 100000\n        }\n      },\n      \"usage\": {\n        \"dailyTransactionCount\": 3,\n        \"dailySpend\": 150000,\n        \"monthlySpend\": 750000,\n        \"dailyResetDate\": \"2025-07-22\",\n        \"monthlyResetMonth\": \"2025-08\"\n      },\n      \"createdAt\": \"2025-07-21T17:32:28Z\",\n      \"updatedAt\": \"2025-07-21T17:32:28Z\"\n    }\n  ],\n  \"hasMore\": false,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 7884\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a121addd-92c7-4d48-8fb0-6e3a6d81b814",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isPaused",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "isConnected",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "935cd252-84f0-4171-adca-513580a043bd",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isPaused",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "isConnected",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "151e36da-a79a-4988-9d1f-7c7382c5ac89",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isPaused",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "isConnected",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "cd13789a-1337-46ac-8d48-ba96d1575e2c",
+          "name": "List agent transaction approval requests",
+          "request": {
+            "name": "List agent transaction approval requests",
+            "description": {
+              "content": "Retrieve a paginated list of agent actions that require platform approval. Filter by `agentId` or `customerId` to scope results to a specific agent or customer. Approve or reject individual actions via `POST /agents/{agentId}/actions/{actionId}/approve` or `POST /agents/{agentId}/actions/{actionId}/reject`.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                "approvals"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "agentId",
+                  "value": "<string>",
+                  "description": "Filter by agent ID"
+                },
+                {
+                  "disabled": false,
+                  "key": "customerId",
+                  "value": "<string>",
+                  "description": "Filter by customer ID"
+                },
+                {
+                  "disabled": false,
+                  "key": "startDate",
+                  "value": "<dateTime>",
+                  "description": "Filter by start date (inclusive) in ISO 8601 format"
+                },
+                {
+                  "disabled": false,
+                  "key": "endDate",
+                  "value": "<dateTime>",
+                  "description": "Filter by end date (inclusive) in ISO 8601 format"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Order to sort results in"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "296ed081-ea2d-48b5-89c4-218ac6cec0d3",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "approvals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "agentId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"AgentAction:019542f5-b3e7-1d02-0000-000000000099\",\n      \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000010\",\n      \"platformCustomerId\": \"user-a1b2c3\",\n      \"status\": \"FAILED\",\n      \"type\": \"TRANSFER_OUT\",\n      \"createdAt\": \"2025-10-03T15:00:00Z\",\n      \"updatedAt\": \"2025-10-03T15:02:00Z\",\n      \"quote\": {\n        \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n        \"status\": \"PENDING\",\n        \"expiresAt\": \"2025-10-03T12:05:00Z\",\n        \"createdAt\": \"2025-10-03T12:00:00Z\",\n        \"source\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"destination\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"sendingCurrency\": {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        },\n        \"receivingCurrency\": {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        },\n        \"totalSendingAmount\": 123010,\n        \"totalReceivingAmount\": 1000,\n        \"exchangeRate\": 6945.828564740879,\n        \"feesIncluded\": 10,\n        \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n        \"paymentInstructions\": [\n          {\n            \"accountOrWalletInfo\": {\n              \"accountType\": \"USD_ACCOUNT\",\n              \"paymentRails\": [\n                \"ACH\",\n                \"WIRE\"\n              ],\n              \"accountNumber\": \"1234567890\",\n              \"routingNumber\": \"021000021\",\n              \"bankName\": \"Chase Bank\",\n              \"reference\": \"UMA-Q12345-REF\"\n            },\n            \"instructionsNotes\": \"Include reference UMA-Q12345-REF in memo\"\n          },\n          {\n            \"accountOrWalletInfo\": {\n              \"accountType\": \"SPARK_WALLET\",\n              \"assetType\": \"BTC\",\n              \"address\": \"spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu\",\n              \"invoice\": \"lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs\"\n            }\n          }\n        ],\n        \"remittanceInformation\": \"12345\",\n        \"counterpartyInformation\": {\n          \"FULL_NAME\": \"John Sender\",\n          \"BIRTH_DATE\": \"1985-06-15\",\n          \"NATIONALITY\": \"DE\"\n        },\n        \"rateDetails\": {\n          \"counterpartyMultiplier\": 1.08,\n          \"counterpartyFixedFee\": 10,\n          \"gridApiMultiplier\": 0.925,\n          \"gridApiFixedFee\": 10,\n          \"gridApiVariableFeeRate\": 0.003,\n          \"gridApiVariableFeeAmount\": 30\n        },\n        \"scaChallenge\": {\n          \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n          \"expiresAt\": \"2025-10-03T12:05:00Z\",\n          \"factor\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"availableFactors\": [\n            \"SMS_OTP\"\n          ],\n          \"purpose\": \"PAYOUT\",\n          \"passkeyAssertionOptions\": {\n            \"key_0\": 6646,\n            \"key_1\": false,\n            \"key_2\": false\n          },\n          \"passkeyAllowedOrigins\": [\n            \"https://app.example.com\"\n          ]\n        }\n      },\n      \"transferDetails\": {\n        \"amount\": 50000,\n        \"currency\": \"USD\",\n        \"sourceAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n        \"destinationAccountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n      },\n      \"transaction\": {\n        \"type\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"receivedAmount\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"source\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"fees\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reconciliationInstructions\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"rateDetails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"failureReason\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"rejectionReason\": \"Transaction amount exceeds customer's current risk limit.\"\n    },\n    {\n      \"id\": \"AgentAction:019542f5-b3e7-1d02-0000-000000000099\",\n      \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000010\",\n      \"platformCustomerId\": \"user-a1b2c3\",\n      \"status\": \"PENDING_APPROVAL\",\n      \"type\": \"TRANSFER_OUT\",\n      \"createdAt\": \"2025-10-03T15:00:00Z\",\n      \"updatedAt\": \"2025-10-03T15:02:00Z\",\n      \"quote\": {\n        \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n        \"status\": \"PENDING\",\n        \"expiresAt\": \"2025-10-03T12:05:00Z\",\n        \"createdAt\": \"2025-10-03T12:00:00Z\",\n        \"source\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"destination\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"sendingCurrency\": {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        },\n        \"receivingCurrency\": {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        },\n        \"totalSendingAmount\": 123010,\n        \"totalReceivingAmount\": 1000,\n        \"exchangeRate\": 7203.585623692537,\n        \"feesIncluded\": 10,\n        \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n        \"paymentInstructions\": [\n          {\n            \"accountOrWalletInfo\": {\n              \"accountType\": \"USD_ACCOUNT\",\n              \"paymentRails\": [\n                \"ACH\",\n                \"WIRE\"\n              ],\n              \"accountNumber\": \"1234567890\",\n              \"routingNumber\": \"021000021\",\n              \"bankName\": \"Chase Bank\",\n              \"reference\": \"UMA-Q12345-REF\"\n            },\n            \"instructionsNotes\": \"Include reference UMA-Q12345-REF in memo\"\n          },\n          {\n            \"accountOrWalletInfo\": {\n              \"accountType\": \"SPARK_WALLET\",\n              \"assetType\": \"BTC\",\n              \"address\": \"spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu\",\n              \"invoice\": \"lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs\"\n            }\n          }\n        ],\n        \"remittanceInformation\": \"12345\",\n        \"counterpartyInformation\": {\n          \"FULL_NAME\": \"John Sender\",\n          \"BIRTH_DATE\": \"1985-06-15\",\n          \"NATIONALITY\": \"DE\"\n        },\n        \"rateDetails\": {\n          \"counterpartyMultiplier\": 1.08,\n          \"counterpartyFixedFee\": 10,\n          \"gridApiMultiplier\": 0.925,\n          \"gridApiFixedFee\": 10,\n          \"gridApiVariableFeeRate\": 0.003,\n          \"gridApiVariableFeeAmount\": 30\n        },\n        \"scaChallenge\": {\n          \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n          \"expiresAt\": \"2025-10-03T12:05:00Z\",\n          \"factor\": {\n            \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n          },\n          \"availableFactors\": [\n            \"SMS_OTP\"\n          ],\n          \"purpose\": \"PAYOUT\",\n          \"passkeyAssertionOptions\": {\n            \"key_0\": 5359\n          },\n          \"passkeyAllowedOrigins\": [\n            \"https://app.example.com\"\n          ]\n        }\n      },\n      \"transferDetails\": {\n        \"amount\": 50000,\n        \"currency\": \"USD\",\n        \"sourceAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n        \"destinationAccountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n      },\n      \"transaction\": {\n        \"type\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"receivedAmount\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"source\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"fees\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reconciliationInstructions\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"rateDetails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"failureReason\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      },\n      \"rejectionReason\": \"Transaction amount exceeds customer's current risk limit.\"\n    }\n  ],\n  \"hasMore\": false,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 7561\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7eab0b02-ffaf-4602-8903-c369f85c5358",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "approvals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "agentId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7b65c00c-664c-468b-b3af-973bf5f515ab",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "approvals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "agentId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1ebcba2e-d661-4167-b424-830131602878",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "approvals"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "agentId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "startDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "endDate",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "392278f9-c3ec-42c4-af2a-979feaac0822",
+          "name": "Get agent by ID",
+          "request": {
+            "name": "Get agent by ID",
+            "description": {
+              "content": "Retrieve an agent by its system-generated ID.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7cf7fa9c-a279-4a72-ae0a-a292655d4921",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"isPaused\": false,\n  \"isConnected\": true,\n  \"policy\": {\n    \"permissions\": [\n      \"EXECUTE_QUOTES\",\n      \"MANAGE_EXTERNAL_ACCOUNTS\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  },\n  \"usage\": {\n    \"dailyTransactionCount\": 3,\n    \"dailySpend\": 150000,\n    \"monthlySpend\": 750000,\n    \"dailyResetDate\": \"2025-07-22\",\n    \"monthlyResetMonth\": \"2025-08\"\n  },\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b7d94bac-8209-4d98-8d93-d224d9dc2b72",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5aa8886a-42df-49d3-9724-06578ce3ecb8",
+              "name": "Agent not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a0dfc919-6b9b-4a94-9d77-7fe6b59bf4da",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "a004a0b1-bcc2-4bba-8c0b-56ffa6451468",
+          "name": "Update agent",
+          "request": {
+            "name": "Update agent",
+            "description": {
+              "content": "Update an agent's name or paused state.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"<string>\",\n  \"isPaused\": \"<boolean>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a9516236-2d23-4cee-8061-c05cb68605f3",
+              "name": "Agent updated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Payroll Agent\",\n  \"isPaused\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"isPaused\": false,\n  \"isConnected\": true,\n  \"policy\": {\n    \"permissions\": [\n      \"EXECUTE_QUOTES\",\n      \"MANAGE_EXTERNAL_ACCOUNTS\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  },\n  \"usage\": {\n    \"dailyTransactionCount\": 3,\n    \"dailySpend\": 150000,\n    \"monthlySpend\": 750000,\n    \"dailyResetDate\": \"2025-07-22\",\n    \"monthlyResetMonth\": \"2025-08\"\n  },\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "60a80198-3e5a-4466-85a1-af6801a0c252",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Payroll Agent\",\n  \"isPaused\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5a601e20-e934-4179-aa06-ebea107c4357",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Payroll Agent\",\n  \"isPaused\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5f6b2455-05f0-4519-99ba-59e17af67925",
+              "name": "Agent not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Payroll Agent\",\n  \"isPaused\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f10a3a60-1975-4fae-b588-7051cf2a61f0",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Payroll Agent\",\n  \"isPaused\": true\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "8c45e269-cf4d-4a36-8301-21c01b05e71e",
+          "name": "Delete agent",
+          "request": {
+            "name": "Delete agent",
+            "description": {
+              "content": "Permanently delete an agent. Connected agent software will lose access immediately.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "7a8bdda0-7be6-475e-a9ff-beb6ac098547",
+              "name": "Agent deleted successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "No Content",
+              "code": 204,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "text/plain"
+                }
+              ],
+              "body": "",
+              "cookie": [],
+              "_postman_previewlanguage": "text"
+            },
+            {
+              "id": "ea517247-6ebd-4da9-83b0-8cc85e27ce61",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7e0c0b45-a4e9-4574-aff0-f4ebd2ca264c",
+              "name": "Agent not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bbdcf9b9-b30f-45d8-bba5-2e2feafb3de2",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "16b631ce-3419-4f01-ab16-531baecc2816",
+          "name": "Update agent policy",
+          "request": {
+            "name": "Update agent policy",
+            "description": {
+              "content": "Partially update an agent's policy. Only provided fields will be updated; omitted fields retain their current values. Policy changes take effect immediately.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId",
+                "policy"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"permissions\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"defaultExecutionMode\": \"<string>\",\n  \"spendingLimits\": {\n    \"currency\": \"<string>\",\n    \"perTransactionLimit\": \"<integer>\",\n    \"dailyLimit\": \"<integer,null>\",\n    \"dailyTransactionLimit\": \"<integer>\",\n    \"monthlyLimit\": \"<integer,null>\"\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"<string>\",\n      \"<string>\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"<string>\",\n        \"executionMode\": \"<string>\",\n        \"perTransactionLimit\": \"<integer,null>\"\n      },\n      {\n        \"accountId\": \"<string>\",\n        \"executionMode\": \"<string>\",\n        \"perTransactionLimit\": \"<integer,null>\"\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"<string>\",\n    \"amount\": \"<integer,null>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "2eaa958a-2bfd-4f2d-a7de-f1ea56543f57",
+              "name": "Agent policy updated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "policy"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permissions\": [\n    \"CREATE_TRANSFERS\",\n    \"EXECUTE_QUOTES\"\n  ],\n  \"defaultExecutionMode\": \"AUTO\",\n  \"spendingLimits\": {\n    \"currency\": \"USD\",\n    \"perTransactionLimit\": 50000,\n    \"dailyLimit\": 500000,\n    \"dailyTransactionLimit\": 10,\n    \"monthlyLimit\": 5000000\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"AUTO\",\n        \"perTransactionLimit\": 10000\n      },\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"APPROVAL_REQUIRED\",\n        \"perTransactionLimit\": 10000\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"USD\",\n    \"amount\": 100000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n  \"name\": \"Payroll Automation Agent\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"isPaused\": false,\n  \"isConnected\": true,\n  \"policy\": {\n    \"permissions\": [\n      \"EXECUTE_QUOTES\",\n      \"MANAGE_EXTERNAL_ACCOUNTS\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  },\n  \"usage\": {\n    \"dailyTransactionCount\": 3,\n    \"dailySpend\": 150000,\n    \"monthlySpend\": 750000,\n    \"dailyResetDate\": \"2025-07-22\",\n    \"monthlyResetMonth\": \"2025-08\"\n  },\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ff98a74f-8d90-4ade-afb1-29163513d079",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "policy"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permissions\": [\n    \"CREATE_TRANSFERS\",\n    \"EXECUTE_QUOTES\"\n  ],\n  \"defaultExecutionMode\": \"AUTO\",\n  \"spendingLimits\": {\n    \"currency\": \"USD\",\n    \"perTransactionLimit\": 50000,\n    \"dailyLimit\": 500000,\n    \"dailyTransactionLimit\": 10,\n    \"monthlyLimit\": 5000000\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"AUTO\",\n        \"perTransactionLimit\": 10000\n      },\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"APPROVAL_REQUIRED\",\n        \"perTransactionLimit\": 10000\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"USD\",\n    \"amount\": 100000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e234dcc5-6bbc-468f-8eab-7711d80bd9e7",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "policy"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permissions\": [\n    \"CREATE_TRANSFERS\",\n    \"EXECUTE_QUOTES\"\n  ],\n  \"defaultExecutionMode\": \"AUTO\",\n  \"spendingLimits\": {\n    \"currency\": \"USD\",\n    \"perTransactionLimit\": 50000,\n    \"dailyLimit\": 500000,\n    \"dailyTransactionLimit\": 10,\n    \"monthlyLimit\": 5000000\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"AUTO\",\n        \"perTransactionLimit\": 10000\n      },\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"APPROVAL_REQUIRED\",\n        \"perTransactionLimit\": 10000\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"USD\",\n    \"amount\": 100000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b6cd5eb3-1253-4402-8eb4-74f81f402b89",
+              "name": "Agent not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "policy"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permissions\": [\n    \"CREATE_TRANSFERS\",\n    \"EXECUTE_QUOTES\"\n  ],\n  \"defaultExecutionMode\": \"AUTO\",\n  \"spendingLimits\": {\n    \"currency\": \"USD\",\n    \"perTransactionLimit\": 50000,\n    \"dailyLimit\": 500000,\n    \"dailyTransactionLimit\": 10,\n    \"monthlyLimit\": 5000000\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"AUTO\",\n        \"perTransactionLimit\": 10000\n      },\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"APPROVAL_REQUIRED\",\n        \"perTransactionLimit\": 10000\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"USD\",\n    \"amount\": 100000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "01c05411-269f-4a81-9981-3546eddae91f",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "policy"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"permissions\": [\n    \"CREATE_TRANSFERS\",\n    \"EXECUTE_QUOTES\"\n  ],\n  \"defaultExecutionMode\": \"AUTO\",\n  \"spendingLimits\": {\n    \"currency\": \"USD\",\n    \"perTransactionLimit\": 50000,\n    \"dailyLimit\": 500000,\n    \"dailyTransactionLimit\": 10,\n    \"monthlyLimit\": 5000000\n  },\n  \"accountRestrictions\": {\n    \"allowedAccountIds\": [\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n      \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n    ],\n    \"accountRules\": [\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"AUTO\",\n        \"perTransactionLimit\": 10000\n      },\n      {\n        \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"executionMode\": \"APPROVAL_REQUIRED\",\n        \"perTransactionLimit\": 10000\n      }\n    ]\n  },\n  \"approvalThresholds\": {\n    \"currency\": \"USD\",\n    \"amount\": 100000\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e4a9854f-37cc-4f25-8f1d-85798b13ea25",
+          "name": "Regenerate a device code",
+          "request": {
+            "name": "Regenerate a device code",
+            "description": {
+              "content": "Generate a new device code for an existing agent. Use this when the original device code has expired before being redeemed, or when the agent software needs to be reinstalled. Any previously issued unredeemed device codes for this agent are invalidated.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId",
+                "device-codes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "e38ccffc-9c74-4441-9ec9-8e5989360a6b",
+              "name": "New device code generated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"GRID-AGENT-X7K9-M2P4\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n  \"expiresAt\": \"2025-07-22T17:32:28Z\",\n  \"redeemed\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f01d6b6f-6f1c-4f68-a7fd-9cd395648f89",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4f077ac5-3dce-4bbd-99a6-6bc59caae9b4",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "34f32674-205f-4e02-88f9-2ffd94ef603d",
+              "name": "Agent not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "40bcc34b-4940-4858-92a7-15a3892fac47",
+              "name": "Conflict - Agent already has an active connection and cannot regenerate a device code",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"PASSKEY_ALREADY_ENROLLED\",\n  \"details\": {\n    \"key_0\": 3434\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5a8bf428-b6dd-4605-9bf6-1da0e0cf9d92",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "device-codes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ef9cddc2-3026-4a5a-a451-ce804cbcaaff",
+          "name": "Approve an agent action",
+          "request": {
+            "name": "Approve an agent action",
+            "description": {
+              "content": "Approve a pending agent action, allowing Grid to proceed with execution. The action must have status `PENDING_APPROVAL`. Once approved, Grid executes the underlying operation (quote execution or transfer) and the action transitions to `APPROVED`.\nFor `EXECUTE_QUOTE` actions, note that the underlying quote may have expired between submission and approval — in that case the action will transition to `FAILED` instead.\nThis endpoint is called by the platform's backend using platform credentials, not by the agent itself.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId",
+                "actions",
+                ":actionId",
+                "approve"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "actionId",
+                  "description": "(Required) Unique identifier of the agent action to approve"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f993a68c-49e2-445f-a9cf-4f720804e7ff",
+              "name": "Action approved successfully. Returns the updated AgentAction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"AgentAction:019542f5-b3e7-1d02-0000-000000000099\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000010\",\n  \"platformCustomerId\": \"user-a1b2c3\",\n  \"status\": \"FAILED\",\n  \"type\": \"TRANSFER_IN\",\n  \"createdAt\": \"2025-10-03T15:00:00Z\",\n  \"updatedAt\": \"2025-10-03T15:02:00Z\",\n  \"quote\": {\n    \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n    \"status\": \"PENDING\",\n    \"expiresAt\": \"2025-10-03T12:05:00Z\",\n    \"createdAt\": \"2025-10-03T12:00:00Z\",\n    \"source\": {\n      \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"sourceType\": \"ACCOUNT\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n    },\n    \"destination\": {\n      \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n      \"destinationType\": \"ACCOUNT\",\n      \"paymentRail\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    \"sendingCurrency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    },\n    \"receivingCurrency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    },\n    \"totalSendingAmount\": 123010,\n    \"totalReceivingAmount\": 1000,\n    \"exchangeRate\": 1794.9444289205596,\n    \"feesIncluded\": 10,\n    \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n    \"paymentInstructions\": [\n      {\n        \"accountOrWalletInfo\": {\n          \"accountType\": \"USD_ACCOUNT\",\n          \"paymentRails\": [\n            \"ACH\",\n            \"WIRE\"\n          ],\n          \"accountNumber\": \"1234567890\",\n          \"routingNumber\": \"021000021\",\n          \"bankName\": \"Chase Bank\",\n          \"reference\": \"UMA-Q12345-REF\"\n        },\n        \"instructionsNotes\": \"Include reference UMA-Q12345-REF in memo\"\n      },\n      {\n        \"accountOrWalletInfo\": {\n          \"accountType\": \"SPARK_WALLET\",\n          \"assetType\": \"BTC\",\n          \"address\": \"spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu\",\n          \"invoice\": \"lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs\"\n        }\n      }\n    ],\n    \"remittanceInformation\": \"12345\",\n    \"counterpartyInformation\": {\n      \"FULL_NAME\": \"John Sender\",\n      \"BIRTH_DATE\": \"1985-06-15\",\n      \"NATIONALITY\": \"DE\"\n    },\n    \"rateDetails\": {\n      \"counterpartyMultiplier\": 1.08,\n      \"counterpartyFixedFee\": 10,\n      \"gridApiMultiplier\": 0.925,\n      \"gridApiFixedFee\": 10,\n      \"gridApiVariableFeeRate\": 0.003,\n      \"gridApiVariableFeeAmount\": 30\n    },\n    \"scaChallenge\": {\n      \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n      \"expiresAt\": \"2025-10-03T12:05:00Z\",\n      \"factor\": \"TOTP\",\n      \"availableFactors\": [\n        \"SMS_OTP\"\n      ],\n      \"purpose\": \"PAYOUT\",\n      \"passkeyAssertionOptions\": {\n        \"key_0\": false,\n        \"key_1\": false\n      },\n      \"passkeyAllowedOrigins\": [\n        \"https://app.example.com\"\n      ]\n    }\n  },\n  \"transferDetails\": {\n    \"amount\": 50000,\n    \"currency\": \"USD\",\n    \"sourceAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationAccountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"transaction\": {\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n    \"destination\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"direction\": \"DEBIT\",\n    \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n    \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n    \"receivedAmount\": {\n      \"amount\": 12550,\n      \"currency\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    \"status\": \"FAILED\",\n    \"type\": \"OUTGOING\",\n    \"settledAt\": \"2025-08-15T14:30:00Z\",\n    \"createdAt\": \"2025-08-15T14:25:18Z\",\n    \"updatedAt\": \"2025-08-15T14:30:00Z\",\n    \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n    \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n    \"description\": \"Payment for invoice #1234\",\n    \"counterpartyInformation\": {\n      \"FULL_NAME\": \"John Sender\",\n      \"BIRTH_DATE\": \"1985-06-15\",\n      \"NATIONALITY\": \"DE\"\n    },\n    \"source\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"fees\": 10,\n    \"reconciliationInstructions\": {\n      \"reference\": \"UMA-Q12345-REF\",\n      \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n    },\n    \"rateDetails\": {\n      \"gridApiMultiplier\": 0.925,\n      \"gridApiFixedFee\": 10,\n      \"gridApiVariableFeeRate\": 0.003,\n      \"gridApiVariableFeeAmount\": 30\n    },\n    \"failureReason\": \"PAYMENT_APPROVAL_WEBHOOK_ERROR\"\n  },\n  \"rejectionReason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "83b2c15c-495a-4e41-ba5e-001a47f436ff",
+              "name": "Bad request - Action cannot be approved",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6eeffa2a-0a1a-418b-b954-3f103dd56812",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b8d65051-6d0a-45ef-8d2a-4f5a66175482",
+              "name": "Agent or action not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bbcf3e14-22c4-4b5d-a543-098a14f41cad",
+              "name": "Conflict - Action is not pending approval or has already been processed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"PASSKEY_ALREADY_ENROLLED\",\n  \"details\": {\n    \"key_0\": 3434\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f42ca90a-8e40-405a-a556-b6e0fa4f3e74",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "approve"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to approve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e86a626c-4fde-46e2-b218-9e2e55163cd9",
+          "name": "Reject an agent action",
+          "request": {
+            "name": "Reject an agent action",
+            "description": {
+              "content": "Reject a pending agent action, preventing execution. The action must have status `PENDING_APPROVAL`. Once rejected, the action transitions to `REJECTED` and the underlying operation is not executed.\nThis endpoint is called by the platform's backend using platform credentials, not by the agent itself.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                ":agentId",
+                "actions",
+                ":actionId",
+                "reject"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "agentId",
+                  "description": "(Required) System-generated unique agent identifier"
+                },
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "actionId",
+                  "description": "(Required) Unique identifier of the agent action to reject"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a3610b9c-0e56-4acb-8e98-b4ea2c518059",
+              "name": "Action rejected successfully. Returns the updated AgentAction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"AgentAction:019542f5-b3e7-1d02-0000-000000000099\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000010\",\n  \"platformCustomerId\": \"user-a1b2c3\",\n  \"status\": \"FAILED\",\n  \"type\": \"TRANSFER_IN\",\n  \"createdAt\": \"2025-10-03T15:00:00Z\",\n  \"updatedAt\": \"2025-10-03T15:02:00Z\",\n  \"quote\": {\n    \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n    \"status\": \"PENDING\",\n    \"expiresAt\": \"2025-10-03T12:05:00Z\",\n    \"createdAt\": \"2025-10-03T12:00:00Z\",\n    \"source\": {\n      \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n      \"sourceType\": \"ACCOUNT\",\n      \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n    },\n    \"destination\": {\n      \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n      \"destinationType\": \"ACCOUNT\",\n      \"paymentRail\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    \"sendingCurrency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    },\n    \"receivingCurrency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    },\n    \"totalSendingAmount\": 123010,\n    \"totalReceivingAmount\": 1000,\n    \"exchangeRate\": 1794.9444289205596,\n    \"feesIncluded\": 10,\n    \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n    \"paymentInstructions\": [\n      {\n        \"accountOrWalletInfo\": {\n          \"accountType\": \"USD_ACCOUNT\",\n          \"paymentRails\": [\n            \"ACH\",\n            \"WIRE\"\n          ],\n          \"accountNumber\": \"1234567890\",\n          \"routingNumber\": \"021000021\",\n          \"bankName\": \"Chase Bank\",\n          \"reference\": \"UMA-Q12345-REF\"\n        },\n        \"instructionsNotes\": \"Include reference UMA-Q12345-REF in memo\"\n      },\n      {\n        \"accountOrWalletInfo\": {\n          \"accountType\": \"SPARK_WALLET\",\n          \"assetType\": \"BTC\",\n          \"address\": \"spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu\",\n          \"invoice\": \"lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs\"\n        }\n      }\n    ],\n    \"remittanceInformation\": \"12345\",\n    \"counterpartyInformation\": {\n      \"FULL_NAME\": \"John Sender\",\n      \"BIRTH_DATE\": \"1985-06-15\",\n      \"NATIONALITY\": \"DE\"\n    },\n    \"rateDetails\": {\n      \"counterpartyMultiplier\": 1.08,\n      \"counterpartyFixedFee\": 10,\n      \"gridApiMultiplier\": 0.925,\n      \"gridApiFixedFee\": 10,\n      \"gridApiVariableFeeRate\": 0.003,\n      \"gridApiVariableFeeAmount\": 30\n    },\n    \"scaChallenge\": {\n      \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n      \"expiresAt\": \"2025-10-03T12:05:00Z\",\n      \"factor\": \"TOTP\",\n      \"availableFactors\": [\n        \"SMS_OTP\"\n      ],\n      \"purpose\": \"PAYOUT\",\n      \"passkeyAssertionOptions\": {\n        \"key_0\": false,\n        \"key_1\": false\n      },\n      \"passkeyAllowedOrigins\": [\n        \"https://app.example.com\"\n      ]\n    }\n  },\n  \"transferDetails\": {\n    \"amount\": 50000,\n    \"currency\": \"USD\",\n    \"sourceAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationAccountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"transaction\": {\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n    \"destination\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"direction\": \"DEBIT\",\n    \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n    \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n    \"receivedAmount\": {\n      \"amount\": 12550,\n      \"currency\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    },\n    \"status\": \"FAILED\",\n    \"type\": \"OUTGOING\",\n    \"settledAt\": \"2025-08-15T14:30:00Z\",\n    \"createdAt\": \"2025-08-15T14:25:18Z\",\n    \"updatedAt\": \"2025-08-15T14:30:00Z\",\n    \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n    \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n    \"description\": \"Payment for invoice #1234\",\n    \"counterpartyInformation\": {\n      \"FULL_NAME\": \"John Sender\",\n      \"BIRTH_DATE\": \"1985-06-15\",\n      \"NATIONALITY\": \"DE\"\n    },\n    \"source\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"fees\": 10,\n    \"reconciliationInstructions\": {\n      \"reference\": \"UMA-Q12345-REF\",\n      \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n    },\n    \"rateDetails\": {\n      \"gridApiMultiplier\": 0.925,\n      \"gridApiFixedFee\": 10,\n      \"gridApiVariableFeeRate\": 0.003,\n      \"gridApiVariableFeeAmount\": 30\n    },\n    \"failureReason\": \"PAYMENT_APPROVAL_WEBHOOK_ERROR\"\n  },\n  \"rejectionReason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9730e3f4-a8e4-45e1-8e3d-ab86aafe0b4c",
+              "name": "Bad request - Action cannot be rejected",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d18413e6-53d3-4944-8e72-17057993626b",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d0c50cb4-8fd0-4ce7-82c2-b315c5817a98",
+              "name": "Agent or action not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4043dcd1-66ff-4da0-8b5c-99b1d12612e4",
+              "name": "Conflict - Action is not pending approval or has already been processed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"PASSKEY_ALREADY_ENROLLED\",\n  \"details\": {\n    \"key_0\": 3434\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "89e60a69-f5b0-4dd1-a0c4-3bccf9adbcc5",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    ":agentId",
+                    "actions",
+                    ":actionId",
+                    "reject"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "agentId",
+                      "description": "(Required) System-generated unique agent identifier"
+                    },
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "actionId",
+                      "description": "(Required) Unique identifier of the agent action to reject"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"reason\": \"Transaction amount exceeds customer's current risk limit.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "036c60bd-ccba-4764-ab3f-a0a7d2485815",
+          "name": "Get device code status",
+          "request": {
+            "name": "Get device code status",
+            "description": {
+              "content": "Check whether a device code has been redeemed. Use this to poll for agent installation completion after creating an agent.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                "device-codes",
+                ":code",
+                "status"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "code",
+                  "description": "(Required) The device code to check"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "cc3d2624-0079-4e89-ac68-e55a49e42077",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to check"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"GRID-AGENT-X7K9-M2P4\",\n  \"redeemed\": false\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "311901ee-35fd-4f99-8335-be97aa98c118",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to check"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aac45971-da8e-441e-a9a8-a9d4d1dbb604",
+              "name": "Device code not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to check"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7d353750-80ad-4bad-b8bb-b598adc50e43",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "status"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to check"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "91135e21-4516-4e7d-9988-dfb8a41bace5",
+          "name": "Redeem device code",
+          "request": {
+            "name": "Redeem device code",
+            "description": {
+              "content": "Redeem a device code to obtain agent credentials. This endpoint is called by the agent software during installation. On success, returns a Bearer access token that the agent uses for all subsequent API calls. The token is returned only once and must be stored securely.\nThis endpoint does not require platform authentication — the device code itself serves as proof of authorization.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "agents",
+                "device-codes",
+                ":code",
+                "redeem"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "code",
+                  "description": "(Required) The device code to redeem"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null
+          },
+          "response": [
+            {
+              "id": "228f07ed-5096-4dd6-bdfa-3acf36f52067",
+              "name": "Device code redeemed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "redeem"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to redeem"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000001\",\n  \"agentName\": \"Payroll Automation Agent\",\n  \"accessToken\": \"gat_ed0ad25881e234cc28fb2dec0a4fe64e4172a3b9\",\n  \"policy\": {\n    \"permissions\": [\n      \"CREATE_TRANSFERS\",\n      \"MANAGE_EXTERNAL_ACCOUNTS\"\n    ],\n    \"defaultExecutionMode\": \"APPROVAL_REQUIRED\",\n    \"spendingLimits\": {\n      \"currency\": \"USD\",\n      \"perTransactionLimit\": 50000,\n      \"dailyLimit\": 500000,\n      \"dailyTransactionLimit\": 10,\n      \"monthlyLimit\": 5000000\n    },\n    \"accountRestrictions\": {\n      \"allowedAccountIds\": [\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n        \"Account:019542f5-b3e7-1d02-0000-000000000001\"\n      ],\n      \"accountRules\": [\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        },\n        {\n          \"accountId\": \"Account:019542f5-b3e7-1d02-0000-000000000001\",\n          \"executionMode\": \"AUTO\",\n          \"perTransactionLimit\": 10000\n        }\n      ]\n    },\n    \"approvalThresholds\": {\n      \"currency\": \"USD\",\n      \"amount\": 100000\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "da0bd42d-f8a7-4c1b-aaa5-529fe4fc947c",
+              "name": "Bad request (e.g., code already redeemed or expired)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "redeem"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to redeem"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SELF_PAYMENT\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1400093f-5dc2-4e67-be42-61724e0878f5",
+              "name": "Device code not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "redeem"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to redeem"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 7720.867620666023,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ab68f2da-f2db-42ef-b9a1-c95e9c75b65a",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "agents",
+                    "device-codes",
+                    ":code",
+                    "redeem"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "code",
+                      "description": "(Required) The device code to redeem"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 9496,\n    \"key_1\": 1570.1459135656792\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "1a04095f-1f37-4285-afcf-d875b86193aa",
+    "name": "Grid Agent Management API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

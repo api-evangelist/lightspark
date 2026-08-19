@@ -1,0 +1,129 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Contact Verification API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Contact Verification",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Send an email verification code to a customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId/verify-email",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Grid customer ID to send an email verification code to."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Send (or resend) a one-time code to the customer's email address to begin\nemail verification.\n\nThis endpoint is only meaningful for customers whose payment provider\nrequires contact verification (e.g. EU customers); the customer's\n`contactVerification.email` status reflects progress. For customers whose\nprovider has no such requirement, this returns `409`.\n\nCall `POST /customers/{customerId}/verify-email/confirm` with the received\ncode to complete verification. Re-POST this endpoint to resend th"
+        },
+        {
+          "info": {
+            "name": "Confirm a customer's email verification code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId/verify-email/confirm",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Grid customer ID whose email is being verified."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Submit the one-time code the customer received by email to mark their email\nas `VERIFIED`. On success, `contactVerification.email` becomes `VERIFIED`.\n\nBoth email and phone must be `VERIFIED` before the customer can begin KYC.\n\nIn sandbox, the code is always `123456`.\n"
+        },
+        {
+          "info": {
+            "name": "Send a phone verification code to a customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId/verify-phone",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Grid customer ID to send a phone verification code to."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Send (or resend) a one-time code via SMS to the customer's phone number to\nbegin phone verification.\n\nThis endpoint is only meaningful for customers whose payment provider\nrequires contact verification (e.g. EU customers); the customer's\n`contactVerification.phone` status reflects progress. For customers whose\nprovider has no such requirement, this returns `409`.\n\nCall `POST /customers/{customerId}/verify-phone/confirm` with the received\ncode to complete verification. Re-POST this endpoint to re"
+        },
+        {
+          "info": {
+            "name": "Confirm a customer's phone verification code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId/verify-phone/confirm",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Grid customer ID whose phone is being verified."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Submit the one-time code the customer received via SMS to mark their phone\nas `VERIFIED`. On success, `contactVerification.phone` becomes `VERIFIED`.\n\nBoth email and phone must be `VERIFIED` before the customer can begin KYC.\n\nIn sandbox, the code is always `123456`.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

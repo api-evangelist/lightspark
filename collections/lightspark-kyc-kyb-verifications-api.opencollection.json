@@ -1,0 +1,253 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management KYC/KYB Verifications API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "KYC/KYB Verifications",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Generate a hosted KYC link for an existing customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId/kyc-link",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "The Grid customer ID to generate a KYC link for."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Generate a single-use hosted URL the customer can complete to verify their identity, and (where supported) a provider-specific `token` for embedding the verification flow directly via the provider's SDK.\n\nThe customer must already exist — create them with `POST /customers` first. Calling this endpoint does not change the customer's `kycStatus`; the customer remains `PENDING` until they complete (or fail) the hosted flow.\n\nEach call returns a fresh link. Previously-issued links are not invalidate"
+        },
+        {
+          "info": {
+            "name": "List beneficial owners",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/beneficial-owners",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "The business customer ID"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of beneficial owners for a business customer.\n"
+        },
+        {
+          "info": {
+            "name": "Create a beneficial owner",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/beneficial-owners",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Add a beneficial owner, director, or company officer to a business customer. The beneficial owner will go through KYC verification automatically.\n"
+        },
+        {
+          "info": {
+            "name": "Get a beneficial owner",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/beneficial-owners/:beneficialOwnerId",
+            "params": [
+              {
+                "name": "beneficialOwnerId",
+                "value": "",
+                "type": "path",
+                "description": "Beneficial owner ID"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve details of a specific beneficial owner by ID."
+        },
+        {
+          "info": {
+            "name": "Update a beneficial owner",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/beneficial-owners/:beneficialOwnerId",
+            "params": [
+              {
+                "name": "beneficialOwnerId",
+                "value": "",
+                "type": "path",
+                "description": "Beneficial owner ID"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Update details of a specific beneficial owner. Only provided fields are updated."
+        },
+        {
+          "info": {
+            "name": "List verifications",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/verifications",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer ID"
+              },
+              {
+                "name": "verificationStatus",
+                "value": "",
+                "type": "query",
+                "description": "Filter by verification status"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of verifications with optional filtering by customer ID and status.\n"
+        },
+        {
+          "info": {
+            "name": "Submit customer for verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/verifications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Trigger KYC (individual) or KYB (business) verification for a customer.\nThe response indicates whether all required information has been provided.\nIf data is missing, the `errors` array describes exactly what needs to be\nsupplied before verification can proceed.\n\nCall this endpoint again after resolving errors to re-submit.\n\n### What to collect for KYB\n\nBefore submitting a `BUSINESS` customer, collect the following via\n`POST /customers`, `POST /beneficial-owners`, and `POST /documents`:\n\n**Busin"
+        },
+        {
+          "info": {
+            "name": "Get a verification",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/verifications/:verificationId",
+            "params": [
+              {
+                "name": "verificationId",
+                "value": "",
+                "type": "path",
+                "description": "Verification ID"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve details of a specific verification by ID."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

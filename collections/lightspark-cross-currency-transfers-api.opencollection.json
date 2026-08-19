@@ -1,0 +1,205 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Cross-Currency Transfers API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cross-Currency Transfers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Look up an UMA address for payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/receiver/uma/:receiverUmaAddress",
+            "params": [
+              {
+                "name": "receiverUmaAddress",
+                "value": "",
+                "type": "path",
+                "description": "UMA address of the intended recipient"
+              },
+              {
+                "name": "senderUmaAddress",
+                "value": "",
+                "type": "query",
+                "description": "UMA address of the sender (optional if customerId is provided)"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "System ID of the sender (optional if senderUmaAddress is provided)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Lookup a receiving UMA address to determine supported currencies and exchange rates.\nThis endpoint helps platforms determine what currencies they can send to a given UMA address.\n"
+        },
+        {
+          "info": {
+            "name": "Look up an external account for payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/receiver/external-account/:accountId",
+            "params": [
+              {
+                "name": "accountId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated ID of the external account"
+              },
+              {
+                "name": "senderUmaAddress",
+                "value": "",
+                "type": "query",
+                "description": "UMA address of the sender (optional if customerId is provided)"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "System ID of the sender (optional if senderUmaAddress is provided)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Lookup an external account by ID to determine supported currencies and exchange rates.\nThis endpoint helps platforms determine what currencies they can send to a given external account, along with the current estimated exchange rates and minimum and maximum amounts that can be sent.\n"
+        },
+        {
+          "info": {
+            "name": "Get quote by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/quotes/:quoteId",
+            "params": [
+              {
+                "name": "quoteId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the quote to retrieve"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a quote by its ID. If the quote has been settled, it will include\nthe transaction ID. This allows clients to track the full lifecycle of a payment\nfrom quote creation to settlement.\n"
+        },
+        {
+          "info": {
+            "name": "Create a transfer quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/quotes",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Generate a quote for a cross-currency transfer between any combination of accounts\nand UMA addresses. This endpoint handles currency exchange and provides the necessary\ninstructions to execute the transfer.\n\n**Transfer Types Supported:**\n- **Account to Account**: Transfer between internal/external accounts with currency exchange.\n- **Account to UMA**: Transfer from an internal account to an UMA address.\n- **UMA to Account or UMA to UMA**: This transfer type will only be funded by payment instruc"
+        },
+        {
+          "info": {
+            "name": "Execute a quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/quotes/:quoteId/execute",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              },
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              }
+            ],
+            "params": [
+              {
+                "name": "quoteId",
+                "value": "Quote:019542f5-b3e7-1d02-0000-000000000001",
+                "type": "path",
+                "description": "The unique identifier of the quote to execute"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Execute a quote by its ID. This endpoint initiates the transfer between\nthe source and destination accounts.\n\nThis endpoint can only be used for quotes with a `source` which is either an internal account,\nor has direct pull functionality (e.g. ACH pull with an external account).\n\nWhen the quote's `source` is an internal account of type `EMBEDDED_WALLET`,\nthe request must include a `Grid-Wallet-Signature` header. The header value\nis the full Grid wallet signature built over the `payloadToSign` va"
+        },
+        {
+          "info": {
+            "name": "Estimate crypto withdrawal fee",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/crypto/estimate-withdrawal-fee",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Estimate the network and application fees for a cryptocurrency withdrawal from a crypto internal account to an external blockchain address. Use this to show fee information to customers before they initiate a withdrawal.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

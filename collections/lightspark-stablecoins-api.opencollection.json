@@ -1,0 +1,115 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Stablecoins API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Stablecoins",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List stablecoin provider account links",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/stablecoin-provider-accounts",
+            "params": [
+              {
+                "name": "provider",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve stablecoin provider account links for the authenticated platform."
+        },
+        {
+          "info": {
+            "name": "Link a stablecoin provider account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/stablecoin-provider-accounts",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Link provider API credentials for the authenticated platform. Provider credentials are account-scoped and can be reused for multiple stablecoins. Currently, the only supported provider is `BRALE`; the provider environment is derived from the authenticated Grid platform mode.\n"
+        },
+        {
+          "info": {
+            "name": "Get a stablecoin provider account link",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/stablecoin-provider-accounts/:stablecoinProviderAccountId",
+            "params": [
+              {
+                "name": "stablecoinProviderAccountId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated stablecoin provider account link identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a stablecoin provider account link by id for the authenticated platform."
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

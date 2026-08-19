@@ -1,0 +1,157 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Documents API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Documents",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List documents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/documents",
+            "params": [
+              {
+                "name": "documentHolder",
+                "value": "",
+                "type": "query",
+                "description": "Filter by document holder ID (Customer or BeneficialOwner)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of documents with optional filtering by document holder.\n"
+        },
+        {
+          "info": {
+            "name": "Upload a document",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/documents",
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Upload a verification document for a customer or beneficial owner. The request must use multipart/form-data with the file in the `file` field and metadata in the remaining fields.\n\nSupported file types: PDF, JPEG, PNG. Maximum file size: 10 MB.\n"
+        },
+        {
+          "info": {
+            "name": "Get a document by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/documents/:documentId",
+            "params": [
+              {
+                "name": "documentId",
+                "value": "",
+                "type": "path",
+                "description": "Document ID"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve details and metadata of a specific document by ID."
+        },
+        {
+          "info": {
+            "name": "Replace a document",
+            "type": "http"
+          },
+          "http": {
+            "method": "PUT",
+            "url": "https://api.lightspark.com/grid/2025-10-13/documents/:documentId",
+            "params": [
+              {
+                "name": "documentId",
+                "value": "",
+                "type": "path",
+                "description": "Document ID"
+              }
+            ],
+            "body": {
+              "type": "multipart-form",
+              "data": []
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Replace an existing document with a new file and/or updated metadata. This is useful when a document was rejected and needs to be re-uploaded. The request must use multipart/form-data.\n"
+        },
+        {
+          "info": {
+            "name": "Delete a document",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/documents/:documentId",
+            "params": [
+              {
+                "name": "documentId",
+                "value": "",
+                "type": "path",
+                "description": "Document ID"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Delete an uploaded document. This cannot be undone. Documents that have already been submitted for verification may not be deletable.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

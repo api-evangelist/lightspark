@@ -1,0 +1,229 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Transactions API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Transactions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/transactions",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by system customer ID. To filter to transactions made on behalf of the platform, specify the platform ID as the customer ID."
+              },
+              {
+                "name": "platformCustomerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by platform-specific customer ID"
+              },
+              {
+                "name": "accountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by account identifier (matches either sender or receiver)"
+              },
+              {
+                "name": "senderAccountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by sender account identifier"
+              },
+              {
+                "name": "receiverAccountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by receiver account identifier"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transaction status"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transaction type"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "query",
+                "description": "Filter by reference"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Order to sort results in"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of transactions with optional filtering.\nThe transactions can be filtered by customer ID, platform customer ID, UMA address,\ndate range, status, and transaction type.\n\nCard transactions are included and identified by `type: CARD`. In Sandbox this is how\nyou discover a `CardTransaction` id after simulating an authorization — list the\ntransactions, take the card transaction's `id`, and pass it as the `cardTransactionId`\nto the clearing and return simulate endpoints.\n"
+        },
+        {
+          "info": {
+            "name": "Get transaction by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/transactions/:transactionId",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the transaction"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve detailed information about a specific transaction."
+        },
+        {
+          "info": {
+            "name": "Confirm receipt delivery",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/transactions/:transactionId/confirm",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the transaction to confirm receipt delivery for"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Confirm that the platform delivered the transaction receipt to its customer. This confirmation is only necessary when the platform is contractually required to send a receipt. If `receiptDeliveryConfirmedAt` is omitted, the confirmation time is set to the current server time. Calling this endpoint again for the same transaction updates the stored confirmation time.\n"
+        },
+        {
+          "info": {
+            "name": "Approve a pending incoming payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/transactions/:transactionId/approve",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the transaction to approve"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Approve a pending incoming payment that was previously acknowledged with a 202 response.\nThis endpoint allows platforms to asynchronously approve payments after async processing.\n"
+        },
+        {
+          "info": {
+            "name": "Reject a pending incoming payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/transactions/:transactionId/reject",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the transaction to reject"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Reject a pending incoming payment that was previously acknowledged with a 202 response.\nThis endpoint allows platforms to asynchronously reject payments after additional processing.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,536 @@
+{
+  "item": [
+    {
+      "id": "a881d7aa-844c-485a-beb5-37f05ac731fb",
+      "name": "Platform Configuration",
+      "description": {
+        "content": "Platform configuration endpoints for managing global settings. You can also configure these settings in the Grid dashboard.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "c06c4620-1fd4-4e88-aa2b-69afa654d866",
+          "name": "Get platform configuration",
+          "request": {
+            "name": "Get platform configuration",
+            "description": {
+              "content": "Retrieve the current platform configuration",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "config"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6beb238e-6eca-47b7-bc13-4bcd83b96c59",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"PlatformConfig:019542f5-b3e7-1d02-0000-000000000003\",\n  \"umaDomain\": \"platform.uma.domain\",\n  \"proxyUmaSubdomain\": \"platform\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"NATIONALITY\",\n        \"BIRTH_DATE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"FULL_NAME\",\n        \"COUNTRY_OF_RESIDENCE\"\n      ]\n    },\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"NATIONALITY\",\n        \"BIRTH_DATE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"FULL_NAME\",\n        \"COUNTRY_OF_RESIDENCE\"\n      ]\n    }\n  ],\n  \"isRegulatedFinancialInstitution\": false,\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"otpLength\": 6,\n    \"alphanumeric\": false,\n    \"expirationSeconds\": 300,\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  },\n  \"createdAt\": \"2025-06-15T12:30:45Z\",\n  \"updatedAt\": \"2025-06-15T12:30:45Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "529aaeec-3568-4c68-b8c2-70aadf3288c3",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "209dbbb8-0679-425b-9fbe-27a352d62e21",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3af7d720-ebf1-4ca7-a5d7-28736a704e7c",
+          "name": "Update platform configuration",
+          "request": {
+            "name": "Update platform configuration",
+            "description": {
+              "content": "Update the platform configuration settings",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "config"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"umaDomain\": \"<string>\",\n  \"webhookEndpoint\": \"<string>\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"<string>\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    },\n    {\n      \"currencyCode\": \"<string>\",\n      \"minAmount\": \"<long>\",\n      \"maxAmount\": \"<long>\",\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"<string>\",\n          \"mandatory\": \"<boolean>\"\n        },\n        {\n          \"name\": \"<string>\",\n          \"mandatory\": \"<boolean>\"\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"<string>\",\n        \"<string>\"\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"<string>\",\n    \"otpLength\": \"<integer>\",\n    \"alphanumeric\": \"<boolean>\",\n    \"expirationSeconds\": \"<integer>\",\n    \"sendFromEmailAddress\": \"<email>\",\n    \"sendFromEmailSenderName\": \"<string>\",\n    \"replyToEmailAddress\": \"<email>\",\n    \"logoUrl\": \"<uri>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "97bc1e77-0ad0-4313-a90b-31f21284b0e9",
+              "name": "Configuration updated successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"mycompany.com\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        }\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"PlatformConfig:019542f5-b3e7-1d02-0000-000000000003\",\n  \"umaDomain\": \"platform.uma.domain\",\n  \"proxyUmaSubdomain\": \"platform\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"NATIONALITY\",\n        \"BIRTH_DATE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"FULL_NAME\",\n        \"COUNTRY_OF_RESIDENCE\"\n      ]\n    },\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        }\n      ],\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"providerRequiredCustomerFields\": [\n        \"NATIONALITY\",\n        \"BIRTH_DATE\"\n      ],\n      \"providerRequiredCounterpartyCustomerFields\": [\n        \"FULL_NAME\",\n        \"COUNTRY_OF_RESIDENCE\"\n      ]\n    }\n  ],\n  \"isRegulatedFinancialInstitution\": false,\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"otpLength\": 6,\n    \"alphanumeric\": false,\n    \"expirationSeconds\": 300,\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  },\n  \"createdAt\": \"2025-06-15T12:30:45Z\",\n  \"updatedAt\": \"2025-06-15T12:30:45Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dcfd5f24-1b28-4a1b-a12e-a170d04d8322",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"mycompany.com\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        }\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"SMS_OTP_CREDENTIAL_ALREADY_EXISTS\",\n  \"details\": {\n    \"key_0\": 3596.373082857135,\n    \"key_1\": \"string\",\n    \"key_2\": 382.9715921907084\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3c9bf6fc-8eee-433a-b9ec-a87935dcf8a5",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"mycompany.com\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        }\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c1f8a265-dc18-4d67-aea6-af1a7d1a0ab1",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"mycompany.com\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        }\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8d12d8ed-3118-4851-8c53-c41b7dc1e823",
+              "name": "Not implemented",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "config"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"umaDomain\": \"mycompany.com\",\n  \"webhookEndpoint\": \"https://api.mycompany.com/webhooks/uma\",\n  \"supportedCurrencies\": [\n    {\n      \"currencyCode\": \"USD\",\n      \"minAmount\": 100,\n      \"maxAmount\": 1000000,\n      \"enabledTransactionTypes\": [\n        \"OUTGOING\",\n        \"INCOMING\"\n      ],\n      \"requiredCounterpartyFields\": [\n        {\n          \"name\": \"FULL_NAME\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"NATIONALITY\",\n          \"mandatory\": true\n        },\n        {\n          \"name\": \"BIRTH_DATE\",\n          \"mandatory\": true\n        }\n      ]\n    }\n  ],\n  \"embeddedWalletConfig\": {\n    \"appName\": \"Acme Wallet\",\n    \"sendFromEmailAddress\": \"noreply@acme.com\",\n    \"sendFromEmailSenderName\": \"Acme Notifications\",\n    \"replyToEmailAddress\": \"support@acme.com\",\n    \"logoUrl\": \"https://acme.com/logo.png\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "53675d4d-a3dc-416a-873c-405ac30c2bda",
+    "name": "Grid Agent Management Platform Configuration API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

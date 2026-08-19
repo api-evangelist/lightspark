@@ -44,3 +44,11 @@ clients_documented:
 - Windsurf
 - Zed
 - Cline
+deployment:
+  mode: remote
+  endpoint: https://grid-mcp.stlmcp.com
+  verified: probed
+  probe: live
+  tools: 2
+  checked: '2026-08-12'
+  source: catalog MCP census

@@ -1,0 +1,412 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Agent Management",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List agents",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer ID"
+              },
+              {
+                "name": "isPaused",
+                "value": "",
+                "type": "query",
+                "description": "Filter by paused status"
+              },
+              {
+                "name": "isConnected",
+                "value": "",
+                "type": "query",
+                "description": "Filter by connection status (whether the device code has been redeemed)"
+              },
+              {
+                "name": "createdAfter",
+                "value": "",
+                "type": "query",
+                "description": "Filter agents created after this timestamp (inclusive)"
+              },
+              {
+                "name": "createdBefore",
+                "value": "",
+                "type": "query",
+                "description": "Filter agents created before this timestamp (inclusive)"
+              },
+              {
+                "name": "updatedAfter",
+                "value": "",
+                "type": "query",
+                "description": "Filter agents updated after this timestamp (inclusive)"
+              },
+              {
+                "name": "updatedBefore",
+                "value": "",
+                "type": "query",
+                "description": "Filter agents updated before this timestamp (inclusive)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of agents for the authenticated platform."
+        },
+        {
+          "info": {
+            "name": "Create an agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Create a new agent with a specified policy. Returns the created agent and a device code that must be redeemed by the agent software to complete installation.\n"
+        },
+        {
+          "info": {
+            "name": "List agent transaction approval requests",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/approvals",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by agent ID"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer ID"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Order to sort results in"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of agent actions that require platform approval. Filter by `agentId` or `customerId` to scope results to a specific agent or customer. Approve or reject individual actions via `POST /agents/{agentId}/actions/{actionId}/approve` or `POST /agents/{agentId}/actions/{actionId}/reject`.\n"
+        },
+        {
+          "info": {
+            "name": "Get agent by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve an agent by its system-generated ID."
+        },
+        {
+          "info": {
+            "name": "Update agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Update an agent's name or paused state."
+        },
+        {
+          "info": {
+            "name": "Delete agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Permanently delete an agent. Connected agent software will lose access immediately."
+        },
+        {
+          "info": {
+            "name": "Update agent policy",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId/policy",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Partially update an agent's policy. Only provided fields will be updated; omitted fields retain their current values. Policy changes take effect immediately.\n"
+        },
+        {
+          "info": {
+            "name": "Regenerate a device code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId/device-codes",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Generate a new device code for an existing agent. Use this when the original device code has expired before being redeemed, or when the agent software needs to be reinstalled. Any previously issued unredeemed device codes for this agent are invalidated.\n"
+        },
+        {
+          "info": {
+            "name": "Approve an agent action",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId/actions/:actionId/approve",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              },
+              {
+                "name": "actionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the agent action to approve"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Approve a pending agent action, allowing Grid to proceed with execution. The action must have status `PENDING_APPROVAL`. Once approved, Grid executes the underlying operation (quote execution or transfer) and the action transitions to `APPROVED`.\nFor `EXECUTE_QUOTE` actions, note that the underlying quote may have expired between submission and approval — in that case the action will transition to `FAILED` instead.\nThis endpoint is called by the platform's backend using platform credentials, not"
+        },
+        {
+          "info": {
+            "name": "Reject an agent action",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/:agentId/actions/:actionId/reject",
+            "params": [
+              {
+                "name": "agentId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique agent identifier"
+              },
+              {
+                "name": "actionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the agent action to reject"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Reject a pending agent action, preventing execution. The action must have status `PENDING_APPROVAL`. Once rejected, the action transitions to `REJECTED` and the underlying operation is not executed.\nThis endpoint is called by the platform's backend using platform credentials, not by the agent itself.\n"
+        },
+        {
+          "info": {
+            "name": "Get device code status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/device-codes/:code/status",
+            "params": [
+              {
+                "name": "code",
+                "value": "",
+                "type": "path",
+                "description": "The device code to check"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Check whether a device code has been redeemed. Use this to poll for agent installation completion after creating an agent.\n"
+        },
+        {
+          "info": {
+            "name": "Redeem device code",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/device-codes/:code/redeem",
+            "params": [
+              {
+                "name": "code",
+                "value": "",
+                "type": "path",
+                "description": "The device code to redeem"
+              }
+            ]
+          },
+          "docs": "Redeem a device code to obtain agent credentials. This endpoint is called by the agent software during installation. On success, returns a Bearer access token that the agent uses for all subsequent API calls. The token is returned only once and must be stored securely.\nThis endpoint does not require platform authentication — the device code itself serves as proof of authorization.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

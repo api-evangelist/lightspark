@@ -1,0 +1,271 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Customers API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Customers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List customers",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers",
+            "params": [
+              {
+                "name": "platformCustomerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by platform-specific customer identifier"
+              },
+              {
+                "name": "customerType",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer type"
+              },
+              {
+                "name": "createdAfter",
+                "value": "",
+                "type": "query",
+                "description": "Filter customers created after this timestamp (inclusive)"
+              },
+              {
+                "name": "createdBefore",
+                "value": "",
+                "type": "query",
+                "description": "Filter customers created before this timestamp (inclusive)"
+              },
+              {
+                "name": "updatedAfter",
+                "value": "",
+                "type": "query",
+                "description": "Filter customers updated after this timestamp (inclusive)"
+              },
+              {
+                "name": "updatedBefore",
+                "value": "",
+                "type": "query",
+                "description": "Filter customers updated before this timestamp (inclusive)"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "region",
+                "value": "",
+                "type": "query",
+                "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)"
+              },
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list."
+              },
+              {
+                "name": "umaAddress",
+                "value": "",
+                "type": "query",
+                "description": "Filter by uma address"
+              },
+              {
+                "name": "isIncludingDeleted",
+                "value": "",
+                "type": "query",
+                "description": "Whether to include deleted customers in the results. Default is false."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of customers with optional filtering parameters. Returns all customers that match\nthe specified filters. If no filters are provided, returns all customers (paginated).\n"
+        },
+        {
+          "info": {
+            "name": "Add a new customer",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Register a new customer in the system with an account identifier and bank account information"
+        },
+        {
+          "info": {
+            "name": "Get customer by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique customer identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a customer by their system-generated ID"
+        },
+        {
+          "info": {
+            "name": "Update customer by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+              }
+            ],
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique customer identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Update a customer's metadata by their system-generated ID.\n\nMost customer updates complete synchronously and return `200` with the updated customer. If the request changes `email` for a customer that has one or more tied Embedded Wallet internal accounts with `EMAIL_OTP` credentials, or changes `phoneNumber` for a customer that has one or more tied Embedded Wallet internal accounts with `SMS_OTP` credentials, the contact update uses the two-step signed-retry flow so the customer's wallet session"
+        },
+        {
+          "info": {
+            "name": "Delete customer by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/:customerId",
+            "params": [
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique customer identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Delete a customer by their system-generated ID"
+        },
+        {
+          "info": {
+            "name": "Upload customers via CSV file",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/bulk/csv",
+            "body": {
+              "type": "multipart-form",
+              "data": [
+                {
+                  "name": "file",
+                  "type": "text",
+                  "value": ""
+                }
+              ]
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Upload a CSV file containing customer information for bulk creation. The CSV file should follow\na specific format with required and optional columns based on customer type.\n\n### CSV Format\nThe CSV file should have the following columns:\n\nRequired columns for all customers:\n- umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)\n- platformCustomerId: Your platform's unique identifier for the customer\n- customerType: Either \"INDIVIDUAL\" or \"BUSINESS\"\n\nRequired columns for individ"
+        },
+        {
+          "info": {
+            "name": "Get bulk import job status",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/bulk/jobs/:jobId",
+            "params": [
+              {
+                "name": "jobId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the bulk import job to retrieve"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve the current status and results of a bulk customer import job. This endpoint can be used\nto track the progress of both CSV uploads.\n\nThe response includes:\n- Overall job status\n- Progress statistics\n- Detailed error information for failed entries\n- Completion timestamp when finished\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

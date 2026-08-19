@@ -1,0 +1,55 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Discoveries API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Discoveries",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List available receiving institution names",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/discoveries",
+            "params": [
+              {
+                "name": "country",
+                "value": "PH",
+                "type": "query",
+                "description": "ISO 3166-1 alpha-2 country code (e.g. PH)"
+              },
+              {
+                "name": "currency",
+                "value": "PHP",
+                "type": "query",
+                "description": "ISO 4217 currency code (e.g. PHP)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve available payment institution names for a given country and currency. Use this endpoint\nto look up supported banks and payment providers for a specific corridor.\nIf no country and currency parameter are provided, all payment institutions will be returned\n\nThe `bankName` field in each result is the value to pass as `bankName` when\ncreating an external account via `POST /customers/external-accounts`.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

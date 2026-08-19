@@ -1,0 +1,476 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Agent Operations API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Agent Operations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get current agent",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me",
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve the authenticated agent's own profile, policy, and current usage. This endpoint is called by the agent software itself using its own credentials (obtained via device code redemption) rather than platform credentials.\n"
+        },
+        {
+          "info": {
+            "name": "List agent transactions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/transactions",
+            "params": [
+              {
+                "name": "accountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by account identifier (matches either sender or receiver)"
+              },
+              {
+                "name": "senderAccountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by sender account identifier"
+              },
+              {
+                "name": "receiverAccountIdentifier",
+                "value": "",
+                "type": "query",
+                "description": "Filter by receiver account identifier"
+              },
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transaction status"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by transaction type"
+              },
+              {
+                "name": "reference",
+                "value": "",
+                "type": "query",
+                "description": "Filter by reference"
+              },
+              {
+                "name": "startDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by start date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "endDate",
+                "value": "",
+                "type": "query",
+                "description": "Filter by end date (inclusive) in ISO 8601 format"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Order to sort results in"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of transactions for the authenticated agent's customer. Results are automatically scoped to the agent's associated customer — no customer filter is needed or accepted.\n"
+        },
+        {
+          "info": {
+            "name": "Get agent transaction by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/transactions/:transactionId",
+            "params": [
+              {
+                "name": "transactionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the transaction"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a specific transaction belonging to the authenticated agent's customer. Returns 404 if the transaction exists but belongs to a different customer.\n"
+        },
+        {
+          "info": {
+            "name": "Create a transfer quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/quotes",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Generate a quote for a cross-currency transfer on behalf of the authenticated agent's customer. Accounts referenced in the request must belong to the agent's customer. Requires the CREATE_QUOTES permission in the agent's policy.\nIf the agent's defaultExecutionMode is APPROVAL_REQUIRED, or the quote amount exceeds the agent's approvalThresholds, the resulting transaction will require explicit approval before funds move.\n"
+        },
+        {
+          "info": {
+            "name": "Get agent quote by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/quotes/:quoteId",
+            "params": [
+              {
+                "name": "quoteId",
+                "value": "",
+                "type": "path",
+                "description": "ID of the quote to retrieve"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a quote created by the authenticated agent. Returns 404 if the quote exists but was not created by this agent.\n"
+        },
+        {
+          "info": {
+            "name": "Execute a quote",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/quotes/:quoteId/execute",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              },
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              }
+            ],
+            "params": [
+              {
+                "name": "quoteId",
+                "value": "Quote:019542f5-b3e7-1d02-0000-000000000001",
+                "type": "path",
+                "description": "The unique identifier of the quote to execute"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Execute a quote created by the authenticated agent. Requires the EXECUTE_QUOTES permission in the agent's policy.\nIf the agent's policy requires approval for this amount (based on execution mode or approval thresholds), the transaction will be created in a pending state and must be approved by the platform via `POST /agents/{agentId}/actions/{actionId}/approve`.\nOnce executed, the quote cannot be cancelled.\n"
+        },
+        {
+          "info": {
+            "name": "List agent's own actions",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/actions",
+            "params": [
+              {
+                "name": "status",
+                "value": "",
+                "type": "query",
+                "description": "Filter by action status"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of actions submitted by the authenticated agent. Use this to poll for approval decisions after submitting an action that requires approval.\n"
+        },
+        {
+          "info": {
+            "name": "Get an agent action",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/actions/:actionId",
+            "params": [
+              {
+                "name": "actionId",
+                "value": "",
+                "type": "path",
+                "description": "Unique identifier of the agent action"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a specific action submitted by the authenticated agent. Poll this endpoint after submitting an action that requires approval to check whether it has been approved, rejected, or has failed.\n"
+        },
+        {
+          "info": {
+            "name": "Create a transfer-in",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/transfer-in",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Transfer funds from an external account to an internal account for the authenticated agent's customer. Accounts must belong to the agent's customer. Requires the CREATE_TRANSFERS permission in the agent's policy.\nIf the agent's policy requires approval for this amount, the transaction will be created in a pending state and must be approved by the platform via `POST /agents/{agentId}/actions/{actionId}/approve`.\nThis endpoint should only be used for external account sources with pull functionalit"
+        },
+        {
+          "info": {
+            "name": "Create a transfer-out",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/transfer-out",
+            "headers": [
+              {
+                "name": "Idempotency-Key",
+                "value": ""
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Transfer funds from an internal account to an external account for the authenticated agent's customer. Accounts must belong to the agent's customer. Requires the CREATE_TRANSFERS permission in the agent's policy.\nIf the agent's policy requires approval for this amount, the transaction will be created in a pending state and must be approved by the platform via `POST /agents/{agentId}/actions/{actionId}/approve`.\n"
+        },
+        {
+          "info": {
+            "name": "List agent's internal accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/internal-accounts",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Filter by currency code"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for the customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for platform-managed holding accounts."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve the internal accounts belonging to the customer this agent operates on behalf of. Use this to discover available source accounts for transfers and quotes, and to verify which accounts are accessible under the agent's `accountRestrictions` policy.\n"
+        },
+        {
+          "info": {
+            "name": "List agent external accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/external-accounts",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Filter by currency code"
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of external accounts belonging to the authenticated agent's customer. Requires the MANAGE_EXTERNAL_ACCOUNTS permission in the agent's policy.\n"
+        },
+        {
+          "info": {
+            "name": "Add an external account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/external-accounts",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Register a new external bank account or wallet for the authenticated agent's customer. Requires the MANAGE_EXTERNAL_ACCOUNTS permission in the agent's policy. The `customerId` field is optional and will be inferred from the agent's associated customer if omitted.\n"
+        },
+        {
+          "info": {
+            "name": "Get agent external account by ID",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/external-accounts/:externalAccountId",
+            "params": [
+              {
+                "name": "externalAccountId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique external account identifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Retrieve an external account belonging to the authenticated agent's customer. Returns 404 if the account exists but belongs to a different customer. Requires the MANAGE_EXTERNAL_ACCOUNTS permission in the agent's policy.\n"
+        },
+        {
+          "info": {
+            "name": "Delete agent external account",
+            "type": "http"
+          },
+          "http": {
+            "method": "DELETE",
+            "url": "https://api.lightspark.com/grid/2025-10-13/agents/me/external-accounts/:externalAccountId",
+            "params": [
+              {
+                "name": "externalAccountId",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique external account identifier"
+              }
+            ],
+            "auth": {
+              "type": "bearer",
+              "token": "{{bearerToken}}"
+            }
+          },
+          "docs": "Delete an external account belonging to the authenticated agent's customer. Requires the MANAGE_EXTERNAL_ACCOUNTS permission in the agent's policy.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,179 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Internal Accounts API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Internal Accounts",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List Customer internal accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/customers/internal-accounts",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Filter by currency code"
+              },
+              {
+                "name": "customerId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by internal accounts associated with a specific customer"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of internal accounts with optional filtering parameters. Returns all\ninternal accounts that match the specified filters. If no filters are provided, returns all internal accounts\n(paginated).\n\nInternal accounts are created automatically when a customer is created based on the platform configuration.\n"
+        },
+        {
+          "info": {
+            "name": "List platform internal accounts",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/platform/internal-accounts",
+            "params": [
+              {
+                "name": "currency",
+                "value": "",
+                "type": "query",
+                "description": "Filter by currency code"
+              },
+              {
+                "name": "type",
+                "value": "",
+                "type": "query",
+                "description": "Filter by internal account type. Use `EMBEDDED_WALLET` to find the self-custodial wallet provisioned for a customer, or `INTERNAL_FIAT` / `INTERNAL_CRYPTO` for the platform-managed holding accounts."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a list of all internal accounts that belong to the platform, as opposed to an individual customer.\n\nThese accounts are created automatically when the platform is configured for each supported currency. They can be used for things like distributing bitcoin rewards to customers, or for other platform-wide purposes.\n"
+        },
+        {
+          "info": {
+            "name": "Update internal account",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/internal-accounts/:id",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "InternalAccount:019542f5-b3e7-1d02-0000-000000000002",
+                "type": "path",
+                "description": "The id of the internal account to update."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Update mutable fields on an internal account. Today this supports updating the wallet privacy setting for an Embedded Wallet internal account.\n\nUpdating wallet privacy is a two-step signed-retry flow:\n\n1. Call `PATCH /internal-accounts/{id}` with the request body `{ \"privateEnabled\": true }` and no signature headers. Grid returns `202` with `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Use the session API keypair of a verified authentication credential on the same internal account to build "
+        },
+        {
+          "info": {
+            "name": "Export internal account wallet credentials",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/internal-accounts/:id/export",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+              },
+              {
+                "name": "Request-Id",
+                "value": "Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "The id of the internal account to export."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Export the wallet credentials of an Embedded Wallet internal account. The returned wallet credentials are HPKE-encrypted to the `clientPublicKey` supplied in the request body.\n\nExport is a two-step signed-retry flow (same pattern as add-additional credential, revoke credential, and revoke session):\n\n1. Call `POST /internal-accounts/{id}/export` with the request body `{ \"clientPublicKey\": \"...\" }` and no signature headers. Grid binds the `clientPublicKey` into the `payloadToSign` it returns, so t"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

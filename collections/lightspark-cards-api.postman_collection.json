@@ -1,0 +1,2158 @@
+{
+  "item": [
+    {
+      "id": "f47db039-49c4-4985-aea5-d7f97065e3d1",
+      "name": "Cards",
+      "description": {
+        "content": "Card management endpoints. Issue debit cards against an internal account, freeze / unfreeze, close, manage card funding sources, and list card transactions.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "999ae6b5-4ccc-4579-b0a1-f534e179ed2b",
+          "name": "Issue a card",
+          "request": {
+            "name": "Issue a card",
+            "description": {
+              "content": "Issue a new card for a cardholder. Every card must be bound to at least one funding source at create time. The cardholder must have KYC status `APPROVED` before a card can be issued; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.\n\nIf any funding source is an Embedded Wallet internal account, the cardholder must authorize Grid to sign Spark token transactions for that card funding source by completing the delegated-key creation flow with `POST /auth/delegated-keys`. Until an active delegated key exists for that funding source, Authorization Decisioning cannot use it to fund card transactions.\n\nNew cards start in `state: \"PROCESSING\"` while the card issuer provisions the card. The `card.state_change` webhook fires on each state transition, including the transition to `ACTIVE` (or to `CLOSED` with `stateReason: \"ISSUER_REJECTED\"` if provisioning fails).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cards"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardholderId\": \"<string>\",\n  \"form\": \"<string>\",\n  \"fundingSources\": [\n    \"<string>\"\n  ],\n  \"platformCardId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "7e22b0a3-beb8-42f0-886a-226332f425dc",
+              "name": "Card created successfully. Newly-created cards start in `PROCESSING` while the issuer provisions them. Cards funded by an Embedded Wallet internal account also require an active delegated key for that funding source before Authorization Decisioning can use it.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"state\": \"PROCESSING\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000003\"\n  ],\n  \"createdAt\": \"2026-05-08T14:10:00Z\",\n  \"updatedAt\": \"2026-05-08T14:11:00Z\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"stateReason\": \"CLOSED_BY_PLATFORM\",\n  \"brand\": \"VISA\",\n  \"last4\": \"4242\",\n  \"expMonth\": 12,\n  \"expYear\": 2029,\n  \"currency\": \"USD\",\n  \"processorRef\": \"card_b81c2a4f\",\n  \"issuerRef\": \"lead_card_7a1b9c3d\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "43d47a0f-059a-4404-bf8b-9355785a62f9",
+              "name": "Bad request. Returned with `CARDHOLDER_KYC_NOT_APPROVED` when the cardholder's KYC status is not `APPROVED`, with `FUNDING_SOURCE_INELIGIBLE` when the supplied funding source does not belong to the cardholder or is not denominated in a card-eligible currency, and for general invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"UNSUITABLE_DOCUMENT\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "457e9b3b-7787-4034-8c0e-ec2d175783c2",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 3556.4653132675116\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8661444b-2f96-4c57-92c1-c19b6fc67164",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 7865,\n    \"key_1\": true,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c67ae917-a16f-4841-ad42-c45d963494a5",
+              "name": "Not implemented in this environment. Card issuance is not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\"\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": 6130.08666747255\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0a55da04-6bc8-4a7b-af1f-3caed34b9559",
+          "name": "List cards",
+          "request": {
+            "name": "List cards",
+            "description": {
+              "content": "Retrieve a paginated list of cards. Cards can be filtered by cardholder, bound funding-source internal account, state, and platform-specific card identifier. If no filters are provided, returns all cards visible to the caller.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cards"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "cardholderId",
+                  "value": "<string>",
+                  "description": "Filter by cardholder (customer) id."
+                },
+                {
+                  "disabled": false,
+                  "key": "accountId",
+                  "value": "<string>",
+                  "description": "Filter by internal account id. Returns cards whose `fundingSources` array contains the given internal account id."
+                },
+                {
+                  "disabled": false,
+                  "key": "platformCardId",
+                  "value": "<string>",
+                  "description": "Filter by platform-specific card identifier."
+                },
+                {
+                  "disabled": false,
+                  "key": "state",
+                  "value": "<string>",
+                  "description": "Filter by card state."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Order to sort results in"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "5696048c-a025-45fe-b8b6-316d01146376",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cardholderId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "accountId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platformCardId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "state",
+                      "value": "ACTIVE"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n      \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"state\": \"FROZEN\",\n      \"form\": \"VIRTUAL\",\n      \"fundingSources\": [\n        \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n        \"InternalAccount:019542f5-b3e7-1d02-0000-000000000003\"\n      ],\n      \"createdAt\": \"2026-05-08T14:10:00Z\",\n      \"updatedAt\": \"2026-05-08T14:11:00Z\",\n      \"platformCardId\": \"card-emp-aary-001\",\n      \"stateReason\": \"ISSUER_REJECTED\",\n      \"brand\": \"VISA\",\n      \"last4\": \"4242\",\n      \"expMonth\": 12,\n      \"expYear\": 2029,\n      \"currency\": \"USD\",\n      \"processorRef\": \"card_b81c2a4f\",\n      \"issuerRef\": \"lead_card_7a1b9c3d\"\n    },\n    {\n      \"id\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n      \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"state\": \"PROCESSING\",\n      \"form\": \"VIRTUAL\",\n      \"fundingSources\": [\n        \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n        \"InternalAccount:019542f5-b3e7-1d02-0000-000000000003\"\n      ],\n      \"createdAt\": \"2026-05-08T14:10:00Z\",\n      \"updatedAt\": \"2026-05-08T14:11:00Z\",\n      \"platformCardId\": \"card-emp-aary-001\",\n      \"stateReason\": \"CLOSED_BY_PLATFORM\",\n      \"brand\": \"MASTERCARD\",\n      \"last4\": \"4242\",\n      \"expMonth\": 12,\n      \"expYear\": 2029,\n      \"currency\": \"USD\",\n      \"processorRef\": \"card_b81c2a4f\",\n      \"issuerRef\": \"lead_card_7a1b9c3d\"\n    }\n  ],\n  \"hasMore\": true,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 4697\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0fda96aa-b4d3-4ffb-b623-e69d2bde84e1",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cardholderId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "accountId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platformCardId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "state",
+                      "value": "ACTIVE"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"UNSUITABLE_DOCUMENT\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e8104cae-71c8-4a7f-b424-d4ee3cf394a2",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cardholderId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "accountId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platformCardId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "state",
+                      "value": "ACTIVE"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 3556.4653132675116\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d8f4181a-d2d1-4830-bc52-b23ea6bd2a2c",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cardholderId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "accountId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platformCardId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "state",
+                      "value": "ACTIVE"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 7865,\n    \"key_1\": true,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dfef19fe-4bb6-4296-8608-633ee677d5fc",
+              "name": "Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "cardholderId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "accountId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "platformCardId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "state",
+                      "value": "ACTIVE"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": 6130.08666747255\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3489e2e3-6993-4772-a5b3-f0008ad61698",
+          "name": "Get a card",
+          "request": {
+            "name": "Get a card",
+            "description": {
+              "content": "Retrieve a card by its system-generated id. To display the card's full PAN, CVV, and expiry to the cardholder, request a reveal with `POST /cards/{id}/reveal` — the card resource itself never carries the reveal URL.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cards",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) System-generated unique card identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "2742a91f-e580-420e-b943-04c7ce44220e",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"state\": \"PROCESSING\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000003\"\n  ],\n  \"createdAt\": \"2026-05-08T14:10:00Z\",\n  \"updatedAt\": \"2026-05-08T14:11:00Z\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"stateReason\": \"CLOSED_BY_PLATFORM\",\n  \"brand\": \"VISA\",\n  \"last4\": \"4242\",\n  \"expMonth\": 12,\n  \"expYear\": 2029,\n  \"currency\": \"USD\",\n  \"processorRef\": \"card_b81c2a4f\",\n  \"issuerRef\": \"lead_card_7a1b9c3d\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d82488a5-716d-4218-9b8a-1afdc79dbed6",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 3556.4653132675116\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "42a61dc0-43ce-4e5f-9fe7-997a374ea723",
+              "name": "Card not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"LOOKUP_REQUEST_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 2977,\n    \"key_1\": true,\n    \"key_2\": false,\n    \"key_3\": true,\n    \"key_4\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "568f12bd-46cf-4a4d-bd40-804da867df32",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 7865,\n    \"key_1\": true,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2383df5a-c7e0-4792-a6e5-a5e113a0734b",
+              "name": "Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": 6130.08666747255\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "6e6be023-3f0f-4984-a264-4349d72e4ae8",
+          "name": "Update a card",
+          "request": {
+            "name": "Update a card",
+            "description": {
+              "content": "Update a card's `state` and / or its bound `fundingSources`. At least one of the two fields must be supplied.\n\n- `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible. Any other transition returns `409 INVALID_STATE_TRANSITION`.\n- `fundingSources`, when supplied, fully replaces the card's bound funding sources. Array order determines the priority Authorization Decisioning tries them in. Each id must belong to the cardholder and be denominated in the card's currency; the list must contain at least one source. `fundingSources` cannot be supplied alongside `state: CLOSED`.\n\nBecause both updates are sensitive state changes, this endpoint uses Grid's 202 → signed-retry pattern (same shape as `DELETE /auth/credentials/{id}` and `POST /internal-accounts/{id}/export`):\n\n1. Call `PATCH /cards/{id}` with the target fields and no signing headers. The response is `202` with a `payloadToSign`, `requestId`, and `expiresAt`.\n\n2. Sign the `payloadToSign` with the session private key of a verified authentication credential on the card's owning internal account and retry with the signature as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The signed retry returns `200` with the updated `Card`.\n\nEffects:\n- `state: FROZEN`: Authorization Decisioning declines new auths with `CARD_PAUSED`. Existing pulls and in-flight reconciliation continue — freezing does not pause the lifecycle of authorizations that already passed.\n- `state: ACTIVE`: normal authorization behavior resumes.\n- `state: CLOSED`: terminal close. The card transitions to `state: \"CLOSED\"` with `stateReason: \"CLOSED_BY_PLATFORM\"` and stays in the system for audit and reconciliation. All pending auths reconcile to a terminal state via the existing reconcile primitive. Inbound clearings received after close follow the standard force-post / late-presentment path — Lightspark absorbs the loss if a post-hoc pull on the now-unbound source fails. Funding-source bindings are detached. Refunds already in flight still complete because Lightspark holds the card-reserve keys.\n- `fundingSources` change: emits `card.funding_source_change` reflecting the new ordered binding.\n\nThe `card.state_change` webhook fires on every successful `state` transition; the `card.funding_source_change` webhook fires whenever `fundingSources` is updated.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cards",
+                ":id"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) System-generated unique card identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                "key": "Grid-Wallet-Signature",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                "key": "Request-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"state\": \"<string>\",\n  \"fundingSources\": [\n    \"<string>\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b8ab0f02-0e88-4d0c-9603-413376a062e7",
+              "name": "Signed retry accepted. Returns the updated card.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"cardholderId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"state\": \"PROCESSING\",\n  \"form\": \"VIRTUAL\",\n  \"fundingSources\": [\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n    \"InternalAccount:019542f5-b3e7-1d02-0000-000000000003\"\n  ],\n  \"createdAt\": \"2026-05-08T14:10:00Z\",\n  \"updatedAt\": \"2026-05-08T14:11:00Z\",\n  \"platformCardId\": \"card-emp-aary-001\",\n  \"stateReason\": \"CLOSED_BY_PLATFORM\",\n  \"brand\": \"VISA\",\n  \"last4\": \"4242\",\n  \"expMonth\": 12,\n  \"expYear\": 2029,\n  \"currency\": \"USD\",\n  \"processorRef\": \"card_b81c2a4f\",\n  \"issuerRef\": \"lead_card_7a1b9c3d\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9af237f0-b3a8-4a0a-ad04-cd9bb2be198a",
+              "name": "Challenge issued. The response contains a `payloadToSign` that must be signed with the session private key of a verified authentication credential on the card's owning internal account, along with a `requestId` that must be echoed back on the retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payloadToSign\": \"{\\\"organizationId\\\":\\\"org_2m9F...\\\",\\\"parameters\\\":{\\\"userId\\\":\\\"user_2m9F...\\\"},\\\"timestampMs\\\":\\\"1775681700000\\\",\\\"type\\\":\\\"ACTIVITY_TYPE_EXAMPLE\\\"}\",\n  \"requestId\": \"Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21\",\n  \"expiresAt\": \"2026-04-08T15:35:00Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2b002ca6-0955-4a90-bf11-286db193fba3",
+              "name": "Bad request. Returned with `FUNDING_SOURCE_INELIGIBLE` when a supplied funding source does not belong to the cardholder or is not denominated in the card's currency, and for general invalid parameters.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"UNSUITABLE_DOCUMENT\",\n  \"details\": {\n    \"key_0\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "978cb21b-7b4e-471c-aced-1c5ad9b99a1f",
+              "name": "Unauthorized. Returned when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match a pending update challenge for this card, or when the `Request-Id` does not match an unexpired pending challenge.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 3556.4653132675116\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6ff4e70a-90d7-4364-826c-20282b13a4d9",
+              "name": "Card not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"LOOKUP_REQUEST_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 2977,\n    \"key_1\": true,\n    \"key_2\": false,\n    \"key_3\": true,\n    \"key_4\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8ab0849b-660a-4838-bc24-9121888ae8cc",
+              "name": "Conflict. Returned with `INVALID_STATE_TRANSITION` when the requested `state` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE | FROZEN → CLOSED` (e.g. trying to un-freeze a `CLOSED` card); with `CARD_ALREADY_CLOSED` when `state: CLOSED` is requested for a card that is already `CLOSED`; and with `CARD_NOT_MUTABLE` when the card is `CLOSED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL\",\n  \"details\": {\n    \"key_0\": 4990.605840153674\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7235d688-38f2-42f8-992c-a110a9a90f22",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 7865,\n    \"key_1\": true,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0ba923df-8e7c-4d2c-8824-ef8d1ed49ea5",
+              "name": "Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"state\": \"FROZEN\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": 6130.08666747255\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "e41608ab-6cec-44f1-bab4-a78691f192d6",
+          "name": "Reveal card details",
+          "request": {
+            "name": "Reveal card details",
+            "description": {
+              "content": "Mint a signed, short-lived URL for the card processor's iframe that displays the card's full PAN, CVV, and expiry to the cardholder. This is the only way to obtain a reveal URL — the `Card` resource never carries one.\n\nRequest the reveal right before rendering the iframe and render the returned `panEmbedUrl` immediately; it expires at `expiresAt` (within minutes). Never store, cache, or log the URL — it is a bearer secret for the full card details. The card data renders inside the processor's iframe and never crosses Grid's or your servers.\n\nEvery reveal is audit-logged with the requesting actor.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "cards",
+                ":id",
+                "reveal"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) System-generated unique card identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "74e65209-e24d-44f6-8188-03034c7da869",
+              "name": "Reveal URL minted.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"panEmbedUrl\": \"https://embed.lithic.com/iframe/...?t=...\",\n  \"expiresAt\": \"2026-05-08T14:16:00Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "da7361e1-1c32-48cc-a00a-39861f90ef04",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 3556.4653132675116\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "09d2c385-10f2-4135-95d0-7259c4556b59",
+              "name": "Forbidden. The session has no attributable actor to audit the reveal against (for example, an impersonated dashboard session).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"FORBIDDEN\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": \"string\",\n    \"key_2\": 3668,\n    \"key_3\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f6b0c596-2e87-4f55-a18d-2378944f1eff",
+              "name": "Card not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"LOOKUP_REQUEST_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 2977,\n    \"key_1\": true,\n    \"key_2\": false,\n    \"key_3\": true,\n    \"key_4\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3ac14b27-90f2-4270-9b2c-ddcc34cd3e74",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 7865,\n    \"key_1\": true,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c283522b-9a12-43ed-a89b-d7a7ef00819c",
+              "name": "Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "cards",
+                    ":id",
+                    "reveal"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) System-generated unique card identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"NOT_IMPLEMENTED\",\n  \"details\": {\n    \"key_0\": 6130.08666747255\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d1e76c99-5cb4-4edf-9551-95de0d9d4618",
+    "name": "Grid Agent Management Cards API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

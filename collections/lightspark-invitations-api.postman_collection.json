@@ -1,0 +1,1323 @@
+{
+  "item": [
+    {
+      "id": "5d028323-70c5-413e-839f-485cf1ffd49e",
+      "name": "Invitations",
+      "description": {
+        "content": "Endpoints for creating, claiming and managing UMA invitations",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "53ae5a17-ec32-4cc8-9a66-597fc52ea42f",
+          "name": "Create an UMA invitation",
+          "request": {
+            "name": "Create an UMA invitation",
+            "description": {
+              "content": "Create an UMA invitation from a given platform customer.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invitations"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inviterUma\": \"<string>\",\n  \"firstName\": \"<string>\",\n  \"amountToSend\": \"<long>\",\n  \"expiresAt\": \"<dateTime>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a4fe8821-be2e-492c-b6ba-2f31baa29794",
+              "name": "Invitation created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"firstName\": \"Alice\",\n  \"amountToSend\": 12550,\n  \"expiresAt\": \"2025-09-01T14:30:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"019542f5\",\n  \"createdAt\": \"2025-09-01T14:30:00Z\",\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"status\": \"PENDING\",\n  \"url\": \"https://uma.me/i/019542f5\",\n  \"claimedAt\": \"2025-09-01T14:30:00Z\",\n  \"expiresAt\": \"2025-09-01T14:30:00Z\",\n  \"inviteeUma\": \"$invitee@uma.domain\",\n  \"firstName\": \"Jane\",\n  \"amountToSend\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "99ec9eaf-f973-43d8-a6e0-675bad0fd734",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"firstName\": \"Alice\",\n  \"amountToSend\": 12550,\n  \"expiresAt\": \"2025-09-01T14:30:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_BANK_ACCOUNT\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": \"string\",\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9914df84-9653-45a8-9210-d25447627f36",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"firstName\": \"Alice\",\n  \"amountToSend\": 12550,\n  \"expiresAt\": \"2025-09-01T14:30:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": 9696,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9039bf93-3f80-43ea-9979-939f654ee4b6",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"firstName\": \"Alice\",\n  \"amountToSend\": 12550,\n  \"expiresAt\": \"2025-09-01T14:30:00Z\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "38113c55-5ca2-4957-9741-5ef40a3634cd",
+          "name": "Get an UMA invitation by code",
+          "request": {
+            "name": "Get an UMA invitation by code",
+            "description": {
+              "content": "Retrieve details about an UMA invitation by its invitation code.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invitations",
+                ":invitationCode"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "invitationCode",
+                  "description": "(Required) The code of the invitation to get"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6f16f604-b04c-4a21-b8f2-8032170c0bf0",
+              "name": "Invitation retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to get"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"019542f5\",\n  \"createdAt\": \"2025-09-01T14:30:00Z\",\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"status\": \"PENDING\",\n  \"url\": \"https://uma.me/i/019542f5\",\n  \"claimedAt\": \"2025-09-01T14:30:00Z\",\n  \"expiresAt\": \"2025-09-01T14:30:00Z\",\n  \"inviteeUma\": \"$invitee@uma.domain\",\n  \"firstName\": \"Jane\",\n  \"amountToSend\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aa44fb06-0e25-405b-b9e9-243a9a8de438",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to get"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": 9696,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "24891f67-ce75-4185-9765-80b6d78e3134",
+              "name": "Invitation not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to get"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 1621.874018366294,\n    \"key_1\": 6680,\n    \"key_2\": 2110\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0255fab5-acd6-475b-9ba0-28c27b8de808",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to get"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bf52e6c6-3ecc-41e3-90e1-b2e1f6689e26",
+          "name": "Claim an UMA invitation",
+          "request": {
+            "name": "Claim an UMA invitation",
+            "description": {
+              "content": "Claim an UMA invitation by associating it with an invitee UMA address.\n\nWhen an invitation is successfully claimed:\n1. The invitation status changes from PENDING to CLAIMED\n2. The invitee UMA address is associated with the invitation\n3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation\n\nThis endpoint allows customers to accept invitations sent to them by other UMA customers.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invitations",
+                ":invitationCode",
+                "claim"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "invitationCode",
+                  "description": "(Required) The code of the invitation to claim"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"inviteeUma\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "9ca9b509-453f-47b4-8bfd-cffa6ce9ad76",
+              "name": "Invitation claimed successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to claim"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteeUma\": \"$invitee@uma.domain\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"019542f5\",\n  \"createdAt\": \"2025-09-01T14:30:00Z\",\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"status\": \"PENDING\",\n  \"url\": \"https://uma.me/i/019542f5\",\n  \"claimedAt\": \"2025-09-01T14:30:00Z\",\n  \"expiresAt\": \"2025-09-01T14:30:00Z\",\n  \"inviteeUma\": \"$invitee@uma.domain\",\n  \"firstName\": \"Jane\",\n  \"amountToSend\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0c67b1a3-a768-4484-9bdd-d7a264cf6fda",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to claim"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteeUma\": \"$invitee@uma.domain\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_BANK_ACCOUNT\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": \"string\",\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1d402cc9-c123-4307-a3ed-bde7a6e84030",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to claim"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteeUma\": \"$invitee@uma.domain\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": 9696,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "48a81f99-e39f-45a7-9cf5-b031a8951b2c",
+              "name": "Invitation not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to claim"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteeUma\": \"$invitee@uma.domain\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 1621.874018366294,\n    \"key_1\": 6680,\n    \"key_2\": 2110\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a8fea4c4-85d5-45fc-b5ca-d254f2e18280",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "claim"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to claim"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"inviteeUma\": \"$invitee@uma.domain\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bab8b034-4d2c-475d-92cf-73d8743d2050",
+          "name": "Cancel an UMA invitation",
+          "request": {
+            "name": "Cancel an UMA invitation",
+            "description": {
+              "content": "Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.\n\nWhen an invitation is cancelled:\n1. The invitation status changes from PENDING to CANCELLED\n2. The invitation can no longer be claimed\n3. The invitation URL will show as cancelled when accessed\n\nOnly pending invitations can be cancelled. Attempting to cancel an invitation\nthat is already claimed, expired, or cancelled will result in an error.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "invitations",
+                ":invitationCode",
+                "cancel"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "invitationCode",
+                  "description": "(Required) The code of the invitation to cancel"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "4e4deb18-5a60-4415-822c-8160ae8d91fd",
+              "name": "Invitation cancelled successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"code\": \"019542f5\",\n  \"createdAt\": \"2025-09-01T14:30:00Z\",\n  \"inviterUma\": \"$inviter@uma.domain\",\n  \"status\": \"PENDING\",\n  \"url\": \"https://uma.me/i/019542f5\",\n  \"claimedAt\": \"2025-09-01T14:30:00Z\",\n  \"expiresAt\": \"2025-09-01T14:30:00Z\",\n  \"inviteeUma\": \"$invitee@uma.domain\",\n  \"firstName\": \"Jane\",\n  \"amountToSend\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "24e5049a-7204-4dfd-914d-2c74f2922af3",
+              "name": "Bad request - Invitation cannot be cancelled (already claimed, expired, or cancelled)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_BANK_ACCOUNT\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": \"string\",\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4eb953c6-5ddc-4610-bad3-62e08a8d73c5",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MISSING\",\n  \"details\": {\n    \"key_0\": 9696,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c354b34a-f443-4902-a202-8f956d2f535b",
+              "name": "Forbidden - Only the platform which created the invitation can cancel it",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"COUNTERPARTY_NOT_ALLOWED\",\n  \"details\": {\n    \"key_0\": 1044\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1ef86796-cb46-405f-b7bb-277ffe6c69f9",
+              "name": "Invitation not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 1621.874018366294,\n    \"key_1\": 6680,\n    \"key_2\": 2110\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "088cf064-547c-450a-a039-d9b5c8c47f83",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "invitations",
+                    ":invitationCode",
+                    "cancel"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "invitationCode",
+                      "description": "(Required) The code of the invitation to cancel"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "90c5218d-55d8-4896-b032-8716f147513b",
+    "name": "Grid Agent Management Invitations API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

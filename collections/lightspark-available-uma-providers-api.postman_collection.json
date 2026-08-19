@@ -1,0 +1,333 @@
+{
+  "item": [
+    {
+      "id": "33a6cbd0-f08c-41f0-ad33-3a05acb86e8e",
+      "name": "Available UMA Providers",
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5775147f-881f-4a6a-8e2e-fb901c62ce1a",
+          "name": "List available Counterparty Providers",
+          "request": {
+            "name": "List available Counterparty Providers",
+            "description": {
+              "content": "Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "uma-providers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "countryCode",
+                  "value": "<string>",
+                  "description": "The alpha-2 representation of a country, as defined by the ISO 3166-1 standard."
+                },
+                {
+                  "disabled": false,
+                  "key": "currencyCode",
+                  "value": "<string>",
+                  "description": "The ISO 4217 currency code to filter providers by supported currency."
+                },
+                {
+                  "disabled": false,
+                  "key": "hasBlockedProviders",
+                  "value": "<boolean>",
+                  "description": "Whether to include providers which are not on your allowlist in the response. By default the response will include blocked providers."
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                },
+                {
+                  "disabled": false,
+                  "key": "sortOrder",
+                  "value": "desc",
+                  "description": "Order to sort results in"
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "742898ca-fe23-4881-87dd-a80022792f13",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "countryCode",
+                      "value": "US"
+                    },
+                    {
+                      "key": "currencyCode",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"name\": \"Lightspark Group\",\n      \"supportedRegions\": [\n        \"US\"\n      ],\n      \"domain\": \"uma.me\",\n      \"logoUrl\": \"https://uma.me/logo.png\",\n      \"supportedCurrencies\": [\n        {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        }\n      ],\n      \"lei\": \"5493001KJTIIGC8Y1R12\",\n      \"allowListStatus\": true\n    },\n    {\n      \"name\": \"Lightspark Group\",\n      \"supportedRegions\": [\n        \"US\"\n      ],\n      \"domain\": \"uma.me\",\n      \"logoUrl\": \"https://uma.me/logo.png\",\n      \"supportedCurrencies\": [\n        {\n          \"code\": \"USD\",\n          \"name\": \"United States Dollar\",\n          \"symbol\": \"$\",\n          \"decimals\": 2\n        }\n      ],\n      \"lei\": \"5493001KJTIIGC8Y1R12\",\n      \"allowListStatus\": true\n    }\n  ],\n  \"hasMore\": false,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 6120\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c0249c03-7a17-4977-924e-e0a64179b5c1",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "countryCode",
+                      "value": "US"
+                    },
+                    {
+                      "key": "currencyCode",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": 1524\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b67686a7-fc6a-4b2b-ac09-25070d2cb7b8",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "uma-providers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "countryCode",
+                      "value": "US"
+                    },
+                    {
+                      "key": "currencyCode",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "hasBlockedProviders",
+                      "value": "<boolean>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "sortOrder",
+                      "value": "desc"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": 6221,\n    \"key_1\": 339\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "ae4ae3a9-e2c1-4553-b28d-39a267262cb4",
+    "name": "Grid Agent Management Available UMA Providers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Sandbox API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Sandbox",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Send a test webhook",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/webhooks/test",
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Send a test webhook to the configured endpoint"
+        },
+        {
+          "info": {
+            "name": "Simulate sending funds",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/send",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate sending funds to the bank account as instructed in the quote.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n"
+        },
+        {
+          "info": {
+            "name": "Simulate payment send to test receiving an UMA payment",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/uma/receive",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate sending payment from an sandbox uma address to a platform customer to test payment receive.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n"
+        },
+        {
+          "info": {
+            "name": "Simulate funding an internal account",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/internal-accounts/:accountId/fund",
+            "params": [
+              {
+                "name": "accountId",
+                "value": "InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123",
+                "type": "path",
+                "description": "The ID of the internal account to fund"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate receiving funds into an internal account in the sandbox environment. This is useful for testing scenarios where you need to add funds to a customer's or platform's internal account without going through a real bank transfer or following payment instructions.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n"
+        },
+        {
+          "info": {
+            "name": "Simulate a card authorization",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/cards/:id/simulate/authorization",
+            "params": [
+              {
+                "name": "id",
+                "value": "Card:019542f5-b3e7-1d02-0000-000000000010",
+                "type": "path",
+                "description": "The id of the card to simulate an authorization against."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate an inbound card authorization in the sandbox environment. Drives the same internal `authorize` + `reconcile` paths the card issuer would call in production, so platforms can exercise Grid's decisioning + funding-source pull behavior end-to-end without an external network round-trip.\n\nThe decisioning outcome is controlled by the last three characters of `merchant.descriptor`:\n\n| Suffix | Outcome | | ------ | ------- | | `002`  | Decline — `INSUFFICIENT_FUNDS` (the pull on the funding sou"
+        },
+        {
+          "info": {
+            "name": "Simulate a card clearing",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/cards/:id/simulate/clearing",
+            "params": [
+              {
+                "name": "id",
+                "value": "Card:019542f5-b3e7-1d02-0000-000000000010",
+                "type": "path",
+                "description": "The id of the card the clearing applies to."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate a clearing (settlement) event against an existing `CardTransaction` in the sandbox environment.\n\n- A clearing `amount` greater than the authorized amount exercises the over-auth post-hoc-pull path (e.g. restaurant tip on top of a 20% over-auth).\n- A clearing `amount` of `0` exercises the `AUTHORIZATION_EXPIRY` path — the auth expires with no clearing posted.\n- Suffix-driven outcomes on the parent transaction's id govern whether the post-hoc pull succeeds (use the suffix table from `simu"
+        },
+        {
+          "info": {
+            "name": "Simulate a card return",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/sandbox/cards/:id/simulate/return",
+            "params": [
+              {
+                "name": "id",
+                "value": "Card:019542f5-b3e7-1d02-0000-000000000010",
+                "type": "path",
+                "description": "The id of the card the return applies to."
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Simulate a merchant-initiated `RETURN` against an existing settled card transaction in the sandbox environment. Creates a `CardRefund` on the parent and either flips the parent to `REFUNDED` (full refund) or keeps it `SETTLED` with a non-zero `refundedAmount` (partial refund).\n\nProduction returns `404` on this path.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

@@ -1,0 +1,2680 @@
+{
+  "item": [
+    {
+      "id": "560a8fcb-50b1-4a15-bd3f-5f67d4b3fd55",
+      "name": "Cross-Currency Transfers",
+      "description": {
+        "content": "Endpoints for creating and confirming quotes for cross-currency transfers",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b6aa0b22-ebd1-4c80-ab2e-cb68ceb29b01",
+          "name": "Look up an UMA address for payment",
+          "request": {
+            "name": "Look up an UMA address for payment",
+            "description": {
+              "content": "Lookup a receiving UMA address to determine supported currencies and exchange rates.\nThis endpoint helps platforms determine what currencies they can send to a given UMA address.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "receiver",
+                "uma",
+                ":receiverUmaAddress"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "senderUmaAddress",
+                  "value": "<string>",
+                  "description": "UMA address of the sender (optional if customerId is provided)"
+                },
+                {
+                  "disabled": false,
+                  "key": "customerId",
+                  "value": "<string>",
+                  "description": "System ID of the sender (optional if senderUmaAddress is provided)"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "receiverUmaAddress",
+                  "description": "(Required) UMA address of the intended recipient"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f48ebade-245a-4def-b65c-0a73864cccd9",
+              "name": "Successful lookup",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"lookupId\": \"Lookup:019542f5-b3e7-1d02-0000-000000000009\",\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"supportedCurrencies\": [\n    {\n      \"currency\": {\n        \"code\": \"USD\",\n        \"name\": \"United States Dollar\",\n        \"symbol\": \"$\",\n        \"decimals\": 2\n      },\n      \"estimatedExchangeRate\": 1.08,\n      \"min\": 1,\n      \"max\": 1000000\n    },\n    {\n      \"currency\": {\n        \"code\": \"USD\",\n        \"name\": \"United States Dollar\",\n        \"symbol\": \"$\",\n        \"decimals\": 2\n      },\n      \"estimatedExchangeRate\": 1.08,\n      \"min\": 1,\n      \"max\": 1000000\n    }\n  ],\n  \"requiredPayerDataFields\": [\n    {\n      \"name\": \"FULL_NAME\",\n      \"mandatory\": true\n    },\n    {\n      \"name\": \"FULL_NAME\",\n      \"mandatory\": true\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "308e986e-6ae9-424e-b659-57a84b1f4b25",
+              "name": "Bad request - Missing or invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INCOMPLETE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 7890\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "41eee535-530a-40bc-bb80-6813ad5e81df",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b07a2bab-3a78-4a95-9e98-5d794570dc9f",
+              "name": "UMA address not found. The address is well-formed but no receiver exists at the counterparty VASP (`UMA_NOT_FOUND`).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 6691,\n    \"key_1\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c1a1d5c4-3d35-45f3-b988-88dac4e92450",
+              "name": "Counterparty doesn't support UMA version",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Precondition Failed",
+              "code": 412,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 412,\n  \"code\": \"UNSUPPORTED_UMA_VERSION\",\n  \"details\": {\n    \"key_0\": 8808,\n    \"key_1\": \"string\",\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8e93266b-da78-4020-aff5-4bdec1f974ef",
+              "name": "Counterparty issue",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Failed Dependency (WebDAV) (RFC 4918)",
+              "code": 424,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 424,\n  \"code\": \"COUNTERPARTY_PUBKEY_FETCH_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 2100.935567481902,\n    \"key_2\": 5220.9433714073,\n    \"key_3\": 1339.563273077542\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "96ce6eb0-7b0d-4b5e-ba2d-f692fd4be93f",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "uma",
+                    ":receiverUmaAddress"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "receiverUmaAddress",
+                      "description": "(Required) UMA address of the intended recipient"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c3b0cd63-b094-4fec-9447-358109c63a54",
+          "name": "Look up an external account for payment",
+          "request": {
+            "name": "Look up an external account for payment",
+            "description": {
+              "content": "Lookup an external account by ID to determine supported currencies and exchange rates.\nThis endpoint helps platforms determine what currencies they can send to a given external account, along with the current estimated exchange rates and minimum and maximum amounts that can be sent.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "receiver",
+                "external-account",
+                ":accountId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "senderUmaAddress",
+                  "value": "<string>",
+                  "description": "UMA address of the sender (optional if customerId is provided)"
+                },
+                {
+                  "disabled": false,
+                  "key": "customerId",
+                  "value": "<string>",
+                  "description": "System ID of the sender (optional if senderUmaAddress is provided)"
+                }
+              ],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "accountId",
+                  "description": "(Required) System-generated ID of the external account"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6e19cf85-beec-4d2b-bc70-094264a5af57",
+              "name": "Successful lookup",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n  \"lookupId\": \"Lookup:019542f5-b3e7-1d02-0000-000000000009\",\n  \"supportedCurrencies\": [\n    {\n      \"currency\": {\n        \"code\": \"USD\",\n        \"name\": \"United States Dollar\",\n        \"symbol\": \"$\",\n        \"decimals\": 2\n      },\n      \"estimatedExchangeRate\": 1.08,\n      \"min\": 1,\n      \"max\": 1000000\n    },\n    {\n      \"currency\": {\n        \"code\": \"USD\",\n        \"name\": \"United States Dollar\",\n        \"symbol\": \"$\",\n        \"decimals\": 2\n      },\n      \"estimatedExchangeRate\": 1.08,\n      \"min\": 1,\n      \"max\": 1000000\n    }\n  ],\n  \"requiredPayerDataFields\": [\n    {\n      \"name\": \"FULL_NAME\",\n      \"mandatory\": true\n    },\n    {\n      \"name\": \"FULL_NAME\",\n      \"mandatory\": true\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aa2f1450-4ec2-461f-b9ac-7448432ff662",
+              "name": "Bad request - Missing or invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INCOMPLETE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 7890\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "49b0c60c-4e55-46bb-9ec6-9b895900a3b0",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fca7edf2-7871-4b87-a8c1-682adc23e384",
+              "name": "External account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 6691,\n    \"key_1\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f952ba39-f26c-47ae-9d67-b4e8c88afb7b",
+              "name": "Counterparty doesn't support UMA version",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Precondition Failed",
+              "code": 412,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 412,\n  \"code\": \"UNSUPPORTED_UMA_VERSION\",\n  \"details\": {\n    \"key_0\": 8808,\n    \"key_1\": \"string\",\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1de5cffb-665b-49f3-ba14-e1dd36787941",
+              "name": "Counterparty issue",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Failed Dependency (WebDAV) (RFC 4918)",
+              "code": 424,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 424,\n  \"code\": \"COUNTERPARTY_PUBKEY_FETCH_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 2100.935567481902,\n    \"key_2\": 5220.9433714073,\n    \"key_3\": 1339.563273077542\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5f5ae016-c6b4-48a6-ad03-8fd0b6bfa356",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "receiver",
+                    "external-account",
+                    ":accountId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "senderUmaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerId",
+                      "value": "<string>"
+                    }
+                  ],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) System-generated ID of the external account"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "0f0d60fd-957e-4033-84d1-3bec53b5d35c",
+          "name": "Get quote by ID",
+          "request": {
+            "name": "Get quote by ID",
+            "description": {
+              "content": "Retrieve a quote by its ID. If the quote has been settled, it will include\nthe transaction ID. This allows clients to track the full lifecycle of a payment\nfrom quote creation to settlement.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "quotes",
+                ":quoteId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "quoteId",
+                  "description": "(Required) ID of the quote to retrieve"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "f79305a9-4afc-4d3c-a1bb-2cc71bff02cf",
+              "name": "Quote retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) ID of the quote to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PENDING\",\n  \"expiresAt\": \"2025-10-03T12:05:00Z\",\n  \"createdAt\": \"2025-10-03T12:00:00Z\",\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationType\": \"ACCOUNT\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"sendingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"receivingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"totalSendingAmount\": 123010,\n  \"totalReceivingAmount\": 1000,\n  \"exchangeRate\": 5594.077299727067,\n  \"feesIncluded\": 10,\n  \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n  \"paymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    }\n  ],\n  \"remittanceInformation\": \"12345\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"rateDetails\": {\n    \"counterpartyMultiplier\": 1.08,\n    \"counterpartyFixedFee\": 10,\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"scaChallenge\": {\n    \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n    \"expiresAt\": \"2025-10-03T12:05:00Z\",\n    \"factor\": \"SMS_OTP\",\n    \"availableFactors\": [\n      \"SMS_OTP\"\n    ],\n    \"purpose\": \"PAYOUT\",\n    \"passkeyAssertionOptions\": {\n      \"key_0\": 6448.1579478641825,\n      \"key_1\": 6167,\n      \"key_2\": 9845\n    },\n    \"passkeyAllowedOrigins\": [\n      \"https://app.example.com\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eb0fd304-e604-40e6-af7e-24b7e8111db1",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) ID of the quote to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "85fd8713-48a3-4882-95bc-7217bf90d0d1",
+              "name": "Quote not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) ID of the quote to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 6691,\n    \"key_1\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a5d9adc3-a096-438b-88f8-fa2ced06f005",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) ID of the quote to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "44a5d986-15cd-46ff-836f-1463f1c3463c",
+          "name": "Create a transfer quote",
+          "request": {
+            "name": "Create a transfer quote",
+            "description": {
+              "content": "Generate a quote for a cross-currency transfer between any combination of accounts\nand UMA addresses. This endpoint handles currency exchange and provides the necessary\ninstructions to execute the transfer.\n\n**Transfer Types Supported:**\n- **Account to Account**: Transfer between internal/external accounts with currency exchange.\n- **Account to UMA**: Transfer from an internal account to an UMA address.\n- **UMA to Account or UMA to UMA**: This transfer type will only be funded by payment instructions, not from an internal account.\n\n**Key Features:**\n- **Flexible Amount Locking**: Always specify whether you want to lock the sending amount or receiving amount\n- **Currency Exchange**: Handles all cross-currency transfers with real-time exchange rates\n- **Payment Instructions**: For UMA or customer ID sources, provides banking details needed for execution\n\n**Important:** If you are transferring funds in the same currency (no exchange required),\nuse the `/transfer-in` or `/transfer-out` endpoints instead.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "quotes"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"accountId\": \"<string>\",\n    \"sourceType\": \"<string>\",\n    \"customerId\": \"<string>\"\n  },\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"destinationType\": \"<string>\",\n    \"paymentRail\": \"<string>\"\n  },\n  \"lockedCurrencySide\": \"<string>\",\n  \"lockedCurrencyAmount\": \"<long>\",\n  \"lookupId\": \"<string>\",\n  \"immediatelyExecute\": \"<boolean>\",\n  \"description\": \"<string>\",\n  \"remittanceInformation\": \"<string>\",\n  \"purposeOfPayment\": \"<string>\",\n  \"scaFactor\": \"<string>\",\n  \"senderCustomerInfo\": {\n    \"key_0\": false\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "b9c6ed06-3fe8-44d5-86c8-3bd9c2c0b45c",
+              "name": "Transfer quote created successfully. The response includes exchange rates,\nfees, and transfer details. For transfers involving UMA addresses, payment\ninstructions are also included for execution through banking systems.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PENDING\",\n  \"createdAt\": \"2025-10-03T12:00:00Z\",\n  \"expiresAt\": \"2025-10-03T12:05:00Z\",\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"sendingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"receivingCurrency\": {\n    \"code\": \"EUR\",\n    \"name\": \"Euro\",\n    \"symbol\": \"€\",\n    \"decimals\": 2\n  },\n  \"totalSendingAmount\": 10000,\n  \"totalReceivingAmount\": 9200,\n  \"exchangeRate\": 0.92,\n  \"feesIncluded\": 10,\n  \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ce018a81-1162-438d-aa4e-26bf78b98979",
+              "name": "Quote created but awaiting Strong Customer Authentication. Returned only for customers whose provider requires SCA (e.g. EU) on a realtime-funding source: the quote has status `PENDING_AUTHORIZATION` and carries an `scaChallenge`, and `paymentInstructions` are **withheld** until the challenge is authorized via `POST /quotes/{quoteId}/authorize`. Once authorized, the quote's `paymentInstructions` are populated.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PENDING\",\n  \"expiresAt\": \"2025-10-03T12:05:00Z\",\n  \"createdAt\": \"2025-10-03T12:00:00Z\",\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationType\": \"ACCOUNT\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"sendingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"receivingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"totalSendingAmount\": 123010,\n  \"totalReceivingAmount\": 1000,\n  \"exchangeRate\": 5594.077299727067,\n  \"feesIncluded\": 10,\n  \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n  \"paymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    }\n  ],\n  \"remittanceInformation\": \"12345\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"rateDetails\": {\n    \"counterpartyMultiplier\": 1.08,\n    \"counterpartyFixedFee\": 10,\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"scaChallenge\": {\n    \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n    \"expiresAt\": \"2025-10-03T12:05:00Z\",\n    \"factor\": \"SMS_OTP\",\n    \"availableFactors\": [\n      \"SMS_OTP\"\n    ],\n    \"purpose\": \"PAYOUT\",\n    \"passkeyAssertionOptions\": {\n      \"key_0\": 6448.1579478641825,\n      \"key_1\": 6167,\n      \"key_2\": 9845\n    },\n    \"passkeyAllowedOrigins\": [\n      \"https://app.example.com\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3c1d5afa-0dd1-4993-bf78-dd886fed6dc1",
+              "name": "Bad request - Missing or invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INCOMPLETE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 7890\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5583acd4-54b1-45ba-8073-97c3d151e5fe",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "54f6044f-c62b-4cf0-ba80-44ad9fefdb9d",
+              "name": "Counterparty doesn't support UMA version",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Precondition Failed",
+              "code": 412,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 412,\n  \"code\": \"UNSUPPORTED_UMA_VERSION\",\n  \"details\": {\n    \"key_0\": 8808,\n    \"key_1\": \"string\",\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3ea2dc5a-e7e8-457b-a641-aff93a23684c",
+              "name": "Counterparty issue",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Failed Dependency (WebDAV) (RFC 4918)",
+              "code": 424,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 424,\n  \"code\": \"COUNTERPARTY_PUBKEY_FETCH_ERROR\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 2100.935567481902,\n    \"key_2\": 5220.9433714073,\n    \"key_3\": 1339.563273077542\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0ca227dd-9779-4c63-a7b4-1f35990d5cd3",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "58138480-a094-492b-9971-ecb4ad723f7c",
+              "name": "Not implemented",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"sourceType\": \"ACCOUNT\",\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"destinationType\": \"ACCOUNT\",\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"lockedCurrencySide\": \"SENDING\",\n  \"lockedCurrencyAmount\": 10000,\n  \"description\": \"Transfer between accounts, either internal or external.\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "9156b093-ae40-42e9-addc-4038095fd016",
+          "name": "Execute a quote",
+          "request": {
+            "name": "Execute a quote",
+            "description": {
+              "content": "Execute a quote by its ID. This endpoint initiates the transfer between\nthe source and destination accounts.\n\nThis endpoint can only be used for quotes with a `source` which is either an internal account,\nor has direct pull functionality (e.g. ACH pull with an external account).\n\nWhen the quote's `source` is an internal account of type `EMBEDDED_WALLET`,\nthe request must include a `Grid-Wallet-Signature` header. The header value\nis the full Grid wallet signature built over the `payloadToSign` value from\nthe quote's `paymentInstructions[].accountOrWalletInfo` entry with the\nsession private key of a verified authentication credential on the source\nEmbedded Wallet.\n\nOnce executed, the quote cannot be cancelled and the transfer will be processed.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "quotes",
+                ":quoteId",
+                "execute"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "quoteId",
+                  "description": "(Required) The unique identifier of the quote to execute"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                "key": "Grid-Wallet-Signature",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scaFactor\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "78a78cfd-7566-458e-9daf-c4d939654271",
+              "name": "Quote processed. The outcome depends on whether SCA applies to the customer (currently EU customers):\n\n- **No SCA required:** the transfer is initiated and the quote status advances (`PROCESSING` / `COMPLETED`).\n\n- **SCA required:** the transfer is **not** initiated yet. The quote is returned with status `PENDING_AUTHORIZATION` and an `scaChallenge`; release the transfer by authorizing the quote you already hold — `POST /quotes/{quoteId}/authorize` (re-calling `execute` returns 409). A pre-funded send is a single challenge, so one authorization releases it. The challenge (and its SMS code / passkey assertion) only comes into existence once this call initiates the transfer, so the proof is always supplied on the follow-up authorize, never inline on this call. If an SMS code lapses, re-send it via `POST /quotes/{quoteId}/authorize/resend`.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PENDING\",\n  \"expiresAt\": \"2025-10-03T12:05:00Z\",\n  \"createdAt\": \"2025-10-03T12:00:00Z\",\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationType\": \"ACCOUNT\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"sendingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"receivingCurrency\": {\n    \"code\": \"USD\",\n    \"name\": \"United States Dollar\",\n    \"symbol\": \"$\",\n    \"decimals\": 2\n  },\n  \"totalSendingAmount\": 123010,\n  \"totalReceivingAmount\": 1000,\n  \"exchangeRate\": 5594.077299727067,\n  \"feesIncluded\": 10,\n  \"transactionId\": \"Transaction:019542f5-b3e7-1d02-0000-000000000005\",\n  \"paymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    }\n  ],\n  \"remittanceInformation\": \"12345\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"rateDetails\": {\n    \"counterpartyMultiplier\": 1.08,\n    \"counterpartyFixedFee\": 10,\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"scaChallenge\": {\n    \"id\": \"ScaChallenge:019542f5-b3e7-1d02-0000-000000000007\",\n    \"expiresAt\": \"2025-10-03T12:05:00Z\",\n    \"factor\": \"SMS_OTP\",\n    \"availableFactors\": [\n      \"SMS_OTP\"\n    ],\n    \"purpose\": \"PAYOUT\",\n    \"passkeyAssertionOptions\": {\n      \"key_0\": 6448.1579478641825,\n      \"key_1\": 6167,\n      \"key_2\": 9845\n    },\n    \"passkeyAllowedOrigins\": [\n      \"https://app.example.com\"\n    ]\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "db360c85-fbbc-40d5-b060-8c6e157c764d",
+              "name": "Bad request - Invalid quote ID or quote cannot be confirmed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INCOMPLETE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 7890\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3c0eb15d-e76f-4031-8e27-b4f6f8aad7bb",
+              "name": "Unauthorized. Also returned when the quote's source is an internal account of type `EMBEDDED_WALLET` and the provided `Grid-Wallet-Signature` header is missing, malformed, or does not match the quote's `payloadToSign`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d70003e0-27fd-49b5-a3a0-6e0f712b97f9",
+              "name": "Quote not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 6691,\n    \"key_1\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dd594f63-fa60-4965-bfab-366770c6df94",
+              "name": "Conflict - Quote already confirmed, expired, or in invalid state",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"EMAIL_OTP_CREDENTIAL_SET_CHANGED\",\n  \"details\": {\n    \"key_0\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "843790a0-1e47-4be9-b333-ba8c43313b03",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "quotes",
+                    ":quoteId",
+                    "execute"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "quoteId",
+                      "description": "(Required) The unique identifier of the quote to execute"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "<uuid>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full Grid wallet signature over the `payloadToSign` returned in the quote's `paymentInstructions[].accountOrWalletInfo` entry, produced with the session private key of a verified authentication credential on the source Embedded Wallet. Required when the quote's source is an internal account of type `EMBEDDED_WALLET`; ignored for other source types.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"scaFactor\": \"SMS_OTP\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "77b91623-4f68-4d6c-a8c5-efb1f21be1bb",
+          "name": "Estimate crypto withdrawal fee",
+          "request": {
+            "name": "Estimate crypto withdrawal fee",
+            "description": {
+              "content": "Estimate the network and application fees for a cryptocurrency withdrawal from a crypto internal account to an external blockchain address. Use this to show fee information to customers before they initiate a withdrawal.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "crypto",
+                "estimate-withdrawal-fee"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"internalAccountId\": \"<string>\",\n  \"currency\": \"<string>\",\n  \"cryptoNetwork\": \"<string>\",\n  \"amount\": \"<integer>\",\n  \"destinationAddress\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "10112e14-e751-42b9-8f83-3dd7731c83ae",
+              "name": "Fee estimation returned successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "crypto",
+                    "estimate-withdrawal-fee"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"internalAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"currency\": \"USDC\",\n  \"cryptoNetwork\": \"SOLANA\",\n  \"amount\": 1000000,\n  \"destinationAddress\": \"7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"networkFee\": 5000,\n  \"networkFeeAsset\": \"SOL\",\n  \"applicationFee\": 0,\n  \"totalFee\": 5000,\n  \"netAmount\": 995000\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "739f586e-caf2-4fcd-aa9c-512302301093",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "crypto",
+                    "estimate-withdrawal-fee"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"internalAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"currency\": \"USDC\",\n  \"cryptoNetwork\": \"SOLANA\",\n  \"amount\": 1000000,\n  \"destinationAddress\": \"7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INCOMPLETE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 7890\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3ef4ef90-deba-4025-b766-0e88bfcbd262",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "crypto",
+                    "estimate-withdrawal-fee"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"internalAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"currency\": \"USDC\",\n  \"cryptoNetwork\": \"SOLANA\",\n  \"amount\": 1000000,\n  \"destinationAddress\": \"7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": 6553.1355940805215,\n    \"key_1\": true,\n    \"key_2\": \"string\",\n    \"key_3\": \"string\",\n    \"key_4\": 3357\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b080d341-a95b-4ae5-94af-c56510e1ca5d",
+              "name": "Internal account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "crypto",
+                    "estimate-withdrawal-fee"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"internalAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"currency\": \"USDC\",\n  \"cryptoNetwork\": \"SOLANA\",\n  \"amount\": 1000000,\n  \"destinationAddress\": \"7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"UMA_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 6691,\n    \"key_1\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "af3fa7c7-8d1f-4722-ae26-f6230327ac38",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "crypto",
+                    "estimate-withdrawal-fee"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"internalAccountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"currency\": \"USDC\",\n  \"cryptoNetwork\": \"SOLANA\",\n  \"amount\": 1000000,\n  \"destinationAddress\": \"7xKXtg2CW87d97TXJSDpbD5jBkheTqA83TZRuJosgAsU\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 1165,\n    \"key_1\": 8877.412115671013\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "7add5649-894d-4d22-90b4-a25b546e192d",
+    "name": "Grid Agent Management Cross-Currency Transfers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

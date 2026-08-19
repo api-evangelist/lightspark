@@ -1,0 +1,121 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Invitations API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Invitations",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Create an UMA invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/invitations",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Create an UMA invitation from a given platform customer.\n"
+        },
+        {
+          "info": {
+            "name": "Get an UMA invitation by code",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/invitations/:invitationCode",
+            "params": [
+              {
+                "name": "invitationCode",
+                "value": "",
+                "type": "path",
+                "description": "The code of the invitation to get"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve details about an UMA invitation by its invitation code.\n"
+        },
+        {
+          "info": {
+            "name": "Claim an UMA invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/invitations/:invitationCode/claim",
+            "params": [
+              {
+                "name": "invitationCode",
+                "value": "",
+                "type": "path",
+                "description": "The code of the invitation to claim"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Claim an UMA invitation by associating it with an invitee UMA address.\n\nWhen an invitation is successfully claimed:\n1. The invitation status changes from PENDING to CLAIMED\n2. The invitee UMA address is associated with the invitation\n3. An INVITATION_CLAIMED webhook is triggered to notify the platform that created the invitation\n\nThis endpoint allows customers to accept invitations sent to them by other UMA customers.\n"
+        },
+        {
+          "info": {
+            "name": "Cancel an UMA invitation",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/invitations/:invitationCode/cancel",
+            "params": [
+              {
+                "name": "invitationCode",
+                "value": "",
+                "type": "path",
+                "description": "The code of the invitation to cancel"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Cancel a pending UMA invitation. Only the inviter or platform can cancel an invitation.\n\nWhen an invitation is cancelled:\n1. The invitation status changes from PENDING to CANCELLED\n2. The invitation can no longer be claimed\n3. The invitation URL will show as cancelled when accessed\n\nOnly pending invitations can be cancelled. Attempting to cancel an invitation\nthat is already claimed, expired, or cancelled will result in an error.\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

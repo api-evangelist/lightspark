@@ -1,0 +1,191 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Cards API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Cards",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "List cards",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/cards",
+            "params": [
+              {
+                "name": "cardholderId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by cardholder (customer) id."
+              },
+              {
+                "name": "accountId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by internal account id. Returns cards whose `fundingSources` array contains the given internal account id."
+              },
+              {
+                "name": "platformCardId",
+                "value": "",
+                "type": "query",
+                "description": "Filter by platform-specific card identifier."
+              },
+              {
+                "name": "state",
+                "value": "",
+                "type": "query",
+                "description": "Filter by card state."
+              },
+              {
+                "name": "limit",
+                "value": "",
+                "type": "query",
+                "description": "Maximum number of results to return (default 20, max 100)"
+              },
+              {
+                "name": "cursor",
+                "value": "",
+                "type": "query",
+                "description": "Cursor for pagination (returned from previous request)"
+              },
+              {
+                "name": "sortOrder",
+                "value": "",
+                "type": "query",
+                "description": "Order to sort results in"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a paginated list of cards. Cards can be filtered by cardholder, bound funding-source internal account, state, and platform-specific card identifier. If no filters are provided, returns all cards visible to the caller.\n"
+        },
+        {
+          "info": {
+            "name": "Issue a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/cards",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Issue a new card for a cardholder. Every card must be bound to at least one funding source at create time. The cardholder must have KYC status `APPROVED` before a card can be issued; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.\n\nIf any funding source is an Embedded Wallet internal account, the cardholder must authorize Grid to sign Spark token transactions for that card funding source by completing the delegated-key creation flow with `POST /auth/delegated-keys`. Until a"
+        },
+        {
+          "info": {
+            "name": "Get a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/cards/:id",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique card identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve a card by its system-generated id. To display the card's full PAN, CVV, and expiry to the cardholder, request a reveal with `POST /cards/{id}/reveal` — the card resource itself never carries the reveal URL."
+        },
+        {
+          "info": {
+            "name": "Update a card",
+            "type": "http"
+          },
+          "http": {
+            "method": "PATCH",
+            "url": "https://api.lightspark.com/grid/2025-10-13/cards/:id",
+            "headers": [
+              {
+                "name": "Grid-Wallet-Signature",
+                "value": "MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE="
+              },
+              {
+                "name": "Request-Id",
+                "value": "7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21"
+              }
+            ],
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique card identifier"
+              }
+            ],
+            "body": {
+              "type": "json",
+              "data": "{}"
+            },
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Update a card's `state` and / or its bound `fundingSources`. At least one of the two fields must be supplied.\n\n- `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible. Any other transition returns `409 INVALID_STATE_TRANSITION`.\n- `fundingSources`, when supplied, fully replaces the card's bound funding sources. Array order determines the priority Authorization Decisioning tries them in. Each id must belong to the cardholder and"
+        },
+        {
+          "info": {
+            "name": "Reveal card details",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.lightspark.com/grid/2025-10-13/cards/:id/reveal",
+            "params": [
+              {
+                "name": "id",
+                "value": "",
+                "type": "path",
+                "description": "System-generated unique card identifier"
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Mint a signed, short-lived URL for the card processor's iframe that displays the card's full PAN, CVV, and expiry to the cardholder. This is the only way to obtain a reveal URL — the `Card` resource never carries one.\n\nRequest the reveal right before rendering the iframe and render the returned `panEmbedUrl` immediately; it expires at `expiresAt` (within minutes). Never store, cache, or log the URL — it is a bearer secret for the full card details. The card data renders inside the processor's if"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

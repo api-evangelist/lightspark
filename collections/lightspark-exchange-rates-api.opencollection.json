@@ -1,0 +1,61 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Grid Agent Management Exchange Rates API",
+    "version": "2025-10-13"
+  },
+  "request": {
+    "auth": {
+      "type": "basic",
+      "username": "{{username}}",
+      "password": "{{password}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Exchange Rates",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Get exchange rates",
+            "type": "http"
+          },
+          "http": {
+            "method": "GET",
+            "url": "https://api.lightspark.com/grid/2025-10-13/exchange-rates",
+            "params": [
+              {
+                "name": "sourceCurrency",
+                "value": "USD",
+                "type": "query",
+                "description": "Filter by source currency code (e.g., USD)"
+              },
+              {
+                "name": "destinationCurrency",
+                "value": "INR",
+                "type": "query",
+                "description": "Filter by destination currency code(s). Can be repeated for multiple currencies (e.g., &destinationCurrency=INR&destinationCurrency=GBP)"
+              },
+              {
+                "name": "sendingAmount",
+                "value": "10000",
+                "type": "query",
+                "description": "Sending amount in the smallest unit of the source currency (e.g., cents for USD).  If no amount is provided, the default is 10000 in the sending currency smallest unit."
+              }
+            ],
+            "auth": {
+              "type": "basic",
+              "username": "{{username}}",
+              "password": "{{password}}"
+            }
+          },
+          "docs": "Retrieve cached exchange rates for currency corridors. Returns FX rates that are cached\nfor approximately 5 minutes. Rates include fees specific to your platform for authenticated requests.\n\n**Filtering Options:**\n- Filter by source currency to get all available destination corridors\n- Filter by specific destination currency or currencies\n- Provide a sending amount to get calculated receiving amounts\n"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

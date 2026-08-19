@@ -1,0 +1,747 @@
+{
+  "item": [
+    {
+      "id": "9fa58263-5d81-4ba7-9f52-2104bf811c5d",
+      "name": "Same-Currency Transfers",
+      "description": {
+        "content": "Endpoints for transferring funds between internal and external accounts with the same currency",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "afed6667-3be8-46d9-80d2-e65b0e1bfe86",
+          "name": "Create a transfer-in request",
+          "request": {
+            "name": "Create a transfer-in request",
+            "description": {
+              "content": "Transfer funds from an external account to an internal account for a specific customer. This endpoint should only be used for external account sources with pull functionality (e.g. ACH Pull). Otherwise, use the paymentInstructions on the internal account to deposit funds.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "transfer-in"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"accountId\": \"<string>\"\n  },\n  \"destination\": {\n    \"accountId\": \"<string>\"\n  },\n  \"amount\": \"<long>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d1f52418-5c3e-422d-98cc-7c1ac420ef1d",
+              "name": "Transfer-in request created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-in"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"amount\": 12550\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"destination\": {\n    \"accountId\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"destinationType\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"onChainTransaction\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"receivedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"status\": \"REFUNDED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"2025-08-15T14:30:00Z\",\n  \"createdAt\": \"2025-08-15T14:25:18Z\",\n  \"updatedAt\": \"2025-08-15T14:30:00Z\",\n  \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"description\": \"Payment for invoice #1234\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"onChainTransaction\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"fees\": 10,\n  \"reconciliationInstructions\": {\n    \"reference\": \"UMA-Q12345-REF\",\n    \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"failureReason\": \"PAY_REQUEST_FAILED\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a835a358-6343-4429-ab47-9dc060117164",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-in"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"amount\": 12550\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_INVALID\",\n  \"details\": {\n    \"key_0\": 9270.014691944038,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a3742aa5-5870-48ed-909a-a58c96f4f3c4",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-in"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"amount\": 12550\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": false,\n    \"key_2\": 4035.486872726768\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "392dcaae-5380-4432-9baf-4e62b271e931",
+              "name": "Customer or account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-in"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"amount\": 12550\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"LOOKUP_REQUEST_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 3833.740914625434\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7f8a4465-24ee-4abe-a3b2-fbd9d853d43c",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-in"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\"\n  },\n  \"destination\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"amount\": 12550\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": false,\n    \"key_2\": 9285.831271650737,\n    \"key_3\": 4976\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "bb3776ca-948c-4897-92fb-682e2a780b80",
+          "name": "Create a transfer-out request",
+          "request": {
+            "name": "Create a transfer-out request",
+            "description": {
+              "content": "Transfer funds from an internal account to an external account for a specific customer.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "transfer-out"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                "key": "Idempotency-Key",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"source\": {\n    \"accountId\": \"<string>\"\n  },\n  \"destination\": {\n    \"accountId\": \"<string>\",\n    \"paymentRail\": \"<string>\"\n  },\n  \"amount\": \"<long>\",\n  \"remittanceInformation\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "df54dd70-da33-4975-8286-e1012be1fcd1",
+              "name": "Transfer-out request created successfully.\n",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-out"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"amount\": 12550,\n  \"remittanceInformation\": \"12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"destination\": {\n    \"accountId\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"destinationType\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"onChainTransaction\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"receivedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"status\": \"REFUNDED\",\n  \"type\": \"OUTGOING\",\n  \"settledAt\": \"2025-08-15T14:30:00Z\",\n  \"createdAt\": \"2025-08-15T14:25:18Z\",\n  \"updatedAt\": \"2025-08-15T14:30:00Z\",\n  \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"description\": \"Payment for invoice #1234\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    },\n    \"onChainTransaction\": {\n      \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n    }\n  },\n  \"fees\": 10,\n  \"reconciliationInstructions\": {\n    \"reference\": \"UMA-Q12345-REF\",\n    \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"failureReason\": \"PAY_REQUEST_FAILED\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8bd24962-fa36-473a-9a19-4761ded2fef8",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-out"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"amount\": 12550,\n  \"remittanceInformation\": \"12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"STABLECOIN_PROVIDER_ACCOUNT_INVALID\",\n  \"details\": {\n    \"key_0\": 9270.014691944038,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fa864e59-d204-4fd4-9d52-f418c91868cb",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-out"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"amount\": 12550,\n  \"remittanceInformation\": \"12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"REQUEST_ID_MISSING\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": false,\n    \"key_2\": 4035.486872726768\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "192b3cd2-29da-40d9-93b0-c6a844723b78",
+              "name": "Customer or account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-out"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"amount\": 12550,\n  \"remittanceInformation\": \"12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"LOOKUP_REQUEST_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": 3833.740914625434\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "09a25be4-a908-4a5f-b9ea-56fca61e0616",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "transfer-out"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.\n",
+                    "key": "Idempotency-Key",
+                    "value": "550e8400-e29b-41d4-a716-446655440000"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"source\": {\n    \"accountId\": \"InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\"\n  },\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"paymentRail\": \"ACH\"\n  },\n  \"amount\": 12550,\n  \"remittanceInformation\": \"12345\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"INTERNAL_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": false,\n    \"key_2\": 9285.831271650737,\n    \"key_3\": 4976\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "26ca7ffc-c4df-47ed-986a-e3e301e860eb",
+    "name": "Grid Agent Management Same-Currency Transfers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

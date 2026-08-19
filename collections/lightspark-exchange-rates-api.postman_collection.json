@@ -1,0 +1,341 @@
+{
+  "item": [
+    {
+      "id": "d07a9760-ec1e-4f76-b9c8-1d45393a7e5c",
+      "name": "Exchange Rates",
+      "description": {
+        "content": "Endpoints for retrieving cached foreign exchange rates. Rates are cached for approximately 5 minutes and include platform-specific fees.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "768710c0-b014-4542-8b0c-2f878a852cac",
+          "name": "Get exchange rates",
+          "request": {
+            "name": "Get exchange rates",
+            "description": {
+              "content": "Retrieve cached exchange rates for currency corridors. Returns FX rates that are cached\nfor approximately 5 minutes. Rates include fees specific to your platform for authenticated requests.\n\n**Filtering Options:**\n- Filter by source currency to get all available destination corridors\n- Filter by specific destination currency or currencies\n- Provide a sending amount to get calculated receiving amounts\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "exchange-rates"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "sourceCurrency",
+                  "value": "<string>",
+                  "description": "Filter by source currency code (e.g., USD)"
+                },
+                {
+                  "disabled": false,
+                  "key": "destinationCurrency",
+                  "value": "<string>",
+                  "description": "Filter by destination currency code(s). Can be repeated for multiple currencies (e.g., &destinationCurrency=INR&destinationCurrency=GBP)"
+                },
+                {
+                  "disabled": false,
+                  "key": "destinationCurrency",
+                  "value": "<string>",
+                  "description": "Filter by destination currency code(s). Can be repeated for multiple currencies (e.g., &destinationCurrency=INR&destinationCurrency=GBP)"
+                },
+                {
+                  "disabled": false,
+                  "key": "sendingAmount",
+                  "value": "10000",
+                  "description": "Sending amount in the smallest unit of the source currency (e.g., cents for USD).  If no amount is provided, the default is 10000 in the sending currency smallest unit."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "de4c2442-7334-4139-bff4-30961abefdde",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rates"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sourceCurrency",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "destinationCurrency",
+                      "value": "INR"
+                    },
+                    {
+                      "key": "sendingAmount",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"sourceCurrency\": {\n        \"code\": \"USD\",\n        \"decimals\": 2,\n        \"name\": \"US Dollar\",\n        \"symbol\": \"$\"\n      },\n      \"sendingAmount\": 10000,\n      \"minSendingAmount\": 100,\n      \"maxSendingAmount\": 10000000,\n      \"destinationCurrency\": {\n        \"code\": \"INR\",\n        \"decimals\": 2,\n        \"name\": \"Indian Rupee\",\n        \"symbol\": \"₹\"\n      },\n      \"destinationPaymentRail\": \"UPI\",\n      \"receivingAmount\": 825000,\n      \"exchangeRate\": 0.012121,\n      \"fees\": {\n        \"fixed\": 100,\n        \"total\": 150\n      },\n      \"updatedAt\": \"2025-02-05T12:00:00Z\"\n    },\n    {\n      \"sourceCurrency\": {\n        \"code\": \"USD\",\n        \"decimals\": 2,\n        \"name\": \"US Dollar\",\n        \"symbol\": \"$\"\n      },\n      \"sendingAmount\": 10000,\n      \"minSendingAmount\": 100,\n      \"maxSendingAmount\": 10000000,\n      \"destinationCurrency\": {\n        \"code\": \"EUR\",\n        \"decimals\": 2,\n        \"name\": \"Euro\",\n        \"symbol\": \"€\"\n      },\n      \"destinationPaymentRail\": \"SEPA_INSTANT\",\n      \"receivingAmount\": 9250,\n      \"exchangeRate\": 1.081081,\n      \"fees\": {\n        \"fixed\": 10,\n        \"total\": 15\n      },\n      \"updatedAt\": \"2025-02-05T12:00:00Z\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6c33d4d0-a2c7-4ed6-b57f-f2a8f8542c93",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rates"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sourceCurrency",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "destinationCurrency",
+                      "value": "INR"
+                    },
+                    {
+                      "key": "sendingAmount",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"MISSING_REQUIRED_UMA_PARAMETERS\",\n  \"details\": {\n    \"key_0\": 1292,\n    \"key_1\": 4147.792182302939,\n    \"key_2\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8b4b95c7-4efa-48d0-8da7-29f675f929bf",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rates"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sourceCurrency",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "destinationCurrency",
+                      "value": "INR"
+                    },
+                    {
+                      "key": "sendingAmount",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"WALLET_SIGNATURE_MALFORMED\",\n  \"details\": {\n    \"key_0\": 5043.975731986119\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9c88ffcc-5b4d-4dd7-b475-0478c834547d",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "exchange-rates"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "sourceCurrency",
+                      "value": "USD"
+                    },
+                    {
+                      "key": "destinationCurrency",
+                      "value": "INR"
+                    },
+                    {
+                      "key": "sendingAmount",
+                      "value": "10000"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true,\n    \"key_2\": 5726\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "640cfbcb-49ff-4194-b4e2-b2c32edac993",
+    "name": "Grid Agent Management Exchange Rates API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

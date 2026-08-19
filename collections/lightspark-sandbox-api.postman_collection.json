@@ -1,0 +1,2820 @@
+{
+  "item": [
+    {
+      "id": "5b969ee1-0818-4723-ae24-f3e4494244ce",
+      "name": "Sandbox",
+      "description": {
+        "content": "Endpoints to trigger test cases in sandbox",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "77d56d15-1d96-47e9-a809-547a487b0d16",
+          "name": "Send a test webhook",
+          "request": {
+            "name": "Send a test webhook",
+            "description": {
+              "content": "Send a test webhook to the configured endpoint",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "webhooks",
+                "test"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "87d6871d-4071-4b96-8270-2083699d0255",
+              "name": "Webhook delivered successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "webhooks",
+                    "test"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"response_status\": 200,\n  \"url\": \"https://api.mycompany.com/webhooks/uma\",\n  \"response_body\": \"string\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2f364f35-13fe-4bf6-a37e-ab536c4f4985",
+              "name": "Bad request - Webhook delivery failed",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "webhooks",
+                    "test"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "38351edc-9a38-479f-b408-f3ce3c106d62",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "webhooks",
+                    "test"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "438add44-8ff6-40ca-b822-53b9f8e13b08",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "webhooks",
+                    "test"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "c38a9dd7-cb1c-4465-a466-a7739876a59a",
+          "name": "Simulate sending funds",
+          "request": {
+            "name": "Simulate sending funds",
+            "description": {
+              "content": "Simulate sending funds to the bank account as instructed in the quote.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "send"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"quoteId\": \"<string>\",\n  \"currencyCode\": \"<string>\",\n  \"currencyAmount\": \"<long>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "d56aeab6-c022-43c7-b6f5-c92a4e84e760",
+              "name": "Funds received successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"EUR\",\n    \"onChainTransaction\": {\n      \"transactionHash\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"network\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  },\n  \"direction\": \"CREDIT\",\n  \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"sentAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"USD\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"h82pJGF9p7kpzb6eU326EFZf2cDnimbTFVeJtx1qtBmUNJAEqN76R7PwPfHt3oWb8R6cKvhgyxQdDn53jFrK6wFx\",\n      \"network\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  },\n  \"status\": \"CREATED\",\n  \"type\": \"INCOMING\",\n  \"settledAt\": \"2025-08-15T14:30:00Z\",\n  \"createdAt\": \"2025-08-15T14:25:18Z\",\n  \"updatedAt\": \"2025-08-15T14:30:00Z\",\n  \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"description\": \"Payment for invoice #1234\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"receivedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"exchangeRate\": 1.08,\n  \"fees\": 10,\n  \"reconciliationInstructions\": {\n    \"reference\": \"UMA-Q12345-REF\",\n    \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n  },\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"paymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    }\n  ],\n  \"refund\": {\n    \"reference\": \"UMA-Q12345-REFUND\",\n    \"initiatedAt\": \"2025-08-15T14:30:00Z\",\n    \"status\": \"COMPLETED\",\n    \"settledAt\": \"2025-08-15T14:35:00Z\",\n    \"reason\": \"TRANSACTION_FAILED\"\n  },\n  \"rateDetails\": {\n    \"counterpartyMultiplier\": 1.08,\n    \"counterpartyFixedFee\": 10,\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"failureReason\": \"LIGHTNING_PAYMENT_FAILED\",\n  \"paymentRail\": \"ACH\",\n  \"railSelectionMode\": \"AUTO\",\n  \"expectedSettlementAt\": \"2024-10-13T08:16:30.638Z\",\n  \"settlementTimelineSeconds\": 4008\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "82eb31b8-d942-4b74-8a81-f963028b1c80",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a3275629-85e4-48d9-960a-aca897afa666",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "53b520ee-23c8-4ecd-878c-c7cc610865b0",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2f1972f4-7a7a-47c6-b729-c5a163f07ba5",
+              "name": "Quote not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7bf9a11c-c4b3-4eb5-92c7-e2d6aff1092d",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "send"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"quoteId\": \"Quote:019542f5-b3e7-1d02-0000-000000000006\",\n  \"currencyCode\": \"USD\",\n  \"currencyAmount\": 1000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "64d11648-1993-4978-b79f-b404d9748410",
+          "name": "Simulate payment send to test receiving an UMA payment",
+          "request": {
+            "name": "Simulate payment send to test receiving an UMA payment",
+            "description": {
+              "content": "Simulate sending payment from an sandbox uma address to a platform customer to test payment receive.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "uma",
+                "receive"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"senderUmaAddress\": \"<string>\",\n  \"receivingCurrencyCode\": \"<string>\",\n  \"receivingCurrencyAmount\": \"<long>\",\n  \"receiverUmaAddress\": \"<string>\",\n  \"customerId\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "a8b7c0ea-903e-457d-99c5-7ebe106bea1c",
+              "name": "Payment triggered successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"destination\": {\n    \"accountId\": \"ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n    \"destinationType\": \"ACCOUNT\",\n    \"currency\": \"EUR\",\n    \"onChainTransaction\": {\n      \"transactionHash\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"network\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  },\n  \"direction\": \"DEBIT\",\n  \"id\": \"Transaction:019542f5-b3e7-1d02-0000-000000000004\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"receivedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"status\": \"EXPIRED\",\n  \"type\": \"INCOMING\",\n  \"settledAt\": \"2025-08-15T14:30:00Z\",\n  \"createdAt\": \"2025-08-15T14:25:18Z\",\n  \"updatedAt\": \"2025-08-15T14:30:00Z\",\n  \"receiptDeliveryConfirmedAt\": \"2025-08-15T14:31:00Z\",\n  \"agentId\": \"Agent:019542f5-b3e7-1d02-0000-000000000042\",\n  \"description\": \"Payment for invoice #1234\",\n  \"counterpartyInformation\": {\n    \"FULL_NAME\": \"John Sender\",\n    \"BIRTH_DATE\": \"1985-06-15\",\n    \"NATIONALITY\": \"DE\"\n  },\n  \"source\": {\n    \"accountId\": \"InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965\",\n    \"sourceType\": \"ACCOUNT\",\n    \"currency\": \"USD\",\n    \"onChainTransaction\": {\n      \"transactionHash\": \"h82pJGF9p7kpzb6eU326EFZf2cDnimbTFVeJtx1qtBmUNJAEqN76R7PwPfHt3oWb8R6cKvhgyxQdDn53jFrK6wFx\",\n      \"network\": {\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      }\n    }\n  },\n  \"fees\": 10,\n  \"reconciliationInstructions\": {\n    \"reference\": \"UMA-Q12345-REF\",\n    \"transactionHash\": \"0x9f2c6b6f4b6c8f2a8d9e0b1c2d3e4f5061728394a5b6c7d8e9f00112233445566\"\n  },\n  \"rateDetails\": {\n    \"gridApiMultiplier\": 0.925,\n    \"gridApiFixedFee\": 10,\n    \"gridApiVariableFeeRate\": 0.003,\n    \"gridApiVariableFeeAmount\": 30\n  },\n  \"failureReason\": \"OFFRAMP_FAILED\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2b743ca1-2aa7-45d9-b0be-afede022cae0",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "90c86dbb-1a73-4a8a-9fd9-62724caed765",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "8017b53f-1391-4341-98c2-06481438c179",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bb9adf42-1547-48d2-848e-8abed29adf5b",
+              "name": "Sender or receiver not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3bebe69e-cda4-4112-8040-3894c6edb21a",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "uma",
+                    "receive"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"senderUmaAddress\": \"$success.usd@sandbox.grid.uma.money\",\n  \"receivingCurrencyCode\": \"USD\",\n  \"receivingCurrencyAmount\": 1000,\n  \"receiverUmaAddress\": \"$receiver@uma.domain\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "738e064a-713e-4227-b3d4-2f2721e33930",
+          "name": "Simulate funding an internal account",
+          "request": {
+            "name": "Simulate funding an internal account",
+            "description": {
+              "content": "Simulate receiving funds into an internal account in the sandbox environment. This is useful for testing scenarios where you need to add funds to a customer's or platform's internal account without going through a real bank transfer or following payment instructions.\nThis endpoint is only for the sandbox environment and will fail for production platforms/keys.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "internal-accounts",
+                ":accountId",
+                "fund"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "accountId",
+                  "description": "(Required) The ID of the internal account to fund"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"<long>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ba1188fe-9485-4605-bd7d-7ca0bd7e4b92",
+              "name": "Internal account funded successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123\",\n  \"type\": \"INTERNAL_CRYPTO\",\n  \"status\": \"ACTIVE\",\n  \"balance\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"totalBalance\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"fundingPaymentInstructions\": [\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    },\n    {\n      \"accountOrWalletInfo\": {\n        \"accountType\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"paymentRails\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"reference\": \"UMA-Q12345-REF\"\n      },\n      \"instructionsNotes\": \"Please ensure the reference code is included in the payment memo/description field\",\n      \"isPlatformAccount\": true\n    }\n  ],\n  \"createdAt\": \"2025-10-03T12:30:00Z\",\n  \"updatedAt\": \"2025-10-03T12:30:00Z\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"privateEnabled\": true\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2db46632-743c-49eb-952d-fb51a4fdad57",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "74748d24-aae8-42fc-ad04-7b414079fcd3",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "c3f4c905-ce72-4375-820f-8562f6e51c6e",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bbb945b4-9d94-4ade-87b6-68e816060199",
+              "name": "Internal account not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "685ad601-9eca-4ae8-a23e-3fcf1f1fff04",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "internal-accounts",
+                    ":accountId",
+                    "fund"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "accountId",
+                      "description": "(Required) The ID of the internal account to fund"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 100000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "216d737c-7ac0-4646-9474-4282468fff32",
+          "name": "Simulate a card authorization",
+          "request": {
+            "name": "Simulate a card authorization",
+            "description": {
+              "content": "Simulate an inbound card authorization in the sandbox environment. Drives the same internal `authorize` + `reconcile` paths the card issuer would call in production, so platforms can exercise Grid's decisioning + funding-source pull behavior end-to-end without an external network round-trip.\n\nThe decisioning outcome is controlled by the last three characters of `merchant.descriptor`:\n\n| Suffix | Outcome | | ------ | ------- | | `002`  | Decline — `INSUFFICIENT_FUNDS` (the pull on the funding source fails) | | `003`  | Decline — `CARD_PAUSED` (intended to verify a frozen card refuses auths) | | `005`  | Delayed pull (~30s) — exercises the `PENDING → CONFIRMED` path | | `006`  | Pull succeeds but the confirmation event reports `FAILED` — exercises the high-urgency `EXCEPTION` alert | | any other | Approved |\n\nProduction returns `404` on this path.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "cards",
+                ":id",
+                "simulate",
+                "authorization"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) The id of the card to simulate an authorization against."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": \"<long>\",\n  \"currency\": {\n    \"code\": \"<string>\",\n    \"name\": \"<string>\",\n    \"symbol\": \"<string>\",\n    \"decimals\": \"<integer>\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"<string>\",\n    \"mcc\": \"<string>\",\n    \"country\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "baf168e8-5ab9-4370-b1eb-f986414794f2",
+              "name": "Simulated authorization processed. Returns the resulting card transaction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"CARD\",\n  \"id\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"status\": \"REFUNDED\",\n  \"direction\": \"DEBIT\",\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  },\n  \"authorizedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"accountId\": \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"authorizedAt\": \"2026-05-08T14:30:00Z\",\n  \"createdAt\": \"2026-05-08T14:30:00Z\",\n  \"updatedAt\": \"2026-05-08T15:42:11Z\",\n  \"cardId\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"issuerTransactionToken\": \"lithic_txn_b81c2a4f\",\n  \"settledAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"refundedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"pullSummary\": {\n    \"count\": 2,\n    \"totalAmount\": 1500,\n    \"pendingCount\": 0\n  },\n  \"refundSummary\": {\n    \"count\": 0,\n    \"totalAmount\": 0\n  },\n  \"settlementSummary\": {\n    \"count\": 1,\n    \"totalAmount\": 1500\n  },\n  \"lastEventAt\": \"2026-05-08T15:42:11Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "69493537-19a4-4293-a9f7-9ba0e5c92298",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "01f520e8-de95-4014-9d13-28baa6929155",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0e7e4352-6b85-48e3-b78b-0c80e55f7775",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "28918fe3-2116-4bcd-8b8b-be9242fa0c73",
+              "name": "Card not found (also returned in production for this path)",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d751aed2-19cc-417e-a04e-02041dfd9b4d",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "authorization"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card to simulate an authorization against."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"amount\": 1250,\n  \"currency\": {\n    \"code\": \"USD\"\n  },\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "eaf944f6-bed9-4828-ade1-4e2fae9114ba",
+          "name": "Simulate a card clearing",
+          "request": {
+            "name": "Simulate a card clearing",
+            "description": {
+              "content": "Simulate a clearing (settlement) event against an existing `CardTransaction` in the sandbox environment.\n\n- A clearing `amount` greater than the authorized amount exercises the over-auth post-hoc-pull path (e.g. restaurant tip on top of a 20% over-auth).\n- A clearing `amount` of `0` exercises the `AUTHORIZATION_EXPIRY` path — the auth expires with no clearing posted.\n- Suffix-driven outcomes on the parent transaction's id govern whether the post-hoc pull succeeds (use the suffix table from `simulate/authorization` to construct deterministic test cases).\n\nProduction returns `404` on this path.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "cards",
+                ":id",
+                "simulate",
+                "clearing"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) The id of the card the clearing applies to."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardTransactionId\": \"<string>\",\n  \"amount\": \"<long>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "21c91edd-54e9-4f63-8772-989bf3fd12ab",
+              "name": "Simulated clearing processed. Returns the updated card transaction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"CARD\",\n  \"id\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"status\": \"REFUNDED\",\n  \"direction\": \"DEBIT\",\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  },\n  \"authorizedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"accountId\": \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"authorizedAt\": \"2026-05-08T14:30:00Z\",\n  \"createdAt\": \"2026-05-08T14:30:00Z\",\n  \"updatedAt\": \"2026-05-08T15:42:11Z\",\n  \"cardId\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"issuerTransactionToken\": \"lithic_txn_b81c2a4f\",\n  \"settledAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"refundedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"pullSummary\": {\n    \"count\": 2,\n    \"totalAmount\": 1500,\n    \"pendingCount\": 0\n  },\n  \"refundSummary\": {\n    \"count\": 0,\n    \"totalAmount\": 0\n  },\n  \"settlementSummary\": {\n    \"count\": 1,\n    \"totalAmount\": 1500\n  },\n  \"lastEventAt\": \"2026-05-08T15:42:11Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "ef290c06-4746-467a-9cbc-a53dc101768a",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "b6130d3c-095d-4c38-bc56-f18256391209",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fe11c992-ad6a-47f7-8a88-eb4fdfb2b53f",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "dd18544c-858c-4779-a6d1-ca3b026eb959",
+              "name": "Card or card transaction not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3d95a460-f91d-4239-90e0-5116d9f0211f",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "clearing"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the clearing applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "79447b02-1e57-429c-b5c7-897f04a93454",
+          "name": "Simulate a card return",
+          "request": {
+            "name": "Simulate a card return",
+            "description": {
+              "content": "Simulate a merchant-initiated `RETURN` against an existing settled card transaction in the sandbox environment. Creates a `CardRefund` on the parent and either flips the parent to `REFUNDED` (full refund) or keeps it `SETTLED` with a non-zero `refundedAmount` (partial refund).\n\nProduction returns `404` on this path.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "sandbox",
+                "cards",
+                ":id",
+                "simulate",
+                "return"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "id",
+                  "description": "(Required) The id of the card the return applies to."
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cardTransactionId\": \"<string>\",\n  \"amount\": \"<long>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "74bb8234-6d7d-4c95-87e0-883dc0e4a363",
+              "name": "Simulated return processed. Returns the updated card transaction.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"type\": \"CARD\",\n  \"id\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"status\": \"REFUNDED\",\n  \"direction\": \"DEBIT\",\n  \"merchant\": {\n    \"descriptor\": \"BLUE BOTTLE COFFEE SF\",\n    \"mcc\": \"5814\",\n    \"country\": \"US\"\n  },\n  \"authorizedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"accountId\": \"InternalAccount:019542f5-b3e7-1d02-0000-000000000002\",\n  \"customerId\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"platformCustomerId\": \"18d3e5f7b4a9c2\",\n  \"authorizedAt\": \"2026-05-08T14:30:00Z\",\n  \"createdAt\": \"2026-05-08T14:30:00Z\",\n  \"updatedAt\": \"2026-05-08T15:42:11Z\",\n  \"cardId\": \"Card:019542f5-b3e7-1d02-0000-000000000010\",\n  \"issuerTransactionToken\": \"lithic_txn_b81c2a4f\",\n  \"settledAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"refundedAmount\": {\n    \"amount\": 12550,\n    \"currency\": {\n      \"code\": \"USD\",\n      \"name\": \"United States Dollar\",\n      \"symbol\": \"$\",\n      \"decimals\": 2\n    }\n  },\n  \"pullSummary\": {\n    \"count\": 2,\n    \"totalAmount\": 1500,\n    \"pendingCount\": 0\n  },\n  \"refundSummary\": {\n    \"count\": 0,\n    \"totalAmount\": 0\n  },\n  \"settlementSummary\": {\n    \"count\": 1,\n    \"totalAmount\": 1500\n  },\n  \"lastEventAt\": \"2026-05-08T15:42:11Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "53c76de1-b35c-4c17-8620-7acd70db68d0",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_NONCE\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": 1397.7023255537347,\n    \"key_2\": false\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "59299126-3078-4bb7-9afd-83cfabe0a4da",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"INVALID_SIGNATURE\",\n  \"details\": {\n    \"key_0\": 8507.886006030965,\n    \"key_1\": \"string\",\n    \"key_2\": 9661,\n    \"key_3\": 7426.290523047767\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd0da3e0-1c2f-40af-886a-b29251796d40",
+              "name": "Forbidden - request was made with a production platform token",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 403,\n  \"code\": \"USER_NOT_READY\",\n  \"details\": {\n    \"key_0\": 3565\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9904e641-3f5f-4f52-a3fa-010747a1aa31",
+              "name": "Card or card transaction not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"TOKEN_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "d4b0f1ce-4336-4f78-8860-f08270873abb",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "sandbox",
+                    "cards",
+                    ":id",
+                    "simulate",
+                    "return"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "id",
+                      "description": "(Required) The id of the card the return applies to."
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"cardTransactionId\": \"CardTransaction:019542f5-b3e7-1d02-0000-000000000100\",\n  \"amount\": 1500\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": false,\n    \"key_1\": 6943.170416842684,\n    \"key_2\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "95c625df-4951-45e1-8768-fe573441fb3d",
+    "name": "Grid Agent Management Sandbox API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}

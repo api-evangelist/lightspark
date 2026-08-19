@@ -1,0 +1,2790 @@
+{
+  "item": [
+    {
+      "id": "0645994d-f49f-4449-8d74-987bb826461c",
+      "name": "Customers",
+      "description": {
+        "content": "Customer management endpoints for creating and updating customer information",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "a86123ed-f7a8-411f-ab4f-40c7885b3643",
+          "name": "Add a new customer",
+          "request": {
+            "name": "Add a new customer",
+            "description": {
+              "content": "Register a new customer in the system with an account identifier and bank account information",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerType\": \"<string>\",\n  \"platformCustomerId\": \"<string>\",\n  \"region\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  },\n  \"idType\": \"<string>\",\n  \"identifier\": \"<string>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5f97d1bf-7fdf-473a-9039-8dc5e8511740",
+              "name": "Customer created successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n  \"umaAddress\": \"$john.doe@uma.domain.com\",\n  \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"email\": \"john.doe@example.com\",\n  \"phoneNumber\": \"+14155551234\",\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\",\n  \"isDeleted\": false,\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"APPROVED\",\n  \"fullName\": \"John Michael Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"address\": {\n    \"line1\": \"123 Main Street\",\n    \"postalCode\": \"94105\",\n    \"country\": \"US\",\n    \"line2\": \"Apt 4B\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a13926fb-db9d-4783-86ff-56e562553a1d",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_PAYREQ_RESPONSE\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6acaeb81-d2ec-401a-be46-7f4e7876de29",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "986a629d-3b6d-4d36-952b-3f295b8944d6",
+              "name": "Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 405,\n  \"code\": \"METHOD_NOT_ALLOWED\",\n  \"details\": {\n    \"key_0\": 766,\n    \"key_1\": 131\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a4205f26-4614-4420-a821-da9b0ffff42f",
+              "name": "Conflict. `UMA_ADDRESS_EXISTS` when the requested UMA address is already taken; `CONFLICT` when `platformCustomerId` collides with an existing active customer on the same platform.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"PASSKEY_ALREADY_ENROLLED\",\n  \"details\": {\n    \"key_0\": 4225.571791420267,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "cdf7e59f-9dd4-42f4-9428-f3e52d1d050b",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e37b4bb8-e242-4281-9a91-b3555942197a",
+              "name": "Not implemented",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"ind-9f84e0c2\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"fullName\": \"Jane Smith\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"email\": \"jane.smith@example.com\",\n  \"phoneNumber\": \"+14155551234\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Implemented",
+              "code": 501,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 501,\n  \"code\": \"UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "306aae45-0889-4823-b313-8bde1da319ff",
+          "name": "List customers",
+          "request": {
+            "name": "List customers",
+            "description": {
+              "content": "Retrieve a list of customers with optional filtering parameters. Returns all customers that match\nthe specified filters. If no filters are provided, returns all customers (paginated).\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [
+                {
+                  "disabled": false,
+                  "key": "platformCustomerId",
+                  "value": "<string>",
+                  "description": "Filter by platform-specific customer identifier"
+                },
+                {
+                  "disabled": false,
+                  "key": "customerType",
+                  "value": "<string>",
+                  "description": "Filter by customer type"
+                },
+                {
+                  "disabled": false,
+                  "key": "createdAfter",
+                  "value": "<dateTime>",
+                  "description": "Filter customers created after this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "createdBefore",
+                  "value": "<dateTime>",
+                  "description": "Filter customers created before this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "updatedAfter",
+                  "value": "<dateTime>",
+                  "description": "Filter customers updated after this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "updatedBefore",
+                  "value": "<dateTime>",
+                  "description": "Filter customers updated before this timestamp (inclusive)"
+                },
+                {
+                  "disabled": false,
+                  "key": "limit",
+                  "value": "20",
+                  "description": "Maximum number of results to return (default 20, max 100)"
+                },
+                {
+                  "disabled": false,
+                  "key": "cursor",
+                  "value": "<string>",
+                  "description": "Cursor for pagination (returned from previous request)"
+                },
+                {
+                  "disabled": false,
+                  "key": "region",
+                  "value": "<string>",
+                  "description": "Filter by customer region (ISO 3166-1 alpha-2 country code)"
+                },
+                {
+                  "disabled": false,
+                  "key": "currency",
+                  "value": "<string>",
+                  "description": "Filter by currency code. Returns customers that have this currency in their enabled currencies list."
+                },
+                {
+                  "disabled": false,
+                  "key": "umaAddress",
+                  "value": "<string>",
+                  "description": "Filter by uma address"
+                },
+                {
+                  "disabled": false,
+                  "key": "isIncludingDeleted",
+                  "value": "<boolean>",
+                  "description": "Whether to include deleted customers in the results. Default is false."
+                }
+              ],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "18112f92-67b8-4a0c-a0c2-7ce71aae013f",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerType",
+                      "value": "INDIVIDUAL"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"customerType\": \"INDIVIDUAL\",\n      \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n      \"umaAddress\": \"$john.doe@uma.domain.com\",\n      \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"region\": \"US\",\n      \"currencies\": [\n        \"USD\",\n        \"USDC\"\n      ],\n      \"email\": \"john.doe@example.com\",\n      \"phoneNumber\": \"+14155551234\",\n      \"createdAt\": \"2025-07-21T17:32:28Z\",\n      \"updatedAt\": \"2025-07-21T17:32:28Z\",\n      \"isDeleted\": false,\n      \"contactVerification\": {\n        \"readOnly\": true,\n        \"description\": \"Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.\",\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"kycStatus\": \"APPROVED\",\n      \"fullName\": \"John Michael Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"postalCode\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"country\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"line2\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"city\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"state\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      }\n    },\n    {\n      \"customerType\": \"INDIVIDUAL\",\n      \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n      \"umaAddress\": \"$john.doe@uma.domain.com\",\n      \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n      \"region\": \"US\",\n      \"currencies\": [\n        \"USD\",\n        \"USDC\"\n      ],\n      \"email\": \"john.doe@example.com\",\n      \"phoneNumber\": \"+14155551234\",\n      \"createdAt\": \"2025-07-21T17:32:28Z\",\n      \"updatedAt\": \"2025-07-21T17:32:28Z\",\n      \"isDeleted\": false,\n      \"contactVerification\": {\n        \"readOnly\": true,\n        \"description\": \"Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.\",\n        \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n      },\n      \"kycStatus\": \"APPROVED\",\n      \"fullName\": \"John Michael Doe\",\n      \"birthDate\": \"1990-01-15\",\n      \"nationality\": \"US\",\n      \"address\": {\n        \"line1\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"postalCode\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"country\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"line2\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"city\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        },\n        \"state\": {\n          \"value\": \"<Error: Too many levels of nesting to fake this schema>\"\n        }\n      }\n    }\n  ],\n  \"hasMore\": false,\n  \"nextCursor\": \"string\",\n  \"totalCount\": 1889\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "41cc775d-c3e1-440c-a73b-e6fde27a1957",
+              "name": "Bad request - Invalid parameters",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerType",
+                      "value": "INDIVIDUAL"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_PAYREQ_RESPONSE\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "6f6f54c7-1367-4bc4-a460-e5cc83367e9c",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerType",
+                      "value": "INDIVIDUAL"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2320a3dd-c5e8-46da-b3df-d0c0974ec693",
+              "name": "Method not allowed. Returned (as JSON, not HTML) when the request uses an HTTP method that is not supported on this path.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerType",
+                      "value": "INDIVIDUAL"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Method Not Allowed",
+              "code": 405,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 405,\n  \"code\": \"METHOD_NOT_ALLOWED\",\n  \"details\": {\n    \"key_0\": 766,\n    \"key_1\": 131\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "606093d6-2691-4d12-8e09-7e50043db560",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [
+                    {
+                      "key": "platformCustomerId",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "customerType",
+                      "value": "INDIVIDUAL"
+                    },
+                    {
+                      "key": "createdAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "createdBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedAfter",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "updatedBefore",
+                      "value": "<dateTime>"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    },
+                    {
+                      "key": "cursor",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "region",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "currency",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "umaAddress",
+                      "value": "<string>"
+                    },
+                    {
+                      "key": "isIncludingDeleted",
+                      "value": "<boolean>"
+                    }
+                  ],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "ffa55d29-46b4-41fa-b5f0-e26ef558bf24",
+          "name": "Get customer by ID",
+          "request": {
+            "name": "Get customer by ID",
+            "description": {
+              "content": "Retrieve a customer by their system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                ":customerId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customerId",
+                  "description": "(Required) System-generated unique customer identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "cbd7da7e-61e3-4e1c-8e70-66422f345bbd",
+              "name": "Successful operation",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n  \"umaAddress\": \"$john.doe@uma.domain.com\",\n  \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"email\": \"john.doe@example.com\",\n  \"phoneNumber\": \"+14155551234\",\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\",\n  \"isDeleted\": false,\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"APPROVED\",\n  \"fullName\": \"John Michael Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"address\": {\n    \"line1\": \"123 Main Street\",\n    \"postalCode\": \"94105\",\n    \"country\": \"US\",\n    \"line2\": \"Apt 4B\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "e5dabd02-4a76-47f4-abae-9448ba7fe83f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "f91295c9-b81a-46d0-825e-24c2d4a688b9",
+              "name": "Customer not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "606cc355-667d-48f6-8932-ba2eadf086a0",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "d30c2d85-b513-4af4-927a-fbe6b0918bcd",
+          "name": "Update customer by ID",
+          "request": {
+            "name": "Update customer by ID",
+            "description": {
+              "content": "Update a customer's metadata by their system-generated ID.\n\nMost customer updates complete synchronously and return `200` with the updated customer. If the request changes `email` for a customer that has one or more tied Embedded Wallet internal accounts with `EMAIL_OTP` credentials, or changes `phoneNumber` for a customer that has one or more tied Embedded Wallet internal accounts with `SMS_OTP` credentials, the contact update uses the two-step signed-retry flow so the customer's wallet session authorizes the authentication credential update. On the signed retry, Grid updates the customer contact field and every tied matching OTP credential across all tied Embedded Wallets as one logical operation. If any tied credential cannot be updated, the customer contact field is not changed.\n\nUpdate `email` and `phoneNumber` in separate PATCH calls. A request that includes both fields is rejected.\n\nFor an Embedded Wallet email or SMS auth phone update:\n\n1. Call `PATCH /customers/{customerId}` with the full update body and no signature headers. Grid returns `202` with `payloadToSign`, `requestId`, and `expiresAt`. The pending challenge binds the submitted update fields and the set of tied Embedded Wallet OTP credentials that must be updated.\n\n2. Use the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets to build an API-key stamp over `payloadToSign`, then retry the same request with that full stamp as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The retry body must carry the same update fields submitted in step 1. The signed retry returns `200` with the updated customer.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                ":customerId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customerId",
+                  "description": "(Required) System-generated unique customer identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "disabled": false,
+                "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                "key": "Grid-Wallet-Signature",
+                "value": "<string>"
+              },
+              {
+                "disabled": false,
+                "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                "key": "Request-Id",
+                "value": "<string>"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "PATCH",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customerType\": \"<string>\",\n  \"currencies\": [\n    \"<string>\",\n    \"<string>\"\n  ],\n  \"email\": \"<email>\",\n  \"phoneNumber\": \"<string>\",\n  \"umaAddress\": \"<string>\",\n  \"kycStatus\": \"<string>\",\n  \"fullName\": \"<string>\",\n  \"birthDate\": \"<date>\",\n  \"nationality\": \"<string>\",\n  \"address\": {\n    \"line1\": \"<string>\",\n    \"postalCode\": \"<string>\",\n    \"country\": \"<string>\",\n    \"line2\": \"<string>\",\n    \"city\": \"<string>\",\n    \"state\": \"<string>\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "171fd1b4-4a90-44ed-a8c5-f121bd4665ad",
+              "name": "Customer updated successfully. For Embedded Wallet email or SMS auth phone updates, this is returned only on the signed retry after the customer contact field and all tied matching OTP credentials have been updated.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n  \"umaAddress\": \"$john.doe@uma.domain.com\",\n  \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"email\": \"john.doe@example.com\",\n  \"phoneNumber\": \"+14155551234\",\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\",\n  \"isDeleted\": false,\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"APPROVED\",\n  \"fullName\": \"John Michael Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"address\": {\n    \"line1\": \"123 Main Street\",\n    \"postalCode\": \"94105\",\n    \"country\": \"US\",\n    \"line2\": \"Apt 4B\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a1b4d4d1-b412-4e7e-ba2a-4332d8693531",
+              "name": "Challenge issued for an Embedded Wallet email or SMS auth phone update. The response contains `payloadToSign` plus a `requestId`. Build an API-key stamp over `payloadToSign` with the session API keypair from a verified authentication credential on one of the customer's tied Embedded Wallets, then retry the same request with `Grid-Wallet-Signature` and `Request-Id`.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"payloadToSign\": \"{\\\"organizationId\\\":\\\"org_2m9F...\\\",\\\"parameters\\\":{\\\"userEmail\\\":\\\"john.smith@example.com\\\",\\\"userId\\\":\\\"user_2m9F...\\\"},\\\"timestampMs\\\":\\\"1775681700000\\\",\\\"type\\\":\\\"ACTIVITY_TYPE_UPDATE_USER_EMAIL\\\"}\",\n  \"requestId\": \"Request:019542f5-b3e7-1d02-0000-000000000010\",\n  \"expiresAt\": \"2026-04-08T15:35:00Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "eed56910-4211-4b2f-aaae-16c4f85133ea",
+              "name": "Bad request",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 400,\n  \"code\": \"INVALID_PAYREQ_RESPONSE\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "019acb6e-ccb3-4498-9f6c-0a0386a4afe6",
+              "name": "Unauthorized. Also returned for Embedded Wallet email or SMS auth phone update retries when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match the pending customer update challenge, when the `Request-Id` does not match an unexpired pending challenge, or when the retry body does not match the update fields bound into `payloadToSign` on the initial call.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3b3e69e2-683e-4d80-a24d-588f36a1608a",
+              "name": "Customer not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5f079e06-2a33-49f9-834a-00f382b4c712",
+              "name": "Conflict. Returned when the supplied email address is already associated with an `EMAIL_OTP` credential, or the supplied phone number is already associated with an `SMS_OTP` credential, on this or another internal account, or when the tied Embedded Wallet OTP credential set changed between the initial `202` challenge and the signed retry.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 409,\n  \"code\": \"PASSKEY_ALREADY_ENROLLED\",\n  \"details\": {\n    \"key_0\": 4225.571791420267,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "894cd63a-90b8-4467-8190-731a6b9ba94a",
+              "name": "Failed dependency. Returned when Grid cannot update one or more tied Embedded Wallet OTP credentials. The customer contact field is not changed unless all tied credentials are updated successfully.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Failed Dependency (WebDAV) (RFC 4918)",
+              "code": 424,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 424,\n  \"code\": \"LNURLP_REQUEST_FAILED\",\n  \"details\": {\n    \"key_0\": 3186,\n    \"key_1\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fd6ea10b-c527-4418-b07e-bf0d7005b290",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "Full API-key stamp built over the prior `payloadToSign` with the session API keypair of a verified authentication credential on one of the customer's tied Embedded Wallets. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; ignored on the initial call and on customer updates that complete synchronously.",
+                    "key": "Grid-Wallet-Signature",
+                    "value": "eyJwdWJsaWNLZXkiOiIwMmExYjIuLi4iLCJzY2hlbWUiOiJTSUdOQVRVUkVfU0NIRU1FX1RLX0FQSV9QMjU2Iiwic2lnbmF0dXJlIjoiMzA0NTAyMjEwMC4uLiJ9"
+                  },
+                  {
+                    "disabled": false,
+                    "description": "The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry for Embedded Wallet email or SMS auth phone updates; must be paired with `Grid-Wallet-Signature`.",
+                    "key": "Request-Id",
+                    "value": "Request:019542f5-b3e7-1d02-0000-000000000010"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "PATCH",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"fullName\": \"John Smith\",\n  \"birthDate\": \"1985-06-15\",\n  \"currencies\": [\n    \"USD\",\n    \"EUR\",\n    \"USDC\"\n  ],\n  \"address\": {\n    \"line1\": \"456 Market St\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"postalCode\": \"94103\",\n    \"country\": \"US\"\n  }\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "7f71cc79-194b-4b87-8b77-1824398db7f4",
+          "name": "Delete customer by ID",
+          "request": {
+            "name": "Delete customer by ID",
+            "description": {
+              "content": "Delete a customer by their system-generated ID",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                ":customerId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "customerId",
+                  "description": "(Required) System-generated unique customer identifier"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "DELETE",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "dbfece61-d86c-4497-993b-0f05b636fa93",
+              "name": "Customer deleted successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"customerType\": \"INDIVIDUAL\",\n  \"platformCustomerId\": \"9f84e0c2a72c4fa\",\n  \"umaAddress\": \"$john.doe@uma.domain.com\",\n  \"id\": \"Customer:019542f5-b3e7-1d02-0000-000000000001\",\n  \"region\": \"US\",\n  \"currencies\": [\n    \"USD\",\n    \"USDC\"\n  ],\n  \"email\": \"john.doe@example.com\",\n  \"phoneNumber\": \"+14155551234\",\n  \"createdAt\": \"2025-07-21T17:32:28Z\",\n  \"updatedAt\": \"2025-07-21T17:32:28Z\",\n  \"isDeleted\": false,\n  \"contactVerification\": {\n    \"email\": \"VERIFIED\",\n    \"phone\": \"VERIFIED\"\n  },\n  \"kycStatus\": \"APPROVED\",\n  \"fullName\": \"John Michael Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"nationality\": \"US\",\n  \"address\": {\n    \"line1\": \"123 Main Street\",\n    \"postalCode\": \"94105\",\n    \"country\": \"US\",\n    \"line2\": \"Apt 4B\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0aac3a3f-cae0-4c95-bb60-f04355ea0e6f",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "04888040-f798-4696-a431-fd0565635250",
+              "name": "Customer not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "4b3223d1-627d-4667-a051-a0ccbaed45b7",
+              "name": "Customer deleted already",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Gone",
+              "code": 410,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 410,\n  \"code\": \"CUSTOMER_DELETED\",\n  \"details\": {\n    \"key_0\": \"string\",\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "70388389-755c-4f7d-b780-0e82bcaf8ba3",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    ":customerId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "customerId",
+                      "description": "(Required) System-generated unique customer identifier"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "DELETE",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "174a039c-2554-4fa5-a031-feb57e07a7e7",
+          "name": "Upload customers via CSV file",
+          "request": {
+            "name": "Upload customers via CSV file",
+            "description": {
+              "content": "Upload a CSV file containing customer information for bulk creation. The CSV file should follow\na specific format with required and optional columns based on customer type.\n\n### CSV Format\nThe CSV file should have the following columns:\n\nRequired columns for all customers:\n- umaAddress: The customer's UMA address (e.g., $john.doe@uma.domain.com)\n- platformCustomerId: Your platform's unique identifier for the customer\n- customerType: Either \"INDIVIDUAL\" or \"BUSINESS\"\n\nRequired columns for individual customers:\n- fullName: Individual's full name\n- birthDate: Date of birth in YYYY-MM-DD format\n- addressLine1: Street address line 1\n- city: City\n- state: State/Province/Region\n- postalCode: Postal/ZIP code\n- country: Country code (ISO 3166-1 alpha-2)\n\nRequired columns for business customers:\n- businessLegalName: Legal name of the business\n- addressLine1: Street address line 1\n- city: City\n- state: State/Province/Region\n- postalCode: Postal/ZIP code\n- country: Country code (ISO 3166-1 alpha-2)\n\nOptional columns for all customers:\n- addressLine2: Street address line 2\n- platformAccountId: Your platform's identifier for the bank account\n- description: Optional description for the customer\n\nOptional columns for individual customers:\n- email: Customer's email address\n\nOptional columns for business customers:\n- businessRegistrationNumber: Business registration number\n- businessTaxId: Tax identification number\n\n### Example CSV\n```csv\numaAddress,platformCustomerId,customerType,fullName,birthDate,addressLine1,city,state,postalCode,country,platformAccountId,businessLegalName\njohn.doe@uma.domain.com,customer123,INDIVIDUAL,John Doe,1990-01-15,123 Main St,San Francisco,CA,94105,US\nacme@uma.domain.com,biz456,BUSINESS,,,400 Commerce Way,Austin,TX,78701,US\n```\n\nThe upload process is asynchronous and will return a job ID that can be used to track progress.\nYou can monitor the job status using the `/customers/bulk/jobs/{jobId}` endpoint.\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "bulk",
+                "csv"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "multipart/form-data"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "description": "(Required) CSV file containing customer information"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "658e6141-9bc8-4ba3-a439-11c99ca4e118",
+              "name": "CSV upload accepted for processing",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "csv"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) CSV file containing customer information",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"jobId\": \"Job:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PENDING\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1c904e82-ffc4-4785-9277-a115a48cf90c",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "csv"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) CSV file containing customer information",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "983972a8-a762-446c-9020-07eb03729b32",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "csv"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "formdata",
+                  "formdata": [
+                    {
+                      "description": {
+                        "content": "(Required) CSV file containing customer information",
+                        "type": "text/plain"
+                      },
+                      "key": "file",
+                      "value": "<binary>",
+                      "type": "text"
+                    }
+                  ]
+                }
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        },
+        {
+          "id": "3aa1c9d4-05ae-4a67-b1d4-7252c1138ce4",
+          "name": "Get bulk import job status",
+          "request": {
+            "name": "Get bulk import job status",
+            "description": {
+              "content": "Retrieve the current status and results of a bulk customer import job. This endpoint can be used\nto track the progress of both CSV uploads.\n\nThe response includes:\n- Overall job status\n- Progress statistics\n- Detailed error information for failed entries\n- Completion timestamp when finished\n",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "customers",
+                "bulk",
+                "jobs",
+                ":jobId"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": [
+                {
+                  "disabled": false,
+                  "type": "any",
+                  "value": "<string>",
+                  "key": "jobId",
+                  "description": "(Required) ID of the bulk import job to retrieve"
+                }
+              ]
+            },
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "GET",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{basicAuthUsername}}"
+                },
+                {
+                  "key": "password",
+                  "value": "{{basicAuthPassword}}"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "id": "6d588009-fa66-47eb-a198-0641a7cf4f62",
+              "name": "Job status retrieved successfully",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "jobs",
+                    ":jobId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "jobId",
+                      "description": "(Required) ID of the bulk import job to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": \"Job:019542f5-b3e7-1d02-0000-000000000006\",\n  \"status\": \"PROCESSING\",\n  \"progress\": {\n    \"total\": 5000,\n    \"processed\": 2500,\n    \"successful\": 2450,\n    \"failed\": 50\n  },\n  \"errors\": [\n    {\n      \"correlationId\": \"biz456\",\n      \"code\": \"string\",\n      \"message\": \"string\",\n      \"details\": {\n        \"key_0\": 8024\n      }\n    },\n    {\n      \"correlationId\": \"biz456\",\n      \"code\": \"string\",\n      \"message\": \"string\",\n      \"details\": {\n        \"key_0\": \"string\",\n        \"key_1\": 7083\n      }\n    }\n  ],\n  \"completedAt\": \"2025-08-15T14:32:00Z\"\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bec25bb7-d10e-4eaa-95db-587b86c02f0d",
+              "name": "Unauthorized",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "jobs",
+                    ":jobId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "jobId",
+                      "description": "(Required) ID of the bulk import job to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 401,\n  \"code\": \"UNAUTHORIZED\",\n  \"details\": {\n    \"key_0\": \"string\"\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd8c9490-8cb4-43aa-ba38-1754ece4d3ac",
+              "name": "Job not found",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "jobs",
+                    ":jobId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "jobId",
+                      "description": "(Required) ID of the bulk import job to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Not Found",
+              "code": 404,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 404,\n  \"code\": \"REFERENCE_NOT_FOUND\",\n  \"details\": {\n    \"key_0\": true,\n    \"key_1\": true\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "077f3027-a979-4761-a2b1-eb1b2b1a95e9",
+              "name": "Internal service error",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "customers",
+                    "bulk",
+                    "jobs",
+                    ":jobId"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": [
+                    {
+                      "disabled": false,
+                      "type": "any",
+                      "value": "<string>",
+                      "key": "jobId",
+                      "description": "(Required) ID of the bulk import job to retrieve"
+                    }
+                  ]
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: basic",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Basic <credentials>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "GET",
+                "body": {}
+              },
+              "status": "Internal Server Error",
+              "code": 500,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"message\": \"string\",\n  \"status\": 500,\n  \"code\": \"GRID_SWITCH_ERROR\",\n  \"details\": {\n    \"key_0\": 4724.151739068281,\n    \"key_1\": 2715,\n    \"key_2\": 3099\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.lightspark.com/grid/2025-10-13",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{basicAuthUsername}}"
+      },
+      {
+        "key": "password",
+        "value": "{{basicAuthPassword}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "71957a0b-34fe-4d1a-9fd3-72802484918c",
+    "name": "Grid Agent Management Customers API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.\n\n\nContact Support:\n Name: Lightspark Support\n Email: support@lightspark.com",
+      "type": "text/plain"
+    }
+  }
+}
