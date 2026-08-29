@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management API Tokens API
+  title: Grid API Tokens API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -226,69 +226,13 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    ApiTokenCreateRequest:
-      type: object
-      required:
-      - name
-      - permissions
-      properties:
-        name:
-          type: string
-          description: Name of the token to help identify it
-          example: Sandbox read-only
-        permissions:
-          type: array
-          description: A list of permissions to grant to the token
-          items:
-            $ref: '#/components/schemas/Permission'
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+    Permission:
+      type: string
+      enum:
+      - VIEW
+      - TRANSACT
+      - MANAGE
+      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
     Error400:
       type: object
       required:
@@ -466,74 +410,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Permission:
-      type: string
-      enum:
-      - VIEW
-      - TRANSACT
-      - MANAGE
-      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
-    ApiToken:
-      type: object
-      required:
-      - id
-      - name
-      - permissions
-      - clientId
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          description: System-generated unique identifier
-          example: Token:019542f5-b3e7-1d02-0000-000000000001
-        name:
-          type: string
-          description: Name of the token
-          example: Sandbox read-only token
-        permissions:
-          type: array
-          description: A list of permissions granted to the token
-          items:
-            $ref: '#/components/schemas/Permission'
-        clientId:
-          type: string
-          description: An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to Grid.
-          example: 01947d2284054f890000e63bca4810df
-        clientSecret:
-          type: string
-          description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation. Platform must keep this secret secure as it grants access to the account.
-          example: ed0ad25881e234cc28fb2dec0a4fe64e4172
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          example: '2025-07-21T17:32:28Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          example: '2025-07-21T17:32:28Z'
-    TokenListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of tokens matching the filter criteria
-          items:
-            $ref: '#/components/schemas/ApiToken'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of tokens matching the criteria (excluding pagination)
     Error404:
       type: object
       required:
@@ -591,6 +467,130 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    ApiToken:
+      type: object
+      required:
+      - id
+      - name
+      - permissions
+      - clientId
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          example: Token:019542f5-b3e7-1d02-0000-000000000001
+        name:
+          type: string
+          description: Name of the token
+          example: Sandbox read-only token
+        permissions:
+          type: array
+          description: A list of permissions granted to the token
+          items:
+            $ref: '#/components/schemas/Permission'
+        clientId:
+          type: string
+          description: An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to Grid.
+          example: 01947d2284054f890000e63bca4810df
+        clientSecret:
+          type: string
+          description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation. Platform must keep this secret secure as it grants access to the account.
+          example: ed0ad25881e234cc28fb2dec0a4fe64e4172
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: '2025-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: '2025-07-21T17:32:28Z'
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ApiTokenCreateRequest:
+      type: object
+      required:
+      - name
+      - permissions
+      properties:
+        name:
+          type: string
+          description: Name of the token to help identify it
+          example: Sandbox read-only
+        permissions:
+          type: array
+          description: A list of permissions to grant to the token
+          items:
+            $ref: '#/components/schemas/Permission'
+    TokenListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of tokens matching the filter criteria
+          items:
+            $ref: '#/components/schemas/ApiToken'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of tokens matching the criteria (excluding pagination)
   securitySchemes:
     BasicAuth:
       type: http

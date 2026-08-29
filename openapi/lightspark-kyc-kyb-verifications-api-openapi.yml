@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management KYC/KYB Verifications API
+  title: Grid KYC/KYB Verifications API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -480,554 +480,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    BeneficialOwnerPersonalInfo:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - birthDate
-      - nationality
-      - address
-      - idType
-      - identifier
-      properties:
-        firstName:
-          type: string
-          description: First name of the individual
-          example: Jane
-        middleName:
-          type: string
-          description: Middle name of the individual
-          example: Marie
-        lastName:
-          type: string
-          description: Last name of the individual
-          example: Smith
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1978-06-15'
-        nationality:
-          type: string
-          description: Country of nationality (ISO 3166-1 alpha-2)
-          example: US
-        email:
-          type: string
-          format: email
-          description: Email address of the individual
-          example: jane.smith@acmecorp.com
-        phoneNumber:
-          type: string
-          description: Phone number in E.164 format
-          example: '+14155550192'
-          pattern: ^\+[1-9]\d{1,14}$
-        address:
-          $ref: '#/components/schemas/Address'
-        idType:
-          $ref: '#/components/schemas/IdentificationType'
-        identifier:
-          type: string
-          description: The identification number or value
-          example: 123-45-6789
-        countryOfIssuance:
-          type: string
-          description: Country that issued the identification (ISO 3166-1 alpha-2)
-          example: US
-    Verification:
-      type: object
-      required:
-      - id
-      - customerId
-      - verificationStatus
-      - errors
-      - createdAt
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this verification
-          example: Verification:019542f5-b3e7-1d02-0000-000000000001
-        customerId:
-          type: string
-          description: The ID of the customer being verified
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        verificationStatus:
-          $ref: '#/components/schemas/VerificationStatus'
-        errors:
-          type: array
-          description: List of issues preventing verification from proceeding. Empty when verificationStatus is APPROVED or IN_PROGRESS.
-          items:
-            $ref: '#/components/schemas/VerificationError'
-        createdAt:
-          type: string
-          format: date-time
-          description: When this verification was created
-          example: '2025-10-03T12:00:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: When this verification was last updated
-          example: '2025-10-03T12:00:00Z'
-    BeneficialOwnerUpdateRequest:
-      type: object
-      properties:
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BeneficialOwnerRole'
-          description: Roles of this person within the business
-          example:
-          - UBO
-          - DIRECTOR
-        ownershipPercentage:
-          type: integer
-          description: Percentage of ownership in the business (0-100)
-          minimum: 0
-          maximum: 100
-          example: 51
-        personalInfo:
-          $ref: '#/components/schemas/BeneficialOwnerPersonalInfoUpdate'
-    BeneficialOwnerListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of beneficial owners matching the filter criteria
-          items:
-            $ref: '#/components/schemas/BeneficialOwner'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of results matching the criteria
-    Address:
-      type: object
-      required:
-      - line1
-      - postalCode
-      - country
-      properties:
-        line1:
-          type: string
-          description: Street address line 1
-          example: 123 Main Street
-        line2:
-          type: string
-          description: Street address line 2
-          example: Apt 4B
-        city:
-          type: string
-          description: City
-          example: San Francisco
-        state:
-          type: string
-          description: State/Province/Region
-          example: CA
-        postalCode:
-          type: string
-          description: Postal/ZIP code
-          example: '94105'
-        country:
-          type: string
-          description: Country code (ISO 3166-1 alpha-2)
-          example: US
-    BeneficialOwner:
-      type: object
-      required:
-      - id
-      - customerId
-      - roles
-      - ownershipPercentage
-      - personalInfo
-      - kycStatus
-      - createdAt
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this beneficial owner
-          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
-        customerId:
-          type: string
-          description: The ID of the business customer this beneficial owner is associated with
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BeneficialOwnerRole'
-          description: Roles of this person within the business
-          example:
-          - UBO
-          - DIRECTOR
-        ownershipPercentage:
-          type: integer
-          description: Percentage of ownership in the business (0-100)
-          minimum: 0
-          maximum: 100
-          example: 51
-        personalInfo:
-          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
-        kycStatus:
-          $ref: '#/components/schemas/KycStatus'
-        createdAt:
-          type: string
-          format: date-time
-          description: When this beneficial owner was created
-          example: '2025-10-03T12:00:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: When this beneficial owner was last updated
-          example: '2025-10-03T12:00:00Z'
-    KycLinkResponse:
-      type: object
-      description: A hosted KYC link that the customer can complete to verify their identity.
-      required:
-      - kycUrl
-      - expiresAt
-      - provider
-      properties:
-        kycUrl:
-          type: string
-          description: Hosted URL the customer should be sent to in order to complete verification. The URL is single-use and expires at `expiresAt`. To generate a new link (for example, after the previous one expires or is abandoned), call this endpoint again.
-          example: https://kyc.lightspark.com/onboard/abc123def456
-        expiresAt:
-          type: string
-          format: date-time
-          description: Time at which the hosted link expires and can no longer be used.
-          example: '2027-01-15T14:32:00Z'
-        provider:
-          $ref: '#/components/schemas/KycProvider'
-        token:
-          type: string
-          description: Provider-specific token that can be used in place of the hosted URL — for example, to embed the provider's SDK directly in your application. Only returned for providers that support direct SDK integration. Whether to use the hosted URL or the embedded SDK is up to you; both flows result in the same `kycStatus` update on the customer.
-          example: _act-sbx-jwt-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    VerificationStatus:
-      type: string
-      enum:
-      - RESOLVE_ERRORS
-      - PENDING_MANUAL_REVIEW
-      - IN_PROGRESS
-      - APPROVED
-      - REJECTED
-      - READY_FOR_VERIFICATION
-      description: Current status of the KYC/KYB verification
-      example: RESOLVE_ERRORS
-    KycProvider:
-      type: string
-      description: The KYC provider that will perform identity verification for the customer. Grid selects the provider based on the customer's region and platform configuration; the value is informational for platforms that want to integrate directly with the provider's SDK.
-      enum:
-      - SUMSUB
-      example: SUMSUB
-    VerificationListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of verifications matching the filter criteria
-          items:
-            $ref: '#/components/schemas/Verification'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of results matching the criteria
-    BeneficialOwnerPersonalInfoUpdate:
-      type: object
-      description: Partial update for beneficial owner personal information. Only provided fields are updated.
-      properties:
-        firstName:
-          type: string
-          description: First name of the individual
-          example: Jane
-        middleName:
-          type: string
-          description: Middle name of the individual
-          example: Marie
-        lastName:
-          type: string
-          description: Last name of the individual
-          example: Smith
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1978-06-15'
-        nationality:
-          type: string
-          description: Country of nationality (ISO 3166-1 alpha-2)
-          example: US
-        email:
-          type: string
-          format: email
-          description: Email address of the individual
-          example: jane.smith@acmecorp.com
-        phoneNumber:
-          type: string
-          description: Phone number in E.164 format
-          example: '+14155550192'
-          pattern: ^\+[1-9]\d{1,14}$
-        address:
-          $ref: '#/components/schemas/Address'
-        idType:
-          $ref: '#/components/schemas/IdentificationType'
-        identifier:
-          type: string
-          description: The identification number or value
-          example: 123-45-6789
-        countryOfIssuance:
-          type: string
-          description: Country that issued the identification (ISO 3166-1 alpha-2)
-          example: US
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    VerificationError:
-      type: object
-      required:
-      - resourceId
-      - type
-      - reason
-      properties:
-        resourceId:
-          type: string
-          description: ID of the resource with the issue (Customer, BeneficialOwner, or Document)
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        type:
-          $ref: '#/components/schemas/VerificationErrorType'
-        field:
-          type: string
-          description: Dot-notation path to the field with the issue. Present when type is MISSING_FIELD or INVALID_FIELD.
-          example: customer.address.line1
-        acceptedDocumentTypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/DocumentType'
-          description: 'Document types that would satisfy this requirement. The integrator can upload any one of the listed types. Present when type is MISSING_LEGAL_PRESENCE_DOCUMENT, MISSING_CONTROL_STRUCTURE_DOCUMENT, MISSING_OWNERSHIP_STRUCTURE_DOCUMENT, MISSING_PROOF_OF_ADDRESS_DOCUMENT, MISSING_IDENTITY_DOCUMENT, INVALID_DOCUMENT, or EXPIRED_DOCUMENT.
-
-
-            | Error Type | Accepted Document Types |
-
-            |---|---|
-
-            | MISSING_LEGAL_PRESENCE_DOCUMENT | CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT |
-
-            | MISSING_CONTROL_STRUCTURE_DOCUMENT | DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT |
-
-            | MISSING_OWNERSHIP_STRUCTURE_DOCUMENT | SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT |
-
-            | MISSING_PROOF_OF_ADDRESS_DOCUMENT | UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN |
-
-            | MISSING_IDENTITY_DOCUMENT | PASSPORT, DRIVERS_LICENSE, NATIONAL_ID |'
-        reason:
-          type: string
-          description: Human-readable description of the issue
-          example: Business address line 1 is required
-    IdentificationType:
-      type: string
-      enum:
-      - SSN
-      - ITIN
-      - EIN
-      - NON_US_TAX_ID
-      description: Type of tax identification
-      example: SSN
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    KycLinkCreateRequest:
-      type: object
-      description: Request body for generating a hosted KYC link for an existing customer.
-      properties:
-        redirectUri:
-          type: string
-          format: uri
-          description: URI the customer is redirected to after completing the hosted KYC flow. Must start with `https://` (or `http://` for local development). Embedded in the returned `kycUrl`.
-          example: https://app.example.com/onboarding/completed
-    VerificationErrorType:
-      type: string
-      enum:
-      - MISSING_FIELD
-      - INVALID_FIELD
-      - MISSING_LEGAL_PRESENCE_DOCUMENT
-      - MISSING_CONTROL_STRUCTURE_DOCUMENT
-      - MISSING_OWNERSHIP_STRUCTURE_DOCUMENT
-      - MISSING_PROOF_OF_ADDRESS_DOCUMENT
-      - MISSING_IDENTITY_DOCUMENT
-      - INVALID_DOCUMENT
-      - EXPIRED_DOCUMENT
-      - POOR_QUALITY_DOCUMENT
-      - SUSPECTED_FRAUD_DOCUMENT
-      - WRONG_DOCUMENT_TYPE
-      - INCOMPLETE_DOCUMENT
-      - UNREADABLE_DOCUMENT
-      - DOCUMENT_VERIFICATION_FAILED
-      - APPLICANT_SANCTIONED
-      - APPLICANT_FRAUD
-      - APPLICANT_CRIMINAL_RECORD
-      - APPLICANT_REJECTED
-      - MISSING_BENEFICIAL_OWNER
-      - MISSING_CONTROL_PERSON
-      - MISSING_GOOD_STANDING_DOCUMENT
-      description: Type of verification error. The category-specific MISSING_*_DOCUMENT types indicate which document category is needed. Document quality types (POOR_QUALITY_DOCUMENT, SUSPECTED_FRAUD_DOCUMENT, etc.) indicate specific issues with uploaded documents. APPLICANT_* types indicate issues with the applicant themselves (sanctions, fraud, criminal records).
-      example: MISSING_FIELD
     Error400:
       type: object
       required:
@@ -1172,6 +624,33 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    VerificationErrorType:
+      type: string
+      enum:
+      - MISSING_FIELD
+      - INVALID_FIELD
+      - MISSING_LEGAL_PRESENCE_DOCUMENT
+      - MISSING_CONTROL_STRUCTURE_DOCUMENT
+      - MISSING_OWNERSHIP_STRUCTURE_DOCUMENT
+      - MISSING_PROOF_OF_ADDRESS_DOCUMENT
+      - MISSING_IDENTITY_DOCUMENT
+      - INVALID_DOCUMENT
+      - EXPIRED_DOCUMENT
+      - POOR_QUALITY_DOCUMENT
+      - SUSPECTED_FRAUD_DOCUMENT
+      - WRONG_DOCUMENT_TYPE
+      - INCOMPLETE_DOCUMENT
+      - UNREADABLE_DOCUMENT
+      - DOCUMENT_VERIFICATION_FAILED
+      - APPLICANT_SANCTIONED
+      - APPLICANT_FRAUD
+      - APPLICANT_CRIMINAL_RECORD
+      - APPLICANT_REJECTED
+      - MISSING_BENEFICIAL_OWNER
+      - MISSING_CONTROL_PERSON
+      - MISSING_GOOD_STANDING_DOCUMENT
+      description: Type of verification error. The category-specific MISSING_*_DOCUMENT types indicate which document category is needed. Document quality types (POOR_QUALITY_DOCUMENT, SUSPECTED_FRAUD_DOCUMENT, etc.) indicate specific issues with uploaded documents. APPLICANT_* types indicate issues with the applicant themselves (sanctions, fraud, criminal records).
+      example: MISSING_FIELD
     BeneficialOwnerRole:
       type: string
       enum:
@@ -1183,70 +662,56 @@ components:
       - GENERAL_PARTNER
       description: Role of the beneficial owner within the business
       example: UBO
-    Error500:
+    BeneficialOwnerPersonalInfoUpdate:
       type: object
-      required:
-      - message
-      - status
-      - code
+      description: Partial update for beneficial owner personal information. Only provided fields are updated.
       properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
+        firstName:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
+          description: First name of the individual
+          example: Jane
+        middleName:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    VerificationRequest:
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
+    BeneficialOwnerUpdateRequest:
       type: object
-      required:
-      - customerId
       properties:
-        customerId:
-          type: string
-          description: The ID of the customer to verify
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-    KycStatus:
-      type: string
-      enum:
-      - UNVERIFIED
-      - PENDING
-      - APPROVED
-      - REJECTED
-      - HOLD
-      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
-      example: APPROVED
-    BeneficialOwnerCreateRequest:
-      type: object
-      required:
-      - customerId
-      - roles
-      - ownershipPercentage
-      - personalInfo
-      properties:
-        customerId:
-          type: string
-          description: The ID of the business customer this beneficial owner is associated with
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
         roles:
           type: array
           items:
@@ -1257,12 +722,12 @@ components:
           - DIRECTOR
         ownershipPercentage:
           type: integer
-          description: Percentage of ownership in the business (0-100). Relevant when role includes UBO.
+          description: Percentage of ownership in the business (0-100)
           minimum: 0
           maximum: 100
           example: 51
         personalInfo:
-          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfoUpdate'
     DocumentType:
       type: string
       enum:
@@ -1304,6 +769,541 @@ components:
 
         **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
       example: PASSPORT
+    VerificationStatus:
+      type: string
+      enum:
+      - RESOLVE_ERRORS
+      - PENDING_MANUAL_REVIEW
+      - IN_PROGRESS
+      - APPROVED
+      - REJECTED
+      - READY_FOR_VERIFICATION
+      description: Current status of the KYC/KYB verification
+      example: RESOLVE_ERRORS
+    KycProvider:
+      type: string
+      description: The KYC provider that will perform identity verification for the customer. Grid selects the provider based on the customer's region and platform configuration; the value is informational for platforms that want to integrate directly with the provider's SDK.
+      enum:
+      - SUMSUB
+      example: SUMSUB
+    IdentificationType:
+      type: string
+      enum:
+      - SSN
+      - ITIN
+      - EIN
+      - NON_US_TAX_ID
+      description: Type of tax identification
+      example: SSN
+    VerificationRequest:
+      type: object
+      required:
+      - customerId
+      properties:
+        customerId:
+          type: string
+          description: The ID of the customer to verify
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    Address:
+      type: object
+      required:
+      - line1
+      - postalCode
+      - country
+      properties:
+        line1:
+          type: string
+          description: Street address line 1
+          example: 123 Main Street
+        line2:
+          type: string
+          description: Street address line 2
+          example: Apt 4B
+        city:
+          type: string
+          description: City
+          example: San Francisco
+        state:
+          type: string
+          description: State/Province/Region
+          example: CA
+        postalCode:
+          type: string
+          description: Postal/ZIP code
+          example: '94105'
+        country:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Verification:
+      type: object
+      required:
+      - id
+      - customerId
+      - verificationStatus
+      - errors
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this verification
+          example: Verification:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the customer being verified
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        verificationStatus:
+          $ref: '#/components/schemas/VerificationStatus'
+        errors:
+          type: array
+          description: List of issues preventing verification from proceeding. Empty when verificationStatus is APPROVED or IN_PROGRESS.
+          items:
+            $ref: '#/components/schemas/VerificationError'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this verification was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this verification was last updated
+          example: '2025-10-03T12:00:00Z'
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    BeneficialOwnerPersonalInfo:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - birthDate
+      - nationality
+      - address
+      - idType
+      - identifier
+      properties:
+        firstName:
+          type: string
+          description: First name of the individual
+          example: Jane
+        middleName:
+          type: string
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
+    BeneficialOwnerListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of beneficial owners matching the filter criteria
+          items:
+            $ref: '#/components/schemas/BeneficialOwner'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of results matching the criteria
+    KycLinkResponse:
+      type: object
+      description: A hosted KYC link that the customer can complete to verify their identity.
+      required:
+      - kycUrl
+      - expiresAt
+      - provider
+      properties:
+        kycUrl:
+          type: string
+          description: Hosted URL the customer should be sent to in order to complete verification. The URL is single-use and expires at `expiresAt`. To generate a new link (for example, after the previous one expires or is abandoned), call this endpoint again.
+          example: https://kyc.lightspark.com/onboard/abc123def456
+        expiresAt:
+          type: string
+          format: date-time
+          description: Time at which the hosted link expires and can no longer be used.
+          example: '2027-01-15T14:32:00Z'
+        provider:
+          $ref: '#/components/schemas/KycProvider'
+        token:
+          type: string
+          description: Provider-specific token that can be used in place of the hosted URL — for example, to embed the provider's SDK directly in your application. Only returned for providers that support direct SDK integration. Whether to use the hosted URL or the embedded SDK is up to you; both flows result in the same `kycStatus` update on the customer.
+          example: _act-sbx-jwt-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    VerificationListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of verifications matching the filter criteria
+          items:
+            $ref: '#/components/schemas/Verification'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of results matching the criteria
+    BeneficialOwner:
+      type: object
+      required:
+      - id
+      - customerId
+      - roles
+      - ownershipPercentage
+      - personalInfo
+      - kycStatus
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this beneficial owner
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the business customer this beneficial owner is associated with
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100)
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was last updated
+          example: '2025-10-03T12:00:00Z'
+    VerificationError:
+      type: object
+      required:
+      - resourceId
+      - type
+      - reason
+      properties:
+        resourceId:
+          type: string
+          description: ID of the resource with the issue (Customer, BeneficialOwner, or Document)
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        type:
+          $ref: '#/components/schemas/VerificationErrorType'
+        field:
+          type: string
+          description: Dot-notation path to the field with the issue. Present when type is MISSING_FIELD or INVALID_FIELD.
+          example: customer.address.line1
+        acceptedDocumentTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+          description: 'Document types that would satisfy this requirement. The integrator can upload any one of the listed types. Present when type is MISSING_LEGAL_PRESENCE_DOCUMENT, MISSING_CONTROL_STRUCTURE_DOCUMENT, MISSING_OWNERSHIP_STRUCTURE_DOCUMENT, MISSING_PROOF_OF_ADDRESS_DOCUMENT, MISSING_IDENTITY_DOCUMENT, INVALID_DOCUMENT, or EXPIRED_DOCUMENT.
+
+
+            | Error Type | Accepted Document Types |
+
+            |---|---|
+
+            | MISSING_LEGAL_PRESENCE_DOCUMENT | CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT |
+
+            | MISSING_CONTROL_STRUCTURE_DOCUMENT | DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT |
+
+            | MISSING_OWNERSHIP_STRUCTURE_DOCUMENT | SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT |
+
+            | MISSING_PROOF_OF_ADDRESS_DOCUMENT | UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN |
+
+            | MISSING_IDENTITY_DOCUMENT | PASSPORT, DRIVERS_LICENSE, NATIONAL_ID |'
+        reason:
+          type: string
+          description: Human-readable description of the issue
+          example: Business address line 1 is required
+    BeneficialOwnerCreateRequest:
+      type: object
+      required:
+      - customerId
+      - roles
+      - ownershipPercentage
+      - personalInfo
+      properties:
+        customerId:
+          type: string
+          description: The ID of the business customer this beneficial owner is associated with
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100). Relevant when role includes UBO.
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    KycLinkCreateRequest:
+      type: object
+      description: Request body for generating a hosted KYC link for an existing customer.
+      properties:
+        redirectUri:
+          type: string
+          format: uri
+          description: URI the customer is redirected to after completing the hosted KYC flow. Must start with `https://` (or `http://` for local development). Embedded in the returned `kycUrl`.
+          example: https://app.example.com/onboarding/completed
+    KycStatus:
+      type: string
+      enum:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
   securitySchemes:
     BasicAuth:
       type: http

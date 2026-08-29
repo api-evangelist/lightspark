@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Stablecoins API
+  title: Grid Stablecoins API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -179,25 +179,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    StablecoinProviderAccountListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/StablecoinProviderAccount'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page.
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results.
-        totalCount:
-          type: integer
-          description: Total number of stablecoin provider account links matching the criteria.
     StablecoinProviderAccountStatus:
       type: string
       enum:
@@ -205,6 +186,46 @@ components:
       - INVALID
       - REVOKED
       description: Status of the linked stablecoin provider account credentials.
+    StablecoinProviderAccount:
+      type: object
+      required:
+      - id
+      - provider
+      - providerAccountId
+      - providerEnvironment
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated stablecoin provider account link identifier.
+          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
+        provider:
+          $ref: '#/components/schemas/StablecoinProvider'
+        providerAccountId:
+          type: string
+          description: Provider account id.
+          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
+        providerEnvironment:
+          $ref: '#/components/schemas/StablecoinProviderEnvironment'
+        status:
+          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
+        lastVerifiedAt:
+          type: string
+          format: date-time
+          description: Timestamp of the last successful provider credential verification.
+          example: '2026-05-20T16:35:00Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp.
+          example: '2026-05-20T16:35:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+          example: '2026-05-20T16:35:00Z'
     Error400:
       type: object
       required:
@@ -349,46 +370,174 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    StablecoinProviderAccount:
+    StablecoinProvider:
+      type: string
+      enum:
+      - BRALE
+      description: Stablecoin provider backing the linked account, stablecoin, or operation.
+    StablecoinProviderEnvironment:
+      type: string
+      enum:
+      - SANDBOX
+      - PRODUCTION
+      description: Provider environment derived from the authenticated Grid platform mode.
+    Error500:
       type: object
       required:
-      - id
-      - provider
-      - providerAccountId
-      - providerEnvironment
+      - message
       - status
-      - createdAt
-      - updatedAt
+      - code
       properties:
-        id:
-          type: string
-          description: System-generated stablecoin provider account link identifier.
-          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
-        provider:
-          $ref: '#/components/schemas/StablecoinProvider'
-        providerAccountId:
-          type: string
-          description: Provider account id.
-          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-        providerEnvironment:
-          $ref: '#/components/schemas/StablecoinProviderEnvironment'
         status:
-          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
-        lastVerifiedAt:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
           type: string
-          format: date-time
-          description: Timestamp of the last successful provider credential verification.
-          example: '2026-05-20T16:35:00Z'
-        createdAt:
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
           type: string
-          format: date-time
-          description: Creation timestamp.
-          example: '2026-05-20T16:35:00Z'
-        updatedAt:
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
           type: string
-          format: date-time
-          description: Last update timestamp.
-          example: '2026-05-20T16:35:00Z'
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    StablecoinProviderAccountListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StablecoinProviderAccount'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page.
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results.
+        totalCount:
+          type: integer
+          description: Total number of stablecoin provider account links matching the criteria.
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Error409:
       type: object
       required:
@@ -456,155 +605,6 @@ components:
           type: string
           description: Provider account id. Optional when the submitted credentials expose exactly one provider account.
           example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    StablecoinProviderEnvironment:
-      type: string
-      enum:
-      - SANDBOX
-      - PRODUCTION
-      description: Provider environment derived from the authenticated Grid platform mode.
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    StablecoinProvider:
-      type: string
-      enum:
-      - BRALE
-      description: Stablecoin provider backing the linked account, stablecoin, or operation.
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
   securitySchemes:
     BasicAuth:
       type: http

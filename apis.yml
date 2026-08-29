@@ -548,6 +548,16 @@ apis:
     url: asyncapi/lightspark-grid-webhooks.yml
   - type: SourceCode
     url: https://github.com/lightsparkdev/grid-api
+- aid: lightspark:lightspark-webhooks-api
+  name: Lightspark Webhooks API
+  description: Webhook endpoints and configuration for receiving notifications
+  humanURL: https://docs.lightspark.com/
+  baseURL: https://api.lightspark.com/grid/2025-10-13
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/lightspark-webhooks-api-openapi.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com

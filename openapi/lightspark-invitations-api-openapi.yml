@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Invitations API
+  title: Grid Invitations API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -244,6 +244,19 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
     Currency:
       type: object
       properties:
@@ -264,54 +277,6 @@ components:
           description: Number of decimal places for the currency
           minimum: 0
           example: 2
-    Error403:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 403
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | FORBIDDEN | Insufficient permissions |
-
-            | USER_NOT_READY | Customer exists but is not ready for operation |
-
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
-
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
-
-            '
-          enum:
-          - FORBIDDEN
-          - USER_NOT_READY
-          - COUNTERPARTY_NOT_ALLOWED
-          - VELOCITY_LIMIT_EXCEEDED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    UmaInvitationClaimRequest:
-      type: object
-      required:
-      - inviteeUma
-      properties:
-        inviteeUma:
-          type: string
-          description: The UMA address of the customer claiming the invitation
-          example: $invitee@uma.domain
     Error400:
       type: object
       required:
@@ -514,39 +479,6 @@ components:
           description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
 
             This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
-    UmaInvitationCreateRequest:
-      type: object
-      required:
-      - inviterUma
-      properties:
-        inviterUma:
-          type: string
-          description: The UMA address of the customer creating the invitation
-          example: $inviter@uma.domain
-        firstName:
-          type: string
-          description: First name of the invitee to show as part of the invite
-          example: Alice
-        amountToSend:
-          description: 'An amount to send (in the smallest unit of the customer''s currency) to the invitee when the invitation is claimed.
-
-            This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
-
-            the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
-
-            platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
-
-            field is primarily used for display purposes on the claiming side of the invitation.
-
-            '
-          type: integer
-          format: int64
-          example: 12550
-        expiresAt:
-          type: string
-          format: date-time
-          description: When the invitation expires (if at all)
-          example: '2025-09-01T14:30:00Z'
     Error500:
       type: object
       required:
@@ -580,67 +512,15 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CurrencyAmount:
+    UmaInvitationClaimRequest:
       type: object
       required:
-      - amount
-      - currency
+      - inviteeUma
       properties:
-        amount:
-          type: integer
-          format: int64
-          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
-          example: 12550
-        currency:
-          $ref: '#/components/schemas/Currency'
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
+        inviteeUma:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          description: The UMA address of the customer claiming the invitation
+          example: $invitee@uma.domain
     Error404:
       type: object
       required:
@@ -698,6 +578,126 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error403:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 403
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    UmaInvitationCreateRequest:
+      type: object
+      required:
+      - inviterUma
+      properties:
+        inviterUma:
+          type: string
+          description: The UMA address of the customer creating the invitation
+          example: $inviter@uma.domain
+        firstName:
+          type: string
+          description: First name of the invitee to show as part of the invite
+          example: Alice
+        amountToSend:
+          description: 'An amount to send (in the smallest unit of the customer''s currency) to the invitee when the invitation is claimed.
+
+            This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
+
+            the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
+
+            platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
+
+            field is primarily used for display purposes on the claiming side of the invitation.
+
+            '
+          type: integer
+          format: int64
+          example: 12550
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
   securitySchemes:
     BasicAuth:
       type: http

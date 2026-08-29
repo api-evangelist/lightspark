@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Available UMA Providers API
+  title: Grid Available UMA Providers API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -98,23 +98,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    UmaProviderListResponse:
-      type: object
-      properties:
-        data:
-          description: List of available UMA Providers using Grid
-          type: array
-          items:
-            $ref: '#/components/schemas/UmaProvider'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of transactions matching the criteria (excluding pagination)
     Currency:
       type: object
       properties:
@@ -168,47 +151,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    UmaProvider:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the UMA Provider
-          example: Lightspark Group
-        supportedRegions:
-          type: array
-          items:
-            type: string
-          description: Region(s) this UMA Provider operates in
-          example:
-          - US
-        domain:
-          type: string
-          description: Domain this VASP uses for UMA addresses
-          example: uma.me
-        logoUrl:
-          type: string
-          description: Logo URL for the VASP
-          format: uri
-          example: https://uma.me/logo.png
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Currency'
-          description: List of currencies supported by this UMA Provider
-          example:
-          - code: USD
-            name: United States Dollar
-            symbol: $
-            decimals: 2
-        lei:
-          type: string
-          description: Legal Entity Identifier for the UMA Provider
-          example: 5493001KJTIIGC8Y1R12
-        allowListStatus:
-          type: boolean
-          description: Whether this UMA Provider is on your allow list
-          example: true
     Error401:
       type: object
       required:
@@ -257,6 +199,64 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    UmaProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the UMA Provider
+          example: Lightspark Group
+        supportedRegions:
+          type: array
+          items:
+            type: string
+          description: Region(s) this UMA Provider operates in
+          example:
+          - US
+        domain:
+          type: string
+          description: Domain this VASP uses for UMA addresses
+          example: uma.me
+        logoUrl:
+          type: string
+          description: Logo URL for the VASP
+          format: uri
+          example: https://uma.me/logo.png
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Currency'
+          description: List of currencies supported by this UMA Provider
+          example:
+          - code: USD
+            name: United States Dollar
+            symbol: $
+            decimals: 2
+        lei:
+          type: string
+          description: Legal Entity Identifier for the UMA Provider
+          example: 5493001KJTIIGC8Y1R12
+        allowListStatus:
+          type: boolean
+          description: Whether this UMA Provider is on your allow list
+          example: true
+    UmaProviderListResponse:
+      type: object
+      properties:
+        data:
+          description: List of available UMA Providers using Grid
+          type: array
+          items:
+            $ref: '#/components/schemas/UmaProvider'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of transactions matching the criteria (excluding pagination)
   securitySchemes:
     BasicAuth:
       type: http

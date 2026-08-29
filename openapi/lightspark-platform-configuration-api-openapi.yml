@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Platform Configuration API
+  title: Grid Platform Configuration API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -119,159 +119,174 @@ paths:
                 $ref: '#/components/schemas/Error501'
 components:
   schemas:
-    EmbeddedWalletConfig:
+    CounterpartyFieldDefinition:
       type: object
-      description: 'Per-platform embedded-wallet configuration. Controls branding and OTP
-
-        behavior for the email sent when a customer authenticates with an
-
-        EMAIL_OTP credential. Fields omitted from a request are left unchanged.
-
-        '
       properties:
-        appName:
-          type: string
-          maxLength: 255
-          description: App name displayed in the default OTP email template.
-          example: Acme Wallet
-        otpLength:
-          type: integer
-          minimum: 4
-          maximum: 12
-          description: 'Number of digits / characters in the OTP code. Defaults to 6 when
-
-            not set.
-
-            '
-          example: 6
-        alphanumeric:
+        name:
+          $ref: '#/components/schemas/CustomerInfoFieldName'
+        mandatory:
           type: boolean
-          description: 'If true, OTP includes letters in addition to digits. Defaults to
-
-            numeric-only when not set.
-
-            '
-          example: false
-        expirationSeconds:
-          type: integer
-          minimum: 1
-          maximum: 86400
-          description: 'OTP validity window in seconds. Defaults to 300 when not set.
-
-            '
-          example: 300
-        sendFromEmailAddress:
-          type: string
-          format: email
-          maxLength: 255
-          description: Custom sender email address for OTP emails.
-          example: noreply@acme.com
-        sendFromEmailSenderName:
-          type: string
-          maxLength: 255
-          description: 'Custom sender display name. Defaults to "Notifications" when not set.
-
-            '
-          example: Acme Notifications
-        replyToEmailAddress:
-          type: string
-          format: email
-          maxLength: 255
-          description: Custom reply-to email address for OTP emails.
-          example: support@acme.com
-        logoUrl:
-          type: string
-          format: uri
-          maxLength: 512
-          description: URL to a PNG logo for the OTP email. Resized to 340x124px.
-          example: https://acme.com/logo.png
-    Error501:
-      type: object
+          description: Whether the field is mandatory
+          example: true
       required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 501
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-
-            | NOT_IMPLEMENTED | Feature not implemented |
-
-            '
-          enum:
-          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
-          - NOT_IMPLEMENTED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+      - name
+      - mandatory
     TransactionType:
       type: string
       enum:
       - INCOMING
       - OUTGOING
       description: Type of transaction (incoming payment or outgoing payment)
-    Error401:
+    CustomerInfoFieldName:
+      type: string
+      enum:
+      - FULL_NAME
+      - BIRTH_DATE
+      - NATIONALITY
+      - PHONE_NUMBER
+      - EMAIL
+      - POSTAL_ADDRESS
+      - TAX_ID
+      - REGISTRATION_NUMBER
+      - USER_TYPE
+      - COUNTRY_OF_RESIDENCE
+      - ACCOUNT_IDENTIFIER
+      - FI_LEGAL_ENTITY_NAME
+      - FI_ADDRESS
+      - PURPOSE_OF_PAYMENT
+      - ULTIMATE_INSTITUTION_COUNTRY
+      - IDENTIFIER
+      - BUSINESS_TYPE
+      - COMPANY_LEGAL_NAME
+      - ID_TYPE
+      - ID_NUMBER
+      description: Name of a type of field containing info about a platform's customer or counterparty customer.
+      example: FULL_NAME
+    PlatformCurrencyConfig:
       type: object
-      required:
-      - message
-      - status
-      - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
+        currencyCode:
           type: string
-          description: '| Error Code | Description |
+          description: Three-letter currency code (ISO 4217)
+          example: USD
+        minAmount:
+          type: integer
+          format: int64
+          description: Minimum amount that can be sent in the smallest unit of this currency
+          minimum: 0
+          example: 100
+        maxAmount:
+          type: integer
+          format: int64
+          description: Maximum amount that can be sent in the smallest unit of this currency
+          minimum: 0
+          example: 1000000
+        requiredCounterpartyFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CounterpartyFieldDefinition'
+          description: List of fields which the platform requires from the counterparty institutions about counterparty customers. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.
+          example:
+          - name: FULL_NAME
+            mandatory: true
+          - name: BIRTH_DATE
+            mandatory: true
+          - name: NATIONALITY
+            mandatory: true
+        providerRequiredCustomerFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerInfoFieldName'
+          description: List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.
+          readOnly: true
+          example:
+          - NATIONALITY
+          - BIRTH_DATE
+        providerRequiredCounterpartyCustomerFields:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomerInfoFieldName'
+          description: List of fields that are required by the underlying UMA provider for this currency. If the counterparty does not provide these fields, quote requests will fail.
+          readOnly: true
+          example:
+          - FULL_NAME
+          - COUNTRY_OF_RESIDENCE
+        enabledTransactionTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransactionType'
+          description: List of transaction types that are enabled for this currency.
+          example:
+          - OUTGOING
+          - INCOMING
+      required:
+      - currencyCode
+      - minAmount
+      - maxAmount
+      - requiredCounterpartyFields
+      - enabledTransactionTypes
+    PlatformConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: PlatformConfig:019542f5-b3e7-1d02-0000-000000000003
+        umaDomain:
+          type: string
+          description: UMA domain for this platform
+          example: platform.uma.domain
+        proxyUmaSubdomain:
+          type: string
+          description: The subdomain that incoming requests will be proxied to
+          example: platform
+        webhookEndpoint:
+          type: string
+          description: URL where webhook notifications will be sent
+          example: https://api.mycompany.com/webhooks/uma
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
+          description: 'List of currencies supported by the platform. This is what the platform''s
 
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+            customers are able to hold, send, and receive.
 
             '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
+        isRegulatedFinancialInstitution:
+          type: boolean
+          description: 'Whether the platform is a regulated financial institution. This is used to
+
+            determine if the platform''s customers must be KYC/KYB''d by Lightspark via
+
+            the KYC link flow. This can only be set by Lightspark during platform
+
+            creation.
+
+            '
+          example: false
+        embeddedWalletConfig:
+          $ref: '#/components/schemas/EmbeddedWalletConfig'
+          description: 'Embedded-wallet branding and OTP settings for this platform. Present
+
+            only when the platform has configured embedded-wallet support;
+
+            omitted otherwise.
+
+            '
+        createdAt:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2025-06-15T12:30:45Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2025-06-15T12:30:45Z'
     Error400:
       type: object
       required:
@@ -416,105 +431,72 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    PlatformConfigUpdateRequest:
+    EmbeddedWalletConfig:
       type: object
+      description: 'Per-platform embedded-wallet configuration. Controls branding and OTP
+
+        behavior for the email sent when a customer authenticates with an
+
+        EMAIL_OTP credential. Fields omitted from a request are left unchanged.
+
+        '
       properties:
-        umaDomain:
+        appName:
           type: string
-          example: mycompany.com
-        webhookEndpoint:
-          type: string
-          example: https://api.mycompany.com/webhooks/uma
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlatformCurrencyConfig'
-        embeddedWalletConfig:
-          $ref: '#/components/schemas/EmbeddedWalletConfig'
-          description: 'Update or create the embedded-wallet configuration for this platform.
+          maxLength: 255
+          description: App name displayed in the default OTP email template.
+          example: Acme Wallet
+        otpLength:
+          type: integer
+          minimum: 4
+          maximum: 12
+          description: 'Number of digits / characters in the OTP code. Defaults to 6 when
 
-            Fields omitted from the nested object are left unchanged. Omit this
-
-            field at the top level to leave the embedded-wallet configuration
-
-            unchanged entirely.
+            not set.
 
             '
-    CounterpartyFieldDefinition:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/CustomerInfoFieldName'
-        mandatory:
+          example: 6
+        alphanumeric:
           type: boolean
-          description: Whether the field is mandatory
-          example: true
-      required:
-      - name
-      - mandatory
-    PlatformCurrencyConfig:
-      type: object
-      properties:
-        currencyCode:
+          description: 'If true, OTP includes letters in addition to digits. Defaults to
+
+            numeric-only when not set.
+
+            '
+          example: false
+        expirationSeconds:
+          type: integer
+          minimum: 1
+          maximum: 86400
+          description: 'OTP validity window in seconds. Defaults to 300 when not set.
+
+            '
+          example: 300
+        sendFromEmailAddress:
           type: string
-          description: Three-letter currency code (ISO 4217)
-          example: USD
-        minAmount:
-          type: integer
-          format: int64
-          description: Minimum amount that can be sent in the smallest unit of this currency
-          minimum: 0
-          example: 100
-        maxAmount:
-          type: integer
-          format: int64
-          description: Maximum amount that can be sent in the smallest unit of this currency
-          minimum: 0
-          example: 1000000
-        requiredCounterpartyFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/CounterpartyFieldDefinition'
-          description: List of fields which the platform requires from the counterparty institutions about counterparty customers. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider.
-          example:
-          - name: FULL_NAME
-            mandatory: true
-          - name: BIRTH_DATE
-            mandatory: true
-          - name: NATIONALITY
-            mandatory: true
-        providerRequiredCustomerFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerInfoFieldName'
-          description: List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.
-          readOnly: true
-          example:
-          - NATIONALITY
-          - BIRTH_DATE
-        providerRequiredCounterpartyCustomerFields:
-          type: array
-          items:
-            $ref: '#/components/schemas/CustomerInfoFieldName'
-          description: List of fields that are required by the underlying UMA provider for this currency. If the counterparty does not provide these fields, quote requests will fail.
-          readOnly: true
-          example:
-          - FULL_NAME
-          - COUNTRY_OF_RESIDENCE
-        enabledTransactionTypes:
-          type: array
-          items:
-            $ref: '#/components/schemas/TransactionType'
-          description: List of transaction types that are enabled for this currency.
-          example:
-          - OUTGOING
-          - INCOMING
-      required:
-      - currencyCode
-      - minAmount
-      - maxAmount
-      - requiredCounterpartyFields
-      - enabledTransactionTypes
+          format: email
+          maxLength: 255
+          description: Custom sender email address for OTP emails.
+          example: noreply@acme.com
+        sendFromEmailSenderName:
+          type: string
+          maxLength: 255
+          description: 'Custom sender display name. Defaults to "Notifications" when not set.
+
+            '
+          example: Acme Notifications
+        replyToEmailAddress:
+          type: string
+          format: email
+          maxLength: 255
+          description: Custom reply-to email address for OTP emails.
+          example: support@acme.com
+        logoUrl:
+          type: string
+          format: uri
+          maxLength: 512
+          description: URL to a PNG logo for the OTP email. Resized to 340x124px.
+          example: https://acme.com/logo.png
     Error500:
       type: object
       required:
@@ -548,93 +530,111 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    PlatformConfig:
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    PlatformConfigUpdateRequest:
       type: object
       properties:
-        id:
-          type: string
-          description: System-generated unique identifier
-          readOnly: true
-          example: PlatformConfig:019542f5-b3e7-1d02-0000-000000000003
         umaDomain:
           type: string
-          description: UMA domain for this platform
-          example: platform.uma.domain
-        proxyUmaSubdomain:
-          type: string
-          description: The subdomain that incoming requests will be proxied to
-          example: platform
+          example: mycompany.com
         webhookEndpoint:
           type: string
-          description: URL where webhook notifications will be sent
           example: https://api.mycompany.com/webhooks/uma
         supportedCurrencies:
           type: array
           items:
             $ref: '#/components/schemas/PlatformCurrencyConfig'
-          description: 'List of currencies supported by the platform. This is what the platform''s
-
-            customers are able to hold, send, and receive.
-
-            '
-        isRegulatedFinancialInstitution:
-          type: boolean
-          description: 'Whether the platform is a regulated financial institution. This is used to
-
-            determine if the platform''s customers must be KYC/KYB''d by Lightspark via
-
-            the KYC link flow. This can only be set by Lightspark during platform
-
-            creation.
-
-            '
-          example: false
         embeddedWalletConfig:
           $ref: '#/components/schemas/EmbeddedWalletConfig'
-          description: 'Embedded-wallet branding and OTP settings for this platform. Present
+          description: 'Update or create the embedded-wallet configuration for this platform.
 
-            only when the platform has configured embedded-wallet support;
+            Fields omitted from the nested object are left unchanged. Omit this
 
-            omitted otherwise.
+            field at the top level to leave the embedded-wallet configuration
+
+            unchanged entirely.
 
             '
-        createdAt:
+    Error501:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 501
+          description: HTTP status code
+        code:
           type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2025-06-15T12:30:45Z'
-        updatedAt:
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
+
+            | NOT_IMPLEMENTED | Feature not implemented |
+
+            '
+          enum:
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
+        message:
           type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2025-06-15T12:30:45Z'
-    CustomerInfoFieldName:
-      type: string
-      enum:
-      - FULL_NAME
-      - BIRTH_DATE
-      - NATIONALITY
-      - PHONE_NUMBER
-      - EMAIL
-      - POSTAL_ADDRESS
-      - TAX_ID
-      - REGISTRATION_NUMBER
-      - USER_TYPE
-      - COUNTRY_OF_RESIDENCE
-      - ACCOUNT_IDENTIFIER
-      - FI_LEGAL_ENTITY_NAME
-      - FI_ADDRESS
-      - PURPOSE_OF_PAYMENT
-      - ULTIMATE_INSTITUTION_COUNTRY
-      - IDENTIFIER
-      - BUSINESS_TYPE
-      - COMPANY_LEGAL_NAME
-      - ID_TYPE
-      - ID_NUMBER
-      description: Name of a type of field containing info about a platform's customer or counterparty customer.
-      example: FULL_NAME
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
   securitySchemes:
     BasicAuth:
       type: http

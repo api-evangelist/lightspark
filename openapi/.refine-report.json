@@ -1,33 +1,12 @@
 {
   "provider": "lightspark",
   "sources": [
-    "lightspark-agent-management-api-openapi.yml",
-    "lightspark-agent-operations-api-openapi.yml",
-    "lightspark-api-tokens-api-openapi.yml",
-    "lightspark-available-uma-providers-api-openapi.yml",
-    "lightspark-cards-api-openapi.yml",
-    "lightspark-contact-verification-api-openapi.yml",
-    "lightspark-cross-currency-transfers-api-openapi.yml",
-    "lightspark-customers-api-openapi.yml",
-    "lightspark-discoveries-api-openapi.yml",
-    "lightspark-documents-api-openapi.yml",
-    "lightspark-embedded-wallet-auth-api-openapi.yml",
-    "lightspark-exchange-rates-api-openapi.yml",
-    "lightspark-external-accounts-api-openapi.yml",
-    "lightspark-internal-accounts-api-openapi.yml",
-    "lightspark-invitations-api-openapi.yml",
-    "lightspark-kyc-kyb-verifications-api-openapi.yml",
-    "lightspark-platform-configuration-api-openapi.yml",
-    "lightspark-same-currency-transfers-api-openapi.yml",
-    "lightspark-sandbox-api-openapi.yml",
-    "lightspark-stablecoins-api-openapi.yml",
-    "lightspark-strong-customer-authentication-api-openapi.yml",
-    "lightspark-transactions-api-openapi.yml"
+    "_original/lightspark-grid-openapi-original.yml"
   ],
   "outputs": [
+    "lightspark-api-tokens-api-openapi.yml",
     "lightspark-agent-management-api-openapi.yml",
     "lightspark-agent-operations-api-openapi.yml",
-    "lightspark-api-tokens-api-openapi.yml",
     "lightspark-available-uma-providers-api-openapi.yml",
     "lightspark-cards-api-openapi.yml",
     "lightspark-contact-verification-api-openapi.yml",
@@ -46,11 +25,39 @@
     "lightspark-sandbox-api-openapi.yml",
     "lightspark-stablecoins-api-openapi.yml",
     "lightspark-strong-customer-authentication-api-openapi.yml",
-    "lightspark-transactions-api-openapi.yml"
+    "lightspark-transactions-api-openapi.yml",
+    "lightspark-webhooks-api-openapi.yml"
   ],
   "archived": [],
   "errors": [],
   "warnings": [],
-  "notes": [],
-  "skipped": []
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "lightspark-grid-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
+    "lightspark-grid-openapi-original.yml: declared missing tag: Available UMA Providers"
+  ],
+  "skipped": [
+    "lightspark-agent-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-agent-operations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-api-tokens-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-available-uma-providers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-cards-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-contact-verification-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-cross-currency-transfers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-customers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-discoveries-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-documents-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-embedded-wallet-auth-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-exchange-rates-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-external-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-internal-accounts-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-invitations-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-kyc-kyb-verifications-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-platform-configuration-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-same-currency-transfers-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-sandbox-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-stablecoins-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-strong-customer-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-transactions-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
 }

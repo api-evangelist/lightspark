@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Cards API
+  title: Grid Cards API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -416,6 +416,30 @@ paths:
                 $ref: '#/components/schemas/Error501'
 components:
   schemas:
+    CardStateReason:
+      type: string
+      enum:
+      - ISSUER_REJECTED
+      - CLOSED_BY_PLATFORM
+      - CLOSED_BY_GRID
+      description: 'Reason a card reached a terminal or non-active state. Present on
+
+        `CLOSED` cards, and on cards that fail provisioning before reaching
+
+        `ACTIVE`.
+
+
+        | Reason | Description |
+
+        |--------|-------------|
+
+        | `ISSUER_REJECTED` | The card issuer rejected provisioning during `PROCESSING`. |
+
+        | `CLOSED_BY_PLATFORM` | The card was closed via `PATCH /cards/{id}` (`state: CLOSED`) by the platform. |
+
+        | `CLOSED_BY_GRID` | The card was closed by Grid (e.g. compliance or risk action). |
+
+        '
     SignedRequestChallenge:
       title: Signed Request Challenge
       type: object
@@ -438,88 +462,6 @@ components:
           format: date-time
           description: Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time.
           example: '2026-04-08T15:35:00Z'
-    Error501:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 501
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-
-            | NOT_IMPLEMENTED | Feature not implemented |
-
-            '
-          enum:
-          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
-          - NOT_IMPLEMENTED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CardBrand:
-      type: string
-      enum:
-      - VISA
-      - MASTERCARD
-      description: 'Card network brand. Read-only — determined by Grid when the card is
-
-        provisioned with the issuer.
-
-        '
-    Error403:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 403
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | FORBIDDEN | Insufficient permissions |
-
-            | USER_NOT_READY | Customer exists but is not ready for operation |
-
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
-
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
-
-            '
-          enum:
-          - FORBIDDEN
-          - USER_NOT_READY
-          - COUNTERPARTY_NOT_ALLOWED
-          - VELOCITY_LIMIT_EXCEEDED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Error400:
       type: object
       required:
@@ -664,51 +606,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     CardRevealResponse:
       type: object
       required:
@@ -725,95 +622,13 @@ components:
           format: date-time
           description: When the signed URL stops loading. Request a new reveal rather than re-rendering an expired URL.
           example: '2026-05-08T14:16:00Z'
-    CardState:
+    CardForm:
       type: string
       enum:
-      - PENDING_KYC
-      - PROCESSING
-      - ACTIVE
-      - FROZEN
-      - CLOSED
-      description: 'Lifecycle state of a card.
+      - VIRTUAL
+      description: 'Physical form factor of the card. Only `VIRTUAL` is supported in v1;
 
-
-        | State | Description |
-
-        |-------|-------------|
-
-        | `PENDING_KYC` | The cardholder has not yet completed KYC. Cards in this state cannot transact. |
-
-        | `PROCESSING` | The card has been requested and is being provisioned with the issuer. |
-
-        | `ACTIVE` | The card is live and can authorize transactions. |
-
-        | `FROZEN` | The card is temporarily disabled by the platform. New authorizations are declined with `CARD_PAUSED`. Existing settlements and refunds continue to reconcile. |
-
-        | `CLOSED` | The card is permanently closed. Terminal, irreversible state. |
-
-        '
-    CardListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of cards matching the filter criteria
-          items:
-            $ref: '#/components/schemas/Card'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of cards matching the criteria (excluding pagination)
-    CardUpdateRequest:
-      type: object
-      description: Update request for `PATCH /cards/{id}`. At least one of `state` or `fundingSources` must be supplied. `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`; any other transition returns `409 INVALID_STATE_TRANSITION`. `CLOSED` is terminal and irreversible and cannot be combined with `fundingSources`. `fundingSources`, when supplied, fully replaces the card's bound funding sources — the array order determines the priority Authorization Decisioning tries them in.
-      properties:
-        state:
-          type: string
-          enum:
-          - ACTIVE
-          - FROZEN
-          - CLOSED
-          description: Target state for the card. Permitted transitions are `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible; once closed, the card stays in the system for audit and reconciliation but cannot transact again.
-          example: FROZEN
-        fundingSources:
-          type: array
-          description: 'New ordered list of internal account ids to bind as funding sources. Fully replaces the previous binding. Each id must belong to the cardholder and be denominated in the card''s currency. The list must contain at least one source — to stop a card from spending without removing all sources, transition it to `FROZEN` instead. Cannot be supplied alongside `state: CLOSED`.'
-          minItems: 1
-          items:
-            type: string
-          example:
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
-    CardStateReason:
-      type: string
-      enum:
-      - ISSUER_REJECTED
-      - CLOSED_BY_PLATFORM
-      - CLOSED_BY_GRID
-      description: 'Reason a card reached a terminal or non-active state. Present on
-
-        `CLOSED` cards, and on cards that fail provisioning before reaching
-
-        `ACTIVE`.
-
-
-        | Reason | Description |
-
-        |--------|-------------|
-
-        | `ISSUER_REJECTED` | The card issuer rejected provisioning during `PROCESSING`. |
-
-        | `CLOSED_BY_PLATFORM` | The card was closed via `PATCH /cards/{id}` (`state: CLOSED`) by the platform. |
-
-        | `CLOSED_BY_GRID` | The card was closed by Grid (e.g. compliance or risk action). |
+        `PHYSICAL` will be added in a later release.
 
         '
     Error500:
@@ -849,15 +664,222 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CardForm:
+    Error403:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 403
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CardCreateRequest:
+      type: object
+      required:
+      - cardholderId
+      - form
+      - fundingSources
+      properties:
+        cardholderId:
+          type: string
+          description: The id of the `Customer` to issue the card to. The customer must have KYC status `APPROVED`; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCardId:
+          type: string
+          description: Optional platform-specific card identifier. System-generated when omitted, mirroring `platformCustomerId` semantics.
+          example: card-emp-aary-001
+        form:
+          $ref: '#/components/schemas/CardForm'
+        fundingSources:
+          type: array
+          description: Internal account ids to bind as funding sources, in priority order. The first entry is tried first by Authorization Decisioning. Every card must be bound to at least one source, and every source must belong to the cardholder and be denominated in a card-eligible currency (USDB in v1); otherwise the request is rejected with `FUNDING_SOURCE_INELIGIBLE`.
+          minItems: 1
+          items:
+            type: string
+          example:
+          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+    CardState:
       type: string
       enum:
-      - VIRTUAL
-      description: 'Physical form factor of the card. Only `VIRTUAL` is supported in v1;
+      - PENDING_KYC
+      - PROCESSING
+      - ACTIVE
+      - FROZEN
+      - CLOSED
+      description: 'Lifecycle state of a card.
 
-        `PHYSICAL` will be added in a later release.
+
+        | State | Description |
+
+        |-------|-------------|
+
+        | `PENDING_KYC` | The cardholder has not yet completed KYC. Cards in this state cannot transact. |
+
+        | `PROCESSING` | The card has been requested and is being provisioned with the issuer. |
+
+        | `ACTIVE` | The card is live and can authorize transactions. |
+
+        | `FROZEN` | The card is temporarily disabled by the platform. New authorizations are declined with `CARD_PAUSED`. Existing settlements and refunds continue to reconcile. |
+
+        | `CLOSED` | The card is permanently closed. Terminal, irreversible state. |
 
         '
+    CardUpdateRequest:
+      type: object
+      description: Update request for `PATCH /cards/{id}`. At least one of `state` or `fundingSources` must be supplied. `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`; any other transition returns `409 INVALID_STATE_TRANSITION`. `CLOSED` is terminal and irreversible and cannot be combined with `fundingSources`. `fundingSources`, when supplied, fully replaces the card's bound funding sources — the array order determines the priority Authorization Decisioning tries them in.
+      properties:
+        state:
+          type: string
+          enum:
+          - ACTIVE
+          - FROZEN
+          - CLOSED
+          description: Target state for the card. Permitted transitions are `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible; once closed, the card stays in the system for audit and reconciliation but cannot transact again.
+          example: FROZEN
+        fundingSources:
+          type: array
+          description: 'New ordered list of internal account ids to bind as funding sources. Fully replaces the previous binding. Each id must belong to the cardholder and be denominated in the card''s currency. The list must contain at least one source — to stop a card from spending without removing all sources, transition it to `FROZEN` instead. Cannot be supplied alongside `state: CLOSED`.'
+          minItems: 1
+          items:
+            type: string
+          example:
+          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+          - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Card:
       type: object
       required:
@@ -942,32 +964,7 @@ components:
           description: Last update timestamp
           readOnly: true
           example: '2026-05-08T14:11:00Z'
-    CardCreateRequest:
-      type: object
-      required:
-      - cardholderId
-      - form
-      - fundingSources
-      properties:
-        cardholderId:
-          type: string
-          description: The id of the `Customer` to issue the card to. The customer must have KYC status `APPROVED`; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        platformCardId:
-          type: string
-          description: Optional platform-specific card identifier. System-generated when omitted, mirroring `platformCustomerId` semantics.
-          example: card-emp-aary-001
-        form:
-          $ref: '#/components/schemas/CardForm'
-        fundingSources:
-          type: array
-          description: Internal account ids to bind as funding sources, in priority order. The first entry is tried first by Authorization Decisioning. Every card must be bound to at least one source, and every source must belong to the cardholder and be denominated in a card-eligible currency (USDB in v1); otherwise the request is rejected with `FUNDING_SOURCE_INELIGIBLE`.
-          minItems: 1
-          items:
-            type: string
-          example:
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-    Error401:
+    Error409:
       type: object
       required:
       - message
@@ -977,7 +974,7 @@ components:
         status:
           type: integer
           enum:
-          - 401
+          - 409
           description: HTTP status code
         code:
           type: string
@@ -985,29 +982,26 @@ components:
 
             |------------|-------------|
 
-            | UNAUTHORIZED | Issue with API credentials |
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
 
-            | INVALID_SIGNATURE | Signature header is invalid |
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
 
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
 
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
 
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
 
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
 
             '
           enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
         message:
           type: string
           description: Error message
@@ -1015,7 +1009,37 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error404:
+    CardListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of cards matching the filter criteria
+          items:
+            $ref: '#/components/schemas/Card'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of cards matching the criteria (excluding pagination)
+    CardBrand:
+      type: string
+      enum:
+      - VISA
+      - MASTERCARD
+      description: 'Card network brand. Read-only — determined by Grid when the card is
+
+        provisioned with the issuer.
+
+        '
+    Error501:
       type: object
       required:
       - message
@@ -1025,7 +1049,7 @@ components:
         status:
           type: integer
           enum:
-          - 404
+          - 501
           description: HTTP status code
         code:
           type: string
@@ -1033,38 +1057,14 @@ components:
 
             |------------|-------------|
 
-            | TRANSACTION_NOT_FOUND | Transaction not found |
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
 
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+            | NOT_IMPLEMENTED | Feature not implemented |
 
             '
           enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
         message:
           type: string
           description: Error message

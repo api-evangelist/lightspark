@@ -1,6 +1,6 @@
 openapi: 3.2.0
 info:
-  title: Grid Agent Management API
+  title: Grid Webhooks API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -18,296 +18,286 @@ security:
 - BasicAuth: []
 - AgentAuth: []
 tags:
-- name: Agent Management
-  description: 'Endpoints for creating and managing agents (experimental), called by the partner''s backend using platform credentials. Covers the full agent lifecycle: creation, policy configuration, pausing, deletion, the device code installation flow, and approving or rejecting transactions initiated by agents.'
-paths:
-  /agents:
+- name: Webhooks
+  description: Webhook endpoints and configuration for receiving notifications
+paths: {}
+webhooks:
+  agent-action:
     post:
-      summary: Create an agent
-      description: 'Create a new agent with a specified policy. Returns the created agent and a device code that must be redeemed by the agent software to complete installation.
+      summary: Agent action pending approval webhook
+      description: 'Fired when an agent submits an action that requires platform approval before Grid will execute it. Use this to send a push notification to the customer so they can review and approve or reject the action in your app.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        The payload contains the full `AgentAction` — including the embedded quote or transfer details — so you can render the approval UI without a second API call. Approve or reject via `POST /agents/{agentId}/actions/{actionId}/approve` or `POST /agents/{agentId}/actions/{actionId}/reject`.
 
         '
-      operationId: createAgent
+      operationId: agentActionWebhook
       tags:
-      - Agent Management
+      - Webhooks
       security:
-      - BasicAuth: []
+      - WebhookSignature: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentCreateRequest'
-      responses:
-        '201':
-          description: Agent created successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentCreateResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-    get:
-      summary: List agents
-      description: Retrieve a paginated list of agents for the authenticated platform.
-      operationId: listAgents
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
-      parameters:
-      - name: customerId
-        in: query
-        description: Filter by customer ID
-        required: false
-        schema:
-          type: string
-      - name: isPaused
-        in: query
-        description: Filter by paused status
-        required: false
-        schema:
-          type: boolean
-      - name: isConnected
-        in: query
-        description: Filter by connection status (whether the device code has been redeemed)
-        required: false
-        schema:
-          type: boolean
-      - name: createdAfter
-        in: query
-        description: Filter agents created after this timestamp (inclusive)
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: createdBefore
-        in: query
-        description: Filter agents created before this timestamp (inclusive)
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: updatedAfter
-        in: query
-        description: Filter agents updated after this timestamp (inclusive)
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: updatedBefore
-        in: query
-        description: Filter agents updated before this timestamp (inclusive)
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: limit
-        in: query
-        description: Maximum number of results to return (default 20, max 100)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 20
-      - name: cursor
-        in: query
-        description: Cursor for pagination (returned from previous request)
-        required: false
-        schema:
-          type: string
+              $ref: '#/components/schemas/AgentActionWebhook'
+            examples:
+              pendingApproval:
+                summary: Agent action pending approval
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000020
+                  type: AGENT_ACTION.PENDING_APPROVAL
+                  timestamp: '2025-10-03T15:00:00Z'
+                  data:
+                    id: AgentAction:019542f5-b3e7-1d02-0000-000000000099
+                    agentId: Agent:019542f5-b3e7-1d02-0000-000000000042
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000010
+                    platformCustomerId: user-a1b2c3
+                    status: PENDING_APPROVAL
+                    type: EXECUTE_QUOTE
+                    quote:
+                      id: Quote:019542f5-b3e7-1d02-0000-000000000006
+                      status: PENDING
+                      expiresAt: '2025-10-03T15:00:30Z'
+                      createdAt: '2025-10-03T15:00:00Z'
+                      source:
+                        sourceType: ACCOUNT
+                        accountId: InternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                      destination:
+                        destinationType: ACCOUNT
+                        accountId: ExternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                      sendingCurrency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                      receivingCurrency:
+                        code: INR
+                        name: Indian Rupee
+                        symbol: ₹
+                        decimals: 2
+                      totalSendingAmount: 50000
+                      totalReceivingAmount: 4625000
+                      exchangeRate: 92.5
+                      feesIncluded: 250
+                      transactionId: Transaction:019542f5-b3e7-1d02-0000-000000000099
+                    createdAt: '2025-10-03T15:00:00Z'
+                    updatedAt: '2025-10-03T15:00:00Z'
       responses:
         '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentListResponse'
-        '400':
-          description: Bad request - Invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
+          description: Webhook received and acknowledged.
         '401':
-          description: Unauthorized
+          description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '500':
-          description: Internal service error
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/approvals:
-    get:
-      summary: List agent transaction approval requests
-      description: 'Retrieve a paginated list of agent actions that require platform approval. Filter by `agentId` or `customerId` to scope results to a specific agent or customer. Approve or reject individual actions via `POST /agents/{agentId}/actions/{actionId}/approve` or `POST /agents/{agentId}/actions/{actionId}/reject`.
+                $ref: '#/components/schemas/Error409'
+  incoming-payment:
+    post:
+      summary: Incoming payment webhook and approval mechanism
+      description: 'Webhook that is called when an incoming payment is received by a customer''s UMA address.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        ### Payment Approval Flow
+
+        When a transaction has `status: "PENDING"`, this webhook serves as an approval mechanism:
+
+
+        1. The client should check the `counterpartyInformation` against their requirements
+
+        2. To APPROVE the payment synchronously, return a 200 OK response
+
+        3. To REJECT the payment, return a 403 Forbidden response with an Error object
+
+        4. To request more information, return a 422 Unprocessable Entity with specific missing fields
+
+        5. To process the payment asynchronously, return a 202 Accepted response and then call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint within 5 seconds. Note that synchronous approval/rejection is preferred where possible.
+
+
+        The Grid system will proceed or cancel the payment based on your response.
+
+
+        For transactions with other statuses (COMPLETED, FAILED, REFUNDED), this webhook is purely informational.
 
         '
-      operationId: listAgentApprovals
+      operationId: incomingPaymentWebhook
       tags:
-      - Agent Management
+      - Webhooks
       security:
-      - BasicAuth: []
-      parameters:
-      - name: agentId
-        in: query
-        description: Filter by agent ID
-        required: false
-        schema:
-          type: string
-      - name: customerId
-        in: query
-        description: Filter by customer ID
-        required: false
-        schema:
-          type: string
-      - name: startDate
-        in: query
-        description: Filter by start date (inclusive) in ISO 8601 format
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: endDate
-        in: query
-        description: Filter by end date (inclusive) in ISO 8601 format
-        required: false
-        schema:
-          type: string
-          format: date-time
-      - name: limit
-        in: query
-        description: Maximum number of results to return (default 20, max 100)
-        required: false
-        schema:
-          type: integer
-          minimum: 1
-          maximum: 100
-          default: 20
-      - name: cursor
-        in: query
-        description: Cursor for pagination (returned from previous request)
-        required: false
-        schema:
-          type: string
-      - name: sortOrder
-        in: query
-        description: Order to sort results in
-        required: false
-        schema:
-          type: string
-          enum:
-          - asc
-          - desc
-          default: desc
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentActionListResponse'
-        '400':
-          description: Bad request - Invalid parameters
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/{agentId}:
-    parameters:
-    - name: agentId
-      in: path
-      description: System-generated unique agent identifier
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get agent by ID
-      description: Retrieve an agent by its system-generated ID.
-      operationId: getAgentById
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Agent'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-    patch:
-      summary: Update agent
-      description: Update an agent's name or paused state.
-      operationId: updateAgent
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
+      - WebhookSignature: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentUpdateRequest'
+              $ref: '#/components/schemas/IncomingPaymentWebhook'
+            examples:
+              pendingPayment:
+                summary: Pending payment example requiring approval
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: INCOMING_PAYMENT.PENDING
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000005
+                    status: PENDING
+                    type: INCOMING
+                    direction: CREDIT
+                    destination:
+                      destinationType: UMA_ADDRESS
+                      umaAddress: $recipient@uma.domain
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    senderUmaAddress: $sender@external.domain
+                    receiverUmaAddress: $recipient@uma.domain
+                    receivedAmount:
+                      amount: 50000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    counterpartyInformation:
+                      FULL_NAME: John Sender
+                      BIRTH_DATE: '1985-06-15'
+                      NATIONALITY: US
+                    reconciliationInstructions:
+                      reference: REF-123456789
+                    requestedReceiverCustomerInfoFields:
+                    - name: NATIONALITY
+                      mandatory: true
+                    - name: POSTAL_ADDRESS
+                      mandatory: false
+              incomingCompletedPayment:
+                summary: Completed payment notification
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: INCOMING_PAYMENT.COMPLETED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000005
+                    status: COMPLETED
+                    type: INCOMING
+                    direction: CREDIT
+                    destination:
+                      destinationType: UMA_ADDRESS
+                      umaAddress: $recipient@uma.domain
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    senderUmaAddress: $sender@external.domain
+                    receiverUmaAddress: $recipient@uma.domain
+                    receivedAmount:
+                      amount: 50000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    settledAt: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
+                    description: Payment for services
+                    reconciliationInstructions:
+                      reference: REF-123456789
+              incomingCompletedCryptoPayment:
+                summary: Completed payment funded from an external crypto wallet
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000009
+                  type: INCOMING_PAYMENT.COMPLETED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000006
+                    status: COMPLETED
+                    type: INCOMING
+                    direction: CREDIT
+                    source:
+                      sourceType: REALTIME_FUNDING
+                      currency: USDC
+                      onChainTransaction:
+                        transactionHash: 7RJWhvQBQPEjJmki5fhBboGBWRJhmcFkMvrr4Fu3tMSJ5EdynMEiYSyiWAH9GpcbHpeUzeSQF9ZY6q4x8AhBskUf
+                        network: SOLANA
+                    destination:
+                      destinationType: ACCOUNT
+                      accountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    receivedAmount:
+                      amount: 100000
+                      currency:
+                        code: USDC
+                        name: USD Coin
+                        symbol: ''
+                        decimals: 6
+                    settledAt: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
+                    description: USDC deposit from self-custody wallet
       responses:
         '200':
-          description: Agent updated successfully
+          description: 'Webhook received successfully.
+
+            For PENDING transactions, this indicates approval to proceed with the payment.
+
+            If `requestedReceiverCustomerInfoFields` were present in the webhook request, the corresponding fields for the recipient must be included in this response in the `receiverCustomerInfo` object.
+
+            '
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Agent'
+                $ref: '#/components/schemas/IncomingPaymentWebhookResponse'
+        '202':
+          description: 'Webhook received and will be processed asynchronously. The synchronous 200 response should be preferred where possible. This asycnhronous path should only be used in
+
+            cases where the platform''s architecture requires async (but still very quick) processing before approving or rejecting the payment.
+
+            The platform must call the `/transactions/{transactionId}/approve` or `/transactions/{transactionId}/reject` endpoint to approve or reject the payment within 5 seconds or the payment will be automatically rejected.
+
+            '
         '400':
           description: Bad request
           content:
@@ -315,83 +305,201 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error400'
         '401':
-          description: Unauthorized
+          description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent not found
+        '403':
+          description: 'Forbidden - Payment rejected by the client.
+
+            Only applicable for PENDING transactions.
+
+            '
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
+                $ref: '#/components/schemas/IncomingPaymentWebhookForbiddenResponse'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
-    delete:
-      summary: Delete agent
-      description: Permanently delete an agent. Connected agent software will lose access immediately.
-      operationId: deleteAgent
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
-      responses:
-        '204':
-          description: Agent deleted successfully
-        '401':
-          description: Unauthorized
+                $ref: '#/components/schemas/Error409'
+        '422':
+          description: 'Unprocessable Entity - Additional counterparty information required.
+
+            Only applicable for PENDING transactions.
+
+            '
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/{agentId}/policy:
-    parameters:
-    - name: agentId
-      in: path
-      description: System-generated unique agent identifier
-      required: true
-      schema:
-        type: string
-    patch:
-      summary: Update agent policy
-      description: 'Partially update an agent''s policy. Only provided fields will be updated; omitted fields retain their current values. Policy changes take effect immediately.
+                $ref: '#/components/schemas/IncomingPaymentWebhookUnprocessableResponse'
+  outgoing-payment:
+    post:
+      summary: Outgoing payment status webhook
+      description: 'Webhook that is called when an outgoing payment''s status changes.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        This webhook is informational only and is sent when an outgoing payment completes successfully, fails, or is refunded.
 
         '
-      operationId: updateAgentPolicy
+      operationId: outgoingPaymentWebhook
       tags:
-      - Agent Management
+      - Webhooks
       security:
-      - BasicAuth: []
+      - WebhookSignature: []
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentPolicyUpdateRequest'
+              $ref: '#/components/schemas/OutgoingPaymentWebhook'
+            examples:
+              outgoingCompletedPayment:
+                summary: Completed outgoing payment
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: OUTGOING_PAYMENT.COMPLETED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000005
+                    status: COMPLETED
+                    type: OUTGOING
+                    direction: DEBIT
+                    source:
+                      sourceType: ACCOUNT
+                      accountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    destination:
+                      destinationType: ACCOUNT
+                      accountId: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    senderUmaAddress: $sender@uma.domain
+                    receiverUmaAddress: $recipient@external.domain
+                    sentAmount:
+                      amount: 10550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    receivedAmount:
+                      amount: 9706
+                      currency:
+                        code: EUR
+                        name: Euro
+                        symbol: €
+                        decimals: 2
+                    exchangeRate: 0.92
+                    quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
+                    settledAt: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
+                    description: 'Payment for invoice #1234'
+                    paymentInstructions: []
+                    rateDetails:
+                      counterpartyMultiplier: 1.08
+                      counterpartyFixedFee: 10
+                      gridApiMultiplier: 0.925
+                      gridApiFixedFee: 10
+                      gridApiVariableFeeRate: 0.003
+                      gridApiVariableFeeAmount: 30
+              outgoingCompletedCryptoPayment:
+                summary: Completed crypto payout to an external wallet
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: OUTGOING_PAYMENT.COMPLETED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000009
+                    status: COMPLETED
+                    type: OUTGOING
+                    direction: DEBIT
+                    source:
+                      sourceType: ACCOUNT
+                      accountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    destination:
+                      destinationType: ACCOUNT
+                      accountId: ExternalAccount:c34dcbd6-dced-4ec4-b756-3c3a9ea3d789
+                      onChainTransaction:
+                        transactionHash: h82pJGF9p7kpzb6eU326EFZf2cDnimbTFVeJtx1qtBmUNJAEqN76R7PwPfHt3oWb8R6cKvhgyxQdDn53jFrK6wFx
+                        network: SOLANA
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    sentAmount:
+                      amount: 100000
+                      currency:
+                        code: USDC
+                        name: USD Coin
+                        symbol: ''
+                        decimals: 6
+                    receivedAmount:
+                      amount: 100000
+                      currency:
+                        code: USDC
+                        name: USD Coin
+                        symbol: ''
+                        decimals: 6
+                    quoteId: Quote:019542f5-b3e7-1d02-0000-000000000010
+                    settledAt: '2025-08-15T14:30:00Z'
+                    createdAt: '2025-08-15T14:25:18Z'
+                    description: USDC withdrawal to self-custody wallet
+                    paymentInstructions: []
+              failedPayment:
+                summary: Failed outgoing payment
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: OUTGOING_PAYMENT.FAILED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Transaction:019542f5-b3e7-1d02-0000-000000000005
+                    status: FAILED
+                    type: OUTGOING
+                    direction: DEBIT
+                    source:
+                      sourceType: ACCOUNT
+                      accountId: InternalAccount:e85dcbd6-dced-4ec4-b756-3c3a9ea3d965
+                    destination:
+                      destinationType: ACCOUNT
+                      accountId: ExternalAccount:a12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    senderUmaAddress: $sender@uma.domain
+                    receiverUmaAddress: $recipient@external.domain
+                    sentAmount:
+                      amount: 10550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    createdAt: '2025-08-15T14:25:18Z'
+                    quoteId: Quote:019542f5-b3e7-1d02-0000-000000000006
+                    failureReason: QUOTE_EXECUTION_FAILED
       responses:
         '200':
-          description: Agent policy updated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Agent'
+          description: Webhook received successfully
         '400':
           description: Bad request
           content:
@@ -399,299 +507,1126 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error400'
         '401':
-          description: Unauthorized
+          description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/{agentId}/device-codes:
-    parameters:
-    - name: agentId
-      in: path
-      description: System-generated unique agent identifier
-      required: true
-      schema:
-        type: string
-    post:
-      summary: Regenerate a device code
-      description: 'Generate a new device code for an existing agent. Use this when the original device code has expired before being redeemed, or when the agent software needs to be reinstalled. Any previously issued unredeemed device codes for this agent are invalidated.
-
-        '
-      operationId: regenerateAgentDeviceCode
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
-      responses:
-        '201':
-          description: New device code generated successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentDeviceCode'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
         '409':
-          description: Conflict - Agent already has an active connection and cannot regenerate a device code
+          description: Conflict - Webhook has already been processed (duplicate id)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/{agentId}/actions/{actionId}/approve:
-    parameters:
-    - name: agentId
-      in: path
-      description: System-generated unique agent identifier
-      required: true
-      schema:
-        type: string
-    - name: actionId
-      in: path
-      description: Unique identifier of the agent action to approve
-      required: true
-      schema:
-        type: string
+  test-webhook:
     post:
-      summary: Approve an agent action
-      description: 'Approve a pending agent action, allowing Grid to proceed with execution. The action must have status `PENDING_APPROVAL`. Once approved, Grid executes the underlying operation (quote execution or transfer) and the action transitions to `APPROVED`.
+      summary: Test webhook for integration verification
+      description: 'Webhook that is sent once to verify your webhook endpoint is correctly set up.
 
-        For `EXECUTE_QUOTE` actions, note that the underlying quote may have expired between submission and approval — in that case the action will transition to `FAILED` instead.
+        This is sent when you configure or update your platform settings with a webhook URL.
 
-        This endpoint is called by the platform''s backend using platform credentials, not by the agent itself.
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by the Grid API.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        This webhook is purely for testing your endpoint integration and signature verification.
 
         '
-      operationId: approveAgentAction
+      operationId: testWebhook
       tags:
-      - Agent Management
+      - Webhooks
       security:
-      - BasicAuth: []
-      responses:
-        '200':
-          description: Action approved successfully. Returns the updated AgentAction.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentAction'
-        '400':
-          description: Bad request - Action cannot be approved
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error400'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent or action not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '409':
-          description: Conflict - Action is not pending approval or has already been processed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error409'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/{agentId}/actions/{actionId}/reject:
-    parameters:
-    - name: agentId
-      in: path
-      description: System-generated unique agent identifier
-      required: true
-      schema:
-        type: string
-    - name: actionId
-      in: path
-      description: Unique identifier of the agent action to reject
-      required: true
-      schema:
-        type: string
-    post:
-      summary: Reject an agent action
-      description: 'Reject a pending agent action, preventing execution. The action must have status `PENDING_APPROVAL`. Once rejected, the action transitions to `REJECTED` and the underlying operation is not executed.
-
-        This endpoint is called by the platform''s backend using platform credentials, not by the agent itself.
-
-        '
-      operationId: rejectAgentAction
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
+      - WebhookSignature: []
       requestBody:
-        required: false
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AgentActionRejectRequest'
+              $ref: '#/components/schemas/TestWebhookRequest'
+            examples:
+              testWebhook:
+                summary: Test webhook example
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000001
+                  type: TEST
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data: {}
       responses:
         '200':
-          description: Action rejected successfully. Returns the updated AgentAction.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentAction'
+          description: Webhook received successfully. This confirms your webhook endpoint is properly configured.
         '400':
-          description: Bad request - Action cannot be rejected
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
         '401':
-          description: Unauthorized
+          description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
-        '404':
-          description: Agent or action not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
         '409':
-          description: Conflict - Action is not pending approval or has already been processed
+          description: Conflict - Webhook has already been processed (duplicate id)
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error409'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/device-codes/{code}/status:
-    parameters:
-    - name: code
-      in: path
-      description: The device code to check
-      required: true
-      schema:
-        type: string
-    get:
-      summary: Get device code status
-      description: 'Check whether a device code has been redeemed. Use this to poll for agent installation completion after creating an agent.
-
-        '
-      operationId: getAgentDeviceCodeStatus
-      tags:
-      - Agent Management
-      security:
-      - BasicAuth: []
-      responses:
-        '200':
-          description: Successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentDeviceCodeStatusResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error401'
-        '404':
-          description: Device code not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error500'
-  /agents/device-codes/{code}/redeem:
-    parameters:
-    - name: code
-      in: path
-      description: The device code to redeem
-      required: true
-      schema:
-        type: string
+  bulk-upload:
     post:
-      summary: Redeem device code
-      description: 'Redeem a device code to obtain agent credentials. This endpoint is called by the agent software during installation. On success, returns a Bearer access token that the agent uses for all subsequent API calls. The token is returned only once and must be stored securely.
+      summary: Bulk upload status webhook
+      description: 'Webhook that is called when a bulk customer upload job completes or fails.
 
-        This endpoint does not require platform authentication — the device code itself serves as proof of authorization.
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        This webhook is sent when a bulk upload job completes or fails, providing detailed information about the results.
 
         '
-      operationId: redeemAgentDeviceCode
+      operationId: bulkUploadWebhook
       tags:
-      - Agent Management
-      security: []
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkUploadWebhook'
+            examples:
+              completedUpload:
+                summary: Successful bulk upload completion
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: BULK_UPLOAD.COMPLETED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Job:019542f5-b3e7-1d02-0000-000000000006
+                    status: COMPLETED
+                    progress:
+                      total: 5000
+                      processed: 5000
+                      successful: 5000
+                      failed: 0
+                    errors: []
+              failedUpload:
+                summary: Failed bulk upload
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: BULK_UPLOAD.FAILED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Job:019542f5-b3e7-1d02-0000-000000000006
+                    status: FAILED
+                    progress:
+                      total: 5000
+                      processed: 5000
+                      successful: 0
+                      failed: 5000
+                    errors:
+                    - correlationId: row_1
+                      error:
+                        code: invalid_csv_format
+                        message: Invalid CSV format
+                        details:
+                          reason: missing_required_column
+                          column: umaAddress
       responses:
         '200':
-          description: Device code redeemed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/AgentDeviceCodeRedeemResponse'
+          description: Webhook received successfully
         '400':
-          description: Bad request (e.g., code already redeemed or expired)
+          description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
-        '404':
-          description: Device code not found
+        '401':
+          description: Unauthorized - Signature validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error404'
-        '500':
-          description: Internal service error
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Error500'
+                $ref: '#/components/schemas/Error409'
+  invitation-claimed:
+    post:
+      summary: Invitation claimed webhook
+      description: 'Webhook that is called when an invitation is claimed by a customer.
+
+        This endpoint should be implemented by platform clients of the Grid API.
+
+
+        When a customer claims an invitation, this webhook is triggered to notify the platform that:
+
+        1. The invitation has been successfully claimed
+
+        2. The invitee UMA address is now associated with the invitation
+
+        3. The invitation status has changed from PENDING to CLAIMED
+
+
+        This allows platforms to:
+
+        - Track invitation usage and conversion rates
+
+        - Trigger onboarding flows for new customers who joined via invitation
+
+        - Apply referral bonuses or rewards to the inviter
+
+        - Update their UI to reflect the claimed status
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: invitationClaimedWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InvitationClaimedWebhook'
+            examples:
+              claimedInvitation:
+                summary: Invitation claimed notification
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: INVITATION.CLAIMED
+                  timestamp: '2025-09-01T15:45:00Z'
+                  data:
+                    code: 019542f5
+                    createdAt: '2025-09-01T14:30:00Z'
+                    claimedAt: '2025-09-01T15:45:00Z'
+                    inviterUma: $inviter@uma.domain
+                    inviteeUma: $invitee@uma.domain
+                    status: CLAIMED
+                    url: https://uma.me/i/019542f5
+      responses:
+        '200':
+          description: Webhook received successfully
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  customer-update:
+    post:
+      summary: Customer status change
+      description: 'Webhook that is called when the status of a customer is updated, including KYC and KYB status changes.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid API public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: customerStatusWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerWebhook'
+            examples:
+              kycApprovedWebhook:
+                summary: When an individual customer KYC has been approved
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: CUSTOMER.KYC_APPROVED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 9f84e0c2a72c4fa
+                    customerType: INDIVIDUAL
+                    region: US
+                    currencies:
+                    - USD
+                    - USDC
+                    umaAddress: $john.doe@uma.domain.com
+                    kycStatus: APPROVED
+                    fullName: John Michael Doe
+                    birthDate: '1990-01-15'
+                    nationality: US
+                    address:
+                      line1: 123 Main Street
+                      line2: Apt 4B
+                      city: San Francisco
+                      state: CA
+                      postalCode: '94105'
+                      country: US
+                    createdAt: '2025-07-21T17:32:28Z'
+                    updatedAt: '2025-07-21T17:32:28Z'
+                    isDeleted: false
+              kycRejectedWebhook:
+                summary: When an individual customer KYC has been rejected
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: CUSTOMER.KYC_REJECTED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Customer:019542f5-b3e7-1d02-0000-000000000002
+                    platformCustomerId: 4b7c1e9d3f5a8e2
+                    customerType: INDIVIDUAL
+                    region: US
+                    currencies:
+                    - USD
+                    - USDC
+                    umaAddress: $jane.smith@uma.domain.com
+                    kycStatus: REJECTED
+                    fullName: Jane Smith
+                    birthDate: '1988-03-22'
+                    nationality: US
+                    createdAt: '2025-07-21T17:32:28Z'
+                    updatedAt: '2025-08-15T14:32:00Z'
+                    isDeleted: false
+              kybApprovedWebhook:
+                summary: When a business customer KYB has been approved
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000009
+                  type: CUSTOMER.KYB_APPROVED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Customer:019542f5-b3e7-1d02-0000-000000000003
+                    platformCustomerId: 7a2f9d4e1b8c3f5
+                    customerType: BUSINESS
+                    region: US
+                    currencies:
+                    - USD
+                    - USDC
+                    umaAddress: $acme.corp@uma.domain.com
+                    kybStatus: APPROVED
+                    address:
+                      line1: 456 Business Ave
+                      city: New York
+                      state: NY
+                      postalCode: '10001'
+                      country: US
+                    businessInfo:
+                      legalName: Acme Corporation
+                      registrationNumber: '12345678'
+                      taxId: 98-7654321
+                      incorporatedOn: '2018-03-14'
+                    createdAt: '2025-07-21T17:32:28Z'
+                    updatedAt: '2025-08-15T14:32:00Z'
+                    isDeleted: false
+              kybRejectedWebhook:
+                summary: When a business customer KYB has been rejected
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000010
+                  type: CUSTOMER.KYB_REJECTED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Customer:019542f5-b3e7-1d02-0000-000000000004
+                    platformCustomerId: 3c8e5f2a9d1b7e4
+                    customerType: BUSINESS
+                    region: US
+                    currencies:
+                    - USD
+                    umaAddress: $globex.inc@uma.domain.com
+                    kybStatus: REJECTED
+                    address:
+                      line1: 789 Corporate Blvd
+                      city: Chicago
+                      state: IL
+                      postalCode: '60601'
+                      country: US
+                    businessInfo:
+                      legalName: Globex Inc
+                      taxId: 47-1234567
+                      incorporatedOn: '2015-09-01'
+                    createdAt: '2025-07-21T17:32:28Z'
+                    updatedAt: '2025-08-15T14:32:00Z'
+                    isDeleted: false
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  internal-account-status:
+    post:
+      summary: Internal account status webhook
+      description: 'Webhook that is called when the status of an internal account changes. This includes balance updates and may include additional account events in the future.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+
+        ### Event types
+
+        - `INTERNAL_ACCOUNT.BALANCE_UPDATED` — Fired when the balance of an internal account changes. The `data` payload contains the full internal account object.
+
+        - `INTERNAL_ACCOUNT.STATUS_UPDATED` — Fired when the status of an internal account changes (e.g., `OPEN` → `FROZEN`). The `data` payload contains the full internal account object.
+
+        '
+      operationId: internalAccountStatusWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InternalAccountStatusWebhook'
+            examples:
+              balanceDecrease:
+                summary: A transaction just cleared a customer account and the balance has decreased
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000007
+                  type: INTERNAL_ACCOUNT.BALANCE_UPDATED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: InternalAccount:019542f5-b3e7-1d02-0000-000000000005
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    type: INTERNAL_FIAT
+                    status: ACTIVE
+                    balance:
+                      amount: 10000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    totalBalance:
+                      amount: 12500
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    fundingPaymentInstructions: []
+                    createdAt: '2025-08-01T10:00:00Z'
+                    updatedAt: '2025-08-15T14:32:00Z'
+              statusUpdated:
+                summary: The status of an internal account changed (e.g., frozen by Grid)
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000008
+                  type: INTERNAL_ACCOUNT.STATUS_UPDATED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: InternalAccount:019542f5-b3e7-1d02-0000-000000000005
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    type: INTERNAL_FIAT
+                    status: FROZEN
+                    balance:
+                      amount: 10000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    totalBalance:
+                      amount: 10000
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    fundingPaymentInstructions: []
+                    createdAt: '2025-08-01T10:00:00Z'
+                    updatedAt: '2025-08-15T14:32:00Z'
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  verification-update:
+    post:
+      summary: Verification status change
+      description: 'Webhook that is called when a customer''s KYC/KYB verification status changes.
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid API public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: verificationStatusWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerificationWebhook'
+            examples:
+              approved:
+                summary: Verification approved
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000030
+                  type: VERIFICATION.APPROVED
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Verification:019542f5-b3e7-1d02-0000-000000000010
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    verificationStatus: APPROVED
+                    errors: []
+                    createdAt: '2025-08-15T14:00:00Z'
+              resolveErrors:
+                summary: Verification requires action
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000031
+                  type: VERIFICATION.RESOLVE_ERRORS
+                  timestamp: '2025-08-15T14:32:00Z'
+                  data:
+                    id: Verification:019542f5-b3e7-1d02-0000-000000000011
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    verificationStatus: RESOLVE_ERRORS
+                    errors:
+                    - resourceId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                      type: MISSING_PROOF_OF_ADDRESS_DOCUMENT
+                      acceptedDocumentTypes:
+                      - PROOF_OF_ADDRESS
+                      reason: Proof of address document is required
+                    createdAt: '2025-08-15T14:00:00Z'
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  card-state-change:
+    post:
+      summary: Card state change
+      description: 'Webhook that is called when a card''s lifecycle state changes. Fires on `PROCESSING → ACTIVE`, on `PROCESSING → CLOSED (ISSUER_REJECTED)` when issuer provisioning fails, and on every subsequent `ACTIVE ⇄ FROZEN` and `→ CLOSED` transition.
+
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: cardStateChangeWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardStateChangeWebhook'
+            examples:
+              activated:
+                summary: Card transitioned from PROCESSING to ACTIVE
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000020
+                  type: CARD.STATE_CHANGE
+                  timestamp: '2026-05-08T14:11:00Z'
+                  data:
+                    id: Card:019542f5-b3e7-1d02-0000-000000000010
+                    cardholderId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCardId: card-emp-aary-001
+                    state: ACTIVE
+                    stateReason: null
+                    brand: VISA
+                    form: VIRTUAL
+                    last4: '4242'
+                    expMonth: 12
+                    expYear: 2029
+                    fundingSources:
+                    - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    currency: USD
+                    processorRef: card_b81c2a4f
+                    issuerRef: lead_card_7a1b9c3d
+                    createdAt: '2026-05-08T14:10:00Z'
+                    updatedAt: '2026-05-08T14:11:00Z'
+              issuerRejected:
+                summary: Card rejected by issuer during provisioning
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000021
+                  type: CARD.STATE_CHANGE
+                  timestamp: '2026-05-08T14:12:00Z'
+                  data:
+                    id: Card:019542f5-b3e7-1d02-0000-000000000011
+                    cardholderId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    state: CLOSED
+                    stateReason: ISSUER_REJECTED
+                    form: VIRTUAL
+                    fundingSources:
+                    - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    currency: USD
+                    createdAt: '2026-05-08T14:10:00Z'
+                    updatedAt: '2026-05-08T14:12:00Z'
+              frozen:
+                summary: Card frozen by the platform
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000022
+                  type: CARD.STATE_CHANGE
+                  timestamp: '2026-05-09T09:00:00Z'
+                  data:
+                    id: Card:019542f5-b3e7-1d02-0000-000000000010
+                    cardholderId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    state: FROZEN
+                    stateReason: null
+                    brand: VISA
+                    form: VIRTUAL
+                    last4: '4242'
+                    expMonth: 12
+                    expYear: 2029
+                    fundingSources:
+                    - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    currency: USD
+                    createdAt: '2026-05-08T14:10:00Z'
+                    updatedAt: '2026-05-09T09:00:00Z'
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  card-funding-source-change:
+    post:
+      summary: Card funding source change
+      description: 'Webhook that is called when the funding sources bound to a card change. Fires whenever `PATCH /cards/{id}` updates the `fundingSources` array. The payload carries the full `Card` resource with the post-change `fundingSources` array.
+
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: cardFundingSourceChangeWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardFundingSourceChangeWebhook'
+            examples:
+              fundingSourcesReplaced:
+                summary: Funding sources replaced via PATCH /cards/{id}
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000030
+                  type: CARD.FUNDING_SOURCE_CHANGE
+                  timestamp: '2026-05-08T14:30:00Z'
+                  data:
+                    id: Card:019542f5-b3e7-1d02-0000-000000000010
+                    cardholderId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    state: ACTIVE
+                    stateReason: null
+                    brand: VISA
+                    form: VIRTUAL
+                    last4: '4242'
+                    expMonth: 12
+                    expYear: 2029
+                    fundingSources:
+                    - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
+                    currency: USD
+                    createdAt: '2026-05-08T14:10:00Z'
+                    updatedAt: '2026-05-08T14:30:00Z'
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+  card-transaction:
+    post:
+      summary: Card transaction
+      description: 'Webhook that is called on every state transition of a card `CardTransaction`. Fires when an authorization is approved (`CARD_TRANSACTION.AUTHORIZED`), as clearings settle against it (`CARD_TRANSACTION.PARTIALLY_SETTLED`, `CARD_TRANSACTION.SETTLED`), when settled funds are returned (`CARD_TRANSACTION.REFUNDED`), and when a pull or confirmation fails (`CARD_TRANSACTION.EXCEPTION`). The payload carries the full `CardTransaction` resource.
+
+
+        This endpoint should be implemented by clients of the Grid API.
+
+
+        ### Authentication
+
+
+        The webhook includes a signature in the `X-Grid-Signature` header that allows you to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '
+      operationId: cardTransactionWebhook
+      tags:
+      - Webhooks
+      security:
+      - WebhookSignature: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardTransactionWebhook'
+            examples:
+              authorized:
+                summary: Authorization approved
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000040
+                  type: CARD_TRANSACTION.AUTHORIZED
+                  timestamp: '2026-05-09T10:00:00Z'
+                  data:
+                    type: CARD
+                    id: CardTransaction:019542f5-b3e7-1d02-0000-000000000100
+                    cardId: Card:019542f5-b3e7-1d02-0000-000000000010
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    issuerTransactionToken: lithic_txn_b81c2a4f
+                    status: AUTHORIZED
+                    direction: DEBIT
+                    merchant:
+                      descriptor: BLUE BOTTLE COFFEE SF
+                      mcc: '5814'
+                      country: US
+                    authorizedAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    accountId: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    pullSummary:
+                      count: 1
+                      totalAmount: 12550
+                      pendingCount: 1
+                    refundSummary:
+                      count: 0
+                      totalAmount: 0
+                    settlementSummary:
+                      count: 0
+                      totalAmount: 0
+                    authorizedAt: '2026-05-09T10:00:00Z'
+                    createdAt: '2026-05-09T10:00:00Z'
+                    updatedAt: '2026-05-09T10:00:00Z'
+              settled:
+                summary: All clearings posted
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000041
+                  type: CARD_TRANSACTION.SETTLED
+                  timestamp: '2026-05-09T15:42:11Z'
+                  data:
+                    type: CARD
+                    id: CardTransaction:019542f5-b3e7-1d02-0000-000000000100
+                    cardId: Card:019542f5-b3e7-1d02-0000-000000000010
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    issuerTransactionToken: lithic_txn_b81c2a4f
+                    status: SETTLED
+                    direction: DEBIT
+                    merchant:
+                      descriptor: BLUE BOTTLE COFFEE SF
+                      mcc: '5814'
+                      country: US
+                    authorizedAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    settledAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    accountId: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    pullSummary:
+                      count: 1
+                      totalAmount: 12550
+                      pendingCount: 0
+                    refundSummary:
+                      count: 0
+                      totalAmount: 0
+                    settlementSummary:
+                      count: 1
+                      totalAmount: 12550
+                    authorizedAt: '2026-05-09T10:00:00Z'
+                    lastEventAt: '2026-05-09T15:42:11Z'
+                    createdAt: '2026-05-09T10:00:00Z'
+                    updatedAt: '2026-05-09T15:42:11Z'
+              refunded:
+                summary: Settled funds returned by the merchant
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000042
+                  type: CARD_TRANSACTION.REFUNDED
+                  timestamp: '2026-05-10T09:15:00Z'
+                  data:
+                    type: CARD
+                    id: CardTransaction:019542f5-b3e7-1d02-0000-000000000100
+                    cardId: Card:019542f5-b3e7-1d02-0000-000000000010
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    issuerTransactionToken: lithic_txn_b81c2a4f
+                    status: REFUNDED
+                    direction: DEBIT
+                    merchant:
+                      descriptor: BLUE BOTTLE COFFEE SF
+                      mcc: '5814'
+                      country: US
+                    authorizedAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    settledAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    refundedAmount:
+                      amount: 12550
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    accountId: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    pullSummary:
+                      count: 1
+                      totalAmount: 12550
+                      pendingCount: 0
+                    refundSummary:
+                      count: 1
+                      totalAmount: 12550
+                    settlementSummary:
+                      count: 1
+                      totalAmount: 12550
+                    authorizedAt: '2026-05-09T10:00:00Z'
+                    lastEventAt: '2026-05-10T09:15:00Z'
+                    createdAt: '2026-05-09T10:00:00Z'
+                    updatedAt: '2026-05-10T09:15:00Z'
+              exception:
+                summary: Settled to the network but the funding-source pull failed
+                value:
+                  id: Webhook:019542f5-b3e7-1d02-0000-000000000043
+                  type: CARD_TRANSACTION.EXCEPTION
+                  timestamp: '2026-05-09T16:05:00Z'
+                  data:
+                    type: CARD
+                    id: CardTransaction:019542f5-b3e7-1d02-0000-000000000101
+                    cardId: Card:019542f5-b3e7-1d02-0000-000000000010
+                    customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                    platformCustomerId: 18d3e5f7b4a9c2
+                    issuerTransactionToken: lithic_txn_c92d3b5a
+                    status: EXCEPTION
+                    direction: DEBIT
+                    merchant:
+                      descriptor: UBER EATS
+                      mcc: '5812'
+                      country: US
+                    authorizedAmount:
+                      amount: 4200
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    settledAmount:
+                      amount: 4200
+                      currency:
+                        code: USD
+                        name: United States Dollar
+                        symbol: $
+                        decimals: 2
+                    accountId: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                    pullSummary:
+                      count: 1
+                      totalAmount: 0
+                      pendingCount: 0
+                    refundSummary:
+                      count: 0
+                      totalAmount: 0
+                    settlementSummary:
+                      count: 1
+                      totalAmount: 4200
+                    authorizedAt: '2026-05-09T15:30:00Z'
+                    lastEventAt: '2026-05-09T16:05:00Z'
+                    createdAt: '2026-05-09T15:30:00Z'
+                    updatedAt: '2026-05-09T16:05:00Z'
+      responses:
+        '200':
+          description: 'Webhook received successfully
+
+            '
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized - Signature validation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict - Webhook has already been processed (duplicate id)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
 components:
   schemas:
     Quote:
@@ -808,6 +1743,60 @@ components:
           $ref: '#/components/schemas/ScaChallenge'
           readOnly: true
           description: 'Present only while `status` is `PENDING_AUTHORIZATION`: the Strong Customer Authentication challenge to satisfy before this quote can be executed (or, for realtime-funding sources, before `paymentInstructions` are issued). Omitted for customers outside SCA-regulated regions (non-EU).'
+    BulkCustomerImportJob:
+      type: object
+      required:
+      - id
+      - status
+      - progress
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the bulk import job
+          example: Job:019542f5-b3e7-1d02-0000-000000000006
+        status:
+          type: string
+          enum:
+          - PENDING
+          - PROCESSING
+          - COMPLETED
+          - FAILED
+          description: Current status of the job
+          example: PROCESSING
+        progress:
+          type: object
+          required:
+          - total
+          - processed
+          - successful
+          - failed
+          properties:
+            total:
+              type: integer
+              description: Total number of customers to process
+              example: 5000
+            processed:
+              type: integer
+              description: Number of customers processed so far
+              example: 2500
+            successful:
+              type: integer
+              description: Number of customers successfully created
+              example: 2450
+            failed:
+              type: integer
+              description: Number of customers that failed to create
+              example: 50
+        errors:
+          type: array
+          description: Detailed error information for failed entries
+          items:
+            $ref: '#/components/schemas/BulkCustomerImportErrorEntry'
+        completedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the job completed (only present for COMPLETED or FAILED status)
+          example: '2025-08-15T14:32:00Z'
     Refund:
       type: object
       required:
@@ -845,6 +1834,20 @@ components:
           - TIMEOUT
           description: Reason for the refund
           example: TRANSACTION_FAILED
+    InternalAccountStatusWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/InternalAccount'
+          type:
+            type: string
+            enum:
+            - INTERNAL_ACCOUNT.BALANCE_UPDATED
+            - INTERNAL_ACCOUNT.STATUS_UPDATED
     BasePaymentAccountInfo:
       type: object
       required:
@@ -852,27 +1855,33 @@ components:
       properties:
         accountType:
           $ref: '#/components/schemas/PaymentAccountType'
-    AgentPolicy:
-      type: object
-      description: Policy governing what an agent can do, how it executes actions, and its spending boundaries.
-      required:
-      - permissions
-      - defaultExecutionMode
-      - spendingLimits
-      properties:
-        permissions:
-          type: array
-          description: List of permissions granted to the agent.
-          items:
-            $ref: '#/components/schemas/AgentPermission'
-        defaultExecutionMode:
-          $ref: '#/components/schemas/AgentExecutionMode'
-        spendingLimits:
-          $ref: '#/components/schemas/AgentSpendingLimits'
-        accountRestrictions:
-          $ref: '#/components/schemas/AgentAccountRestrictions'
-        approvalThresholds:
-          $ref: '#/components/schemas/AgentApprovalThresholds'
+    VerificationErrorType:
+      type: string
+      enum:
+      - MISSING_FIELD
+      - INVALID_FIELD
+      - MISSING_LEGAL_PRESENCE_DOCUMENT
+      - MISSING_CONTROL_STRUCTURE_DOCUMENT
+      - MISSING_OWNERSHIP_STRUCTURE_DOCUMENT
+      - MISSING_PROOF_OF_ADDRESS_DOCUMENT
+      - MISSING_IDENTITY_DOCUMENT
+      - INVALID_DOCUMENT
+      - EXPIRED_DOCUMENT
+      - POOR_QUALITY_DOCUMENT
+      - SUSPECTED_FRAUD_DOCUMENT
+      - WRONG_DOCUMENT_TYPE
+      - INCOMPLETE_DOCUMENT
+      - UNREADABLE_DOCUMENT
+      - DOCUMENT_VERIFICATION_FAILED
+      - APPLICANT_SANCTIONED
+      - APPLICANT_FRAUD
+      - APPLICANT_CRIMINAL_RECORD
+      - APPLICANT_REJECTED
+      - MISSING_BENEFICIAL_OWNER
+      - MISSING_CONTROL_PERSON
+      - MISSING_GOOD_STANDING_DOCUMENT
+      description: Type of verification error. The category-specific MISSING_*_DOCUMENT types indicate which document category is needed. Document quality types (POOR_QUALITY_DOCUMENT, SUSPECTED_FRAUD_DOCUMENT, etc.) indicate specific issues with uploaded documents. APPLICANT_* types indicate issues with the applicant themselves (sanctions, fraud, criminal records).
+      example: MISSING_FIELD
     QuoteDestinationOneOf:
       oneOf:
       - $ref: '#/components/schemas/AccountDestination'
@@ -961,15 +1970,6 @@ components:
             description: Type of asset
             enum:
             - USDC
-    AgentPermission:
-      type: string
-      enum:
-      - VIEW_TRANSACTIONS
-      - CREATE_TRANSFERS
-      - CREATE_QUOTES
-      - EXECUTE_QUOTES
-      - MANAGE_EXTERNAL_ACCOUNTS
-      description: 'Permission granted to an agent that determines what actions it can perform. VIEW_TRANSACTIONS: Can list and retrieve transactions and account balances. CREATE_TRANSFERS: Can initiate same-currency transfers. CREATE_QUOTES: Can create cross-currency quotes. EXECUTE_QUOTES: Can execute cross-currency quotes. MANAGE_EXTERNAL_ACCOUNTS: Can create and manage external accounts.'
     HkdAccountInfo:
       allOf:
       - $ref: '#/components/schemas/HkdAccountInfoBase'
@@ -1046,6 +2046,47 @@ components:
             type: string
             description: JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet.
             example: '{"type":"ACTIVITY_TYPE_SIGN_TRANSACTION_V2","timestampMs":"1746736509954","organizationId":"org_abc123","parameters":{"signWith":"wallet_abc123def456","unsignedTransaction":"ea69b4bf05f775209f26ff0a34a05569180f7936579d5c4af9377ae550194f72","type":"TRANSACTION_TYPE_ETHEREUM"},"generateAppProofs":true}'
+    DocumentType:
+      type: string
+      enum:
+      - PASSPORT
+      - DRIVERS_LICENSE
+      - NATIONAL_ID
+      - PROOF_OF_ADDRESS
+      - BANK_STATEMENT
+      - TAX_RETURN
+      - CERTIFICATE_OF_INCORPORATION
+      - ARTICLES_OF_INCORPORATION
+      - ARTICLES_OF_ASSOCIATION
+      - STATE_REGISTRY_EXCERPT
+      - GOOD_STANDING_CERTIFICATE
+      - INFORMATION_STATEMENT
+      - INCUMBENCY_CERTIFICATE
+      - BUSINESS_LICENSE
+      - SHAREHOLDER_REGISTER
+      - POWER_OF_ATTORNEY
+      - UTILITY_BILL
+      - ELECTRICITY_BILL
+      - RENT_OR_LEASE_AGREEMENT
+      - DIRECTOR_REGISTRY
+      - TRUST_AGREEMENT
+      - STATE_COMPANY_REGISTRY
+      - PARTNERSHIP_CONTROL_AGREEMENT
+      - PARTNERSHIP_AGREEMENT
+      - SELFIE
+      - OTHER
+      description: 'Type of identity or business verification document. Document types are grouped by verification category:
+
+        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
+
+        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
+
+        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
+
+        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
+
+        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
+      example: PASSPORT
     CardTransaction:
       title: Card Transaction
       type: object
@@ -1185,35 +2226,28 @@ components:
         bankName: Example Bank
         accountNumber: '1234567890'
         swiftCode: MABORUMMYYY
-    AgentUsage:
+    InternalAccountType:
+      title: Internal Account Type
+      type: string
+      enum:
+      - INTERNAL_FIAT
+      - INTERNAL_CRYPTO
+      - EMBEDDED_WALLET
+      description: 'Classification of an internal account.
+
+
+        - `INTERNAL_FIAT`: A Grid-managed fiat holding account (for example, the USD holding account used as the source for Payouts flows).
+
+        - `INTERNAL_CRYPTO`: A Grid-managed crypto holding account denominated in a stablecoin such as USDC.
+
+        - `EMBEDDED_WALLET`: A self-custodial Embedded Wallet provisioned for the customer. Outbound transfers require a session signature produced by the customer''s device — see the Embedded Wallets guide.'
+    IncomingPaymentWebhookResponse:
       type: object
-      description: Real-time counters tracking the agent's spending and transaction activity against its policy limits.
-      required:
-      - dailyTransactionCount
-      - dailySpend
-      - monthlySpend
       properties:
-        dailyTransactionCount:
-          type: integer
-          description: Number of transactions initiated by the agent today.
-          example: 3
-        dailySpend:
-          type: integer
-          description: Total amount spent by the agent today, in the smallest unit of the policy's `spendingLimits.currency`.
-          example: 150000
-        dailyResetDate:
-          type: string
-          format: date
-          description: The date when daily usage counters will reset.
-          example: '2025-07-22'
-        monthlySpend:
-          type: integer
-          description: Total amount spent by the agent this month, in the smallest unit of the policy's `spendingLimits.currency`.
-          example: 750000
-        monthlyResetMonth:
-          type: string
-          description: The year-month (YYYY-MM) when monthly usage counters will reset.
-          example: 2025-08
+        receiverCustomerInfo:
+          type: object
+          additionalProperties: true
+          description: Information about the recipient, provided by the platform if requested in the webhook via `requestedReceiverCustomerInfoFields` and the payment is approved.
     TransactionOneOf:
       oneOf:
       - $ref: '#/components/schemas/IncomingTransaction'
@@ -1312,6 +2346,31 @@ components:
             description: Type of asset
             enum:
             - USDC
+    CounterpartyFieldDefinition:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/CustomerInfoFieldName'
+        mandatory:
+          type: boolean
+          description: Whether the field is mandatory
+          example: true
+      required:
+      - name
+      - mandatory
+    BusinessCustomer:
+      title: Business Customer
+      allOf:
+      - $ref: '#/components/schemas/Customer'
+      - $ref: '#/components/schemas/BusinessCustomerFields'
+      - type: object
+        properties:
+          businessInfo:
+            $ref: '#/components/schemas/BusinessInfoResponse'
+          beneficialOwners:
+            type: array
+            items:
+              $ref: '#/components/schemas/BeneficialOwner'
     EgpAccountInfo:
       allOf:
       - $ref: '#/components/schemas/EgpAccountInfoBase'
@@ -1359,6 +2418,15 @@ components:
       - QUOTE_EXPIRED
       - QUOTE_EXECUTION_FAILED
       description: Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted.
+    IdentificationType:
+      type: string
+      enum:
+      - SSN
+      - ITIN
+      - EIN
+      - NON_US_TAX_ID
+      description: Type of tax identification
+      example: SSN
     GtqAccountInfo:
       allOf:
       - $ref: '#/components/schemas/GtqAccountInfoBase'
@@ -1428,6 +2496,25 @@ components:
         accountNumber: '1234567890'
         swiftCode: CENAIDJA
         phoneNumber: '+6281234567890'
+    BaseWebhook:
+      type: object
+      required:
+      - timestamp
+      - id
+      - type
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this webhook delivery (can be used for idempotency)
+          example: Webhook:019542f5-b3e7-1d02-0000-000000000007
+        type:
+          $ref: '#/components/schemas/WebhookType'
+          description: Status-specific event type in OBJECT.EVENT dot-notation (e.g., OUTGOING_PAYMENT.COMPLETED)
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of when the webhook was sent
+          example: '2025-08-15T14:32:00Z'
     JmdAccountInfo:
       allOf:
       - $ref: '#/components/schemas/JmdAccountInfoBase'
@@ -1441,39 +2528,6 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     AedAccountInfoBase:
       type: object
       required:
@@ -1531,20 +2585,11 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    AgentApprovalThresholds:
-      type: object
-      description: Thresholds that force approval for high-value transactions, overriding the default execution mode. When a transaction is denominated in a different currency than the threshold, Grid converts using the exchange rate at evaluation time.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 currency code that the amount threshold is denominated in. Required when amount is set.
-          example: USD
-        amount:
-          type:
-          - integer
-          - 'null'
-          description: If set, any transaction above this amount (in the smallest unit of the specified currency) will require explicit approval even when the agent's defaultExecutionMode is AUTO. Null means no threshold override.
-          example: 100000
+    PaymentInrAccountInfo:
+      title: INR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/InrAccountInfo'
     CardRefundSummary:
       type: object
       required:
@@ -1560,11 +2605,6 @@ components:
           format: int64
           description: Sum of all refund amounts in the smallest unit of the funding source's currency.
           example: 0
-    PaymentInrAccountInfo:
-      title: INR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/InrAccountInfo'
     NgnAccountInfo:
       allOf:
       - $ref: '#/components/schemas/NgnAccountInfoBase'
@@ -1591,12 +2631,83 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
-    AgentExecutionMode:
-      type: string
-      enum:
-      - AUTO
-      - APPROVAL_REQUIRED
-      description: 'Execution mode controlling whether agent actions require human approval. AUTO: The agent can execute actions autonomously without explicit approval. APPROVAL_REQUIRED: All agent actions require explicit human approval before execution.'
+    IncomingPaymentWebhookData:
+      title: Incoming Payment Webhook Data
+      allOf:
+      - $ref: '#/components/schemas/IncomingTransaction'
+      - type: object
+        properties:
+          requestedReceiverCustomerInfoFields:
+            type: array
+            items:
+              $ref: '#/components/schemas/CounterpartyFieldDefinition'
+            description: Information required by the sender's VASP about the recipient. Platform must provide these in the 200 OK response if approving. Note that this only includes fields which Grid does not already have from initial customer registration.
+    Customer:
+      type: object
+      required:
+      - umaAddress
+      - platformCustomerId
+      - customerType
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
+          type: string
+          description: Platform-specific customer identifier
+          example: 9f84e0c2a72c4fa
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        region:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2) representing the customer's regional identity and regulatory jurisdiction.
+          example: US
+        currencies:
+          type: array
+          items:
+            type: string
+          description: List of currency codes enabled for this customer.
+          example:
+          - USD
+          - USDC
+        email:
+          type: string
+          format: email
+          description: Email address for the customer.
+          example: john.doe@example.com
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Phone number for the customer in strict E.164 format.
+          example: '+14155551234'
+        umaAddress:
+          type: string
+          description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        isDeleted:
+          type: boolean
+          description: Whether the customer is marked as deleted
+          example: false
+          readOnly: true
+        contactVerification:
+          allOf:
+          - $ref: '#/components/schemas/ContactVerification'
+          readOnly: true
+          description: Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.
     GbpAccountInfoBase:
       type: object
       required:
@@ -1653,6 +2764,53 @@ components:
               type: string
               enum:
               - SPEI
+    BeneficialOwner:
+      type: object
+      required:
+      - id
+      - customerId
+      - roles
+      - ownershipPercentage
+      - personalInfo
+      - kycStatus
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this beneficial owner
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the business customer this beneficial owner is associated with
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100)
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this beneficial owner was last updated
+          example: '2025-10-03T12:00:00Z'
     RailSelectionMode:
       type: string
       enum:
@@ -1660,6 +2818,32 @@ components:
       - MANUAL
       description: How the payment rail was chosen — MANUAL when the platform specified a paymentRail on the destination, AUTO when Lightspark selects it.
       example: AUTO
+    IndividualCustomerFields:
+      type: object
+      required:
+      - customerType
+      properties:
+        customerType:
+          type: string
+          enum:
+          - INDIVIDUAL
+        kycStatus:
+          $ref: '#/components/schemas/KycStatus'
+        fullName:
+          type: string
+          description: Individual's full name
+          example: John Michael Doe
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1990-01-15'
+        nationality:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+        address:
+          $ref: '#/components/schemas/Address'
     Error409:
       type: object
       required:
@@ -1705,31 +2889,93 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    AgentDeviceCode:
-      type: object
-      required:
-      - code
-      - agentId
-      - expiresAt
-      - redeemed
-      properties:
-        code:
-          type: string
-          description: Human-readable device code used to install and connect the agent software.
-          example: GRID-AGENT-X7K9-M2P4
-        agentId:
-          type: string
-          description: The agent this device code belongs to.
-          example: Agent:019542f5-b3e7-1d02-0000-000000000001
-        expiresAt:
-          type: string
-          format: date-time
-          description: Timestamp when this device code expires.
-          example: '2025-07-22T17:32:28Z'
-        redeemed:
-          type: boolean
-          description: Whether this device code has already been redeemed by the agent.
-          example: false
+    CardStateReason:
+      type: string
+      enum:
+      - ISSUER_REJECTED
+      - CLOSED_BY_PLATFORM
+      - CLOSED_BY_GRID
+      description: 'Reason a card reached a terminal or non-active state. Present on
+
+        `CLOSED` cards, and on cards that fail provisioning before reaching
+
+        `ACTIVE`.
+
+
+        | Reason | Description |
+
+        |--------|-------------|
+
+        | `ISSUER_REJECTED` | The card issuer rejected provisioning during `PROCESSING`. |
+
+        | `CLOSED_BY_PLATFORM` | The card was closed via `PATCH /cards/{id}` (`state: CLOSED`) by the platform. |
+
+        | `CLOSED_BY_GRID` | The card was closed by Grid (e.g. compliance or risk action). |
+
+        '
+    CustomerWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/CustomerOneOf'
+          type:
+            type: string
+            enum:
+            - CUSTOMER.KYC_APPROVED
+            - CUSTOMER.KYC_REJECTED
+            - CUSTOMER.KYC_PENDING
+            - CUSTOMER.KYB_APPROVED
+            - CUSTOMER.KYB_REJECTED
+            - CUSTOMER.KYB_PENDING
+    CardBrand:
+      type: string
+      enum:
+      - VISA
+      - MASTERCARD
+      description: 'Card network brand. Read-only — determined by Grid when the card is
+
+        provisioned with the issuer.
+
+        '
+    CardStateChangeWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/Card'
+          type:
+            type: string
+            enum:
+            - CARD.STATE_CHANGE
+    KycStatus:
+      type: string
+      enum:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
+    BulkCustomerImportErrorEntry:
+      allOf:
+      - $ref: '#/components/schemas/GridError'
+      - type: object
+        description: Error information for a failed bulk import entry
+        required:
+        - correlationId
+        properties:
+          correlationId:
+            type: string
+            description: Platform customer ID or row number for the failed entry
+            example: biz456
     VndAccountInfoBase:
       type: object
       required:
@@ -1789,6 +3035,43 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    ContactVerification:
+      type: object
+      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
+
+
+        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
+      properties:
+        email:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's email address. Present only when the provider requires email verification.
+        phone:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
+    BusinessType:
+      type: string
+      description: The high-level industry category of the business
+      enum:
+      - AGRICULTURE_FORESTRY_FISHING_AND_HUNTING
+      - MINING_QUARRYING_AND_OIL_AND_GAS_EXTRACTION
+      - UTILITIES
+      - CONSTRUCTION
+      - MANUFACTURING
+      - WHOLESALE_TRADE
+      - RETAIL_TRADE
+      - TRANSPORTATION_AND_WAREHOUSING
+      - INFORMATION
+      - FINANCE_AND_INSURANCE
+      - REAL_ESTATE_AND_RENTAL_AND_LEASING
+      - PROFESSIONAL_SCIENTIFIC_AND_TECHNICAL_SERVICES
+      - MANAGEMENT_OF_COMPANIES_AND_ENTERPRISES
+      - ADMINISTRATIVE_AND_SUPPORT_AND_WASTE_MANAGEMENT_AND_REMEDIATION_SERVICES
+      - EDUCATIONAL_SERVICES
+      - HEALTH_CARE_AND_SOCIAL_ASSISTANCE
+      - ARTS_ENTERTAINMENT_AND_RECREATION
+      - ACCOMMODATION_AND_FOOD_SERVICES
+      - OTHER_SERVICES
+      - PUBLIC_ADMINISTRATION
     AccountDestination:
       title: Account
       allOf:
@@ -1868,6 +3151,33 @@ components:
             $ref: '#/components/schemas/OnChainTransaction'
             description: On-chain transaction that delivered the funding, when the funds arrived from an external crypto wallet. Populated once the crypto transfer has settled.
         description: Transaction was funded using an external funding source. All originator fields are optional and populated on a best-effort basis depending on what the funding source provides.
+    GridError:
+      type: object
+      title: GridError
+      properties:
+        code:
+          type: string
+          description: Error code
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    IncomingPaymentWebhookUnprocessableResponse:
+      allOf:
+      - $ref: '#/components/schemas/GridError'
+      - type: object
+        properties:
+          requiredFields:
+            type: array
+            items:
+              type: string
+            description: List of fields that are required by the platform, but are not present in the counterparty information.
+            example:
+            - TAX_ID
+            - REGISTRATION_NUMBER
     PaymentAedAccountInfo:
       title: AED Account
       allOf:
@@ -2037,6 +3347,118 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    BusinessInfoResponse:
+      type: object
+      description: 'Business information returned on a customer. `taxId` and `incorporatedOn` are
+
+        required on creation but may be absent on legacy customers that pre-date the
+
+        requirement, so both are optional in responses.
+
+        '
+      required:
+      - legalName
+      properties:
+        legalName:
+          type: string
+          description: Legal name of the business
+          example: Acme Corporation, Inc.
+        doingBusinessAs:
+          type: string
+          description: Trade name or DBA name of the business, if different from the legal name
+          example: Acme
+        country:
+          type: string
+          description: Country of incorporation or registration (ISO 3166-1 alpha-2)
+          example: US
+        registrationNumber:
+          type: string
+          description: Business registration number
+          example: '5523041'
+        incorporatedOn:
+          type: string
+          format: date
+          description: Date of incorporation in ISO 8601 format (YYYY-MM-DD)
+          example: '2018-03-14'
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        taxId:
+          type: string
+          description: Tax identification number
+          example: 47-1234567
+        countriesOfOperation:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business operates (ISO 3166-1 alpha-2)
+          example:
+          - US
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        purposeOfAccount:
+          $ref: '#/components/schemas/PurposeOfAccount'
+        sourceOfFunds:
+          type: string
+          description: The primary source of funds for the business
+          example: Funds derived from customer payments for software services
+        expectedMonthlyTransactionCount:
+          type: string
+          enum:
+          - COUNT_UNDER_10
+          - COUNT_10_TO_100
+          - COUNT_100_TO_500
+          - COUNT_500_TO_1000
+          - COUNT_OVER_1000
+          description: Expected number of transactions per month
+          example: COUNT_100_TO_500
+        expectedMonthlyTransactionVolume:
+          type: string
+          enum:
+          - VOLUME_UNDER_10K
+          - VOLUME_10K_TO_100K
+          - VOLUME_100K_TO_1M
+          - VOLUME_1M_TO_10M
+          - VOLUME_OVER_10M
+          description: Expected total transaction volume per month in USD equivalent
+          example: VOLUME_100K_TO_1M
+        expectedRecipientJurisdictions:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business expects to send payments (ISO 3166-1 alpha-2)
+          example:
+          - US
+        naicsCode:
+          type: string
+          pattern: ^\d{2,6}$
+          description: NAICS code describing the nature of the business (2-6 digits)
+          example: '541511'
+        sourceOfFundsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceOfFundsCategory'
+          description: Structured source-of-funds categories for the business
+          example:
+          - OPERATING_REVENUE
+        sourceOfFundsOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the source of funds when OTHER is selected
+          example: Proceeds from a legal settlement
+        purposeOfAccountOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the account purpose when OTHER is selected
+          example: Escrow for equipment leases
+        expectedCounterpartyCountries:
+          type: array
+          items:
+            type: string
+          description: List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)
+          example:
+          - US
     KesAccountInfo:
       allOf:
       - $ref: '#/components/schemas/KesAccountInfoBase'
@@ -2050,32 +3472,6 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
-    CardPullSummary:
-      type: object
-      required:
-      - count
-      - totalAmount
-      properties:
-        count:
-          type: integer
-          description: Total number of pulls (debits) executed against the funding source for this transaction. `> 1` indicates one or more post-hoc pulls — e.g. restaurant tip / over-auth clearings.
-          example: 2
-        totalAmount:
-          type: integer
-          format: int64
-          description: Sum of all pull amounts in the smallest unit of the funding source's currency.
-          example: 1500
-        pendingCount:
-          type: integer
-          description: Number of pulls still in the `PENDING` state. Drops to zero when every pull has reached a terminal state. Non-zero values that persist beyond the expected settlement window are an early signal for the `EXCEPTION` path.
-          example: 0
-    TransactionDestinationType:
-      type: string
-      enum:
-      - ACCOUNT
-      - UMA_ADDRESS
-      description: Type of transaction destination
-      example: ACCOUNT
     PaymentArsAccountInfo:
       title: ARS Account
       allOf:
@@ -2095,6 +3491,13 @@ components:
             maxLength: 22
             pattern: ^\d{22}$
             example: '0000003100074052501434'
+    TransactionDestinationType:
+      type: string
+      enum:
+      - ACCOUNT
+      - UMA_ADDRESS
+      description: Type of transaction destination
+      example: ACCOUNT
     PaymentBwpAccountInfo:
       title: BWP Account
       allOf:
@@ -2108,6 +3511,35 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    CardPullSummary:
+      type: object
+      required:
+      - count
+      - totalAmount
+      properties:
+        count:
+          type: integer
+          description: Total number of pulls (debits) executed against the funding source for this transaction. `> 1` indicates one or more post-hoc pulls — e.g. restaurant tip / over-auth clearings.
+          example: 2
+        totalAmount:
+          type: integer
+          format: int64
+          description: Sum of all pull amounts in the smallest unit of the funding source's currency.
+          example: 1500
+        pendingCount:
+          type: integer
+          description: Number of pulls still in the `PENDING` state. Drops to zero when every pull has reached a terminal state. Non-zero values that persist beyond the expected settlement window are an early signal for the `EXCEPTION` path.
+          example: 0
+    KybStatus:
+      type: string
+      enum:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYB status of a business customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
     QuoteSourceOneOf:
       oneOf:
       - $ref: '#/components/schemas/AccountQuoteSource'
@@ -2551,6 +3983,60 @@ components:
           minLength: 7
           maxLength: 12
           pattern: ^[0-9]{7,12}$
+    BeneficialOwnerPersonalInfo:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - birthDate
+      - nationality
+      - address
+      - idType
+      - identifier
+      properties:
+        firstName:
+          type: string
+          description: First name of the individual
+          example: Jane
+        middleName:
+          type: string
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
     IncomingTransaction:
       title: Incoming Transaction
       allOf:
@@ -2584,54 +4070,6 @@ components:
           failureReason:
             $ref: '#/components/schemas/IncomingTransactionFailureReason'
             description: If the transaction failed, this field provides the reason for failure.
-    Agent:
-      type: object
-      description: A programmatic agent with scoped permissions and a spending policy, used to automate payment workflows.
-      required:
-      - id
-      - name
-      - customerId
-      - isPaused
-      - isConnected
-      - policy
-      - usage
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          description: System-generated unique identifier for the agent.
-          example: Agent:019542f5-b3e7-1d02-0000-000000000001
-        name:
-          type: string
-          description: Human-readable name for the agent.
-          example: Payroll Automation Agent
-        customerId:
-          type: string
-          description: The ID of the customer this agent operates on behalf of.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        isPaused:
-          type: boolean
-          description: Whether the agent is currently paused. Paused agents cannot initiate any actions.
-          example: false
-        isConnected:
-          type: boolean
-          description: Whether the agent has been installed and connected (i.e., its device code has been redeemed).
-          example: true
-        policy:
-          $ref: '#/components/schemas/AgentPolicy'
-        usage:
-          $ref: '#/components/schemas/AgentUsage'
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp.
-          example: '2025-07-21T17:32:28Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp.
-          example: '2025-07-21T17:32:28Z'
     TransactionDirection:
       type: string
       enum:
@@ -2653,26 +4091,6 @@ components:
               - UPI
               - NEFT
               - RTGS
-    AgentListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of agents matching the filter criteria.
-          items:
-            $ref: '#/components/schemas/Agent'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page.
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true).
-        totalCount:
-          type: integer
-          description: Total number of agents matching the criteria (excluding pagination).
     PaymentCnyAccountInfo:
       title: CNY Account
       allOf:
@@ -2712,6 +4130,65 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    PurposeOfAccount:
+      type: string
+      enum:
+      - CONTRACTOR_PAYOUTS
+      - CREATOR_PAYOUTS
+      - EMPLOYEE_PAYOUTS
+      - MARKETPLACE_SELLER_PAYOUTS
+      - SUPPLIER_PAYMENTS
+      - CROSS_BORDER_B2B
+      - AR_AUTOMATION
+      - AP_AUTOMATION
+      - EMBEDDED_PAYMENTS
+      - PLATFORM_FEE_COLLECTION
+      - P2P_TRANSFERS
+      - CHARITABLE_DONATIONS
+      - OTHER
+      description: The intended purpose for using the Grid account
+      example: CONTRACTOR_PAYOUTS
+    VerificationError:
+      type: object
+      required:
+      - resourceId
+      - type
+      - reason
+      properties:
+        resourceId:
+          type: string
+          description: ID of the resource with the issue (Customer, BeneficialOwner, or Document)
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        type:
+          $ref: '#/components/schemas/VerificationErrorType'
+        field:
+          type: string
+          description: Dot-notation path to the field with the issue. Present when type is MISSING_FIELD or INVALID_FIELD.
+          example: customer.address.line1
+        acceptedDocumentTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentType'
+          description: 'Document types that would satisfy this requirement. The integrator can upload any one of the listed types. Present when type is MISSING_LEGAL_PRESENCE_DOCUMENT, MISSING_CONTROL_STRUCTURE_DOCUMENT, MISSING_OWNERSHIP_STRUCTURE_DOCUMENT, MISSING_PROOF_OF_ADDRESS_DOCUMENT, MISSING_IDENTITY_DOCUMENT, INVALID_DOCUMENT, or EXPIRED_DOCUMENT.
+
+
+            | Error Type | Accepted Document Types |
+
+            |---|---|
+
+            | MISSING_LEGAL_PRESENCE_DOCUMENT | CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT |
+
+            | MISSING_CONTROL_STRUCTURE_DOCUMENT | DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT |
+
+            | MISSING_OWNERSHIP_STRUCTURE_DOCUMENT | SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT |
+
+            | MISSING_PROOF_OF_ADDRESS_DOCUMENT | UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN |
+
+            | MISSING_IDENTITY_DOCUMENT | PASSPORT, DRIVERS_LICENSE, NATIONAL_ID |'
+        reason:
+          type: string
+          description: Human-readable description of the issue
+          example: Business address line 1 is required
     PaymentSparkWalletInfo:
       title: Spark Wallet
       allOf:
@@ -2834,26 +4311,6 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    AgentActionListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of agent actions matching the filter criteria.
-          items:
-            $ref: '#/components/schemas/AgentAction'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page.
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true).
-        totalCount:
-          type: integer
-          description: Total number of actions matching the criteria (excluding pagination).
     OutgoingRateDetails:
       description: 'Details about the rate and fees for an outgoing transaction or quote. Note: `counterpartyFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.'
       type: object
@@ -2901,17 +4358,6 @@ components:
           description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.
           minimum: 0
           example: 30
-    AgentCreateResponse:
-      type: object
-      description: Response returned when an agent is created, including the agent and a device code for installation.
-      required:
-      - agent
-      - deviceCode
-      properties:
-        agent:
-          $ref: '#/components/schemas/Agent'
-        deviceCode:
-          $ref: '#/components/schemas/AgentDeviceCode'
     ThbAccountInfoBase:
       type: object
       required:
@@ -2981,6 +4427,15 @@ components:
         | `TRANSFER_IN` | Transfer from an external account to an internal account |
 
         '
+    IncomingPaymentWebhookForbiddenResponse:
+      allOf:
+      - $ref: '#/components/schemas/GridError'
+      - type: object
+        properties:
+          reason:
+            type: string
+            description: Optional reason for rejecting the payment. This is just for debugging purposes or can be used for a platform's own purposes.
+            example: RESTRICTED_JURISDICTION
     CryptoNetwork:
       type: string
       enum:
@@ -2993,6 +4448,13 @@ components:
       - SPARK
       description: The blockchain network an on-chain transaction settled on. Whether this is the mainnet or a test network (e.g. Solana devnet) is determined by your platform's environment — sandbox platforms operate on test networks, production platforms on mainnet — mirroring how `cryptoNetwork` is interpreted elsewhere in the API.
       example: SOLANA
+    ContactVerificationStatus:
+      type: string
+      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
+      enum:
+      - PENDING
+      - VERIFIED
+      example: VERIFIED
     AgentActionStatus:
       type: string
       enum:
@@ -3060,20 +4522,28 @@ components:
         network:
           $ref: '#/components/schemas/CryptoNetwork'
           description: Blockchain network the transaction settled on (mainnet vs test network is determined by your platform environment).
-    AgentDeviceCodeStatusResponse:
-      type: object
-      required:
-      - code
-      - redeemed
-      properties:
-        code:
-          type: string
-          description: The device code.
-          example: GRID-AGENT-X7K9-M2P4
-        redeemed:
-          type: boolean
-          description: Whether this device code has been redeemed.
-          example: false
+    InternalAccountStatus:
+      title: Internal Account Status
+      type: string
+      enum:
+      - PENDING
+      - ACTIVE
+      - CLOSED
+      - FROZEN
+      - FAILED
+      description: 'Status of a Grid internal account. The status determines whether the account can send or receive payments.
+
+
+        - `PENDING`: The account is under review and is being provisioned. The account cannot send or receive payments until provisioning completes.
+
+        - `ACTIVE`: The account is ready to send and receive payments.
+
+        - `CLOSED`: The account cannot send or receive payments. A customer can initiate the closing of an internal account, after which the account transitions to this status.
+
+        - `FROZEN`: The account cannot send or receive payments. Grid may freeze an account in response to compliance or fraud signals; payments are blocked while the account remains frozen.
+
+        - `FAILED`: The account could not be provisioned. Grid was unable to create the underlying account, so it cannot send or receive payments and requires remediation.'
+      example: ACTIVE
     TransactionStatus:
       type: string
       enum:
@@ -3274,6 +4744,15 @@ components:
         | `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |
 
         '
+    TestWebhookRequest:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        properties:
+          type:
+            type: string
+            enum:
+            - TEST
     CounterpartyInformation:
       type: object
       description: Additional information about the counterparty, if available and relevant to the transaction and platform.
@@ -3309,6 +4788,47 @@ components:
         accountType: KES_ACCOUNT
         phoneNumber: '+254712345678'
         provider: Example Provider
+    WebhookType:
+      type: string
+      enum:
+      - OUTGOING_PAYMENT.PENDING
+      - OUTGOING_PAYMENT.PROCESSING
+      - OUTGOING_PAYMENT.COMPLETED
+      - OUTGOING_PAYMENT.FAILED
+      - OUTGOING_PAYMENT.EXPIRED
+      - OUTGOING_PAYMENT.REFUND_PENDING
+      - OUTGOING_PAYMENT.REFUND_COMPLETED
+      - OUTGOING_PAYMENT.REFUND_FAILED
+      - INCOMING_PAYMENT.PENDING
+      - INCOMING_PAYMENT.COMPLETED
+      - INCOMING_PAYMENT.FAILED
+      - CUSTOMER.KYC_APPROVED
+      - CUSTOMER.KYC_REJECTED
+      - CUSTOMER.KYC_PENDING
+      - CUSTOMER.KYB_APPROVED
+      - CUSTOMER.KYB_REJECTED
+      - CUSTOMER.KYB_PENDING
+      - VERIFICATION.APPROVED
+      - VERIFICATION.REJECTED
+      - VERIFICATION.RESOLVE_ERRORS
+      - VERIFICATION.IN_PROGRESS
+      - VERIFICATION.PENDING_MANUAL_REVIEW
+      - VERIFICATION.READY_FOR_VERIFICATION
+      - INTERNAL_ACCOUNT.BALANCE_UPDATED
+      - INTERNAL_ACCOUNT.STATUS_UPDATED
+      - INVITATION.CLAIMED
+      - BULK_UPLOAD.COMPLETED
+      - BULK_UPLOAD.FAILED
+      - AGENT_ACTION.PENDING_APPROVAL
+      - CARD.STATE_CHANGE
+      - CARD.FUNDING_SOURCE_CHANGE
+      - CARD_TRANSACTION.AUTHORIZED
+      - CARD_TRANSACTION.PARTIALLY_SETTLED
+      - CARD_TRANSACTION.SETTLED
+      - CARD_TRANSACTION.REFUNDED
+      - CARD_TRANSACTION.EXCEPTION
+      - TEST
+      description: Type of webhook event in OBJECT.EVENT dot-notation. The part before the dot identifies the resource, the part after identifies the event. This lets consumers route purely on type without inspecting data.status.
     PaymentSlvAccountInfo:
       title: SLV Account
       allOf:
@@ -3322,6 +4842,49 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    CardTransactionWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/CardTransaction'
+          type:
+            type: string
+            enum:
+            - CARD_TRANSACTION.AUTHORIZED
+            - CARD_TRANSACTION.PARTIALLY_SETTLED
+            - CARD_TRANSACTION.SETTLED
+            - CARD_TRANSACTION.REFUNDED
+            - CARD_TRANSACTION.EXCEPTION
+    IncomingPaymentWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/IncomingPaymentWebhookData'
+          type:
+            type: string
+            enum:
+            - INCOMING_PAYMENT.PENDING
+            - INCOMING_PAYMENT.COMPLETED
+            - INCOMING_PAYMENT.FAILED
+    VerificationStatus:
+      type: string
+      enum:
+      - RESOLVE_ERRORS
+      - PENDING_MANUAL_REVIEW
+      - IN_PROGRESS
+      - APPROVED
+      - REJECTED
+      - READY_FOR_VERIFICATION
+      description: Current status of the KYC/KYB verification
+      example: RESOLVE_ERRORS
     EurAccountInfoBase:
       type: object
       required:
@@ -3350,6 +4913,27 @@ components:
         accountType: EUR_ACCOUNT
         iban: DE89370400440532013000
         swiftCode: DEUTDEFF
+    OutgoingPaymentWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/OutgoingTransaction'
+          type:
+            type: string
+            enum:
+            - OUTGOING_PAYMENT.PENDING
+            - OUTGOING_PAYMENT.PENDING_AUTHORIZATION
+            - OUTGOING_PAYMENT.PROCESSING
+            - OUTGOING_PAYMENT.COMPLETED
+            - OUTGOING_PAYMENT.FAILED
+            - OUTGOING_PAYMENT.EXPIRED
+            - OUTGOING_PAYMENT.REFUND_PENDING
+            - OUTGOING_PAYMENT.REFUND_COMPLETED
+            - OUTGOING_PAYMENT.REFUND_FAILED
     PaymentInstructions:
       type: object
       required:
@@ -3475,13 +5059,110 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    AgentActionRejectRequest:
+    BusinessInfoUpdate:
       type: object
+      description: Additional information for business entities
       properties:
-        reason:
+        legalName:
           type: string
-          description: Optional human-readable reason for the rejection, stored on the action and visible to the platform.
-          example: Transaction amount exceeds customer's current risk limit.
+          description: Legal name of the business
+          example: Acme Corporation, Inc.
+        doingBusinessAs:
+          type: string
+          description: Trade name or DBA name of the business, if different from the legal name
+          example: Acme
+        country:
+          type: string
+          description: Country of incorporation or registration (ISO 3166-1 alpha-2)
+          example: US
+        registrationNumber:
+          type: string
+          description: Business registration number
+          example: '5523041'
+        incorporatedOn:
+          type: string
+          format: date
+          description: Date of incorporation in ISO 8601 format (YYYY-MM-DD)
+          example: '2018-03-14'
+        entityType:
+          $ref: '#/components/schemas/EntityType'
+        taxId:
+          type: string
+          description: Tax identification number
+          example: 47-1234567
+        countriesOfOperation:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business operates (ISO 3166-1 alpha-2)
+          example:
+          - US
+        businessType:
+          $ref: '#/components/schemas/BusinessType'
+        purposeOfAccount:
+          $ref: '#/components/schemas/PurposeOfAccount'
+        sourceOfFunds:
+          type: string
+          description: The primary source of funds for the business
+          example: Funds derived from customer payments for software services
+        expectedMonthlyTransactionCount:
+          type: string
+          enum:
+          - COUNT_UNDER_10
+          - COUNT_10_TO_100
+          - COUNT_100_TO_500
+          - COUNT_500_TO_1000
+          - COUNT_OVER_1000
+          description: Expected number of transactions per month
+          example: COUNT_100_TO_500
+        expectedMonthlyTransactionVolume:
+          type: string
+          enum:
+          - VOLUME_UNDER_10K
+          - VOLUME_10K_TO_100K
+          - VOLUME_100K_TO_1M
+          - VOLUME_1M_TO_10M
+          - VOLUME_OVER_10M
+          description: Expected total transaction volume per month in USD equivalent
+          example: VOLUME_100K_TO_1M
+        expectedRecipientJurisdictions:
+          type: array
+          items:
+            type: string
+          description: List of countries where the business expects to send payments (ISO 3166-1 alpha-2)
+          example:
+          - US
+        naicsCode:
+          type: string
+          pattern: ^\d{2,6}$
+          description: NAICS code describing the nature of the business (2-6 digits)
+          example: '541511'
+        sourceOfFundsCategories:
+          type: array
+          items:
+            $ref: '#/components/schemas/SourceOfFundsCategory'
+          description: Structured source-of-funds categories for the business
+          example:
+          - OPERATING_REVENUE
+        sourceOfFundsOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the source of funds when OTHER is selected
+          example: Proceeds from a legal settlement
+        purposeOfAccountOtherDescription:
+          type: string
+          minLength: 1
+          maxLength: 500
+          description: Description of the account purpose when OTHER is selected
+          example: Escrow for equipment leases
+        expectedCounterpartyCountries:
+          type: array
+          items:
+            type: string
+          description: List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)
+          example:
+          - US
     ScaChallenge:
       type: object
       description: 'A Strong Customer Authentication challenge that must be satisfied before a money-movement operation can complete. This object is **only present when the customer is in a region where SCA is required** (the EU); for customers outside SCA-regulated regions it is omitted entirely and no action is needed.
@@ -3621,6 +5302,20 @@ components:
             description: Currency code for the destination. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies.
             example: EUR
         description: UMA address destination details
+    BulkUploadWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/BulkCustomerImportJob'
+          type:
+            type: string
+            enum:
+            - BULK_UPLOAD.COMPLETED
+            - BULK_UPLOAD.FAILED
     InrAccountInfoBase:
       type: object
       required:
@@ -3689,6 +5384,37 @@ components:
               type: string
               enum:
               - FASTER_PAYMENTS
+    Address:
+      type: object
+      required:
+      - line1
+      - postalCode
+      - country
+      properties:
+        line1:
+          type: string
+          description: Street address line 1
+          example: 123 Main Street
+        line2:
+          type: string
+          description: Street address line 2
+          example: Apt 4B
+        city:
+          type: string
+          description: City
+          example: San Francisco
+        state:
+          type: string
+          description: State/Province/Region
+          example: CA
+        postalCode:
+          type: string
+          description: Postal/ZIP code
+          example: '94105'
+        country:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
     OutgoingTransactionStatus:
       type: string
       enum:
@@ -3718,6 +5444,40 @@ components:
         | `FAILED` | Something went wrong — accompanied by a `failureReason` |
 
         '
+    Verification:
+      type: object
+      required:
+      - id
+      - customerId
+      - verificationStatus
+      - errors
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this verification
+          example: Verification:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the customer being verified
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        verificationStatus:
+          $ref: '#/components/schemas/VerificationStatus'
+        errors:
+          type: array
+          description: List of issues preventing verification from proceeding. Empty when verificationStatus is APPROVED or IN_PROGRESS.
+          items:
+            $ref: '#/components/schemas/VerificationError'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this verification was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this verification was last updated
+          example: '2025-10-03T12:00:00Z'
     NgnAccountInfoBase:
       type: object
       required:
@@ -3810,6 +5570,19 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
+    CardFundingSourceChangeWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/Card'
+          type:
+            type: string
+            enum:
+            - CARD.FUNDING_SOURCE_CHANGE
     UmaAddressTransactionDestination:
       title: UMA Address Destination
       allOf:
@@ -3869,26 +5642,19 @@ components:
               enum:
               - SEPA
               - SEPA_INSTANT
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
+    InvitationClaimedWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/UmaInvitation'
+          type:
+            type: string
+            enum:
+            - INVITATION.CLAIMED
     PaymentTronWalletInfo:
       title: Tron Wallet
       allOf:
@@ -3914,6 +5680,26 @@ components:
               type: string
               enum:
               - SWIFT
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
     IdrAccountInfo:
       allOf:
       - $ref: '#/components/schemas/IdrAccountInfoBase'
@@ -3927,6 +5713,38 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
+    BusinessCustomerFields:
+      type: object
+      required:
+      - customerType
+      properties:
+        customerType:
+          type: string
+          enum:
+          - BUSINESS
+        kybStatus:
+          $ref: '#/components/schemas/KybStatus'
+        address:
+          $ref: '#/components/schemas/Address'
+        businessInfo:
+          $ref: '#/components/schemas/BusinessInfoUpdate'
+    VerificationWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/Verification'
+          type:
+            type: string
+            enum:
+            - VERIFICATION.APPROVED
+            - VERIFICATION.REJECTED
+            - VERIFICATION.RESOLVE_ERRORS
+            - VERIFICATION.IN_PROGRESS
+            - VERIFICATION.PENDING_MANUAL_REVIEW
     AgentAction:
       type: object
       description: An action submitted by an agent that may require platform approval before execution. All agent-initiated operations (quote execution, transfers) are represented as AgentActions, giving the platform a consistent object to approve, reject, and audit regardless of the underlying operation type.
@@ -4034,6 +5852,90 @@ components:
         bankName: DBS Bank Ltd
         accountNumber: 0123456789
         swiftCode: DBSSSGSG
+    Card:
+      type: object
+      required:
+      - id
+      - cardholderId
+      - state
+      - form
+      - fundingSources
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique card identifier
+          readOnly: true
+          example: Card:019542f5-b3e7-1d02-0000-000000000010
+        cardholderId:
+          type: string
+          description: The id of the `Customer` who holds this card.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCardId:
+          type: string
+          description: Platform-specific card identifier. Optional on create — system-generated if omitted, mirroring `platformCustomerId` semantics.
+          example: card-emp-aary-001
+        state:
+          $ref: '#/components/schemas/CardState'
+        stateReason:
+          anyOf:
+          - $ref: '#/components/schemas/CardStateReason'
+          - type: 'null'
+          description: Reason associated with the current `state`. Populated when the card is `CLOSED` or when provisioning was rejected; otherwise null.
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        form:
+          $ref: '#/components/schemas/CardForm'
+        last4:
+          type: string
+          description: Last four digits of the card PAN.
+          example: '4242'
+        expMonth:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: Card expiration month (1–12).
+          example: 12
+        expYear:
+          type: integer
+          description: Card expiration year (four digits).
+          example: 2029
+        fundingSources:
+          type: array
+          description: Internal account ids bound to this card as funding sources, in priority order — the first entry is tried first by Authorization Decisioning. Every card has at least one funding source.
+          items:
+            type: string
+          example:
+          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+          - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
+        currency:
+          type: string
+          description: Currency the card transacts in (ISO 4217 for fiat, tickers for crypto). Derived from the funding sources at issue time — all funding sources bound to a card must be denominated in the same card-eligible currency.
+          example: USD
+          readOnly: true
+        processorRef:
+          type: string
+          description: Opaque processor-side reference for the card (e.g. the Lithic card token). Useful for cross-referencing in the processor's dashboards; not used for any Grid request routing.
+          example: card_b81c2a4f
+          readOnly: true
+        issuerRef:
+          type: string
+          description: Opaque identifier for the card on the issuer of record (e.g. the Lead Bank account/card identifier). Useful for cross-referencing in issuer dashboards; not used for any Grid request routing.
+          example: lead_card_7a1b9c3d
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2026-05-08T14:10:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2026-05-08T14:11:00Z'
     MwkAccountInfoBase:
       type: object
       required:
@@ -4061,24 +5963,27 @@ components:
         accountType: MWK_ACCOUNT
         phoneNumber: '+1234567890'
         provider: Example Provider
-    AgentAccountRule:
-      type: object
-      description: Per-account policy override that takes precedence over the agent's default policy for a specific account.
-      required:
-      - accountId
-      properties:
-        accountId:
-          type: string
-          description: The internal account ID this rule applies to.
-          example: Account:019542f5-b3e7-1d02-0000-000000000001
-        executionMode:
-          $ref: '#/components/schemas/AgentExecutionMode'
-        perTransactionLimit:
-          type:
-          - integer
-          - 'null'
-          description: Per-transaction limit override, in the smallest unit of the relevant currency. Null inherits from the agent's spending limits.
-          example: 10000
+    CardForm:
+      type: string
+      enum:
+      - VIRTUAL
+      description: 'Physical form factor of the card. Only `VIRTUAL` is supported in v1;
+
+        `PHYSICAL` will be added in a later release.
+
+        '
+    EntityType:
+      type: string
+      enum:
+      - SOLE_PROPRIETORSHIP
+      - PARTNERSHIP
+      - LLC
+      - CORPORATION
+      - S_CORPORATION
+      - NON_PROFIT
+      - OTHER
+      description: Legal entity type of the business
+      example: LLC
     CardSettlementSummary:
       type: object
       required:
@@ -4115,6 +6020,51 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    PaymentDkkAccountInfo:
+      title: DKK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/DkkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    SlvAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SlvAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    CustomerType:
+      type: string
+      enum:
+      - INDIVIDUAL
+      - BUSINESS
+      description: Whether the customer is an individual or a business entity
+      example: INDIVIDUAL
+    BeneficialOwnerRole:
+      type: string
+      enum:
+      - UBO
+      - DIRECTOR
+      - COMPANY_OFFICER
+      - CONTROL_PERSON
+      - TRUSTEE
+      - GENERAL_PARTNER
+      description: Role of the beneficial owner within the business
+      example: UBO
     CardMerchant:
       type: object
       required:
@@ -4132,33 +6082,6 @@ components:
           type: string
           description: Two-letter ISO 3166-1 alpha-2 country code of the merchant.
           example: US
-    SlvAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/SlvAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    PaymentDkkAccountInfo:
-      title: DKK Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/DkkAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
     Error400:
       type: object
       required:
@@ -4303,34 +6226,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    AgentSpendingLimitsUpdate:
-      type: object
-      description: Partial update to spending limits. Only provided fields will be updated; omitted fields retain their current values.
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 currency code that all amount limits are denominated in. Updating this recasts all existing limits into the new currency denomination.
-          example: USD
-        perTransactionLimit:
-          type: integer
-          description: Maximum amount per transaction.
-          example: 50000
-        dailyLimit:
-          type:
-          - integer
-          - 'null'
-          description: Maximum daily spend. Set to null to remove the daily limit.
-          example: 500000
-        dailyTransactionLimit:
-          type: integer
-          description: Maximum number of transactions per day.
-          example: 10
-        monthlyLimit:
-          type:
-          - integer
-          - 'null'
-          description: Maximum monthly spend. Set to null to remove the monthly limit.
-          example: 5000000
     PaymentPhpAccountInfo:
       title: PHP Account
       allOf:
@@ -4382,6 +6277,15 @@ components:
           type: string
           description: Tron wallet address
           example: TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL
+    CustomerOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/IndividualCustomer'
+      - $ref: '#/components/schemas/BusinessCustomer'
+      discriminator:
+        propertyName: customerType
+        mapping:
+          INDIVIDUAL: '#/components/schemas/IndividualCustomer'
+          BUSINESS: '#/components/schemas/BusinessCustomer'
     UsdAccountInfo:
       allOf:
       - $ref: '#/components/schemas/UsdAccountInfoBase'
@@ -4469,54 +6373,6 @@ components:
           description: The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.
           minimum: 0
           example: 30
-    AgentAccountRestrictions:
-      type: object
-      description: Optional restrictions that limit the agent to specific accounts or override policy per account.
-      properties:
-        allowedAccountIds:
-          type:
-          - array
-          - 'null'
-          description: If set, restricts the agent to operate only on the specified internal account IDs. Null means the agent can access all accounts.
-          items:
-            type: string
-            example: Account:019542f5-b3e7-1d02-0000-000000000001
-        accountRules:
-          type: array
-          description: Per-account rules that override the agent's default policy for specific accounts.
-          items:
-            $ref: '#/components/schemas/AgentAccountRule'
-    AgentSpendingLimits:
-      type: object
-      description: Spending limits that cap the agent's transaction amounts and frequency. All amount fields are integers in the smallest unit of the specified currency. When a transaction is denominated in a different currency, Grid converts using the exchange rate at evaluation time.
-      required:
-      - currency
-      - perTransactionLimit
-      properties:
-        currency:
-          type: string
-          description: ISO 4217 currency code that all amount limits are denominated in.
-          example: USD
-        perTransactionLimit:
-          type: integer
-          description: Maximum amount the agent can transfer in a single transaction.
-          example: 50000
-        dailyLimit:
-          type:
-          - integer
-          - 'null'
-          description: Maximum total amount the agent can transfer per day. Null means no daily limit.
-          example: 500000
-        dailyTransactionLimit:
-          type: integer
-          description: Maximum number of transactions the agent can initiate per day.
-          example: 10
-        monthlyLimit:
-          type:
-          - integer
-          - 'null'
-          description: Maximum total amount the agent can transfer per month. Null means no monthly limit.
-          example: 5000000
     CurrencyAmount:
       type: object
       required:
@@ -4616,6 +6472,32 @@ components:
           type: string
           description: Spark wallet address
           example: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+    CardState:
+      type: string
+      enum:
+      - PENDING_KYC
+      - PROCESSING
+      - ACTIVE
+      - FROZEN
+      - CLOSED
+      description: 'Lifecycle state of a card.
+
+
+        | State | Description |
+
+        |-------|-------------|
+
+        | `PENDING_KYC` | The cardholder has not yet completed KYC. Cards in this state cannot transact. |
+
+        | `PROCESSING` | The card has been requested and is being provisioned with the issuer. |
+
+        | `ACTIVE` | The card is live and can authorize transactions. |
+
+        | `FROZEN` | The card is temporarily disabled by the platform. New authorizations are declined with `CARD_PAUSED`. Existing settlements and refunds continue to reconcile. |
+
+        | `CLOSED` | The card is permanently closed. Terminal, irreversible state. |
+
+        '
     RwfAccountInfoBase:
       type: object
       required:
@@ -4746,6 +6628,18 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
+    SourceOfFundsCategory:
+      type: string
+      enum:
+      - OPERATING_REVENUE
+      - INVESTMENT_INCOME
+      - LOANS
+      - VENTURE_CAPITAL
+      - PERSONAL_SAVINGS
+      - DONATIONS
+      - OTHER
+      description: A structured source-of-funds category for the business
+      example: OPERATING_REVENUE
     HtgAccountInfo:
       allOf:
       - $ref: '#/components/schemas/HtgAccountInfoBase'
@@ -4830,75 +6724,6 @@ components:
         accountType: PHP_ACCOUNT
         bankName: BDO Unibank
         accountNumber: 001234567890
-    AgentUpdateRequest:
-      type: object
-      description: Partial update to an agent's basic fields. At least one field must be provided.
-      properties:
-        name:
-          type: string
-          description: Updated name for the agent.
-          example: Updated Payroll Agent
-        isPaused:
-          type: boolean
-          description: Set to true to pause the agent or false to resume it.
-          example: true
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Error401:
       type: object
       required:
@@ -5026,28 +6851,11 @@ components:
         accountType: TZS_ACCOUNT
         phoneNumber: '+255712345678'
         provider: Example Provider
-    AgentDeviceCodeRedeemResponse:
-      type: object
-      required:
-      - agentId
-      - agentName
-      - accessToken
-      - policy
-      properties:
-        agentId:
-          type: string
-          description: The agent's system-generated ID.
-          example: Agent:019542f5-b3e7-1d02-0000-000000000001
-        agentName:
-          type: string
-          description: The agent's name.
-          example: Payroll Automation Agent
-        accessToken:
-          type: string
-          description: 'Bearer token used to authenticate all subsequent API calls as this agent. Pass as `Authorization: Bearer <accessToken>`. This token is returned only once and must be stored securely — it cannot be retrieved again.'
-          example: gat_ed0ad25881e234cc28fb2dec0a4fe64e4172a3b9
-        policy:
-          $ref: '#/components/schemas/AgentPolicy'
+    IndividualCustomer:
+      title: Individual Customer
+      allOf:
+      - $ref: '#/components/schemas/Customer'
+      - $ref: '#/components/schemas/IndividualCustomerFields'
     CnyAccountInfoBase:
       type: object
       required:
@@ -5098,40 +6906,89 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    AgentPolicyUpdateRequest:
-      type: object
-      description: Partial update to an agent's policy. Only provided fields will be updated; omitted fields retain their current values.
-      properties:
-        permissions:
-          type: array
-          description: Updated list of permissions. Replaces the entire permissions list when provided.
-          items:
-            $ref: '#/components/schemas/AgentPermission'
-        defaultExecutionMode:
-          $ref: '#/components/schemas/AgentExecutionMode'
-        spendingLimits:
-          $ref: '#/components/schemas/AgentSpendingLimitsUpdate'
-        accountRestrictions:
-          $ref: '#/components/schemas/AgentAccountRestrictions'
-        approvalThresholds:
-          $ref: '#/components/schemas/AgentApprovalThresholds'
-    AgentCreateRequest:
+    CustomerInfoFieldName:
+      type: string
+      enum:
+      - FULL_NAME
+      - BIRTH_DATE
+      - NATIONALITY
+      - PHONE_NUMBER
+      - EMAIL
+      - POSTAL_ADDRESS
+      - TAX_ID
+      - REGISTRATION_NUMBER
+      - USER_TYPE
+      - COUNTRY_OF_RESIDENCE
+      - ACCOUNT_IDENTIFIER
+      - FI_LEGAL_ENTITY_NAME
+      - FI_ADDRESS
+      - PURPOSE_OF_PAYMENT
+      - ULTIMATE_INSTITUTION_COUNTRY
+      - IDENTIFIER
+      - BUSINESS_TYPE
+      - COMPANY_LEGAL_NAME
+      - ID_TYPE
+      - ID_NUMBER
+      description: Name of a type of field containing info about a platform's customer or counterparty customer.
+      example: FULL_NAME
+    UmaInvitation:
       type: object
       required:
-      - name
-      - customerId
-      - policy
+      - code
+      - createdAt
+      - inviterUma
+      - status
+      - url
       properties:
-        name:
+        code:
           type: string
-          description: Human-readable name to identify the agent.
-          example: Payroll Automation Agent
-        customerId:
+          description: The unique code of the invitation
+          example: 019542f5
+        createdAt:
           type: string
-          description: The ID of the customer this agent will operate on behalf of.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        policy:
-          $ref: '#/components/schemas/AgentPolicy'
+          format: date-time
+          description: When the invitation was created
+          example: '2025-09-01T14:30:00Z'
+        claimedAt:
+          type: string
+          format: date-time
+          description: When the invitation was claimed if it has been claimed
+          example: '2025-09-01T14:30:00Z'
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: https://uma.me/i/019542f5
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
+        inviterUma:
+          type: string
+          description: The UMA address of the inviter
+          example: $inviter@uma.domain
+        inviteeUma:
+          type: string
+          description: The UMA address of the invitee
+          example: $invitee@uma.domain
+        status:
+          type: string
+          enum:
+          - PENDING
+          - CLAIMED
+          - EXPIRED
+          - CANCELLED
+          description: The status of the invitation
+          example: PENDING
+        firstName:
+          type: string
+          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
+          example: Jane
+        amountToSend:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
+
+            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
     PaymentSolanaWalletInfo:
       title: Solana Wallet
       allOf:
@@ -5145,6 +7002,55 @@ components:
             enum:
             - USDC
             - USDT
+    InternalAccount:
+      type: object
+      required:
+      - id
+      - type
+      - status
+      - balance
+      - totalBalance
+      - fundingPaymentInstructions
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: The ID of the internal account
+          example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        customerId:
+          type: string
+          description: The ID of the customer associated with the internal account. If this field is empty, the internal account belongs to the platform.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        type:
+          $ref: '#/components/schemas/InternalAccountType'
+        status:
+          $ref: '#/components/schemas/InternalAccountStatus'
+        balance:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: The balance available to spend, excluding pending and held funds
+        totalBalance:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: The total balance, including pending and held funds
+        fundingPaymentInstructions:
+          type: array
+          description: Payment instructions for funding the account
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+        privateEnabled:
+          type: boolean
+          description: Whether wallet privacy is enabled for the Embedded Wallet. Only present for `EMBEDDED_WALLET` internal accounts.
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was created
+          example: '2025-10-03T12:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was last updated
+          example: '2025-10-03T12:30:00Z'
     GtqAccountInfoBase:
       type: object
       required:
@@ -5271,6 +7177,19 @@ components:
         accountType: ZMW_ACCOUNT
         phoneNumber: '+260971234567'
         provider: Example Provider
+    AgentActionWebhook:
+      allOf:
+      - $ref: '#/components/schemas/BaseWebhook'
+      - type: object
+        required:
+        - data
+        properties:
+          data:
+            $ref: '#/components/schemas/AgentAction'
+          type:
+            type: string
+            enum:
+            - AGENT_ACTION.PENDING_APPROVAL
     TransactionDestinationOneOf:
       oneOf:
       - $ref: '#/components/schemas/AccountTransactionDestination'

@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Documents API
+  title: Grid Documents API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -262,24 +262,58 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    Document:
+    DocumentType:
+      type: string
+      enum:
+      - PASSPORT
+      - DRIVERS_LICENSE
+      - NATIONAL_ID
+      - PROOF_OF_ADDRESS
+      - BANK_STATEMENT
+      - TAX_RETURN
+      - CERTIFICATE_OF_INCORPORATION
+      - ARTICLES_OF_INCORPORATION
+      - ARTICLES_OF_ASSOCIATION
+      - STATE_REGISTRY_EXCERPT
+      - GOOD_STANDING_CERTIFICATE
+      - INFORMATION_STATEMENT
+      - INCUMBENCY_CERTIFICATE
+      - BUSINESS_LICENSE
+      - SHAREHOLDER_REGISTER
+      - POWER_OF_ATTORNEY
+      - UTILITY_BILL
+      - ELECTRICITY_BILL
+      - RENT_OR_LEASE_AGREEMENT
+      - DIRECTOR_REGISTRY
+      - TRUST_AGREEMENT
+      - STATE_COMPANY_REGISTRY
+      - PARTNERSHIP_CONTROL_AGREEMENT
+      - PARTNERSHIP_AGREEMENT
+      - SELFIE
+      - OTHER
+      description: 'Type of identity or business verification document. Document types are grouped by verification category:
+
+        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
+
+        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
+
+        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
+
+        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
+
+        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
+      example: PASSPORT
+    BaseDocumentRequest:
       type: object
       required:
-      - id
-      - documentHolder
+      - file
       - documentType
       - country
-      - fileName
-      - createdAt
       properties:
-        id:
+        file:
           type: string
-          description: Unique identifier for this document
-          example: Document:019542f5-b3e7-1d02-0000-000000000001
-        documentHolder:
-          type: string
-          description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
-          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+          format: binary
+          description: The document file (PDF, JPEG, or PNG, max 10 MB)
         documentType:
           $ref: '#/components/schemas/DocumentType'
         side:
@@ -287,7 +321,7 @@ components:
           enum:
           - FRONT
           - BACK
-          description: Which side of the document this upload represents. Relevant for two-sided documents like driver's licenses or national IDs.
+          description: Which side of the document (for two-sided documents like driver's licenses)
           example: FRONT
         country:
           type: string
@@ -301,44 +335,6 @@ components:
           type: string
           description: Name of the government agency or organization that issued the document
           example: U.S. Department of State
-        fileName:
-          type: string
-          description: Original file name of the uploaded document
-          example: passport_scan.pdf
-        createdAt:
-          type: string
-          format: date-time
-          description: When this document was uploaded
-          example: '2025-10-03T12:00:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: When this document was last updated
-          example: '2025-10-03T12:00:00Z'
-    DocumentReplaceRequest:
-      title: Document Replace Request
-      allOf:
-      - $ref: '#/components/schemas/BaseDocumentRequest'
-    DocumentListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of documents matching the filter criteria
-          items:
-            $ref: '#/components/schemas/Document'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of results matching the criteria
     DocumentUploadRequest:
       title: Document Upload Request
       allOf:
@@ -495,136 +491,48 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error409:
+    DocumentReplaceRequest:
+      title: Document Replace Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
+    DocumentListResponse:
       type: object
       required:
-      - message
-      - status
-      - code
+      - data
+      - hasMore
       properties:
-        status:
+        data:
+          type: array
+          description: List of documents matching the filter criteria
+          items:
+            $ref: '#/components/schemas/Document'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
           type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error500:
+          description: Total number of results matching the criteria
+    Document:
       type: object
       required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    DocumentType:
-      type: string
-      enum:
-      - PASSPORT
-      - DRIVERS_LICENSE
-      - NATIONAL_ID
-      - PROOF_OF_ADDRESS
-      - BANK_STATEMENT
-      - TAX_RETURN
-      - CERTIFICATE_OF_INCORPORATION
-      - ARTICLES_OF_INCORPORATION
-      - ARTICLES_OF_ASSOCIATION
-      - STATE_REGISTRY_EXCERPT
-      - GOOD_STANDING_CERTIFICATE
-      - INFORMATION_STATEMENT
-      - INCUMBENCY_CERTIFICATE
-      - BUSINESS_LICENSE
-      - SHAREHOLDER_REGISTER
-      - POWER_OF_ATTORNEY
-      - UTILITY_BILL
-      - ELECTRICITY_BILL
-      - RENT_OR_LEASE_AGREEMENT
-      - DIRECTOR_REGISTRY
-      - TRUST_AGREEMENT
-      - STATE_COMPANY_REGISTRY
-      - PARTNERSHIP_CONTROL_AGREEMENT
-      - PARTNERSHIP_AGREEMENT
-      - SELFIE
-      - OTHER
-      description: 'Type of identity or business verification document. Document types are grouped by verification category:
-
-        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
-
-        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
-
-        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
-
-        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
-
-        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
-      example: PASSPORT
-    BaseDocumentRequest:
-      type: object
-      required:
-      - file
+      - id
+      - documentHolder
       - documentType
       - country
+      - fileName
+      - createdAt
       properties:
-        file:
+        id:
           type: string
-          format: binary
-          description: The document file (PDF, JPEG, or PNG, max 10 MB)
+          description: Unique identifier for this document
+          example: Document:019542f5-b3e7-1d02-0000-000000000001
+        documentHolder:
+          type: string
+          description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
         documentType:
           $ref: '#/components/schemas/DocumentType'
         side:
@@ -632,7 +540,7 @@ components:
           enum:
           - FRONT
           - BACK
-          description: Which side of the document (for two-sided documents like driver's licenses)
+          description: Which side of the document this upload represents. Relevant for two-sided documents like driver's licenses or national IDs.
           example: FRONT
         country:
           type: string
@@ -646,54 +554,20 @@ components:
           type: string
           description: Name of the government agency or organization that issued the document
           example: U.S. Department of State
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
+        fileName:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
+          description: Original file name of the uploaded document
+          example: passport_scan.pdf
+        createdAt:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          format: date-time
+          description: When this document was uploaded
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this document was last updated
+          example: '2025-10-03T12:00:00Z'
     Error404:
       type: object
       required:
@@ -751,19 +625,145 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
   requestBodies:
-    DocumentReplaceRequestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            $ref: '#/components/schemas/DocumentReplaceRequest'
     DocumentUploadRequestBody:
       required: true
       content:
         multipart/form-data:
           schema:
             $ref: '#/components/schemas/DocumentUploadRequest'
+    DocumentReplaceRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentReplaceRequest'
   securitySchemes:
     BasicAuth:
       type: http

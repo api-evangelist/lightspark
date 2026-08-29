@@ -1,6 +1,6 @@
-openapi: 3.1.0
+openapi: 3.2.0
 info:
-  title: Grid Agent Management Exchange Rates API
+  title: Grid Exchange Rates API
   description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
 
     '
@@ -145,16 +145,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    ExchangeRateListResponse:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          description: List of exchange rates matching the filter criteria
-          items:
-            $ref: '#/components/schemas/ExchangeRate'
     Currency:
       type: object
       properties:
@@ -175,6 +165,22 @@ components:
           description: Number of decimal places for the currency
           minimum: 0
           example: 2
+    ExchangeRateFees:
+      type: object
+      description: Fees associated with an exchange rate
+      properties:
+        fixed:
+          type: integer
+          format: int64
+          description: Fixed fee in the smallest unit of the sending currency (e.g., cents for USD)
+          minimum: 0
+          example: 100
+        total:
+          type: integer
+          format: int64
+          description: Total fees in the smallest unit of the sending currency (e.g., cents for USD). This value may change depending on the sending amount used; if no sending amount is specified, it falls back to the default.
+          minimum: 0
+          example: 100
     Error400:
       type: object
       required:
@@ -319,22 +325,49 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    ExchangeRateFees:
+    Error500:
       type: object
-      description: Fees associated with an exchange rate
+      required:
+      - message
+      - status
+      - code
       properties:
-        fixed:
+        status:
           type: integer
-          format: int64
-          description: Fixed fee in the smallest unit of the sending currency (e.g., cents for USD)
-          minimum: 0
-          example: 100
-        total:
-          type: integer
-          format: int64
-          description: Total fees in the smallest unit of the sending currency (e.g., cents for USD). This value may change depending on the sending amount used; if no sending amount is specified, it falls back to the default.
-          minimum: 0
-          example: 100
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ExchangeRateListResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          description: List of exchange rates matching the filter criteria
+          items:
+            $ref: '#/components/schemas/ExchangeRate'
     PaymentRail:
       type: string
       enum:
@@ -363,7 +396,7 @@ components:
       - WIRE
       description: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
       example: ACH
-    Error500:
+    Error401:
       type: object
       required:
       - message
@@ -373,7 +406,7 @@ components:
         status:
           type: integer
           enum:
-          - 500
+          - 401
           description: HTTP status code
         code:
           type: string
@@ -381,14 +414,29 @@ components:
 
             |------------|-------------|
 
-            | GRID_SWITCH_ERROR | Grid switch error |
+            | UNAUTHORIZED | Issue with API credentials |
 
-            | INTERNAL_ERROR | Internal server or UMA error |
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
 
             '
           enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
         message:
           type: string
           description: Error message
@@ -456,54 +504,6 @@ components:
           format: date-time
           description: Timestamp when this exchange rate was last refreshed
           example: '2025-02-05T12:00:00Z'
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
   securitySchemes:
     BasicAuth:
       type: http
