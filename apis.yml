@@ -9,6 +9,20 @@ description: >-
   and human-in-the-loop approvals, a hosted MCP server, a published Claude agent skill, an
   open-source CLI, and generated TypeScript and Kotlin SDKs. Lightspark also operates the Spark and
   UMA protocol stacks and is backed by a16z, Matrix Partners, Paradigm and Ribbit Capital.
+deliveryModel:
+  model: open-core
+  license: Apache-2.0
+  open_source: true
+  commercial: true
+  callable_host: true
+  label: Open core · an OSS project plus a commercial hosted product
+  confidence: high
+  source:
+  - license
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: unknown
   onboarding: self-serve
