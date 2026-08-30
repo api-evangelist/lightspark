@@ -554,6 +554,8 @@ apis:
   humanURL: https://docs.lightspark.com/
   baseURL: https://api.lightspark.com/grid/2025-10-13
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
