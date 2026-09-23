@@ -1,9 +1,7 @@
 openapi: 3.2.0
 info:
   title: Grid Available UMA Providers API
-  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
-
-    '
+  description: API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
   version: '2025-10-13'
   contact:
     name: Lightspark Support
@@ -23,9 +21,7 @@ paths:
   /uma-providers:
     get:
       summary: List available Counterparty Providers
-      description: 'Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
-
-        '
+      description: Retrieve a list of available Counterparty Providers. The response includes basic information about each provider, such as its UMA address, name, and supported currencies.
       operationId: getAvailableUmaProviders
       tags:
       - Available UMA Providers
@@ -98,59 +94,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Error401:
       type: object
       required:
@@ -199,6 +142,43 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    UmaProviderListResponse:
+      type: object
+      properties:
+        data:
+          description: List of available UMA Providers using Grid
+          type: array
+          items:
+            $ref: '#/components/schemas/UmaProvider'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of transactions matching the criteria (excluding pagination)
     UmaProvider:
       type: object
       properties:
@@ -240,23 +220,39 @@ components:
           type: boolean
           description: Whether this UMA Provider is on your allow list
           example: true
-    UmaProviderListResponse:
+    Error500:
       type: object
+      required:
+      - message
+      - status
+      - code
       properties:
-        data:
-          description: List of available UMA Providers using Grid
-          type: array
-          items:
-            $ref: '#/components/schemas/UmaProvider'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
+        status:
           type: integer
-          description: Total number of transactions matching the criteria (excluding pagination)
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
   securitySchemes:
     BasicAuth:
       type: http

@@ -34,7 +34,8 @@
   "notes": [
     "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
     "lightspark-grid-openapi-original.yml: upgraded openapi 3.1.0 -> OpenAPI 3.2.0",
-    "lightspark-grid-openapi-original.yml: declared missing tag: Available UMA Providers"
+    "lightspark-grid-openapi-original.yml: declared missing tag: Available UMA Providers",
+    "apis.yml register: already-registered"
   ],
   "skipped": [
     "lightspark-agent-management-api-openapi.yml: previously refined output, superseded by openapi/_original/",
@@ -58,6 +59,7 @@
     "lightspark-sandbox-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "lightspark-stablecoins-api-openapi.yml: previously refined output, superseded by openapi/_original/",
     "lightspark-strong-customer-authentication-api-openapi.yml: previously refined output, superseded by openapi/_original/",
-    "lightspark-transactions-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+    "lightspark-transactions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "lightspark-webhooks-api-openapi.yml: previously refined output, superseded by openapi/_original/"
   ]
 }

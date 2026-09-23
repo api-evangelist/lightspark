@@ -1,9 +1,7 @@
 openapi: 3.2.0
 info:
   title: Grid Discoveries API
-  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
-
-    '
+  description: API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
   version: '2025-10-13'
   contact:
     name: Lightspark Support
@@ -33,9 +31,7 @@ paths:
 
         The `bankName` field in each result is the value to pass as `bankName` when
 
-        creating an external account via `POST /customers/external-accounts`.
-
-        '
+        creating an external account via `POST /customers/external-accounts`.'
       operationId: getDiscoveries
       tags:
       - Discoveries
@@ -144,6 +140,34 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    DiscoveryListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: List of payment rails matching the filter criteria
+          items:
+            type: object
+            required:
+            - bankName
+            - displayName
+            - country
+            - currency
+            properties:
+              bankName:
+                type: string
+                description: 'Canonical name for this payment rail. Pass this value as `bankName` when creating an external account.
+
+                  '
+              displayName:
+                type: string
+                description: Human-friendly display name for this payment rail.
+              country:
+                type: string
+                description: ISO 3166-1 alpha-2 country code.
+              currency:
+                type: string
+                description: ISO 4217 currency code.
     Error500:
       type: object
       required:
@@ -321,34 +345,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    DiscoveryListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          description: List of payment rails matching the filter criteria
-          items:
-            type: object
-            required:
-            - bankName
-            - displayName
-            - country
-            - currency
-            properties:
-              bankName:
-                type: string
-                description: 'Canonical name for this payment rail. Pass this value as `bankName` when creating an external account.
-
-                  '
-              displayName:
-                type: string
-                description: Human-friendly display name for this payment rail.
-              country:
-                type: string
-                description: ISO 3166-1 alpha-2 country code.
-              currency:
-                type: string
-                description: ISO 4217 currency code.
   securitySchemes:
     BasicAuth:
       type: http

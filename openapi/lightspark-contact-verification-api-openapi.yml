@@ -1,9 +1,7 @@
 openapi: 3.2.0
 info:
   title: Grid Contact Verification API
-  description: 'API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
-
-    '
+  description: API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
   version: '2025-10-13'
   contact:
     name: Lightspark Support
@@ -50,9 +48,7 @@ paths:
         code to complete verification. Re-POST this endpoint to resend the code.
 
 
-        In sandbox, no email is sent and the code is always `123456`.
-
-        '
+        In sandbox, no email is sent and the code is always `123456`.'
       operationId: sendCustomerEmailVerification
       tags:
       - Contact Verification
@@ -103,9 +99,7 @@ paths:
         Both email and phone must be `VERIFIED` before the customer can begin KYC.
 
 
-        In sandbox, the code is always `123456`.
-
-        '
+        In sandbox, the code is always `123456`.'
       operationId: confirmCustomerEmailVerification
       tags:
       - Contact Verification
@@ -183,9 +177,7 @@ paths:
         code to complete verification. Re-POST this endpoint to resend the code.
 
 
-        In sandbox, no SMS is sent and the code is always `123456`.
-
-        '
+        In sandbox, no SMS is sent and the code is always `123456`.'
       operationId: sendCustomerPhoneVerification
       tags:
       - Contact Verification
@@ -236,9 +228,7 @@ paths:
         Both email and phone must be `VERIFIED` before the customer can begin KYC.
 
 
-        In sandbox, the code is always `123456`.
-
-        '
+        In sandbox, the code is always `123456`.'
       operationId: confirmCustomerPhoneVerification
       tags:
       - Contact Verification
@@ -289,6 +279,54 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     ContactVerificationConfirmRequest:
       type: object
       description: Request body for confirming an email or phone verification challenge.
@@ -299,6 +337,234 @@ components:
           type: string
           description: The one-time verification code the customer received via email or SMS. In sandbox, the code is always `123456`.
           example: '123456'
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ContactVerification:
+      type: object
+      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
+
+
+        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
+      properties:
+        email:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's email address. Present only when the provider requires email verification.
+        phone:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
+    Customer:
+      type: object
+      required:
+      - umaAddress
+      - platformCustomerId
+      - customerType
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          readOnly: true
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCustomerId:
+          type: string
+          description: Platform-specific customer identifier
+          example: 9f84e0c2a72c4fa
+        customerType:
+          $ref: '#/components/schemas/CustomerType'
+        region:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2) representing the customer's regional identity and regulatory jurisdiction.
+          example: US
+        currencies:
+          type: array
+          items:
+            type: string
+          description: List of currency codes enabled for this customer.
+          example:
+          - USD
+          - USDC
+        email:
+          type: string
+          format: email
+          description: Email address for the customer.
+          example: john.doe@example.com
+        phoneNumber:
+          type: string
+          pattern: ^\+[1-9]\d{1,14}$
+          description: Phone number for the customer in strict E.164 format.
+          example: '+14155551234'
+        umaAddress:
+          type: string
+          description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
+          example: $john.doe@uma.domain.com
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          readOnly: true
+          example: '2025-07-21T17:32:28Z'
+        isDeleted:
+          type: boolean
+          description: Whether the customer is marked as deleted
+          example: false
+          readOnly: true
+        contactVerification:
+          allOf:
+          - $ref: '#/components/schemas/ContactVerification'
+          readOnly: true
+          description: Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.
+    CustomerType:
+      type: string
+      enum:
+      - INDIVIDUAL
+      - BUSINESS
+      description: Whether the customer is an individual or a business entity
+      example: INDIVIDUAL
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ContactVerificationStatus:
+      type: string
+      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
+      enum:
+      - PENDING
+      - VERIFIED
+      example: VERIFIED
     Error400:
       type: object
       required:
@@ -443,282 +709,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CustomerType:
-      type: string
-      enum:
-      - INDIVIDUAL
-      - BUSINESS
-      description: Whether the customer is an individual or a business entity
-      example: INDIVIDUAL
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    ContactVerification:
-      type: object
-      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
-
-
-        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
-      properties:
-        email:
-          $ref: '#/components/schemas/ContactVerificationStatus'
-          description: Verification status of the customer's email address. Present only when the provider requires email verification.
-        phone:
-          $ref: '#/components/schemas/ContactVerificationStatus'
-          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    ContactVerificationStatus:
-      type: string
-      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
-      enum:
-      - PENDING
-      - VERIFIED
-      example: VERIFIED
-    Customer:
-      type: object
-      required:
-      - umaAddress
-      - platformCustomerId
-      - customerType
-      properties:
-        id:
-          type: string
-          description: System-generated unique identifier
-          readOnly: true
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        platformCustomerId:
-          type: string
-          description: Platform-specific customer identifier
-          example: 9f84e0c2a72c4fa
-        customerType:
-          $ref: '#/components/schemas/CustomerType'
-        region:
-          type: string
-          description: Country code (ISO 3166-1 alpha-2) representing the customer's regional identity and regulatory jurisdiction.
-          example: US
-        currencies:
-          type: array
-          items:
-            type: string
-          description: List of currency codes enabled for this customer.
-          example:
-          - USD
-          - USDC
-        email:
-          type: string
-          format: email
-          description: Email address for the customer.
-          example: john.doe@example.com
-        phoneNumber:
-          type: string
-          pattern: ^\+[1-9]\d{1,14}$
-          description: Phone number for the customer in strict E.164 format.
-          example: '+14155551234'
-        umaAddress:
-          type: string
-          description: Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer.
-          example: $john.doe@uma.domain.com
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2025-07-21T17:32:28Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2025-07-21T17:32:28Z'
-        isDeleted:
-          type: boolean
-          description: Whether the customer is marked as deleted
-          example: false
-          readOnly: true
-        contactVerification:
-          allOf:
-          - $ref: '#/components/schemas/ContactVerification'
-          readOnly: true
-          description: Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.
   securitySchemes:
     BasicAuth:
       type: http
