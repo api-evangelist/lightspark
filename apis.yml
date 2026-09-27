@@ -62,7 +62,7 @@ tags:
 - Agentic Payments
 - Cards
 - KYC
-- Financial-Services
+- Financial Services
 - Foreign Exchange
 tags_raw:
 - Company
@@ -77,6 +77,7 @@ tags_raw:
 - KYC
 - Financial Services
 - Foreign Exchange
+- Financial-Services
 apis:
 - aid: lightspark:lightspark-agent-management-api
   name: Lightspark Agent Management API

@@ -175,67 +175,11 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    StablecoinProviderAccountStatus:
+    StablecoinProvider:
       type: string
       enum:
-      - ACTIVE
-      - INVALID
-      - REVOKED
-      description: Status of the linked stablecoin provider account credentials.
-    StablecoinProviderEnvironment:
-      type: string
-      enum:
-      - SANDBOX
-      - PRODUCTION
-      description: Provider environment derived from the authenticated Grid platform mode.
+      - BRALE
+      description: Stablecoin provider backing the linked account, stablecoin, or operation.
     Error404:
       type: object
       required:
@@ -293,6 +237,19 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    StablecoinProviderAccountStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INVALID
+      - REVOKED
+      description: Status of the linked stablecoin provider account credentials.
+    StablecoinProviderEnvironment:
+      type: string
+      enum:
+      - SANDBOX
+      - PRODUCTION
+      description: Provider environment derived from the authenticated Grid platform mode.
     StablecoinProviderAccountListResponse:
       type: object
       required:
@@ -312,46 +269,6 @@ components:
         totalCount:
           type: integer
           description: Total number of stablecoin provider account links matching the criteria.
-    StablecoinProviderAccount:
-      type: object
-      required:
-      - id
-      - provider
-      - providerAccountId
-      - providerEnvironment
-      - status
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          description: System-generated stablecoin provider account link identifier.
-          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
-        provider:
-          $ref: '#/components/schemas/StablecoinProvider'
-        providerAccountId:
-          type: string
-          description: Provider account id.
-          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-        providerEnvironment:
-          $ref: '#/components/schemas/StablecoinProviderEnvironment'
-        status:
-          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
-        lastVerifiedAt:
-          type: string
-          format: date-time
-          description: Timestamp of the last successful provider credential verification.
-          example: '2026-05-20T16:35:00Z'
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp.
-          example: '2026-05-20T16:35:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp.
-          example: '2026-05-20T16:35:00Z'
     Error500:
       type: object
       required:
@@ -385,78 +302,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    StablecoinProviderAccountLinkRequest:
-      type: object
-      required:
-      - provider
-      - apiClientId
-      - apiClientSecret
-      properties:
-        provider:
-          $ref: '#/components/schemas/StablecoinProvider'
-        apiClientId:
-          type: string
-          description: Provider API client id used to verify and link the provider account.
-          example: provider_client_123
-        apiClientSecret:
-          type: string
-          writeOnly: true
-          description: Provider API client secret. Grid verifies and stores this secret encrypted; it is never returned.
-          example: provider_secret_456
-        providerAccountId:
-          type: string
-          description: Provider account id. Optional when the submitted credentials expose exactly one provider account.
-          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-    StablecoinProvider:
-      type: string
-      enum:
-      - BRALE
-      description: Stablecoin provider backing the linked account, stablecoin, or operation.
     Error400:
       type: object
       required:
@@ -601,6 +446,161 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    StablecoinProviderAccount:
+      type: object
+      required:
+      - id
+      - provider
+      - providerAccountId
+      - providerEnvironment
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated stablecoin provider account link identifier.
+          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
+        provider:
+          $ref: '#/components/schemas/StablecoinProvider'
+        providerAccountId:
+          type: string
+          description: Provider account id.
+          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
+        providerEnvironment:
+          $ref: '#/components/schemas/StablecoinProviderEnvironment'
+        status:
+          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
+        lastVerifiedAt:
+          type: string
+          format: date-time
+          description: Timestamp of the last successful provider credential verification.
+          example: '2026-05-20T16:35:00Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp.
+          example: '2026-05-20T16:35:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+          example: '2026-05-20T16:35:00Z'
+    StablecoinProviderAccountLinkRequest:
+      type: object
+      required:
+      - provider
+      - apiClientId
+      - apiClientSecret
+      properties:
+        provider:
+          $ref: '#/components/schemas/StablecoinProvider'
+        apiClientId:
+          type: string
+          description: Provider API client id used to verify and link the provider account.
+          example: provider_client_123
+        apiClientSecret:
+          type: string
+          writeOnly: true
+          description: Provider API client secret. Grid verifies and stores this secret encrypted; it is never returned.
+          example: provider_secret_456
+        providerAccountId:
+          type: string
+          description: Provider account id. Optional when the submitted credentials expose exactly one provider account.
+          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
   securitySchemes:
     BasicAuth:
       type: http

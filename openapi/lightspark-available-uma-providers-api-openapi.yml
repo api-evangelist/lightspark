@@ -94,6 +94,64 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    UmaProvider:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the UMA Provider
+          example: Lightspark Group
+        supportedRegions:
+          type: array
+          items:
+            type: string
+          description: Region(s) this UMA Provider operates in
+          example:
+          - US
+        domain:
+          type: string
+          description: Domain this VASP uses for UMA addresses
+          example: uma.me
+        logoUrl:
+          type: string
+          description: Logo URL for the VASP
+          format: uri
+          example: https://uma.me/logo.png
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Currency'
+          description: List of currencies supported by this UMA Provider
+          example:
+          - code: USD
+            name: United States Dollar
+            symbol: $
+            decimals: 2
+        lei:
+          type: string
+          description: Legal Entity Identifier for the UMA Provider
+          example: 5493001KJTIIGC8Y1R12
+        allowListStatus:
+          type: boolean
+          description: Whether this UMA Provider is on your allow list
+          example: true
+    UmaProviderListResponse:
+      type: object
+      properties:
+        data:
+          description: List of available UMA Providers using Grid
+          type: array
+          items:
+            $ref: '#/components/schemas/UmaProvider'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of transactions matching the criteria (excluding pagination)
     Error401:
       type: object
       required:
@@ -142,84 +200,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
-    UmaProviderListResponse:
-      type: object
-      properties:
-        data:
-          description: List of available UMA Providers using Grid
-          type: array
-          items:
-            $ref: '#/components/schemas/UmaProvider'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of transactions matching the criteria (excluding pagination)
-    UmaProvider:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the UMA Provider
-          example: Lightspark Group
-        supportedRegions:
-          type: array
-          items:
-            type: string
-          description: Region(s) this UMA Provider operates in
-          example:
-          - US
-        domain:
-          type: string
-          description: Domain this VASP uses for UMA addresses
-          example: uma.me
-        logoUrl:
-          type: string
-          description: Logo URL for the VASP
-          format: uri
-          example: https://uma.me/logo.png
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/Currency'
-          description: List of currencies supported by this UMA Provider
-          example:
-          - code: USD
-            name: United States Dollar
-            symbol: $
-            decimals: 2
-        lei:
-          type: string
-          description: Legal Entity Identifier for the UMA Provider
-          example: 5493001KJTIIGC8Y1R12
-        allowListStatus:
-          type: boolean
-          description: Whether this UMA Provider is on your allow list
-          example: true
     Error500:
       type: object
       required:
@@ -253,6 +233,26 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
   securitySchemes:
     BasicAuth:
       type: http
