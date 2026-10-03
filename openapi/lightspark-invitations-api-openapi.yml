@@ -234,154 +234,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    UmaInvitation:
-      type: object
-      required:
-      - code
-      - createdAt
-      - inviterUma
-      - status
-      - url
-      properties:
-        code:
-          type: string
-          description: The unique code of the invitation
-          example: 019542f5
-        createdAt:
-          type: string
-          format: date-time
-          description: When the invitation was created
-          example: '2025-09-01T14:30:00Z'
-        claimedAt:
-          type: string
-          format: date-time
-          description: When the invitation was claimed if it has been claimed
-          example: '2025-09-01T14:30:00Z'
-        url:
-          type: string
-          description: The URL where this invitation can be claimed.
-          example: https://uma.me/i/019542f5
-        expiresAt:
-          type: string
-          format: date-time
-          description: When the invitation expires (if at all)
-          example: '2025-09-01T14:30:00Z'
-        inviterUma:
-          type: string
-          description: The UMA address of the inviter
-          example: $inviter@uma.domain
-        inviteeUma:
-          type: string
-          description: The UMA address of the invitee
-          example: $invitee@uma.domain
-        status:
-          type: string
-          enum:
-          - PENDING
-          - CLAIMED
-          - EXPIRED
-          - CANCELLED
-          description: The status of the invitation
-          example: PENDING
-        firstName:
-          type: string
-          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
-          example: Jane
-        amountToSend:
-          $ref: '#/components/schemas/CurrencyAmount'
-          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
-
-            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    UmaInvitationCreateRequest:
-      type: object
-      required:
-      - inviterUma
-      properties:
-        inviterUma:
-          type: string
-          description: The UMA address of the customer creating the invitation
-          example: $inviter@uma.domain
-        firstName:
-          type: string
-          description: First name of the invitee to show as part of the invite
-          example: Alice
-        amountToSend:
-          description: 'An amount to send (in the smallest unit of the customer''s currency) to the invitee when the invitation is claimed.
-
-            This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
-
-            the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
-
-            platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
-
-            field is primarily used for display purposes on the claiming side of the invitation.
-
-            '
-          type: integer
-          format: int64
-          example: 12550
-        expiresAt:
-          type: string
-          format: date-time
-          description: When the invitation expires (if at all)
-          example: '2025-09-01T14:30:00Z'
     UmaInvitationClaimRequest:
       type: object
       required:
@@ -391,6 +243,78 @@ components:
           type: string
           description: The UMA address of the customer claiming the invitation
           example: $invitee@uma.domain
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error403:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 403
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Error400:
       type: object
       required:
@@ -535,6 +459,64 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    UmaInvitation:
+      type: object
+      required:
+      - code
+      - createdAt
+      - inviterUma
+      - status
+      - url
+      properties:
+        code:
+          type: string
+          description: The unique code of the invitation
+          example: 019542f5
+        createdAt:
+          type: string
+          format: date-time
+          description: When the invitation was created
+          example: '2025-09-01T14:30:00Z'
+        claimedAt:
+          type: string
+          format: date-time
+          description: When the invitation was claimed if it has been claimed
+          example: '2025-09-01T14:30:00Z'
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: https://uma.me/i/019542f5
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
+        inviterUma:
+          type: string
+          description: The UMA address of the inviter
+          example: $inviter@uma.domain
+        inviteeUma:
+          type: string
+          description: The UMA address of the invitee
+          example: $invitee@uma.domain
+        status:
+          type: string
+          enum:
+          - PENDING
+          - CLAIMED
+          - EXPIRED
+          - CANCELLED
+          description: The status of the invitation
+          example: PENDING
+        firstName:
+          type: string
+          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
+          example: Jane
+        amountToSend:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
+
+            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
     Error401:
       type: object
       required:
@@ -596,39 +578,6 @@ components:
           example: 12550
         currency:
           $ref: '#/components/schemas/Currency'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Currency:
       type: object
       properties:
@@ -649,7 +598,7 @@ components:
           description: Number of decimal places for the currency
           minimum: 0
           example: 2
-    Error403:
+    Error404:
       type: object
       required:
       - message
@@ -659,7 +608,7 @@ components:
         status:
           type: integer
           enum:
-          - 403
+          - 404
           description: HTTP status code
         code:
           type: string
@@ -667,20 +616,38 @@ components:
 
             |------------|-------------|
 
-            | FORBIDDEN | Insufficient permissions |
+            | TRANSACTION_NOT_FOUND | Transaction not found |
 
-            | USER_NOT_READY | Customer exists but is not ready for operation |
+            | INVITATION_NOT_FOUND | Invitation not found |
 
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+            | USER_NOT_FOUND | Customer not found |
 
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
 
             '
           enum:
-          - FORBIDDEN
-          - USER_NOT_READY
-          - COUNTERPARTY_NOT_ALLOWED
-          - VELOCITY_LIMIT_EXCEEDED
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
         message:
           type: string
           description: Error message
@@ -688,6 +655,39 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    UmaInvitationCreateRequest:
+      type: object
+      required:
+      - inviterUma
+      properties:
+        inviterUma:
+          type: string
+          description: The UMA address of the customer creating the invitation
+          example: $inviter@uma.domain
+        firstName:
+          type: string
+          description: First name of the invitee to show as part of the invite
+          example: Alice
+        amountToSend:
+          description: 'An amount to send (in the smallest unit of the customer''s currency) to the invitee when the invitation is claimed.
+
+            This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of
+
+            the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter
+
+            platform either does not send the payment or the payment fails, the invitee will not receive this amount. This
+
+            field is primarily used for display purposes on the claiming side of the invitation.
+
+            '
+          type: integer
+          format: int64
+          example: 12550
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
   securitySchemes:
     BasicAuth:
       type: http

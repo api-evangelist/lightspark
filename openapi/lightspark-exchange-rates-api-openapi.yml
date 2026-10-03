@@ -141,6 +141,39 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     ExchangeRateListResponse:
       type: object
       required:
@@ -151,114 +184,6 @@ components:
           description: List of exchange rates matching the filter criteria
           items:
             $ref: '#/components/schemas/ExchangeRate'
-    PaymentRail:
-      type: string
-      enum:
-      - ACH
-      - ACH_COLOMBIA
-      - BANK_TRANSFER
-      - BRE_B
-      - CIPS
-      - FAST
-      - FASTER_PAYMENTS
-      - FEDNOW
-      - INSTAPAY
-      - MOBILE_MONEY
-      - NEFT
-      - PAYNOW
-      - PESONET
-      - PIX
-      - RTGS
-      - RTP
-      - SEPA
-      - SEPA_INSTANT
-      - SPEI
-      - SWIFT
-      - UNIONPAY
-      - UPI
-      - WIRE
-      description: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
-      example: ACH
-    ExchangeRate:
-      type: object
-      description: Exchange rate information for a currency corridor
-      required:
-      - sourceCurrency
-      - destinationCurrency
-      - destinationPaymentRail
-      - minSendingAmount
-      - maxSendingAmount
-      - sendingAmount
-      - receivingAmount
-      - exchangeRate
-      - fees
-      - updatedAt
-      properties:
-        sourceCurrency:
-          $ref: '#/components/schemas/Currency'
-        sendingAmount:
-          type: integer
-          format: int64
-          description: The sending amount in the smallest unit of the source currency (e.g., cents for USD). Echoed back from the request if provided.
-          minimum: 0
-          example: 10000
-        minSendingAmount:
-          type: integer
-          format: int64
-          description: The minimum supported sending amount in the smallest unit of the source currency.
-          minimum: 0
-          example: 100
-        maxSendingAmount:
-          type: integer
-          format: int64
-          description: The maximum supported sending amount in the smallest unit of the source currency.
-          minimum: 0
-          example: 10000000
-        destinationCurrency:
-          $ref: '#/components/schemas/Currency'
-        destinationPaymentRail:
-          allOf:
-          - $ref: '#/components/schemas/PaymentRail'
-          - description: The payment rail used for the destination (e.g., UPI, SEPA_INSTANT, MOBILE_MONEY, FASTER_PAYMENTS)
-            example: UPI
-        receivingAmount:
-          type: integer
-          format: int64
-          description: The receiving amount in the smallest unit of the destination currency
-          minimum: 0
-          example: 1650000
-        exchangeRate:
-          type: number
-          description: Number of sending currency units per receiving currency unit.
-          exclusiveMinimum: 0
-          example: 0.012121
-        fees:
-          $ref: '#/components/schemas/ExchangeRateFees'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp when this exchange rate was last refreshed
-          example: '2025-02-05T12:00:00Z'
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
     Error400:
       type: object
       required:
@@ -451,39 +376,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     ExchangeRateFees:
       type: object
       description: Fees associated with an exchange rate
@@ -500,6 +392,114 @@ components:
           description: Total fees in the smallest unit of the sending currency (e.g., cents for USD). This value may change depending on the sending amount used; if no sending amount is specified, it falls back to the default.
           minimum: 0
           example: 100
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    PaymentRail:
+      type: string
+      enum:
+      - ACH
+      - ACH_COLOMBIA
+      - BANK_TRANSFER
+      - BRE_B
+      - CIPS
+      - FAST
+      - FASTER_PAYMENTS
+      - FEDNOW
+      - INSTAPAY
+      - MOBILE_MONEY
+      - NEFT
+      - PAYNOW
+      - PESONET
+      - PIX
+      - RTGS
+      - RTP
+      - SEPA
+      - SEPA_INSTANT
+      - SPEI
+      - SWIFT
+      - UNIONPAY
+      - UPI
+      - WIRE
+      description: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
+      example: ACH
+    ExchangeRate:
+      type: object
+      description: Exchange rate information for a currency corridor
+      required:
+      - sourceCurrency
+      - destinationCurrency
+      - destinationPaymentRail
+      - minSendingAmount
+      - maxSendingAmount
+      - sendingAmount
+      - receivingAmount
+      - exchangeRate
+      - fees
+      - updatedAt
+      properties:
+        sourceCurrency:
+          $ref: '#/components/schemas/Currency'
+        sendingAmount:
+          type: integer
+          format: int64
+          description: The sending amount in the smallest unit of the source currency (e.g., cents for USD). Echoed back from the request if provided.
+          minimum: 0
+          example: 10000
+        minSendingAmount:
+          type: integer
+          format: int64
+          description: The minimum supported sending amount in the smallest unit of the source currency.
+          minimum: 0
+          example: 100
+        maxSendingAmount:
+          type: integer
+          format: int64
+          description: The maximum supported sending amount in the smallest unit of the source currency.
+          minimum: 0
+          example: 10000000
+        destinationCurrency:
+          $ref: '#/components/schemas/Currency'
+        destinationPaymentRail:
+          allOf:
+          - $ref: '#/components/schemas/PaymentRail'
+          - description: The payment rail used for the destination (e.g., UPI, SEPA_INSTANT, MOBILE_MONEY, FASTER_PAYMENTS)
+            example: UPI
+        receivingAmount:
+          type: integer
+          format: int64
+          description: The receiving amount in the smallest unit of the destination currency
+          minimum: 0
+          example: 1650000
+        exchangeRate:
+          type: number
+          description: Number of sending currency units per receiving currency unit.
+          exclusiveMinimum: 0
+          example: 0.012121
+        fees:
+          $ref: '#/components/schemas/ExchangeRateFees'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when this exchange rate was last refreshed
+          example: '2025-02-05T12:00:00Z'
   securitySchemes:
     BasicAuth:
       type: http

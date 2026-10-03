@@ -175,100 +175,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    StablecoinProvider:
-      type: string
-      enum:
-      - BRALE
-      description: Stablecoin provider backing the linked account, stablecoin, or operation.
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    StablecoinProviderAccountStatus:
-      type: string
-      enum:
-      - ACTIVE
-      - INVALID
-      - REVOKED
-      description: Status of the linked stablecoin provider account credentials.
-    StablecoinProviderEnvironment:
-      type: string
-      enum:
-      - SANDBOX
-      - PRODUCTION
-      description: Provider environment derived from the authenticated Grid platform mode.
-    StablecoinProviderAccountListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/StablecoinProviderAccount'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page.
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results.
-        totalCount:
-          type: integer
-          description: Total number of stablecoin provider account links matching the criteria.
     Error500:
       type: object
       required:
@@ -494,6 +400,46 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    StablecoinProviderAccount:
+      type: object
+      required:
+      - id
+      - provider
+      - providerAccountId
+      - providerEnvironment
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated stablecoin provider account link identifier.
+          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
+        provider:
+          $ref: '#/components/schemas/StablecoinProvider'
+        providerAccountId:
+          type: string
+          description: Provider account id.
+          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
+        providerEnvironment:
+          $ref: '#/components/schemas/StablecoinProviderEnvironment'
+        status:
+          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
+        lastVerifiedAt:
+          type: string
+          format: date-time
+          description: Timestamp of the last successful provider credential verification.
+          example: '2026-05-20T16:35:00Z'
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp.
+          example: '2026-05-20T16:35:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp.
+          example: '2026-05-20T16:35:00Z'
     Error409:
       type: object
       required:
@@ -539,46 +485,93 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    StablecoinProviderAccount:
+    StablecoinProviderAccountListResponse:
       type: object
       required:
-      - id
-      - provider
-      - providerAccountId
-      - providerEnvironment
-      - status
-      - createdAt
-      - updatedAt
+      - data
+      - hasMore
       properties:
-        id:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StablecoinProviderAccount'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page.
+        nextCursor:
           type: string
-          description: System-generated stablecoin provider account link identifier.
-          example: StablecoinProviderAccount:019542f5-b3e7-1d02-0000-000000000001
-        provider:
-          $ref: '#/components/schemas/StablecoinProvider'
-        providerAccountId:
-          type: string
-          description: Provider account id.
-          example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-        providerEnvironment:
-          $ref: '#/components/schemas/StablecoinProviderEnvironment'
+          description: Cursor to retrieve the next page of results.
+        totalCount:
+          type: integer
+          description: Total number of stablecoin provider account links matching the criteria.
+    StablecoinProvider:
+      type: string
+      enum:
+      - BRALE
+      description: Stablecoin provider backing the linked account, stablecoin, or operation.
+    Error404:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
         status:
-          $ref: '#/components/schemas/StablecoinProviderAccountStatus'
-        lastVerifiedAt:
+          type: integer
+          enum:
+          - 404
+          description: HTTP status code
+        code:
           type: string
-          format: date-time
-          description: Timestamp of the last successful provider credential verification.
-          example: '2026-05-20T16:35:00Z'
-        createdAt:
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+        message:
           type: string
-          format: date-time
-          description: Creation timestamp.
-          example: '2026-05-20T16:35:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp.
-          example: '2026-05-20T16:35:00Z'
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    StablecoinProviderEnvironment:
+      type: string
+      enum:
+      - SANDBOX
+      - PRODUCTION
+      description: Provider environment derived from the authenticated Grid platform mode.
     StablecoinProviderAccountLinkRequest:
       type: object
       required:
@@ -601,6 +594,13 @@ components:
           type: string
           description: Provider account id. Optional when the submitted credentials expose exactly one provider account.
           example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
+    StablecoinProviderAccountStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INVALID
+      - REVOKED
+      description: Status of the linked stablecoin provider account credentials.
   securitySchemes:
     BasicAuth:
       type: http

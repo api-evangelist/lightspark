@@ -117,7 +117,7 @@ paths:
                 $ref: '#/components/schemas/Error501'
 components:
   schemas:
-    Error501:
+    Error500:
       type: object
       required:
       - message
@@ -127,7 +127,7 @@ components:
         status:
           type: integer
           enum:
-          - 501
+          - 500
           description: HTTP status code
         code:
           type: string
@@ -135,14 +135,14 @@ components:
 
             |------------|-------------|
 
-            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
+            | GRID_SWITCH_ERROR | Grid switch error |
 
-            | NOT_IMPLEMENTED | Feature not implemented |
+            | INTERNAL_ERROR | Internal server or UMA error |
 
             '
           enum:
-          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
-          - NOT_IMPLEMENTED
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
         message:
           type: string
           description: Error message
@@ -150,36 +150,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    PlatformConfigUpdateRequest:
-      type: object
-      properties:
-        umaDomain:
-          type: string
-          example: mycompany.com
-        webhookEndpoint:
-          type: string
-          example: https://api.mycompany.com/webhooks/uma
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlatformCurrencyConfig'
-        embeddedWalletConfig:
-          $ref: '#/components/schemas/EmbeddedWalletConfig'
-          description: 'Update or create the embedded-wallet configuration for this platform.
-
-            Fields omitted from the nested object are left unchanged. Omit this
-
-            field at the top level to leave the embedded-wallet configuration
-
-            unchanged entirely.
-
-            '
-    TransactionType:
-      type: string
-      enum:
-      - INCOMING
-      - OUTGOING
-      description: Type of transaction (incoming payment or outgoing payment)
     PlatformConfig:
       type: object
       properties:
@@ -386,18 +356,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CounterpartyFieldDefinition:
-      type: object
-      properties:
-        name:
-          $ref: '#/components/schemas/CustomerInfoFieldName'
-        mandatory:
-          type: boolean
-          description: Whether the field is mandatory
-          example: true
-      required:
-      - name
-      - mandatory
     Error401:
       type: object
       required:
@@ -446,31 +404,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CustomerInfoFieldName:
-      type: string
-      enum:
-      - FULL_NAME
-      - BIRTH_DATE
-      - NATIONALITY
-      - PHONE_NUMBER
-      - EMAIL
-      - POSTAL_ADDRESS
-      - TAX_ID
-      - REGISTRATION_NUMBER
-      - USER_TYPE
-      - COUNTRY_OF_RESIDENCE
-      - ACCOUNT_IDENTIFIER
-      - FI_LEGAL_ENTITY_NAME
-      - FI_ADDRESS
-      - PURPOSE_OF_PAYMENT
-      - ULTIMATE_INSTITUTION_COUNTRY
-      - IDENTIFIER
-      - BUSINESS_TYPE
-      - COMPANY_LEGAL_NAME
-      - ID_TYPE
-      - ID_NUMBER
-      description: Name of a type of field containing info about a platform's customer or counterparty customer.
-      example: FULL_NAME
     PlatformCurrencyConfig:
       type: object
       properties:
@@ -534,7 +467,50 @@ components:
       - maxAmount
       - requiredCounterpartyFields
       - enabledTransactionTypes
-    Error500:
+    CustomerInfoFieldName:
+      type: string
+      enum:
+      - FULL_NAME
+      - BIRTH_DATE
+      - NATIONALITY
+      - PHONE_NUMBER
+      - EMAIL
+      - POSTAL_ADDRESS
+      - TAX_ID
+      - REGISTRATION_NUMBER
+      - USER_TYPE
+      - COUNTRY_OF_RESIDENCE
+      - ACCOUNT_IDENTIFIER
+      - FI_LEGAL_ENTITY_NAME
+      - FI_ADDRESS
+      - PURPOSE_OF_PAYMENT
+      - ULTIMATE_INSTITUTION_COUNTRY
+      - IDENTIFIER
+      - BUSINESS_TYPE
+      - COMPANY_LEGAL_NAME
+      - ID_TYPE
+      - ID_NUMBER
+      description: Name of a type of field containing info about a platform's customer or counterparty customer.
+      example: FULL_NAME
+    TransactionType:
+      type: string
+      enum:
+      - INCOMING
+      - OUTGOING
+      description: Type of transaction (incoming payment or outgoing payment)
+    CounterpartyFieldDefinition:
+      type: object
+      properties:
+        name:
+          $ref: '#/components/schemas/CustomerInfoFieldName'
+        mandatory:
+          type: boolean
+          description: Whether the field is mandatory
+          example: true
+      required:
+      - name
+      - mandatory
+    Error501:
       type: object
       required:
       - message
@@ -544,7 +520,7 @@ components:
         status:
           type: integer
           enum:
-          - 500
+          - 501
           description: HTTP status code
         code:
           type: string
@@ -552,14 +528,14 @@ components:
 
             |------------|-------------|
 
-            | GRID_SWITCH_ERROR | Grid switch error |
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
 
-            | INTERNAL_ERROR | Internal server or UMA error |
+            | NOT_IMPLEMENTED | Feature not implemented |
 
             '
           enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
         message:
           type: string
           description: Error message
@@ -633,6 +609,30 @@ components:
           maxLength: 512
           description: URL to a PNG logo for the OTP email. Resized to 340x124px.
           example: https://acme.com/logo.png
+    PlatformConfigUpdateRequest:
+      type: object
+      properties:
+        umaDomain:
+          type: string
+          example: mycompany.com
+        webhookEndpoint:
+          type: string
+          example: https://api.mycompany.com/webhooks/uma
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
+        embeddedWalletConfig:
+          $ref: '#/components/schemas/EmbeddedWalletConfig'
+          description: 'Update or create the embedded-wallet configuration for this platform.
+
+            Fields omitted from the nested object are left unchanged. Omit this
+
+            field at the top level to leave the embedded-wallet configuration
+
+            unchanged entirely.
+
+            '
   securitySchemes:
     BasicAuth:
       type: http
