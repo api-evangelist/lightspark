@@ -173,34 +173,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    DiscoveryListResponse:
-      type: object
-      properties:
-        data:
-          type: array
-          description: List of payment rails matching the filter criteria
-          items:
-            type: object
-            required:
-            - bankName
-            - displayName
-            - country
-            - currency
-            properties:
-              bankName:
-                type: string
-                description: 'Canonical name for this payment rail. Pass this value as `bankName` when creating an external account.
-
-                  '
-              displayName:
-                type: string
-                description: Human-friendly display name for this payment rail.
-              country:
-                type: string
-                description: ISO 3166-1 alpha-2 country code.
-              currency:
-                type: string
-                description: ISO 4217 currency code.
     Error400:
       type: object
       required:
@@ -345,6 +317,34 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    DiscoveryListResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          description: List of payment rails matching the filter criteria
+          items:
+            type: object
+            required:
+            - bankName
+            - displayName
+            - country
+            - currency
+            properties:
+              bankName:
+                type: string
+                description: 'Canonical name for this payment rail. Pass this value as `bankName` when creating an external account.
+
+                  '
+              displayName:
+                type: string
+                description: Human-friendly display name for this payment rail.
+              country:
+                type: string
+                description: ISO 3166-1 alpha-2 country code.
+              currency:
+                type: string
+                description: ISO 4217 currency code.
   securitySchemes:
     BasicAuth:
       type: http

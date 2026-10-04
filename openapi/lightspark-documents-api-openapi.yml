@@ -252,38 +252,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    BaseDocumentRequest:
-      type: object
-      required:
-      - file
-      - documentType
-      - country
-      properties:
-        file:
-          type: string
-          format: binary
-          description: The document file (PDF, JPEG, or PNG, max 10 MB)
-        documentType:
-          $ref: '#/components/schemas/DocumentType'
-        side:
-          type: string
-          enum:
-          - FRONT
-          - BACK
-          description: Which side of the document (for two-sided documents like driver's licenses)
-          example: FRONT
-        country:
-          type: string
-          description: Country that issued the document (ISO 3166-1 alpha-2)
-          example: US
-        documentNumber:
-          type: string
-          description: Document identification number (e.g., passport number)
-          example: A12345678
-        issuingAuthority:
-          type: string
-          description: Name of the government agency or organization that issued the document
-          example: U.S. Department of State
     DocumentType:
       type: string
       enum:
@@ -325,6 +293,54 @@ components:
 
         **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
       example: PASSPORT
+    BaseDocumentRequest:
+      type: object
+      required:
+      - file
+      - documentType
+      - country
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The document file (PDF, JPEG, or PNG, max 10 MB)
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        side:
+          type: string
+          enum:
+          - FRONT
+          - BACK
+          description: Which side of the document (for two-sided documents like driver's licenses)
+          example: FRONT
+        country:
+          type: string
+          description: Country that issued the document (ISO 3166-1 alpha-2)
+          example: US
+        documentNumber:
+          type: string
+          description: Document identification number (e.g., passport number)
+          example: A12345678
+        issuingAuthority:
+          type: string
+          description: Name of the government agency or organization that issued the document
+          example: U.S. Department of State
+    DocumentUploadRequest:
+      title: Document Upload Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
+      - type: object
+        required:
+        - documentHolder
+        properties:
+          documentHolder:
+            type: string
+            description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+            example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+    DocumentReplaceRequest:
+      title: Document Replace Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
     Error500:
       type: object
       required:
@@ -351,6 +367,51 @@ components:
           enum:
           - GRID_SWITCH_ERROR
           - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
         message:
           type: string
           description: Error message
@@ -522,10 +583,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    DocumentReplaceRequest:
-      title: Document Replace Request
-      allOf:
-      - $ref: '#/components/schemas/BaseDocumentRequest'
     Error401:
       type: object
       required:
@@ -574,7 +631,7 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error409:
+    Error404:
       type: object
       required:
       - message
@@ -584,7 +641,7 @@ components:
         status:
           type: integer
           enum:
-          - 409
+          - 404
           description: HTTP status code
         code:
           type: string
@@ -592,26 +649,38 @@ components:
 
             |------------|-------------|
 
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+            | TRANSACTION_NOT_FOUND | Transaction not found |
 
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
+            | INVITATION_NOT_FOUND | Invitation not found |
 
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+            | USER_NOT_FOUND | Customer not found |
 
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+            | QUOTE_NOT_FOUND | Quote not found |
 
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
 
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
 
             '
           enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
         message:
           type: string
           description: Error message
@@ -672,88 +741,19 @@ components:
           format: date-time
           description: When this document was last updated
           example: '2025-10-03T12:00:00Z'
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    DocumentUploadRequest:
-      title: Document Upload Request
-      allOf:
-      - $ref: '#/components/schemas/BaseDocumentRequest'
-      - type: object
-        required:
-        - documentHolder
-        properties:
-          documentHolder:
-            type: string
-            description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
-            example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
   requestBodies:
-    DocumentUploadRequestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            $ref: '#/components/schemas/DocumentUploadRequest'
     DocumentReplaceRequestBody:
       required: true
       content:
         multipart/form-data:
           schema:
             $ref: '#/components/schemas/DocumentReplaceRequest'
+    DocumentUploadRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentUploadRequest'
   securitySchemes:
     BasicAuth:
       type: http

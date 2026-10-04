@@ -279,6 +279,29 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    ContactVerificationConfirmRequest:
+      type: object
+      description: Request body for confirming an email or phone verification challenge.
+      required:
+      - code
+      properties:
+        code:
+          type: string
+          description: The one-time verification code the customer received via email or SMS. In sandbox, the code is always `123456`.
+          example: '123456'
+    ContactVerification:
+      type: object
+      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
+
+
+        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
+      properties:
+        email:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's email address. Present only when the provider requires email verification.
+        phone:
+          $ref: '#/components/schemas/ContactVerificationStatus'
+          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
     Error500:
       type: object
       required:
@@ -312,6 +335,65 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    CustomerType:
+      type: string
+      enum:
+      - INDIVIDUAL
+      - BUSINESS
+      description: Whether the customer is an individual or a business entity
+      example: INDIVIDUAL
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    ContactVerificationStatus:
+      type: string
+      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
+      enum:
+      - PENDING
+      - VERIFIED
+      example: VERIFIED
     Error400:
       type: object
       required:
@@ -456,16 +538,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    ContactVerificationConfirmRequest:
-      type: object
-      description: Request body for confirming an email or phone verification challenge.
-      required:
-      - code
-      properties:
-        code:
-          type: string
-          description: The one-time verification code the customer received via email or SMS. In sandbox, the code is always `123456`.
-          example: '123456'
     Error401:
       type: object
       required:
@@ -514,7 +586,7 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error409:
+    Error404:
       type: object
       required:
       - message
@@ -524,7 +596,7 @@ components:
         status:
           type: integer
           enum:
-          - 409
+          - 404
           description: HTTP status code
         code:
           type: string
@@ -532,26 +604,38 @@ components:
 
             |------------|-------------|
 
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+            | TRANSACTION_NOT_FOUND | Transaction not found |
 
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
+            | INVITATION_NOT_FOUND | Invitation not found |
 
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+            | USER_NOT_FOUND | Customer not found |
 
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+            | QUOTE_NOT_FOUND | Quote not found |
 
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
 
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
 
             '
           enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
         message:
           type: string
           description: Error message
@@ -559,13 +643,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    CustomerType:
-      type: string
-      enum:
-      - INDIVIDUAL
-      - BUSINESS
-      description: Whether the customer is an individual or a business entity
-      example: INDIVIDUAL
     Customer:
       type: object
       required:
@@ -632,83 +709,6 @@ components:
           - $ref: '#/components/schemas/ContactVerification'
           readOnly: true
           description: Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise.
-    ContactVerification:
-      type: object
-      description: 'Email and/or phone verification state for the customer. This object is **only present when the customer''s regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.
-
-
-        Each channel is reported independently: only the channels the customer''s provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).'
-      properties:
-        email:
-          $ref: '#/components/schemas/ContactVerificationStatus'
-          description: Verification status of the customer's email address. Present only when the provider requires email verification.
-        phone:
-          $ref: '#/components/schemas/ContactVerificationStatus'
-          description: Verification status of the customer's phone number. Present only when the provider requires phone verification.
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    ContactVerificationStatus:
-      type: string
-      description: Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.
-      enum:
-      - PENDING
-      - VERIFIED
-      example: VERIFIED
   securitySchemes:
     BasicAuth:
       type: http

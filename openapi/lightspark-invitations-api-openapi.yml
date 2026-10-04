@@ -243,39 +243,64 @@ components:
           type: string
           description: The UMA address of the customer claiming the invitation
           example: $invitee@uma.domain
-    Error500:
+    UmaInvitation:
       type: object
       required:
-      - message
-      - status
       - code
+      - createdAt
+      - inviterUma
+      - status
+      - url
       properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
         code:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
+          description: The unique code of the invitation
+          example: 019542f5
+        createdAt:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          format: date-time
+          description: When the invitation was created
+          example: '2025-09-01T14:30:00Z'
+        claimedAt:
+          type: string
+          format: date-time
+          description: When the invitation was claimed if it has been claimed
+          example: '2025-09-01T14:30:00Z'
+        url:
+          type: string
+          description: The URL where this invitation can be claimed.
+          example: https://uma.me/i/019542f5
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the invitation expires (if at all)
+          example: '2025-09-01T14:30:00Z'
+        inviterUma:
+          type: string
+          description: The UMA address of the inviter
+          example: $inviter@uma.domain
+        inviteeUma:
+          type: string
+          description: The UMA address of the invitee
+          example: $invitee@uma.domain
+        status:
+          type: string
+          enum:
+          - PENDING
+          - CLAIMED
+          - EXPIRED
+          - CANCELLED
+          description: The status of the invitation
+          example: PENDING
+        firstName:
+          type: string
+          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
+          example: Jane
+        amountToSend:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
+
+            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
     Error403:
       type: object
       required:
@@ -308,6 +333,39 @@ components:
           - USER_NOT_READY
           - COUNTERPARTY_NOT_ALLOWED
           - VELOCITY_LIMIT_EXCEEDED
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
         message:
           type: string
           description: Error message
@@ -459,145 +517,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    UmaInvitation:
-      type: object
-      required:
-      - code
-      - createdAt
-      - inviterUma
-      - status
-      - url
-      properties:
-        code:
-          type: string
-          description: The unique code of the invitation
-          example: 019542f5
-        createdAt:
-          type: string
-          format: date-time
-          description: When the invitation was created
-          example: '2025-09-01T14:30:00Z'
-        claimedAt:
-          type: string
-          format: date-time
-          description: When the invitation was claimed if it has been claimed
-          example: '2025-09-01T14:30:00Z'
-        url:
-          type: string
-          description: The URL where this invitation can be claimed.
-          example: https://uma.me/i/019542f5
-        expiresAt:
-          type: string
-          format: date-time
-          description: When the invitation expires (if at all)
-          example: '2025-09-01T14:30:00Z'
-        inviterUma:
-          type: string
-          description: The UMA address of the inviter
-          example: $inviter@uma.domain
-        inviteeUma:
-          type: string
-          description: The UMA address of the invitee
-          example: $invitee@uma.domain
-        status:
-          type: string
-          enum:
-          - PENDING
-          - CLAIMED
-          - EXPIRED
-          - CANCELLED
-          description: The status of the invitation
-          example: PENDING
-        firstName:
-          type: string
-          description: The inviter's first name. Will be displayed when the recipient clicks the invite link
-          example: Jane
-        amountToSend:
-          $ref: '#/components/schemas/CurrencyAmount'
-          description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
-
-            This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CurrencyAmount:
-      type: object
-      required:
-      - amount
-      - currency
-      properties:
-        amount:
-          type: integer
-          format: int64
-          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
-          example: 12550
-        currency:
-          $ref: '#/components/schemas/Currency'
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
     Error404:
       type: object
       required:
@@ -655,6 +574,54 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     UmaInvitationCreateRequest:
       type: object
       required:
@@ -688,6 +655,39 @@ components:
           format: date-time
           description: When the invitation expires (if at all)
           example: '2025-09-01T14:30:00Z'
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
   securitySchemes:
     BasicAuth:
       type: http
