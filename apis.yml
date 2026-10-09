@@ -664,6 +664,8 @@ common:
   url: asyncapi/lightspark-grid-webhooks.yml
 - type: WellKnown
   url: well-known/lightspark-well-known.yml
+- type: SpectralRules
+  url: https://github.com/lightsparkdev/grid-api/blob/db243ccb20e4ad10ecc9ee81e0d60268a2a141a4/.spectral.yaml
 x-enrichment:
   date: '2026-07-19'
   status: backfilled
