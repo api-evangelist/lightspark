@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-sandbox-uma-receive-request-schema.json",
+  "title": "SandboxUmaReceiveRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-sandbox-api-openapi.yml#/components/schemas/SandboxUmaReceiveRequest",
+  "type": "object",
+  "required": [
+    "senderUmaAddress",
+    "receivingCurrencyCode",
+    "receivingCurrencyAmount"
+  ],
+  "properties": {
+    "senderUmaAddress": {
+      "type": "string",
+      "description": "UMA address of the sender from the sandbox"
+    },
+    "receiverUmaAddress": {
+      "type": "string",
+      "description": "UMA address of the receiver (optional if customerId is provided)"
+    },
+    "customerId": {
+      "type": "string",
+      "description": "System ID of the receiver (optional if receiverUmaAddress is provided)"
+    },
+    "receivingCurrencyCode": {
+      "type": "string",
+      "description": "The currency code for the receiving amount"
+    },
+    "receivingCurrencyAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The amount to be received in the smallest unit of the currency (eg. cents)",
+      "exclusiveMinimum": 0
+    }
+  }
+}

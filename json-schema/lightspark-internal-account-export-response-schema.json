@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-internal-account-export-response-schema.json",
+  "title": "Internal Account Export Response",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-internal-accounts-api-openapi.yml#/components/schemas/InternalAccountExportResponse",
+  "type": "object",
+  "required": [
+    "id",
+    "encryptedWalletCredentials"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "The id of the internal account that was exported."
+    },
+    "encryptedWalletCredentials": {
+      "type": "string",
+      "description": "Encrypted wallet mnemonic, sealed to the `clientPublicKey` from the request body using HPKE: DHKEM(P-256, HKDF-SHA256) + HKDF-SHA256 + AES-256-GCM. Decrypt with the matching private key, then manage the mnemonic securely because it is the master key of the self-custodial Embedded Wallet.\nThe value is a JSON string of the form `{\"version\": \"v1.0.0\", \"data\": \"<hex>\", \"dataSignature\": \"<hex>\", \"enclaveQuorumPublic\": \"<hex>\"}`. `data` hex-decodes to JSON `{\"encappedPublic\": \"<hex>\", \"ciphertext\": \"<hex>\", \"organizationId\": \"<id>\"}`, where `encappedPublic` is the uncompressed SEC1 ephemeral public key. `dataSignature` is an ECDSA-P256-SHA256 signature over the `data` bytes produced by the issuer key in `enclaveQuorumPublic`; verify before decrypting.\nIn sandbox, `dataSignature` and `enclaveQuorumPublic` are empty strings. Clients should bypass attestation verification when calling against sandbox."
+    }
+  }
+}

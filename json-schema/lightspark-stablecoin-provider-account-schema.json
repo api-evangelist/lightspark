@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-stablecoin-provider-account-schema.json",
+  "title": "StablecoinProviderAccount",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-stablecoins-api-openapi.yml#/components/schemas/StablecoinProviderAccount",
+  "type": "object",
+  "required": [
+    "id",
+    "provider",
+    "providerAccountId",
+    "providerEnvironment",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "System-generated stablecoin provider account link identifier."
+    },
+    "provider": {
+      "$ref": "#/$defs/StablecoinProvider"
+    },
+    "providerAccountId": {
+      "type": "string",
+      "description": "Provider account id."
+    },
+    "providerEnvironment": {
+      "$ref": "#/$defs/StablecoinProviderEnvironment"
+    },
+    "status": {
+      "$ref": "#/$defs/StablecoinProviderAccountStatus"
+    },
+    "lastVerifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the last successful provider credential verification."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp."
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp."
+    }
+  },
+  "$defs": {
+    "StablecoinProvider": {
+      "type": "string",
+      "enum": [
+        "BRALE"
+      ],
+      "description": "Stablecoin provider backing the linked account, stablecoin, or operation."
+    },
+    "StablecoinProviderAccountStatus": {
+      "type": "string",
+      "enum": [
+        "ACTIVE",
+        "INVALID",
+        "REVOKED"
+      ],
+      "description": "Status of the linked stablecoin provider account credentials."
+    },
+    "StablecoinProviderEnvironment": {
+      "type": "string",
+      "enum": [
+        "SANDBOX",
+        "PRODUCTION"
+      ],
+      "description": "Provider environment derived from the authenticated Grid platform mode."
+    }
+  }
+}

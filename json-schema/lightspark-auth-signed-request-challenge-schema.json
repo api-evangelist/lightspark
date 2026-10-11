@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-auth-signed-request-challenge-schema.json",
+  "title": "Authentication Signed Request Challenge",
+  "description": "202 response returned from Embedded Wallet Auth endpoints that require a signed retry — `POST /auth/credentials` (adding an additional credential), `DELETE /auth/credentials/{id}` (revoking a credential), `DELETE /auth/sessions/{id}` (revoking a session), and the `EMAIL_OTP` / `SMS_OTP` branch of `POST /auth/credentials/{id}/verify` (the secure OTP login flow, where the client submits an `encryptedOtpBundle` and receives a `verificationToken` to sign for the second-leg session issuance). Carries the signing fields from `SignedRequestChallenge` plus the `type` of the authentication credential involved (being added, revoked, that issued the session being revoked, or being authenticated). The client already knows the target resource id from the request path / body it just sent, so nothing beyond `type` is echoed in the response.\n\nThe keypair used to compute the stamp depends on the operation. For credential / session management retries, sign with the session API keypair of an existing verified credential on the same internal account. For OTP verify retries, sign with the ephemeral Target Encryption Key (TEK) the client generated for this login — its public key is the one carried inside the `encryptedOtpBundle` and bound into the `verificationToken`, and it becomes the client's session API key on successful completion.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-embedded-wallet-auth-api-openapi.yml#/components/schemas/AuthSignedRequestChallenge",
+  "allOf": [
+    {
+      "$ref": "#/$defs/SignedRequestChallenge"
+    },
+    {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/AuthMethodType",
+          "description": "Credential type relevant to this challenge: the credential type being added (`POST /auth/credentials`), revoked (`DELETE /auth/credentials/{id}`), or authenticated (`EMAIL_OTP` / `SMS_OTP` branch of `POST /auth/credentials/{id}/verify`). For session revocation, this is the type of credential that issued the session (`DELETE /auth/sessions/{id}`)."
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "AuthMethodType": {
+      "type": "string",
+      "enum": [
+        "OAUTH",
+        "EMAIL_OTP",
+        "SMS_OTP",
+        "PASSKEY"
+      ],
+      "description": "The type of authentication credential.\n- `OAUTH`: OpenID Connect (OIDC) token issued by an identity provider such as Google or Apple.\n- `EMAIL_OTP`: A one-time password delivered to the user's email address.\n- `SMS_OTP`: A one-time password delivered to the user's phone number.\n- `PASSKEY`: A WebAuthn passkey bound to the user's device."
+    },
+    "SignedRequestChallenge": {
+      "title": "Signed Request Challenge",
+      "type": "object",
+      "required": [
+        "payloadToSign",
+        "requestId",
+        "expiresAt"
+      ],
+      "description": "Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.",
+      "properties": {
+        "payloadToSign": {
+          "type": "string",
+          "description": "Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request."
+        },
+        "requestId": {
+          "type": "string",
+          "description": "Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge."
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time."
+        }
+      }
+    }
+  }
+}

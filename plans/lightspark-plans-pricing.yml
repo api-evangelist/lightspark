@@ -1,0 +1,15 @@
+name: Lightspark Grid Plans and Pricing
+generated: '2026-10-12'
+method: none
+source: https://www.lightspark.com/contact
+audience: unclear
+pricing_basis: negotiated
+published: false
+plan_count: 0
+plans: []
+delivery:
+  model: managed
+note: >-
+  No public pricing page: https://www.lightspark.com/pricing returned 404 on 2026-10-12 and the
+  site's only commercial link is /contact. Per-payment fees are returned by the API in quotes
+  (docs.lightspark.com/payouts-and-b2b/payment-flow/assessing-fees), not published as tiers.

@@ -1,0 +1,4692 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-platform-external-account-create-request-schema.json",
+  "title": "PlatformExternalAccountCreateRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-external-accounts-api-openapi.yml#/components/schemas/PlatformExternalAccountCreateRequest",
+  "type": "object",
+  "required": [
+    "currency",
+    "accountInfo"
+  ],
+  "properties": {
+    "currency": {
+      "type": "string",
+      "description": "The ISO 4217 currency code"
+    },
+    "platformAccountId": {
+      "type": "string",
+      "description": "Your platform's identifier for the account in your system. This can be used to reference the account by your own identifier."
+    },
+    "accountInfo": {
+      "$ref": "#/$defs/ExternalAccountCreateInfoOneOf"
+    }
+  },
+  "$defs": {
+    "Address": {
+      "type": "object",
+      "required": [
+        "line1",
+        "postalCode",
+        "country"
+      ],
+      "properties": {
+        "line1": {
+          "type": "string",
+          "description": "Street address line 1"
+        },
+        "line2": {
+          "type": "string",
+          "description": "Street address line 2"
+        },
+        "city": {
+          "type": "string",
+          "description": "City"
+        },
+        "state": {
+          "type": "string",
+          "description": "State/Province/Region"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2)"
+        }
+      }
+    },
+    "AedAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "AED_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "UAE IBAN (23 characters, starting with AE)",
+          "minLength": 23,
+          "maxLength": 23,
+          "pattern": "^AE[0-9]{21}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "AedBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "address",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "AedExternalAccountCreateInfo": {
+      "title": "AED Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/AedAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/AedBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "BaseExternalAccountInfo": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "$ref": "#/$defs/ExternalAccountType"
+        }
+      }
+    },
+    "BaseWalletExternalAccountInfo": {
+      "title": "Base Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BaseWalletInfo"
+        }
+      ]
+    },
+    "BaseWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BASE_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Base eth wallet address"
+        }
+      }
+    },
+    "BdtAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BDT_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "The branch code",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "BdtBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "BdtExternalAccountCreateInfo": {
+      "title": "BDT Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BdtAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/BdtBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "BrlAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "pixKey",
+        "pixKeyType",
+        "taxId"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BRL_ACCOUNT"
+          ]
+        },
+        "pixKey": {
+          "type": "string",
+          "description": "The PIX key (email, phone, CPF, CNPJ, or random)",
+          "minLength": 1,
+          "maxLength": 77
+        },
+        "pixKeyType": {
+          "type": "string",
+          "description": "The type of PIX key",
+          "enum": [
+            "CPF",
+            "CNPJ",
+            "EMAIL",
+            "PHONE",
+            "RANDOM"
+          ]
+        },
+        "taxId": {
+          "type": "string",
+          "description": "The tax ID (CPF or CNPJ)",
+          "minLength": 11,
+          "maxLength": 14,
+          "pattern": "^[0-9]{11,14}$"
+        }
+      }
+    },
+    "BrlBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "BrlExternalAccountCreateInfo": {
+      "title": "BRL Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BrlAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/BrlBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "BusinessBeneficiary": {
+      "title": "Business Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "legalName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "BUSINESS"
+          ]
+        },
+        "legalName": {
+          "type": "string",
+          "description": "The legal name of the business"
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "The registration number of the business"
+        },
+        "taxId": {
+          "type": "string",
+          "description": "The tax identification number of the business"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "BwpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BWP_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "BwpBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "BwpExternalAccountCreateInfo": {
+      "title": "BWP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BwpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/BwpBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "CadAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankCode",
+        "branchCode",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "CAD_ACCOUNT"
+          ]
+        },
+        "bankCode": {
+          "type": "string",
+          "description": "Canadian financial institution number (3 digits)",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[0-9]{3}$"
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "Transit number identifying the branch (5 digits)",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number (7-12 digits)",
+          "minLength": 7,
+          "maxLength": 12,
+          "pattern": "^[0-9]{7,12}$"
+        }
+      }
+    },
+    "CadBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "The registration number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "CadExternalAccountCreateInfo": {
+      "title": "CAD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/CadAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/CadBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "CnyAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "CNY_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "CnyBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "CnyExternalAccountCreateInfo": {
+      "title": "CNY Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/CnyAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/CnyBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "CopAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankAccountType, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "COP_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "CopBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "documentType": {
+          "type": "string",
+          "description": "Identity document type (Colombia)",
+          "enum": [
+            "CC",
+            "CE",
+            "TI",
+            "NIT",
+            "PP"
+          ]
+        },
+        "documentNumber": {
+          "type": "string",
+          "description": "The identity document number",
+          "minLength": 1,
+          "maxLength": 50
+        }
+      }
+    },
+    "CopExternalAccountCreateInfo": {
+      "title": "COP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/CopAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/CopBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "DkkAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "DKK_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "Danish IBAN (18 characters, starting with DK)",
+          "minLength": 18,
+          "maxLength": 18,
+          "pattern": "^DK[0-9]{16}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "DkkBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "DkkExternalAccountCreateInfo": {
+      "title": "DKK Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/DkkAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/DkkBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "EgpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: bankName, iban\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "EGP_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "Egyptian IBAN (29 characters, starting with EG)",
+          "minLength": 29,
+          "maxLength": 29,
+          "pattern": "^EG[0-9]{27}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "EgpBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "EgpExternalAccountCreateInfo": {
+      "title": "EGP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EgpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/EgpBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "EthereumWalletExternalAccountInfo": {
+      "title": "Ethereum L1 Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EthereumWalletInfo"
+        }
+      ]
+    },
+    "EthereumWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ETHEREUM_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Ethereum L1 wallet address"
+        }
+      }
+    },
+    "EurAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "EUR_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "The IBAN of the bank account",
+          "minLength": 15,
+          "maxLength": 34,
+          "pattern": "^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "EurBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "countryOfResidence",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "EurExternalAccountCreateInfo": {
+      "title": "EUR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EurAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/EurBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ExternalAccountCreateInfoOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AedExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/BdtExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/BrlExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/BwpExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/CadExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/CnyExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/CopExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/DkkExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/EgpExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/EurExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/GbpExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/GhsExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/GtqExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/HkdExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/HtgExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/IdrExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/InrExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/JmdExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/KesExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/MwkExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/MxnExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/MyrExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/NgnExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/PhpExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/PkrExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/RwfExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/SgdExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/SlvExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/ThbExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/TzsExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/UgxExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/UsdExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/VndExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/XafExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/XofExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/ZarExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/ZmwExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/SwiftExternalAccountCreateInfo"
+        },
+        {
+          "$ref": "#/$defs/BaseWalletExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EthereumWalletExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/LightningExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PolygonWalletExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SolanaWalletExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SparkWalletExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/TronWalletExternalAccountInfo"
+        }
+      ]
+    },
+    "ExternalAccountType": {
+      "type": "string",
+      "enum": [
+        "AED_ACCOUNT",
+        "BDT_ACCOUNT",
+        "BRL_ACCOUNT",
+        "BWP_ACCOUNT",
+        "CAD_ACCOUNT",
+        "COP_ACCOUNT",
+        "DKK_ACCOUNT",
+        "EGP_ACCOUNT",
+        "EUR_ACCOUNT",
+        "GBP_ACCOUNT",
+        "GHS_ACCOUNT",
+        "GTQ_ACCOUNT",
+        "HKD_ACCOUNT",
+        "HTG_ACCOUNT",
+        "IDR_ACCOUNT",
+        "INR_ACCOUNT",
+        "JMD_ACCOUNT",
+        "KES_ACCOUNT",
+        "MWK_ACCOUNT",
+        "MXN_ACCOUNT",
+        "MYR_ACCOUNT",
+        "NGN_ACCOUNT",
+        "PHP_ACCOUNT",
+        "PKR_ACCOUNT",
+        "RWF_ACCOUNT",
+        "SGD_ACCOUNT",
+        "SLV_ACCOUNT",
+        "THB_ACCOUNT",
+        "TZS_ACCOUNT",
+        "UGX_ACCOUNT",
+        "USD_ACCOUNT",
+        "VND_ACCOUNT",
+        "XAF_ACCOUNT",
+        "XOF_ACCOUNT",
+        "ZAR_ACCOUNT",
+        "ZMW_ACCOUNT",
+        "SWIFT_ACCOUNT",
+        "BASE_WALLET",
+        "ETHEREUM_WALLET",
+        "LIGHTNING",
+        "POLYGON_WALLET",
+        "SOLANA_WALLET",
+        "SPARK_WALLET",
+        "TRON_WALLET",
+        "CNY_ACCOUNT"
+      ],
+      "description": "Type of external account or wallet"
+    },
+    "GbpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "sortCode",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GBP_ACCOUNT"
+          ]
+        },
+        "sortCode": {
+          "type": "string",
+          "description": "The UK sort code",
+          "minLength": 6,
+          "maxLength": 6,
+          "pattern": "^[0-9]{6}$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "UK bank account number (8 digits)",
+          "minLength": 8,
+          "maxLength": 8,
+          "pattern": "^[0-9]{8}$"
+        }
+      }
+    },
+    "GbpBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "GbpExternalAccountCreateInfo": {
+      "title": "GBP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GbpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/GbpBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "GhsAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GHS_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "GhsBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "GhsExternalAccountCreateInfo": {
+      "title": "GHS Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GhsAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/GhsBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "GtqAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankAccountType",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GTQ_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the beneficiary's bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "GtqBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "countryOfResidence",
+        "fullName",
+        "phoneNumber"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "GtqExternalAccountCreateInfo": {
+      "title": "GTQ Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GtqAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/GtqBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "HkdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "HKD_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Hong Kong bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "HkdBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "HkdExternalAccountCreateInfo": {
+      "title": "HKD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/HkdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/HkdBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "HtgAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "HTG_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "HtgBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "HtgExternalAccountCreateInfo": {
+      "title": "HTG Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/HtgAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/HtgBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "IdrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode",
+        "phoneNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "IDR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Indonesian bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Indonesian phone number for e-wallet payments",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+62[0-9]{9,12}$"
+        }
+      }
+    },
+    "IdrBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "IdrExternalAccountCreateInfo": {
+      "title": "IDR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/IdrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/IdrBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "InrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- NEFT: accountNumber, ifsc, rail\n- RTGS: accountNumber, ifsc, rail\n- UPI: vpa",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "INR_ACCOUNT"
+          ]
+        },
+        "vpa": {
+          "type": "string",
+          "description": "The UPI Virtual Payment Address",
+          "minLength": 3,
+          "maxLength": 255,
+          "pattern": "^[a-zA-Z0-9.\\-_]+@[a-zA-Z0-9]+$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Indian bank account number (9–18 digits)",
+          "minLength": 9,
+          "maxLength": 18,
+          "pattern": "^[0-9]{9,18}$"
+        },
+        "ifsc": {
+          "type": "string",
+          "description": "The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)",
+          "minLength": 11,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$"
+        },
+        "rail": {
+          "type": "string",
+          "description": "The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "InrBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "InrExternalAccountCreateInfo": {
+      "title": "INR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/InrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/InrBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "JmdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "branchCode",
+        "bankAccountType",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "JMD_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "The branch code",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "JmdBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "address",
+        "fullName",
+        "phoneNumber"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "JmdExternalAccountCreateInfo": {
+      "title": "JMD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/JmdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/JmdBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "KesAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "KES_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Kenyan mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+254[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "KesBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "KesExternalAccountCreateInfo": {
+      "title": "KES Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/KesAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/KesBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "LightningExternalAccountInfo": {
+      "title": "Lightning",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/LightningInfo"
+        }
+      ]
+    },
+    "LightningInfo": {
+      "type": "object",
+      "description": "Lightning payment destination. Exactly one of `invoice`, `bolt12`, or `lightningAddress` must be provided.\n",
+      "required": [
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "LIGHTNING"
+          ]
+        },
+        "invoice": {
+          "type": "string",
+          "description": "1-time use lightning bolt11 invoice payout destination"
+        },
+        "bolt12": {
+          "type": "string",
+          "description": "A bolt12 offer which can be reused as a payment destination"
+        },
+        "lightningAddress": {
+          "type": "string",
+          "description": "A lightning address which can be used as a payment destination. Note that for UMA addresses, no external account is needed. You can use the UMA address directly as a destination."
+        }
+      }
+    },
+    "MwkAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MWK_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "MwkBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "MwkExternalAccountCreateInfo": {
+      "title": "MWK Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MwkAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/MwkBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "MxnAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "clabeNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MXN_ACCOUNT"
+          ]
+        },
+        "clabeNumber": {
+          "type": "string",
+          "description": "The CLABE number of the bank",
+          "minLength": 18,
+          "maxLength": 18,
+          "pattern": "^[0-9]{18}$"
+        }
+      }
+    },
+    "MxnBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "MxnExternalAccountCreateInfo": {
+      "title": "MXN Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MxnAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/MxnBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "MyrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MYR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Malaysian bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "MyrBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "MyrExternalAccountCreateInfo": {
+      "title": "MYR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MyrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/MyrBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "NgnAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "NGN_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Nigerian bank account number",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{10}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "NgnBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "NgnExternalAccountCreateInfo": {
+      "title": "NGN Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/NgnAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/NgnBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PhpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "PHP_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Name of the beneficiary's bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number",
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
+        }
+      }
+    },
+    "PhpBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "PhpExternalAccountCreateInfo": {
+      "title": "PHP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PhpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/PhpBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PkrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "PKR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "iban": {
+          "type": "string",
+          "description": "Pakistani IBAN (24 characters, starting with PK)",
+          "minLength": 24,
+          "maxLength": 24,
+          "pattern": "^PK[0-9]{2}[A-Z]{4}[0-9]{16}$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "PkrBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "PkrExternalAccountCreateInfo": {
+      "title": "PKR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PkrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/PkrBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PolygonWalletExternalAccountInfo": {
+      "title": "Polygon Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PolygonWalletInfo"
+        }
+      ]
+    },
+    "PolygonWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "POLYGON_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Polygon eth wallet address"
+        }
+      }
+    },
+    "RwfAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "RWF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Rwandan mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+250[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "RwfBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "RwfExternalAccountCreateInfo": {
+      "title": "RWF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/RwfAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/RwfBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "SgdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SGD_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "SgdBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "SgdExternalAccountCreateInfo": {
+      "title": "SGD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SgdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/SgdBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "SlvAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: bankAccountType, accountNumber\n- MOBILE_MONEY: phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SLV_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank (BANK_TRANSFER only)",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank (BANK_TRANSFER only)",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type (BANK_TRANSFER only)",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format (MOBILE_MONEY only — e.g. Tigo Money)",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "SlvBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "SlvExternalAccountCreateInfo": {
+      "title": "SLV Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SlvAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/SlvBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "SolanaWalletExternalAccountInfo": {
+      "title": "Solana Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SolanaWalletInfo"
+        }
+      ]
+    },
+    "SolanaWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SOLANA_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Solana wallet address"
+        }
+      }
+    },
+    "SparkWalletExternalAccountInfo": {
+      "title": "Spark Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SparkWalletInfo"
+        }
+      ]
+    },
+    "SparkWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SPARK_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Spark wallet address"
+        }
+      }
+    },
+    "SwiftAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "swiftCode",
+        "bankName",
+        "country"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SWIFT_ACCOUNT"
+          ]
+        },
+        "country": {
+          "type": "string",
+          "description": "The ISO 3166-1 alpha-2 country code of the bank account",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "iban": {
+          "type": "string",
+          "description": "The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.",
+          "minLength": 15,
+          "maxLength": 34,
+          "pattern": "^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$"
+        }
+      }
+    },
+    "SwiftBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "SwiftExternalAccountCreateInfo": {
+      "title": "SWIFT Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SwiftAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/SwiftBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ThbAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "THB_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Thai bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "ThbBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "ThbExternalAccountCreateInfo": {
+      "title": "THB Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ThbAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/ThbBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "TronWalletExternalAccountInfo": {
+      "title": "Tron Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/TronWalletInfo"
+        }
+      ]
+    },
+    "TronWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "TRON_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Tron wallet address"
+        }
+      }
+    },
+    "TzsAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "TZS_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Tanzanian mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+255[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "TzsBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "TzsExternalAccountCreateInfo": {
+      "title": "TZS Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/TzsAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/TzsBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "UgxAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "UGX_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "UgxBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "UgxExternalAccountCreateInfo": {
+      "title": "UGX Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/UgxAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/UgxBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "UsdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "routingNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "USD_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "routingNumber": {
+          "type": "string",
+          "description": "The ABA routing number",
+          "minLength": 9,
+          "maxLength": 9,
+          "pattern": "^[0-9]{9}$"
+        }
+      }
+    },
+    "UsdBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "UsdExternalAccountCreateInfo": {
+      "title": "USD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/UsdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/UsdBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "VndAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "VND_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Vietnamese bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "VndBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "VndExternalAccountCreateInfo": {
+      "title": "VND Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/VndAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/VndBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "XafAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider",
+        "region"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "XAF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "region": {
+          "type": "string",
+          "description": "Country code within the Central African CFA franc zone",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$",
+          "enum": [
+            "CM",
+            "CG"
+          ]
+        }
+      }
+    },
+    "XafBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "XafExternalAccountCreateInfo": {
+      "title": "XAF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/XafAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/XafBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "XofAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider",
+        "region"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "XOF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "region": {
+          "type": "string",
+          "description": "Country code within the West African CFA franc zone",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$",
+          "enum": [
+            "BJ",
+            "CI",
+            "SN",
+            "TG"
+          ]
+        }
+      }
+    },
+    "XofBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "XofExternalAccountCreateInfo": {
+      "title": "XOF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/XofAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/XofBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ZarAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ZAR_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "South African bank account number",
+          "minLength": 9,
+          "maxLength": 13,
+          "pattern": "^[0-9]{9,13}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "ZarBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "ZarExternalAccountCreateInfo": {
+      "title": "ZAR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ZarAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/ZarBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "ZmwAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ZMW_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Zambian mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+260[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "ZmwBeneficiary": {
+      "title": "Individual Beneficiary",
+      "type": "object",
+      "required": [
+        "beneficiaryType",
+        "fullName"
+      ],
+      "properties": {
+        "beneficiaryType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "fullName": {
+          "type": "string",
+          "description": "The full name of the beneficiary"
+        },
+        "birthDate": {
+          "type": "string",
+          "description": "The birth date of the beneficiary"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "The nationality of the beneficiary"
+        },
+        "email": {
+          "type": "string",
+          "description": "The email of the beneficiary"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the beneficiary"
+        },
+        "countryOfResidence": {
+          "type": "string",
+          "description": "The country of residence of the beneficiary"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "ZmwExternalAccountCreateInfo": {
+      "title": "ZMW Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseExternalAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ZmwAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "beneficiary"
+          ],
+          "properties": {
+            "beneficiary": {
+              "oneOf": [
+                {
+                  "title": "Individual Beneficiary",
+                  "$ref": "#/$defs/ZmwBeneficiary"
+                },
+                {
+                  "title": "Business Beneficiary",
+                  "$ref": "#/$defs/BusinessBeneficiary"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

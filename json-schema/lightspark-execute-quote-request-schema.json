@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-execute-quote-request-schema.json",
+  "title": "ExecuteQuoteRequest",
+  "description": "Optional body for executing a quote. Only needed to request a specific Strong Customer Authentication factor (`scaFactor`) for the challenge this call issues; omit the body entirely otherwise.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-cross-currency-transfers-api-openapi.yml#/components/schemas/ExecuteQuoteRequest",
+  "type": "object",
+  "properties": {
+    "scaFactor": {
+      "$ref": "#/$defs/ScaFactor",
+      "description": "Optional preferred factor for the Strong Customer Authentication challenge this call issues. Only relevant for customers in a region where SCA is required (e.g. EU); ignored otherwise. Valid values for a per-transaction challenge are `SMS_OTP` (default) and `PASSKEY` — `TOTP` cannot carry the required dynamic linking and is rejected here. Omit to default to `SMS_OTP`."
+    }
+  },
+  "$defs": {
+    "ScaFactor": {
+      "type": "string",
+      "enum": [
+        "SMS_OTP",
+        "TOTP",
+        "PASSKEY"
+      ],
+      "description": "A Strong Customer Authentication factor.\n\n| Factor | Description |\n|--------|-------------|\n| `SMS_OTP` | One-time code sent by SMS to the customer's verified phone. Requires no prior enrollment. |\n| `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |\n| `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |\n"
+    }
+  }
+}

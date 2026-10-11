@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-transfer-in-request-schema.json",
+  "title": "TransferInRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-same-currency-transfers-api-openapi.yml#/components/schemas/TransferInRequest",
+  "type": "object",
+  "required": [
+    "source",
+    "destination"
+  ],
+  "properties": {
+    "source": {
+      "$ref": "#/$defs/ExternalAccountReference",
+      "description": "Source external account details"
+    },
+    "destination": {
+      "$ref": "#/$defs/InternalAccountReference",
+      "description": "Destination internal account details"
+    },
+    "amount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)"
+    }
+  },
+  "$defs": {
+    "ExternalAccountReference": {
+      "type": "object",
+      "required": [
+        "accountId"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "description": "Reference to an external account ID"
+        }
+      }
+    },
+    "InternalAccountReference": {
+      "type": "object",
+      "required": [
+        "accountId"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "description": "Reference to an internal account ID"
+        }
+      }
+    }
+  }
+}

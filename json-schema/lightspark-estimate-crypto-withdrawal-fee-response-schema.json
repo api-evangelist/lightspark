@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-estimate-crypto-withdrawal-fee-response-schema.json",
+  "title": "EstimateCryptoWithdrawalFeeResponse",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-cross-currency-transfers-api-openapi.yml#/components/schemas/EstimateCryptoWithdrawalFeeResponse",
+  "type": "object",
+  "required": [
+    "networkFee",
+    "networkFeeAsset",
+    "applicationFee",
+    "totalFee",
+    "netAmount"
+  ],
+  "properties": {
+    "networkFee": {
+      "type": "integer",
+      "description": "The estimated network (gas) fee in the smallest unit of the network fee asset (e.g. lamports for SOL). This is provided for informational purposes to show the raw on-chain cost. Note that this value is denominated in networkFeeAsset, not in the withdrawal currency — it cannot be directly added to applicationFee or compared to totalFee."
+    },
+    "networkFeeAsset": {
+      "type": "string",
+      "description": "The asset used to pay the network fee (e.g. SOL for Solana transactions)."
+    },
+    "applicationFee": {
+      "type": "integer",
+      "description": "The application fee charged by the platform in the smallest unit of the withdrawal currency. Zero if no application fee applies."
+    },
+    "totalFee": {
+      "type": "integer",
+      "description": "The total cost of the withdrawal in the smallest unit of the withdrawal currency. This equals the network fee converted to the withdrawal currency at current rates plus the application fee. This is the amount deducted from the withdrawal in addition to netAmount."
+    },
+    "netAmount": {
+      "type": "integer",
+      "description": "The net amount the recipient will receive after fees, in the smallest unit of the withdrawal currency."
+    }
+  }
+}

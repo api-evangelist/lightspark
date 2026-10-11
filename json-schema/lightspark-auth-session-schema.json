@@ -1,0 +1,91 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-auth-session-schema.json",
+  "title": "Authentication Session",
+  "description": "An authentication session on an Embedded Wallet internal account. Returned from `GET /auth/sessions` (list) and `POST /auth/credentials/{id}/verify` (on credential verification) or `POST /auth/sessions/{id}/refresh` (on mid-session refresh). Only session-issuing responses include `encryptedSessionSigningKey` — it is delivered exactly once at the moment the session is issued and is never returned by the list endpoint.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-embedded-wallet-auth-api-openapi.yml#/components/schemas/AuthSession",
+  "allOf": [
+    {
+      "$ref": "#/$defs/AuthMethod"
+    },
+    {
+      "type": "object",
+      "required": [
+        "id",
+        "expiresAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "System-generated unique identifier for the session. Pass this value to `DELETE /auth/sessions/{id}` to revoke the session before `expiresAt`. Overrides the `id` inherited from `AuthMethod` so this response identifies the session rather than the authenticating credential."
+        },
+        "encryptedSessionSigningKey": {
+          "type": "string",
+          "description": "HPKE-encrypted session signing key, sealed to the `clientPublicKey` supplied on the verification or refresh request. Encoded as a base58check string: the decoded payload is a 33-byte compressed P-256 encapsulated public key followed by AES-256-GCM ciphertext. The client decrypts this key with its private key and uses it to sign subsequent Embedded Wallet requests until `expiresAt`.\n\nReturned only by session-issuing responses for `OAUTH` and `PASSKEY` credentials. `EMAIL_OTP` and `SMS_OTP` sessions omit this field — the client generates a TEK keypair before verification and retains the private key throughout, so the server has nothing to deliver. Always omitted from list responses (`GET /auth/sessions`) since Grid does not retain the plaintext key after the client has decrypted it."
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp after which the session is no longer valid and the `encryptedSessionSigningKey` must not be used to sign further requests."
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "AuthMethod": {
+      "type": "object",
+      "required": [
+        "id",
+        "accountId",
+        "type",
+        "nickname",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "System-generated unique identifier for the authentication credential."
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Identifier of the internal account that this credential authenticates."
+        },
+        "type": {
+          "$ref": "#/$defs/AuthMethodType"
+        },
+        "credentialId": {
+          "type": "string",
+          "description": "Base64url-encoded WebAuthn credential identifier for this passkey. Present only for `PASSKEY` authentication credentials. Corresponds to `PublicKeyCredential.rawId`; pass this value as `allowCredentials[].id` when requesting a passkey assertion for this auth method."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "Human-readable identifier for this credential. For EMAIL_OTP credentials this is the email address; for SMS_OTP credentials this is the E.164 phone number; for OAUTH credentials it is typically the email claim from the OIDC token; for PASSKEY credentials it is the validated nickname provided at registration time."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      }
+    },
+    "AuthMethodType": {
+      "type": "string",
+      "enum": [
+        "OAUTH",
+        "EMAIL_OTP",
+        "SMS_OTP",
+        "PASSKEY"
+      ],
+      "description": "The type of authentication credential.\n- `OAUTH`: OpenID Connect (OIDC) token issued by an identity provider such as Google or Apple.\n- `EMAIL_OTP`: A one-time password delivered to the user's email address.\n- `SMS_OTP`: A one-time password delivered to the user's phone number.\n- `PASSKEY`: A WebAuthn passkey bound to the user's device."
+    }
+  }
+}

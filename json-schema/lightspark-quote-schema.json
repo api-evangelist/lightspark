@@ -1,0 +1,4026 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-quote-schema.json",
+  "title": "Quote",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-agent-operations-api-openapi.yml#/components/schemas/Quote",
+  "type": "object",
+  "required": [
+    "id",
+    "status",
+    "expiresAt",
+    "createdAt",
+    "source",
+    "destination",
+    "sendingCurrency",
+    "receivingCurrency",
+    "totalSendingAmount",
+    "totalReceivingAmount",
+    "exchangeRate",
+    "feesIncluded",
+    "transactionId"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for this quote"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "PENDING_AUTHORIZATION",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED",
+        "EXPIRED"
+      ],
+      "description": "Current status of the quote. `PENDING_AUTHORIZATION` occurs only for customers in a region where Strong Customer Authentication is required (e.g. EU): the quote carries an `scaChallenge` that must be authorized before execution, and for realtime-funding sources `paymentInstructions` are withheld until it is satisfied."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When this quote was created"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Absolute UTC timestamp when the rate locked in this quote becomes invalid and the quote can no longer be executed. The window depends on the rail and corridor: instant rails (Lightning, Spark, USDC on Solana/Base/Polygon, RTP, SEPA Instant) typically expire in 1–5 minutes; corridors with longer settlement guarantees may have longer windows. Always rely on this timestamp rather than assuming a fixed window."
+    },
+    "source": {
+      "$ref": "#/$defs/QuoteSourceOneOf"
+    },
+    "destination": {
+      "$ref": "#/$defs/QuoteDestinationOneOf"
+    },
+    "sendingCurrency": {
+      "$ref": "#/$defs/Currency",
+      "description": "Currency for the sending amount"
+    },
+    "receivingCurrency": {
+      "$ref": "#/$defs/Currency",
+      "description": "Currency for the receiving amount"
+    },
+    "totalSendingAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The total amount that will be sent in the smallest unit of the sending currency (eg. cents).",
+      "exclusiveMinimum": 0
+    },
+    "totalReceivingAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The total amount that will be received in the smallest unit of the receiving currency (eg. cents).",
+      "exclusiveMinimum": 0
+    },
+    "exchangeRate": {
+      "type": "number",
+      "description": "Number of sending currency units per receiving currency unit.",
+      "exclusiveMinimum": 0
+    },
+    "feesIncluded": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The fees associated with the quote in the smallest unit of the sending currency (eg. cents). Note: this value may fluctuate between quotes — some underlying fee components are defined in the receiving currency, so their equivalent in the sending currency moves with the FX rate. The fees shown here are locked only for the lifetime of this quote.",
+      "minimum": 0
+    },
+    "paymentInstructions": {
+      "type": "array",
+      "description": "Payment instructions for executing the payment. This is not required when using an internal account source.",
+      "items": {
+        "$ref": "#/$defs/PaymentInstructions"
+      }
+    },
+    "transactionId": {
+      "type": "string",
+      "description": "The ID of the transaction created from this quote."
+    },
+    "remittanceInformation": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Free-form information about the payment that travels with it to the recipient, as provided on the quote request. The field this populates depends on the payment rail: for ACH it populates the Addenda record, for FedNow and RTP it populates the remittanceInformation field, and for wires it populates the OBI (Originator to Beneficiary Information) / beneficiary information."
+    },
+    "counterpartyInformation": {
+      "$ref": "#/$defs/CounterpartyInformation",
+      "description": "Additional information about the counterparty, if available and required by the platform in their configuration."
+    },
+    "rateDetails": {
+      "$ref": "#/$defs/OutgoingRateDetails",
+      "description": "Details about the rate and fees for the transaction."
+    },
+    "scaChallenge": {
+      "$ref": "#/$defs/ScaChallenge",
+      "readOnly": true,
+      "description": "Present only while `status` is `PENDING_AUTHORIZATION`: the Strong Customer Authentication challenge to satisfy before this quote can be executed (or, for realtime-funding sources, before `paymentInstructions` are issued). Omitted for customers outside SCA-regulated regions (non-EU)."
+    }
+  },
+  "$defs": {
+    "AccountDestination": {
+      "title": "Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Destination account identifier"
+            },
+            "paymentRail": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PaymentRail"
+                },
+                {
+                  "description": "The payment rail to use for the transfer. Must be one of the rails supported by the destination account. If not specified, the system will select a default rail."
+                }
+              ]
+            }
+          },
+          "description": "Destination account details"
+        }
+      ]
+    },
+    "AccountQuoteSource": {
+      "title": "Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseQuoteSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Source account identifier"
+            },
+            "customerId": {
+              "type": "string",
+              "description": "Required when funding from an FBO account to identify the customer on whose behalf the transaction is being initiated.  Otherwise, will default to the customerId of the account owner."
+            }
+          },
+          "description": "Source account details"
+        }
+      ]
+    },
+    "AedAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/AedAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "AedAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "AED_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "UAE IBAN (23 characters, starting with AE)",
+          "minLength": 23,
+          "maxLength": 23,
+          "pattern": "^AE[0-9]{21}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "BaseDestination": {
+      "type": "object",
+      "required": [
+        "destinationType"
+      ],
+      "properties": {
+        "destinationType": {
+          "$ref": "#/$defs/DestinationType"
+        }
+      }
+    },
+    "BasePaymentAccountInfo": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "$ref": "#/$defs/PaymentAccountType"
+        }
+      }
+    },
+    "BaseQuoteSource": {
+      "type": "object",
+      "required": [
+        "sourceType"
+      ],
+      "properties": {
+        "sourceType": {
+          "$ref": "#/$defs/QuoteSourceType"
+        }
+      }
+    },
+    "BaseWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BASE_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Base eth wallet address"
+        }
+      }
+    },
+    "BdtAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BdtAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "BdtAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BDT_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "The branch code",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "BwpAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/BwpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "BwpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "BWP_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "CadAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CadAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CadAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankCode",
+        "branchCode",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "CAD_ACCOUNT"
+          ]
+        },
+        "bankCode": {
+          "type": "string",
+          "description": "Canadian financial institution number (3 digits)",
+          "minLength": 3,
+          "maxLength": 3,
+          "pattern": "^[0-9]{3}$"
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "Transit number identifying the branch (5 digits)",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number (7-12 digits)",
+          "minLength": 7,
+          "maxLength": 12,
+          "pattern": "^[0-9]{7,12}$"
+        }
+      }
+    },
+    "CnyAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CnyAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "CnyAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "CNY_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "CounterpartyInformation": {
+      "type": "object",
+      "description": "Additional information about the counterparty, if available and relevant to the transaction and platform.",
+      "additionalProperties": true
+    },
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "DestinationType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "UMA_ADDRESS"
+      ],
+      "description": "Type of payment destination"
+    },
+    "DkkAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/DkkAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SEPA",
+                  "SEPA_INSTANT"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "DkkAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "DKK_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "Danish IBAN (18 characters, starting with DK)",
+          "minLength": 18,
+          "maxLength": 18,
+          "pattern": "^DK[0-9]{16}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "EgpAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/EgpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "EgpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: bankName, iban\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "EGP_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "Egyptian IBAN (29 characters, starting with EG)",
+          "minLength": 29,
+          "maxLength": 29,
+          "pattern": "^EG[0-9]{27}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "EthereumWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ETHEREUM_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Ethereum L1 wallet address"
+        }
+      }
+    },
+    "EurAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/EurAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SEPA",
+                  "SEPA_INSTANT"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "EurAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "iban"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "EUR_ACCOUNT"
+          ]
+        },
+        "iban": {
+          "type": "string",
+          "description": "The IBAN of the bank account",
+          "minLength": 15,
+          "maxLength": 34,
+          "pattern": "^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "GbpAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/GbpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "FASTER_PAYMENTS"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GbpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "sortCode",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GBP_ACCOUNT"
+          ]
+        },
+        "sortCode": {
+          "type": "string",
+          "description": "The UK sort code",
+          "minLength": 6,
+          "maxLength": 6,
+          "pattern": "^[0-9]{6}$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "UK bank account number (8 digits)",
+          "minLength": 8,
+          "maxLength": 8,
+          "pattern": "^[0-9]{8}$"
+        }
+      }
+    },
+    "GhsAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/GhsAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GhsAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GHS_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "GtqAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/GtqAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "GtqAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankAccountType",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "GTQ_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the beneficiary's bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "HkdAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/HkdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "HkdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "HKD_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Hong Kong bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "HtgAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/HtgAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "HtgAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "HTG_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "IdrAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/IdrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "IdrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode",
+        "phoneNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "IDR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Indonesian bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Indonesian phone number for e-wallet payments",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+62[0-9]{9,12}$"
+        }
+      }
+    },
+    "InrAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/InrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "UPI",
+                  "NEFT",
+                  "RTGS"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "InrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- NEFT: accountNumber, ifsc, rail\n- RTGS: accountNumber, ifsc, rail\n- UPI: vpa",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "INR_ACCOUNT"
+          ]
+        },
+        "vpa": {
+          "type": "string",
+          "description": "The UPI Virtual Payment Address",
+          "minLength": 3,
+          "maxLength": 255,
+          "pattern": "^[a-zA-Z0-9.\\-_]+@[a-zA-Z0-9]+$"
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Indian bank account number (9–18 digits)",
+          "minLength": 9,
+          "maxLength": 18,
+          "pattern": "^[0-9]{9,18}$"
+        },
+        "ifsc": {
+          "type": "string",
+          "description": "The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)",
+          "minLength": 11,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$"
+        },
+        "rail": {
+          "type": "string",
+          "description": "The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "JmdAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/JmdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "JmdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "branchCode",
+        "bankAccountType",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "JMD_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "branchCode": {
+          "type": "string",
+          "description": "The branch code",
+          "minLength": 5,
+          "maxLength": 5,
+          "pattern": "^[0-9]{5}$"
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "KesAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/KesAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "KesAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "KES_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Kenyan mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+254[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "MwkAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MwkAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "MwkAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MWK_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "MxnAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MxnAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SPEI"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "MxnAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "clabeNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MXN_ACCOUNT"
+          ]
+        },
+        "clabeNumber": {
+          "type": "string",
+          "description": "The CLABE number of the bank",
+          "minLength": 18,
+          "maxLength": 18,
+          "pattern": "^[0-9]{18}$"
+        }
+      }
+    },
+    "MyrAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/MyrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "MyrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "MYR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Malaysian bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "NgnAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/NgnAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "NgnAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "NGN_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Nigerian bank account number",
+          "minLength": 10,
+          "maxLength": 10,
+          "pattern": "^[0-9]{10}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "OutgoingRateDetails": {
+      "description": "Details about the rate and fees for an outgoing transaction or quote. Note: `counterpartyFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.",
+      "type": "object",
+      "required": [
+        "counterpartyMultiplier",
+        "counterpartyFixedFee",
+        "gridApiMultiplier",
+        "gridApiFixedFee",
+        "gridApiVariableFeeRate",
+        "gridApiVariableFeeAmount"
+      ],
+      "properties": {
+        "counterpartyMultiplier": {
+          "type": "number",
+          "format": "double",
+          "description": "The underlying multiplier from mSATs to the receiving currency as returned by the counterparty institution.",
+          "exclusiveMinimum": 0
+        },
+        "counterpartyFixedFee": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The fixed fee charged by the counterparty institution to execute the quote in the smallest unit of the receiving currency (eg. cents).",
+          "minimum": 0
+        },
+        "gridApiMultiplier": {
+          "type": "number",
+          "format": "double",
+          "description": "The underlying multiplier from the sending currency to mSATS, including variable fees.",
+          "exclusiveMinimum": 0
+        },
+        "gridApiFixedFee": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The fixed fee charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents).",
+          "minimum": 0
+        },
+        "gridApiVariableFeeRate": {
+          "type": "number",
+          "format": "double",
+          "description": "The variable fee rate charged by the Grid product to execute the quote as a percentage of the sending currency amount.",
+          "minimum": 0
+        },
+        "gridApiVariableFeeAmount": {
+          "type": "number",
+          "format": "int64",
+          "description": "The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the sending currency (eg. cents). This is the sending amount times gridApiVariableFeeRate.",
+          "minimum": 0
+        }
+      }
+    },
+    "PaymentAccountType": {
+      "type": "string",
+      "enum": [
+        "USD_ACCOUNT",
+        "BRL_ACCOUNT",
+        "MXN_ACCOUNT",
+        "DKK_ACCOUNT",
+        "ARS_ACCOUNT",
+        "COP_ACCOUNT",
+        "EUR_ACCOUNT",
+        "INR_ACCOUNT",
+        "NGN_ACCOUNT",
+        "CAD_ACCOUNT",
+        "GBP_ACCOUNT",
+        "HKD_ACCOUNT",
+        "IDR_ACCOUNT",
+        "MYR_ACCOUNT",
+        "PHP_ACCOUNT",
+        "SGD_ACCOUNT",
+        "THB_ACCOUNT",
+        "VND_ACCOUNT",
+        "SPARK_WALLET",
+        "LIGHTNING",
+        "SOLANA_WALLET",
+        "TRON_WALLET",
+        "POLYGON_WALLET",
+        "BASE_WALLET",
+        "ETHEREUM_WALLET",
+        "EMBEDDED_WALLET"
+      ],
+      "description": "Type of payment account or wallet"
+    },
+    "PaymentAedAccountInfo": {
+      "title": "AED Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/AedAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentArsAccountInfo": {
+      "title": "ARS Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountNumber"
+          ],
+          "properties": {
+            "accountType": {
+              "type": "string",
+              "enum": [
+                "ARS_ACCOUNT"
+              ]
+            },
+            "accountNumber": {
+              "type": "string",
+              "description": "The static CVU (Clave Virtual Uniforme) bank account number to pay to.",
+              "minLength": 22,
+              "maxLength": 22,
+              "pattern": "^\\d{22}$"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentBaseWalletInfo": {
+      "title": "Base Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BaseWalletInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset",
+              "enum": [
+                "USDC"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PaymentBdtAccountInfo": {
+      "title": "BDT Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BdtAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentBrlAccountInfo": {
+      "title": "BRL Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "qrCode"
+          ],
+          "properties": {
+            "accountType": {
+              "type": "string",
+              "enum": [
+                "BRL_ACCOUNT"
+              ]
+            },
+            "qrCode": {
+              "type": "string",
+              "description": "A PIX QR code payload that can be used to fund the transaction. This can be rendered as a QR code image or pasted into a PIX-compatible banking app.",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "PaymentBwpAccountInfo": {
+      "title": "BWP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/BwpAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentCadAccountInfo": {
+      "title": "CAD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/CadAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentCnyAccountInfo": {
+      "title": "CNY Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/CnyAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentCopAccountInfo": {
+      "title": "COP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentUrl"
+          ],
+          "properties": {
+            "accountType": {
+              "type": "string",
+              "enum": [
+                "COP_ACCOUNT"
+              ]
+            },
+            "paymentUrl": {
+              "type": "string",
+              "format": "uri",
+              "description": "A payment URL where the customer can complete their COP deposit."
+            }
+          }
+        }
+      ]
+    },
+    "PaymentDkkAccountInfo": {
+      "title": "DKK Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/DkkAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentEgpAccountInfo": {
+      "title": "EGP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EgpAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentEmbeddedWalletInfo": {
+      "title": "Embedded Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountType",
+            "payloadToSign"
+          ],
+          "properties": {
+            "accountType": {
+              "type": "string",
+              "enum": [
+                "EMBEDDED_WALLET"
+              ],
+              "description": "Discriminator value identifying this as Embedded Wallet payment instructions."
+            },
+            "payloadToSign": {
+              "type": "string",
+              "description": "JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet."
+            }
+          }
+        }
+      ]
+    },
+    "PaymentEthereumWalletInfo": {
+      "title": "Ethereum Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EthereumWalletInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset",
+              "enum": [
+                "USDC"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PaymentEurAccountInfo": {
+      "title": "EUR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/EurAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentGbpAccountInfo": {
+      "title": "GBP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GbpAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentGhsAccountInfo": {
+      "title": "GHS Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GhsAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentGtqAccountInfo": {
+      "title": "GTQ Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/GtqAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentHkdAccountInfo": {
+      "title": "HKD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/HkdAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentHtgAccountInfo": {
+      "title": "HTG Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/HtgAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentIdrAccountInfo": {
+      "title": "IDR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/IdrAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentInrAccountInfo": {
+      "title": "INR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/InrAccountInfo"
+        }
+      ]
+    },
+    "PaymentInstructions": {
+      "type": "object",
+      "required": [
+        "accountOrWalletInfo"
+      ],
+      "properties": {
+        "instructionsNotes": {
+          "type": "string",
+          "description": "Additional human-readable instructions for making the payment"
+        },
+        "isPlatformAccount": {
+          "type": "boolean",
+          "description": "Indicates whether the account is a platform account or a customer account."
+        },
+        "accountOrWalletInfo": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/PaymentUsdAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentBrlAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentMxnAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentDkkAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentEurAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentInrAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentNgnAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentCadAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentGbpAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentHkdAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentIdrAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentMyrAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentPhpAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentSgdAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentThbAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentVndAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentAedAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentKesAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentMwkAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentRwfAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentTzsAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentUgxAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentXofAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentZarAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentZmwAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentBwpAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentXafAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentBdtAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentArsAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentCopAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentEgpAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentGhsAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentGtqAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentHtgAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentJmdAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentPkrAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentSlvAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentSwiftAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentCnyAccountInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentSparkWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentLightningInvoiceInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentSolanaWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentTronWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentPolygonWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentBaseWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentEthereumWalletInfo"
+            },
+            {
+              "$ref": "#/$defs/PaymentEmbeddedWalletInfo"
+            }
+          ]
+        }
+      }
+    },
+    "PaymentJmdAccountInfo": {
+      "title": "JMD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/JmdAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentKesAccountInfo": {
+      "title": "KES Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/KesAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentLightningInvoiceInfo": {
+      "title": "Lightning Invoice",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "invoice"
+          ],
+          "properties": {
+            "accountType": {
+              "type": "string",
+              "enum": [
+                "LIGHTNING"
+              ]
+            },
+            "invoice": {
+              "type": "string",
+              "description": "Invoice for the payment"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentMwkAccountInfo": {
+      "title": "MWK Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MwkAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentMxnAccountInfo": {
+      "title": "MXN Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MxnAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentMyrAccountInfo": {
+      "title": "MYR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/MyrAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentNgnAccountInfo": {
+      "title": "NGN Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/NgnAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentPhpAccountInfo": {
+      "title": "PHP Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PhpAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentPkrAccountInfo": {
+      "title": "PKR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PkrAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentPolygonWalletInfo": {
+      "title": "Polygon Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/PolygonWalletInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset",
+              "enum": [
+                "USDC"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PaymentRail": {
+      "type": "string",
+      "enum": [
+        "ACH",
+        "ACH_COLOMBIA",
+        "BANK_TRANSFER",
+        "BRE_B",
+        "CIPS",
+        "FAST",
+        "FASTER_PAYMENTS",
+        "FEDNOW",
+        "INSTAPAY",
+        "MOBILE_MONEY",
+        "NEFT",
+        "PAYNOW",
+        "PESONET",
+        "PIX",
+        "RTGS",
+        "RTP",
+        "SEPA",
+        "SEPA_INSTANT",
+        "SPEI",
+        "SWIFT",
+        "UNIONPAY",
+        "UPI",
+        "WIRE"
+      ],
+      "description": "The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts."
+    },
+    "PaymentRwfAccountInfo": {
+      "title": "RWF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/RwfAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentSgdAccountInfo": {
+      "title": "SGD Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SgdAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentSlvAccountInfo": {
+      "title": "SLV Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SlvAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentSolanaWalletInfo": {
+      "title": "Solana Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SolanaWalletInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset",
+              "enum": [
+                "USDC",
+                "USDT"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PaymentSparkWalletInfo": {
+      "title": "Spark Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SparkWalletInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "assetType"
+          ],
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset or configured Spark token currency code"
+            },
+            "invoice": {
+              "type": "string",
+              "description": "Invoice for the payment"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentSwiftAccountInfo": {
+      "title": "SWIFT Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/SwiftAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentThbAccountInfo": {
+      "title": "THB Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ThbAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentTronWalletInfo": {
+      "title": "Tron Wallet",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/TronWalletInfo"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "assetType": {
+              "type": "string",
+              "description": "Type of asset",
+              "enum": [
+                "USDT"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "PaymentTzsAccountInfo": {
+      "title": "TZS Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/TzsAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentUgxAccountInfo": {
+      "title": "UGX Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/UgxAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentUsdAccountInfo": {
+      "title": "USD Bank Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/UsdAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentVndAccountInfo": {
+      "title": "VND Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/VndAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentXafAccountInfo": {
+      "title": "XAF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/XafAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentXofAccountInfo": {
+      "title": "XOF Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/XofAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentZarAccountInfo": {
+      "title": "ZAR Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ZarAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PaymentZmwAccountInfo": {
+      "title": "ZMW Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BasePaymentAccountInfo"
+        },
+        {
+          "$ref": "#/$defs/ZmwAccountInfo"
+        },
+        {
+          "type": "object",
+          "required": [
+            "reference"
+          ],
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "Unique reference code that must be included with the payment to properly credit it"
+            }
+          }
+        }
+      ]
+    },
+    "PhpAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/PhpAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PhpAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "PHP_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Name of the beneficiary's bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number",
+          "minLength": 8,
+          "maxLength": 16,
+          "pattern": "^[0-9]{8,16}$"
+        }
+      }
+    },
+    "PkrAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/PkrAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "PkrAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: accountNumber, bankName\n- MOBILE_MONEY: bankName, phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "PKR_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "iban": {
+          "type": "string",
+          "description": "Pakistani IBAN (24 characters, starting with PK)",
+          "minLength": 24,
+          "maxLength": 24,
+          "pattern": "^PK[0-9]{2}[A-Z]{4}[0-9]{16}$"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "PolygonWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "POLYGON_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Polygon eth wallet address"
+        }
+      }
+    },
+    "QuoteDestinationOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountDestination"
+        },
+        {
+          "$ref": "#/$defs/UmaAddressDestination"
+        }
+      ]
+    },
+    "QuoteSourceOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountQuoteSource"
+        },
+        {
+          "$ref": "#/$defs/RealtimeFundingQuoteSource"
+        }
+      ]
+    },
+    "QuoteSourceType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "REALTIME_FUNDING"
+      ],
+      "description": "Type of quote funding source"
+    },
+    "RealtimeFundingQuoteSource": {
+      "title": "Real-time Funding",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseQuoteSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "REALTIME_FUNDING"
+              ]
+            },
+            "customerId": {
+              "type": "string",
+              "description": "Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself."
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code for the funding source. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies."
+            },
+            "cryptoNetwork": {
+              "type": "string",
+              "description": "The crypto network to use for the funding source. Required when `currency` is a stablecoin (e.g. USDC, USDT). Specifies which network the customer will deposit on, so the correct deposit address can be generated. Example values: `SOLANA`, `ETHEREUM`, `BASE`, `POLYGON`, `SPARK`, `LIGHTNING`, `BITCOIN`."
+            }
+          },
+          "description": "Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.)."
+        }
+      ]
+    },
+    "RwfAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/RwfAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "RwfAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "RWF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Rwandan mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+250[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "ScaChallenge": {
+      "type": "object",
+      "description": "A Strong Customer Authentication challenge that must be satisfied before a money-movement operation can complete. This object is **only present when the customer is in a region where SCA is required** (the EU); for customers outside SCA-regulated regions it is omitted entirely and no action is needed.\n\nWhen present on a quote, authorize it by submitting an `ScaAuthorization` proof to `POST /quotes/{quoteId}/authorize`.\n\n**A single operation may require more than one authorization, in sequence.** Treat `scaChallenge` as *the challenge to satisfy now*, not \"the only one\". After each authorize, re-inspect the returned quote/transaction: if it is still `PENDING_AUTHORIZATION`, it carries the **next** `scaChallenge` (a new `id`) — authorize that too, and repeat until it leaves `PENDING_AUTHORIZATION`. Do not assume one authorization releases the transfer. The number of authorizations is flow-dependent and **may decrease in future**: for example, a cross-currency send today authorizes the currency conversion and the payout as two separate challenges; a future update may collapse them into one. A client written to loop on status handles any count unchanged.",
+      "required": [
+        "id",
+        "expiresAt",
+        "factor",
+        "availableFactors"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this challenge. The server resolves the active challenge from the quote or transaction being authorized, so this field need not be supplied back; it is informational (e.g. for logging or correlation)."
+        },
+        "expiresAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Absolute UTC timestamp after which this challenge can no longer be authorized."
+        },
+        "factor": {
+          "$ref": "#/$defs/ScaFactor",
+          "description": "The factor this challenge was issued for. Defaults to `SMS_OTP`."
+        },
+        "availableFactors": {
+          "type": "array",
+          "description": "The factors the customer may use to satisfy this challenge.",
+          "items": {
+            "$ref": "#/$defs/ScaFactor"
+          }
+        },
+        "purpose": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "description": "Optional, informational label for what this particular challenge in the sequence authorizes — useful for step UX (e.g. \"Authorize the currency conversion\" vs \"Authorize the payout\"). Known values include `CURRENCY_CONVERSION`, `PAYOUT`, and `TRANSFER`, but the set is **non-exhaustive and may grow** — treat unrecognized values as a generic authorization step and do not branch program logic on it. Omitted when steps are not distinguished (e.g. a single-authorization flow)."
+        },
+        "passkeyAssertionOptions": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "additionalProperties": true,
+          "description": "Opaque WebAuthn assertion request options (including the relying-party id, challenge, and allowed credentials), present only when `factor` is `PASSKEY`. Pass to the device's WebAuthn API to produce the assertion submitted back in `ScaAuthorization.passkeyAssertion`."
+        },
+        "passkeyAllowedOrigins": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "items": {
+            "type": "string"
+          },
+          "description": "The origins the WebAuthn ceremony may run against. Populated for enrollment and login passkey challenges; the origin the assertion is produced against must be one of these and echoed back as `ScaAuthorization.origin`. Per-transaction passkey challenges omit this (they carry `passkeyAssertionOptions` only) — see `ScaAuthorization.origin` for how to source the origin in that case."
+        }
+      }
+    },
+    "ScaFactor": {
+      "type": "string",
+      "enum": [
+        "SMS_OTP",
+        "TOTP",
+        "PASSKEY"
+      ],
+      "description": "A Strong Customer Authentication factor.\n\n| Factor | Description |\n|--------|-------------|\n| `SMS_OTP` | One-time code sent by SMS to the customer's verified phone. Requires no prior enrollment. |\n| `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |\n| `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |\n"
+    },
+    "SgdAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SgdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "PAYNOW",
+                  "FAST",
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SgdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SGD_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "SlvAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SlvAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER",
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SlvAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType"
+      ],
+      "description": "Required fields depend on the selected paymentRails:\n- BANK_TRANSFER: bankAccountType, accountNumber\n- MOBILE_MONEY: phoneNumber",
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SLV_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank (BANK_TRANSFER only)",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank (BANK_TRANSFER only)",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "bankAccountType": {
+          "type": "string",
+          "description": "The bank account type (BANK_TRANSFER only)",
+          "enum": [
+            "CHECKING",
+            "SAVINGS"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format (MOBILE_MONEY only — e.g. Tigo Money)",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        }
+      }
+    },
+    "SolanaWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SOLANA_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Solana wallet address"
+        }
+      }
+    },
+    "SparkWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SPARK_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Spark wallet address"
+        }
+      }
+    },
+    "SwiftAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/SwiftAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "SWIFT"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "SwiftAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "swiftCode",
+        "bankName",
+        "country"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "SWIFT_ACCOUNT"
+          ]
+        },
+        "country": {
+          "type": "string",
+          "description": "The ISO 3166-1 alpha-2 country code of the bank account",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$"
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "iban": {
+          "type": "string",
+          "description": "The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.",
+          "minLength": 15,
+          "maxLength": 34,
+          "pattern": "^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$"
+        }
+      }
+    },
+    "ThbAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ThbAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ThbAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "THB_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Thai bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "TronWalletInfo": {
+      "type": "object",
+      "required": [
+        "address",
+        "accountType"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "TRON_WALLET"
+          ]
+        },
+        "address": {
+          "type": "string",
+          "description": "Tron wallet address"
+        }
+      }
+    },
+    "TzsAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/TzsAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "TzsAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "TZS_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Tanzanian mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+255[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "UgxAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/UgxAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "UgxAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "UGX_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "UmaAddressDestination": {
+      "title": "UMA Address",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "umaAddress",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "UMA_ADDRESS"
+              ]
+            },
+            "umaAddress": {
+              "type": "string",
+              "description": "UMA address of the recipient"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code for the destination. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies."
+            }
+          },
+          "description": "UMA address destination details"
+        }
+      ]
+    },
+    "UsdAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/UsdAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "ACH",
+                  "WIRE",
+                  "RTP",
+                  "FEDNOW"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "UsdAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "routingNumber"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "USD_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "The account number of the bank",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "routingNumber": {
+          "type": "string",
+          "description": "The ABA routing number",
+          "minLength": 9,
+          "maxLength": 9,
+          "pattern": "^[0-9]{9}$"
+        }
+      }
+    },
+    "VndAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/VndAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "VndAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "bankName",
+        "accountNumber",
+        "swiftCode"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "VND_ACCOUNT"
+          ]
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "Vietnamese bank account number",
+          "minLength": 1,
+          "maxLength": 34
+        },
+        "swiftCode": {
+          "type": "string",
+          "description": "The SWIFT/BIC code of the bank",
+          "minLength": 8,
+          "maxLength": 11,
+          "pattern": "^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+        }
+      }
+    },
+    "XafAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/XafAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "XafAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider",
+        "region"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "XAF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "region": {
+          "type": "string",
+          "description": "Country code within the Central African CFA franc zone",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$",
+          "enum": [
+            "CM",
+            "CG"
+          ]
+        }
+      }
+    },
+    "XofAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/XofAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "XofAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider",
+        "region"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "XOF_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number in international format",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+[0-9]{6,14}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        },
+        "region": {
+          "type": "string",
+          "description": "Country code within the West African CFA franc zone",
+          "minLength": 2,
+          "maxLength": 2,
+          "pattern": "^[A-Z]{2}$",
+          "enum": [
+            "BJ",
+            "CI",
+            "SN",
+            "TG"
+          ]
+        }
+      }
+    },
+    "ZarAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ZarAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "BANK_TRANSFER"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ZarAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "accountNumber",
+        "bankName"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ZAR_ACCOUNT"
+          ]
+        },
+        "accountNumber": {
+          "type": "string",
+          "description": "South African bank account number",
+          "minLength": 9,
+          "maxLength": 13,
+          "pattern": "^[0-9]{9,13}$"
+        },
+        "bankName": {
+          "type": "string",
+          "description": "The name of the bank",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    },
+    "ZmwAccountInfo": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ZmwAccountInfoBase"
+        },
+        {
+          "type": "object",
+          "required": [
+            "paymentRails"
+          ],
+          "properties": {
+            "paymentRails": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "MOBILE_MONEY"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "ZmwAccountInfoBase": {
+      "type": "object",
+      "required": [
+        "accountType",
+        "phoneNumber",
+        "provider"
+      ],
+      "properties": {
+        "accountType": {
+          "type": "string",
+          "enum": [
+            "ZMW_ACCOUNT"
+          ]
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Zambian mobile money phone number",
+          "minLength": 7,
+          "maxLength": 15,
+          "pattern": "^\\+260[0-9]{9}$"
+        },
+        "provider": {
+          "type": "string",
+          "description": "The mobile money provider name",
+          "minLength": 1,
+          "maxLength": 255
+        }
+      }
+    }
+  }
+}

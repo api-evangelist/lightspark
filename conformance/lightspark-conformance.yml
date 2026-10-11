@@ -13,20 +13,19 @@ standards:
   evidence: components.securitySchemes.AgentAuth type http scheme bearer (agent device-code access tokens)
 - id: oauth2
   conforms: false
-  evidence: no oauth2 securityScheme; OIDC id_tokens are accepted as an embedded-wallet credential type
-    but Grid is not an OAuth2 authorization server
+  evidence: no oauth2 securityScheme; OIDC id_tokens are accepted as an embedded-wallet credential type but Grid is not an OAuth2 authorization
+    server
 - id: oidc
   conforms: partial
-  evidence: OAUTH credential type accepts OIDC ID tokens from supported issuers (Google, Apple) for embedded
-    wallet auth; validates iss/aud/sub/iat/exp and nonce=sha256(clientPublicKey)
+  evidence: OAUTH credential type accepts OIDC ID tokens from supported issuers (Google, Apple) for embedded wallet auth; validates iss/aud/sub/iat/exp
+    and nonce=sha256(clientPublicKey)
 - id: webauthn-passkeys
   conforms: true
-  evidence: PASSKEY credential type runs a full WebAuthn registration/assertion ceremony; validates challenge,
-    origin/RP binding, user-presence bit, assertion signature and signature counter
+  evidence: PASSKEY credential type runs a full WebAuthn registration/assertion ceremony; validates challenge, origin/RP binding, user-presence
+    bit, assertion signature and signature counter
 - id: rfc9457-problem-details
   conforms: false
-  evidence: errors are application/json with a proprietary {status, code, message, details} envelope,
-    not application/problem+json
+  evidence: errors are application/json with a proprietary {status, code, message, details} envelope, not application/problem+json
 - id: idempotency-key
   conforms: true
   evidence: Idempotency-Key request header on 10 mutating operations
@@ -38,12 +37,10 @@ standards:
   evidence: no Sunset or Deprecation headers declared; deprecation is communicated by email
 - id: uma
   conforms: true
-  evidence: Universal Money Address lookup, payreq and LNURLP operations; UMA version negotiation errors
-    (UNSUPPORTED_UMA_VERSION, NO_COMPATIBLE_UMA_VERSION)
+  evidence: Universal Money Address lookup, payreq and LNURLP operations; UMA version negotiation errors (UNSUPPORTED_UMA_VERSION, NO_COMPATIBLE_UMA_VERSION)
 - id: hpke
   conforms: true
-  evidence: HPKE-encrypted OTP bundles (encryptedOtpBundle / otpEncryptionTargetBundle) in the embedded
-    wallet auth flow
+  evidence: HPKE-encrypted OTP bundles (encryptedOtpBundle / otpEncryptionTargetBundle) in the embedded wallet auth flow
 - id: kyc-kyb
   conforms: true
   evidence: KYC/KYB Verifications tag with verification, beneficial-owner and document operations
@@ -53,3 +50,18 @@ standards:
 - id: mica
   conforms: true
   evidence: https://www.lightspark.com/news/lightspark/lightspark-mica-license-estonia
+- id: openapi-3.2
+  conforms: true
+  evidence: the document declares 3.2.0
+- id: rfc9457
+  conforms: false
+  evidence: no response declares application/problem+json
+- id: idempotency
+  conforms: true
+  evidence: Idempotency-Key declared on 10 of 82 mutating operations (partial)
+- id: pagination
+  conforms: true
+  evidence: list operations take cursor, limit
+- id: ratelimit-headers
+  conforms: true
+  evidence: responses declare Retry-After

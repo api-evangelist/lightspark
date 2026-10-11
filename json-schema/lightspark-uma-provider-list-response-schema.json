@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-uma-provider-list-response-schema.json",
+  "title": "UmaProviderListResponse",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-available-uma-providers-api-openapi.yml#/components/schemas/UmaProviderListResponse",
+  "type": "object",
+  "properties": {
+    "data": {
+      "description": "List of available UMA Providers using Grid",
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/UmaProvider"
+      }
+    },
+    "hasMore": {
+      "type": "boolean",
+      "description": "Indicates if more results are available beyond this page"
+    },
+    "nextCursor": {
+      "type": "string",
+      "description": "Cursor to retrieve the next page of results (only present if hasMore is true)"
+    },
+    "totalCount": {
+      "type": "integer",
+      "description": "Total number of transactions matching the criteria (excluding pagination)"
+    }
+  },
+  "$defs": {
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "UmaProvider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the UMA Provider"
+        },
+        "supportedRegions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Region(s) this UMA Provider operates in"
+        },
+        "domain": {
+          "type": "string",
+          "description": "Domain this VASP uses for UMA addresses"
+        },
+        "logoUrl": {
+          "type": "string",
+          "description": "Logo URL for the VASP",
+          "format": "uri"
+        },
+        "supportedCurrencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Currency"
+          },
+          "description": "List of currencies supported by this UMA Provider"
+        },
+        "lei": {
+          "type": "string",
+          "description": "Legal Entity Identifier for the UMA Provider"
+        },
+        "allowListStatus": {
+          "type": "boolean",
+          "description": "Whether this UMA Provider is on your allow list"
+        }
+      }
+    }
+  }
+}

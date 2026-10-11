@@ -1,0 +1,248 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-card-transaction-schema.json",
+  "title": "Card Transaction",
+  "description": "Parent transaction row for a card authorization and all of the pulls / settlements / refunds that reconcile against it. Child events are rolled up into the `pullSummary`, `refundSummary`, and `settlementSummary` aggregates. Delivered as the payload of the generic transaction webhook stream (extends the Transaction model with a card destination type) on every transition.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-sandbox-api-openapi.yml#/components/schemas/CardTransaction",
+  "type": "object",
+  "required": [
+    "type",
+    "id",
+    "status",
+    "direction",
+    "merchant",
+    "authorizedAmount",
+    "accountId",
+    "customerId",
+    "platformCustomerId",
+    "authorizedAt",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "CARD"
+      ],
+      "description": "Discriminator identifying this transaction as a card transaction in the `Transaction` list."
+    },
+    "id": {
+      "type": "string",
+      "description": "System-generated unique card transaction identifier",
+      "readOnly": true
+    },
+    "cardId": {
+      "type": "string",
+      "description": "The id of the `Card` this transaction was made on."
+    },
+    "customerId": {
+      "type": "string",
+      "description": "System ID of the customer (cardholder) this transaction belongs to."
+    },
+    "platformCustomerId": {
+      "type": "string",
+      "description": "Platform-specific ID of the customer (cardholder) this transaction belongs to."
+    },
+    "issuerTransactionToken": {
+      "type": "string",
+      "description": "Opaque identifier for the transaction on the underlying issuer. Used to cross-reference Grid records against issuer dashboards and webhooks.",
+      "readOnly": true
+    },
+    "status": {
+      "$ref": "#/$defs/CardTransactionStatus"
+    },
+    "direction": {
+      "$ref": "#/$defs/TransactionDirection",
+      "description": "Card transactions debit the customer's account."
+    },
+    "merchant": {
+      "$ref": "#/$defs/CardMerchant"
+    },
+    "authorizedAmount": {
+      "$ref": "#/$defs/CurrencyAmount"
+    },
+    "settledAmount": {
+      "$ref": "#/$defs/CurrencyAmount"
+    },
+    "refundedAmount": {
+      "$ref": "#/$defs/CurrencyAmount"
+    },
+    "accountId": {
+      "type": "string",
+      "description": "Internal account id that funded this transaction (the funding source selected by Authorization Decisioning at auth time)."
+    },
+    "pullSummary": {
+      "$ref": "#/$defs/CardPullSummary"
+    },
+    "refundSummary": {
+      "$ref": "#/$defs/CardRefundSummary"
+    },
+    "settlementSummary": {
+      "$ref": "#/$defs/CardSettlementSummary"
+    },
+    "authorizedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the auth was approved."
+    },
+    "lastEventAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp of the most recent reconcile event (pull / clearing / refund) against this transaction."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp (same as `authorizedAt` for card transactions).",
+      "readOnly": true
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp.",
+      "readOnly": true
+    }
+  },
+  "$defs": {
+    "CardMerchant": {
+      "type": "object",
+      "required": [
+        "descriptor"
+      ],
+      "properties": {
+        "descriptor": {
+          "type": "string",
+          "description": "Merchant descriptor string captured from the card network at authorization time."
+        },
+        "mcc": {
+          "type": "string",
+          "description": "Merchant Category Code (ISO 18245) — four-digit numeric string."
+        },
+        "country": {
+          "type": "string",
+          "description": "Two-letter ISO 3166-1 alpha-2 country code of the merchant."
+        }
+      }
+    },
+    "CardPullSummary": {
+      "type": "object",
+      "required": [
+        "count",
+        "totalAmount"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Total number of pulls (debits) executed against the funding source for this transaction. `> 1` indicates one or more post-hoc pulls — e.g. restaurant tip / over-auth clearings."
+        },
+        "totalAmount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Sum of all pull amounts in the smallest unit of the funding source's currency."
+        },
+        "pendingCount": {
+          "type": "integer",
+          "description": "Number of pulls still in the `PENDING` state. Drops to zero when every pull has reached a terminal state. Non-zero values that persist beyond the expected settlement window are an early signal for the `EXCEPTION` path."
+        }
+      }
+    },
+    "CardRefundSummary": {
+      "type": "object",
+      "required": [
+        "count",
+        "totalAmount"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Number of refund (return) events received for this transaction."
+        },
+        "totalAmount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Sum of all refund amounts in the smallest unit of the funding source's currency."
+        }
+      }
+    },
+    "CardSettlementSummary": {
+      "type": "object",
+      "required": [
+        "count",
+        "totalAmount"
+      ],
+      "properties": {
+        "count": {
+          "type": "integer",
+          "description": "Number of settlement (clearing) events received for this transaction."
+        },
+        "totalAmount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Sum of all settled amounts in the smallest unit of the funding source's currency."
+        }
+      }
+    },
+    "CardTransactionStatus": {
+      "type": "string",
+      "enum": [
+        "AUTHORIZED",
+        "PARTIALLY_SETTLED",
+        "SETTLED",
+        "REFUNDED",
+        "EXCEPTION"
+      ],
+      "description": "Lifecycle status of a card transaction.\n\n| Status | Description |\n|--------|-------------|\n| `AUTHORIZED` | The auth has been approved and a hold placed on the funding source; no clearing has arrived yet. |\n| `PARTIALLY_SETTLED` | At least one clearing has arrived and posted, but more clearings are still expected (split shipments, tips, multi-leg trips). |\n| `SETTLED` | All clearings for the auth have posted and the transaction is closed against the funding source. |\n| `REFUNDED` | A `RETURN` was received from the merchant; the net settled amount has been refunded in part or whole. |\n| `EXCEPTION` | The transaction settled to the card network but the corresponding pull from the funding source failed (e.g. balance no longer covers the post-hoc clearing). Surfaces high-urgency alerts and is the dashboard query for stuck reconciliations. |\n"
+    },
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "CurrencyAmount": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      }
+    },
+    "TransactionDirection": {
+      "type": "string",
+      "enum": [
+        "CREDIT",
+        "DEBIT"
+      ],
+      "description": "Whether the transaction credits (funds in) or debits (funds out) the customer's account. Independent of `type`: an incoming transaction is normally a `CREDIT`, but an inbound ACH pull, for example, is an `INCOMING` transaction with a `DEBIT` direction."
+    }
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-kyc-link-response-schema.json",
+  "title": "KycLinkResponse",
+  "description": "A hosted KYC link that the customer can complete to verify their identity.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-kyc-kyb-verifications-api-openapi.yml#/components/schemas/KycLinkResponse",
+  "type": "object",
+  "required": [
+    "kycUrl",
+    "expiresAt",
+    "provider"
+  ],
+  "properties": {
+    "kycUrl": {
+      "type": "string",
+      "description": "Hosted URL the customer should be sent to in order to complete verification. The URL is single-use and expires at `expiresAt`. To generate a new link (for example, after the previous one expires or is abandoned), call this endpoint again."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time at which the hosted link expires and can no longer be used."
+    },
+    "provider": {
+      "$ref": "#/$defs/KycProvider"
+    },
+    "token": {
+      "type": "string",
+      "description": "Provider-specific token that can be used in place of the hosted URL — for example, to embed the provider's SDK directly in your application. Only returned for providers that support direct SDK integration. Whether to use the hosted URL or the embedded SDK is up to you; both flows result in the same `kycStatus` update on the customer."
+    }
+  },
+  "$defs": {
+    "KycProvider": {
+      "type": "string",
+      "description": "The KYC provider that will perform identity verification for the customer. Grid selects the provider based on the customer's region and platform configuration; the value is informational for platforms that want to integrate directly with the provider's SDK.",
+      "enum": [
+        "SUMSUB"
+      ]
+    }
+  }
+}

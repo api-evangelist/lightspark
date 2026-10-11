@@ -2,9 +2,8 @@ generated: '2026-07-19'
 method: searched
 probe: true
 url: null
-note: Lightspark publishes no dedicated trust center (trust.lightspark.com and security.lightspark.com
-  do not resolve; /trust, /security and /compliance return 404). Compliance posture is published through
-  news announcements instead.
+note: Lightspark publishes no dedicated trust center (trust.lightspark.com and security.lightspark.com do not resolve;
+  /trust, /security and /compliance return 404). Compliance posture is published through news announcements instead.
 certifications:
 - SOC 2 Type 1
 in_progress:
@@ -20,5 +19,5 @@ evidence:
   claim: First MiCA license in Estonia, foundation for open payments in Europe.
 kyc_kyb:
   in_product: true
-  note: Grid exposes KYC/KYB verification, beneficial-owner and document operations as first-class API
-    surface.
+  note: Grid exposes KYC/KYB verification, beneficial-owner and document operations as first-class API surface.
+source: https://www.lightspark.com/news/lightspark/soc2-announcement

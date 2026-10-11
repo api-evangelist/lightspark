@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-delegated-key-schema.json",
+  "title": "Delegated Key",
+  "description": "A delegated signing key for a card funding source backed by an Embedded Wallet internal account. Returned from `POST /auth/delegated-keys` (on activation), `GET /auth/delegated-keys` (list), and `GET /auth/delegated-keys/{id}`. The keypair is generated and custodied by Grid; the private key is never returned. While `ACTIVE`, Grid may use the key to authorize Spark token-transaction signing for the card funding source's Embedded Wallet funding account in place of a session keypair. `publicKey` is informational metadata identifying the credential.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-embedded-wallet-auth-api-openapi.yml#/components/schemas/DelegatedKey",
+  "type": "object",
+  "required": [
+    "id",
+    "cardId",
+    "fundingSourceId",
+    "accountId",
+    "publicKey",
+    "nickname",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Grid-issued `DelegatedKey:<uuid>` identifier."
+    },
+    "cardId": {
+      "type": "string",
+      "description": "The card this key is delegated for."
+    },
+    "fundingSourceId": {
+      "type": "string",
+      "description": "The card funding source this key is delegated for."
+    },
+    "accountId": {
+      "type": "string",
+      "description": "The Embedded Wallet internal account this key is delegated for, derived from the card funding source."
+    },
+    "publicKey": {
+      "type": "string",
+      "description": "Compressed P-256 public key (hex) of the delegated API keypair."
+    },
+    "nickname": {
+      "type": "string",
+      "description": "Human-readable label for the delegated key."
+    },
+    "status": {
+      "$ref": "#/$defs/DelegatedKeyStatus"
+    },
+    "spendingLimits": {
+      "type": "array",
+      "uniqueItems": true,
+      "description": "Per-transaction spending limits the key was created with, at most one entry per currency. Absent when the key has no limits.",
+      "items": {
+        "$ref": "#/$defs/DelegatedKeySpendingLimit"
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the delegated key was created."
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the delegated key was last updated."
+    }
+  },
+  "$defs": {
+    "DelegatedKeySpendingLimit": {
+      "title": "Delegated Key Spending Limit",
+      "type": "object",
+      "required": [
+        "currencyCode",
+        "maxPerTransaction"
+      ],
+      "properties": {
+        "currencyCode": {
+          "type": "string",
+          "pattern": "^[A-Z0-9]{3,16}$",
+          "description": "Uppercase alphanumeric currency code the limit applies to — ISO 4217 for fiat (e.g. USD), or a Grid token code for stablecoins (e.g. USDB). Must match the card's currency; requests with any other currency are rejected."
+        },
+        "maxPerTransaction": {
+          "type": "integer",
+          "format": "int64",
+          "minimum": 1,
+          "description": "Largest amount a single card transaction may authorize, in the smallest unit of the currency (e.g., cents for USD)."
+        }
+      }
+    },
+    "DelegatedKeyStatus": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "ACTIVE",
+        "REVOKED"
+      ],
+      "description": "Status of a delegated signing key.\n\n- `PENDING`: The delegated user exists but the policy-creation leg never completed. The key cannot sign.\n- `ACTIVE`: The policy is granted and the key may stamp quote executions.\n- `REVOKED`: The delegated user has been deleted and the key can no longer sign."
+    }
+  }
+}

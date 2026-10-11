@@ -7,8 +7,8 @@ model:
   environments:
   - production
   - sandbox
-  separation: Both environments share the same base URL (https://api.lightspark.com/grid/2025-10-13);
-    API tokens are scoped to one environment.
+  separation: Both environments share the same base URL (https://api.lightspark.com/grid/2025-10-13); API tokens
+    are scoped to one environment.
   production_access: Production access is granted by a Lightspark contact, not self-serve.
 magic_values:
 - family: KYB business verification
@@ -105,8 +105,8 @@ magic_values:
   field: encryptedOtpBundle otp_code
   values:
   - value: '000000'
-    result: Fixed sandbox OTP code for EMAIL_OTP and SMS_OTP; must still be HPKE-encrypted as in production.
-      Any other code returns 401 UNAUTHORIZED with reason "Invalid OTP code".
+    result: Fixed sandbox OTP code for EMAIL_OTP and SMS_OTP; must still be HPKE-encrypted as in production. Any
+      other code returns 401 UNAUTHORIZED with reason "Invalid OTP code".
 - family: Legacy sandbox shortcuts (still accepted, discouraged)
   values:
   - value: sandbox-valid-passkey-signature
@@ -149,11 +149,12 @@ cli_support:
 - grid sandbox send
 - grid sandbox receive
 oidc_sandbox:
-  description: OAuth credentials accept a JWT-shaped sandbox OIDC token; the signature segment may be
-    a dummy value but iss/aud/sub/iat/exp claims and the nonce=sha256(clientPublicKey) binding are validated.
+  description: OAuth credentials accept a JWT-shaped sandbox OIDC token; the signature segment may be a dummy value
+    but iss/aud/sub/iat/exp claims and the nonce=sha256(clientPublicKey) binding are validated.
   supported_issuers:
   - https://accounts.google.com
   - accounts.google.com
   - https://appleid.apple.com
 notes:
 - All values above are published verbatim by Lightspark in the Sandbox Testing doc; none are invented.
+description: Grid sandbox environment with magic test values and sandbox fixture endpoints, documented at https://docs.lightspark.com/api-reference/sandbox-testing

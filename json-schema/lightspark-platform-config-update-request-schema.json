@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-platform-config-update-request-schema.json",
+  "title": "PlatformConfigUpdateRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-platform-configuration-api-openapi.yml#/components/schemas/PlatformConfigUpdateRequest",
+  "type": "object",
+  "properties": {
+    "umaDomain": {
+      "type": "string"
+    },
+    "webhookEndpoint": {
+      "type": "string"
+    },
+    "supportedCurrencies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/PlatformCurrencyConfig"
+      }
+    },
+    "embeddedWalletConfig": {
+      "$ref": "#/$defs/EmbeddedWalletConfig",
+      "description": "Update or create the embedded-wallet configuration for this platform.\nFields omitted from the nested object are left unchanged. Omit this\nfield at the top level to leave the embedded-wallet configuration\nunchanged entirely.\n"
+    }
+  },
+  "$defs": {
+    "CounterpartyFieldDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/CustomerInfoFieldName"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether the field is mandatory"
+        }
+      },
+      "required": [
+        "name",
+        "mandatory"
+      ]
+    },
+    "CustomerInfoFieldName": {
+      "type": "string",
+      "enum": [
+        "FULL_NAME",
+        "BIRTH_DATE",
+        "NATIONALITY",
+        "PHONE_NUMBER",
+        "EMAIL",
+        "POSTAL_ADDRESS",
+        "TAX_ID",
+        "REGISTRATION_NUMBER",
+        "USER_TYPE",
+        "COUNTRY_OF_RESIDENCE",
+        "ACCOUNT_IDENTIFIER",
+        "FI_LEGAL_ENTITY_NAME",
+        "FI_ADDRESS",
+        "PURPOSE_OF_PAYMENT",
+        "ULTIMATE_INSTITUTION_COUNTRY",
+        "IDENTIFIER",
+        "BUSINESS_TYPE",
+        "COMPANY_LEGAL_NAME",
+        "ID_TYPE",
+        "ID_NUMBER"
+      ],
+      "description": "Name of a type of field containing info about a platform's customer or counterparty customer."
+    },
+    "EmbeddedWalletConfig": {
+      "type": "object",
+      "description": "Per-platform embedded-wallet configuration. Controls branding and OTP\nbehavior for the email sent when a customer authenticates with an\nEMAIL_OTP credential. Fields omitted from a request are left unchanged.\n",
+      "properties": {
+        "appName": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "App name displayed in the default OTP email template."
+        },
+        "otpLength": {
+          "type": "integer",
+          "minimum": 4,
+          "maximum": 12,
+          "description": "Number of digits / characters in the OTP code. Defaults to 6 when\nnot set.\n"
+        },
+        "alphanumeric": {
+          "type": "boolean",
+          "description": "If true, OTP includes letters in addition to digits. Defaults to\nnumeric-only when not set.\n"
+        },
+        "expirationSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 86400,
+          "description": "OTP validity window in seconds. Defaults to 300 when not set.\n"
+        },
+        "sendFromEmailAddress": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 255,
+          "description": "Custom sender email address for OTP emails."
+        },
+        "sendFromEmailSenderName": {
+          "type": "string",
+          "maxLength": 255,
+          "description": "Custom sender display name. Defaults to \"Notifications\" when not set.\n"
+        },
+        "replyToEmailAddress": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 255,
+          "description": "Custom reply-to email address for OTP emails."
+        },
+        "logoUrl": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 512,
+          "description": "URL to a PNG logo for the OTP email. Resized to 340x124px."
+        }
+      }
+    },
+    "PlatformCurrencyConfig": {
+      "type": "object",
+      "properties": {
+        "currencyCode": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217)"
+        },
+        "minAmount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Minimum amount that can be sent in the smallest unit of this currency",
+          "minimum": 0
+        },
+        "maxAmount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Maximum amount that can be sent in the smallest unit of this currency",
+          "minimum": 0
+        },
+        "requiredCounterpartyFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CounterpartyFieldDefinition"
+          },
+          "description": "List of fields which the platform requires from the counterparty institutions about counterparty customers. Platforms can set mandatory to false if the platform does not require the field, but would like to have it available. Some fields may be required by the underlying UMA provider."
+        },
+        "providerRequiredCustomerFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CustomerInfoFieldName"
+          },
+          "description": "List of customer info field names that are required by the underlying UMA provider when creating a customer for this currency. These fields must be supplied when creating or updating a customer if this currency is intended to be used by that customer. If no fields are required, this field is omitted.",
+          "readOnly": true
+        },
+        "providerRequiredCounterpartyCustomerFields": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CustomerInfoFieldName"
+          },
+          "description": "List of fields that are required by the underlying UMA provider for this currency. If the counterparty does not provide these fields, quote requests will fail.",
+          "readOnly": true
+        },
+        "enabledTransactionTypes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TransactionType"
+          },
+          "description": "List of transaction types that are enabled for this currency."
+        }
+      },
+      "required": [
+        "currencyCode",
+        "minAmount",
+        "maxAmount",
+        "requiredCounterpartyFields",
+        "enabledTransactionTypes"
+      ]
+    },
+    "TransactionType": {
+      "type": "string",
+      "enum": [
+        "INCOMING",
+        "OUTGOING"
+      ],
+      "description": "Type of transaction (incoming payment or outgoing payment)"
+    }
+  }
+}

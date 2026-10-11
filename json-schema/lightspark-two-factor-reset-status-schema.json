@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-two-factor-reset-status-schema.json",
+  "title": "TwoFactorResetStatus",
+  "description": "The status of an in-progress 2FA reset, polled until it reaches a terminal value.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-strong-customer-authentication-api-openapi.yml#/components/schemas/TwoFactorResetStatus",
+  "type": "object",
+  "required": [
+    "status",
+    "factor",
+    "expiresAt"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "INITIATED",
+        "PENDING_REVIEW",
+        "LIVENESS_PASSED",
+        "COMPLETED",
+        "REJECTED",
+        "EXPIRED"
+      ],
+      "description": "The reset status.\n| Value | Terminal | Meaning | |-------|----------|---------| | `INITIATED` | no | Reset started; liveness not yet submitted. Keep polling. | | `PENDING_REVIEW` | no | Liveness submitted; under review. Keep polling. | | `LIVENESS_PASSED` | no | Liveness passed; call the complete endpoint to finish the reset. | | `COMPLETED` | **yes** | Reset finished; the lost factor is cleared and re-enrollment can begin. | | `REJECTED` | **yes** | Liveness failed. Stop polling; start a new reset. | | `EXPIRED` | **yes** | The reset window closed before it completed. Stop polling; start a new reset. |\nStop polling on any terminal value."
+    },
+    "factor": {
+      "$ref": "#/$defs/ScaFactor",
+      "description": "The factor being reset."
+    },
+    "enrollmentStatus": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "PENDING",
+        "COMPLETED",
+        null
+      ],
+      "description": "The enrollment status of the replacement factor. `PENDING` until the customer finishes re-enrolling, then `COMPLETED`. Null for an `SMS_OTP` reset, where completing the reset enrolls the new number directly with no separate enrollment step."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the reset window closes. Poll no longer than this."
+    },
+    "completedAt": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date-time",
+      "description": "When the reset completed; null until then."
+    }
+  },
+  "$defs": {
+    "ScaFactor": {
+      "type": "string",
+      "enum": [
+        "SMS_OTP",
+        "TOTP",
+        "PASSKEY"
+      ],
+      "description": "A Strong Customer Authentication factor.\n\n| Factor | Description |\n|--------|-------------|\n| `SMS_OTP` | One-time code sent by SMS to the customer's verified phone. Requires no prior enrollment. |\n| `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |\n| `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |\n"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-card-reveal-response-schema.json",
+  "title": "CardRevealResponse",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-cards-api-openapi.yml#/components/schemas/CardRevealResponse",
+  "type": "object",
+  "required": [
+    "panEmbedUrl",
+    "expiresAt"
+  ],
+  "properties": {
+    "panEmbedUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "Signed URL of the card processor's iframe that securely displays the PAN, CVV, and expiry to the cardholder. The full PAN and CVV never cross Grid's servers — render this URL in an iframe in your client to reveal card details. The URL is a short-lived bearer secret: render it immediately and never store, cache, or log it."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the signed URL stops loading. Request a new reveal rather than re-rendering an expired URL."
+    }
+  }
+}

@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-auth-method-response-schema.json",
+  "title": "Auth Method Response",
+  "description": "Strict wrapper around `AuthMethod`. Used directly as the registration response on `POST /auth/credentials` and inside `AuthCredentialResponseOneOf` for the `EMAIL_OTP` / `SMS_OTP` branches of `POST /auth/credentials/{id}/challenge`. The only difference from `AuthMethod` is `unevaluatedProperties: false`, which disambiguates the oneOf against `PasskeyAuthChallenge` — without the strictness, an `AuthMethod` with extra fields would ambiguously match both branches.\n\nFor `EMAIL_OTP` and `SMS_OTP` credentials, responses that initiate or reissue an OTP challenge carry `otpEncryptionTargetBundle` so the client can HPKE-encrypt the OTP code in the subsequent `POST /auth/credentials/{id}/verify` call without the plaintext code ever transiting the server. First-time EMAIL_OTP wallet bootstrap registration can omit it; call `POST /auth/credentials/{id}/challenge` if it is absent.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-embedded-wallet-auth-api-openapi.yml#/components/schemas/AuthMethodResponse",
+  "allOf": [
+    {
+      "$ref": "#/$defs/AuthMethod"
+    },
+    {
+      "type": "object",
+      "properties": {
+        "otpEncryptionTargetBundle": {
+          "type": "string",
+          "description": "HPKE encryption target bundle for a freshly initiated OTP challenge. Returned only on `EMAIL_OTP` and `SMS_OTP` responses that initiate or reissue an OTP challenge, such as `POST /auth/credentials/{id}/challenge` and signed-retry add responses. It is omitted from first-time EMAIL_OTP wallet bootstrap registration; call `POST /auth/credentials/{id}/challenge` for the new credential if it is absent. The client generates an ephemeral P-256 keypair (the Target Encryption Key, or TEK) and uses this bundle as the recipient when HPKE-encrypting `{otp_code, public_key}`; the encrypted payload is submitted as `encryptedOtpBundle` on `POST /auth/credentials/{id}/verify`. The bundle is one-time-use per OTP issuance — re-issue via `POST /auth/credentials/{id}/challenge` to obtain a fresh bundle. The matching TEK private key must remain on the client and is used to sign the `verificationToken` returned on the subsequent signed-retry. Treat the bundle as opaque and pass it to your HPKE library; the Global Accounts client-keys guide shows how."
+        }
+      }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "AuthMethod": {
+      "type": "object",
+      "required": [
+        "id",
+        "accountId",
+        "type",
+        "nickname",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "System-generated unique identifier for the authentication credential."
+        },
+        "accountId": {
+          "type": "string",
+          "description": "Identifier of the internal account that this credential authenticates."
+        },
+        "type": {
+          "$ref": "#/$defs/AuthMethodType"
+        },
+        "credentialId": {
+          "type": "string",
+          "description": "Base64url-encoded WebAuthn credential identifier for this passkey. Present only for `PASSKEY` authentication credentials. Corresponds to `PublicKeyCredential.rawId`; pass this value as `allowCredentials[].id` when requesting a passkey assertion for this auth method."
+        },
+        "nickname": {
+          "type": "string",
+          "description": "Human-readable identifier for this credential. For EMAIL_OTP credentials this is the email address; for SMS_OTP credentials this is the E.164 phone number; for OAUTH credentials it is typically the email claim from the OIDC token; for PASSKEY credentials it is the validated nickname provided at registration time."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp."
+        }
+      }
+    },
+    "AuthMethodType": {
+      "type": "string",
+      "enum": [
+        "OAUTH",
+        "EMAIL_OTP",
+        "SMS_OTP",
+        "PASSKEY"
+      ],
+      "description": "The type of authentication credential.\n- `OAUTH`: OpenID Connect (OIDC) token issued by an identity provider such as Google or Apple.\n- `EMAIL_OTP`: A one-time password delivered to the user's email address.\n- `SMS_OTP`: A one-time password delivered to the user's phone number.\n- `PASSKEY`: A WebAuthn passkey bound to the user's device."
+    }
+  }
+}

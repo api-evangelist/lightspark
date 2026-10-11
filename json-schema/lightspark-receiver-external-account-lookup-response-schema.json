@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-receiver-external-account-lookup-response-schema.json",
+  "title": "ReceiverExternalAccountLookupResponse",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-cross-currency-transfers-api-openapi.yml#/components/schemas/ReceiverExternalAccountLookupResponse",
+  "allOf": [
+    {
+      "$ref": "#/$defs/ReceiverLookupResponse"
+    },
+    {
+      "type": "object",
+      "required": [
+        "accountId"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "description": "The external account ID that was looked up"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "CounterpartyFieldDefinition": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/CustomerInfoFieldName"
+        },
+        "mandatory": {
+          "type": "boolean",
+          "description": "Whether the field is mandatory"
+        }
+      },
+      "required": [
+        "name",
+        "mandatory"
+      ]
+    },
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "CurrencyPreference": {
+      "type": "object",
+      "required": [
+        "currency",
+        "estimatedExchangeRate",
+        "min",
+        "max"
+      ],
+      "properties": {
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        },
+        "estimatedExchangeRate": {
+          "type": "number",
+          "description": "An estimated exchange rate from the sender's currency to this currency. This is not a locked rate and is subject to change when calling the quotes endpoint.",
+          "exclusiveMinimum": 0
+        },
+        "min": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The minimum amount that can be received in this currency.",
+          "exclusiveMinimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The maximum amount that can be received in this currency.",
+          "exclusiveMinimum": 0
+        }
+      }
+    },
+    "CustomerInfoFieldName": {
+      "type": "string",
+      "enum": [
+        "FULL_NAME",
+        "BIRTH_DATE",
+        "NATIONALITY",
+        "PHONE_NUMBER",
+        "EMAIL",
+        "POSTAL_ADDRESS",
+        "TAX_ID",
+        "REGISTRATION_NUMBER",
+        "USER_TYPE",
+        "COUNTRY_OF_RESIDENCE",
+        "ACCOUNT_IDENTIFIER",
+        "FI_LEGAL_ENTITY_NAME",
+        "FI_ADDRESS",
+        "PURPOSE_OF_PAYMENT",
+        "ULTIMATE_INSTITUTION_COUNTRY",
+        "IDENTIFIER",
+        "BUSINESS_TYPE",
+        "COMPANY_LEGAL_NAME",
+        "ID_TYPE",
+        "ID_NUMBER"
+      ],
+      "description": "Name of a type of field containing info about a platform's customer or counterparty customer."
+    },
+    "ReceiverLookupResponse": {
+      "type": "object",
+      "required": [
+        "supportedCurrencies",
+        "lookupId"
+      ],
+      "properties": {
+        "supportedCurrencies": {
+          "type": "array",
+          "description": "List of currencies supported by the receiving account",
+          "items": {
+            "$ref": "#/$defs/CurrencyPreference"
+          }
+        },
+        "requiredPayerDataFields": {
+          "type": "array",
+          "description": "Fields required by the receiving institution about the payer before payment can be completed",
+          "items": {
+            "$ref": "#/$defs/CounterpartyFieldDefinition"
+          }
+        },
+        "lookupId": {
+          "type": "string",
+          "description": "Unique identifier for the lookup. Needed in the subsequent create quote request."
+        }
+      }
+    }
+  }
+}

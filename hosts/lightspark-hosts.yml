@@ -1,0 +1,116 @@
+generated: '2026-10-12'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 8
+  own: 6
+  other_domain: 0
+  platform: 2
+  roles:
+  - api
+  - identity
+  - other
+  - portal
+  - source
+  - status
+  - support
+  - website
+hosts:
+- host: api.lightspark.com
+  found_by:
+  - apis[]
+  - vendor-detect
+  types: []
+  serves:
+  - api
+  - cdn
+  vendor: cloudfront
+  registrable_domain: lightspark.com
+  role: api
+  relation: own
+- host: app.lightspark.com
+  found_by:
+  - pointer
+  types:
+  - SignUp
+  - Login
+  serves: []
+  registrable_domain: lightspark.com
+  role: identity
+  relation: own
+- host: docs.lightspark.com
+  found_by:
+  - pointer
+  - apis[]
+  - vendor-detect
+  types:
+  - DeveloperPortal
+  - Documentation
+  - APIReference
+  - GettingStarted
+  - ChangeLog
+  - Deprecation
+  serves:
+  - docs
+  - cdn
+  vendor: cloudflare
+  registrable_domain: lightspark.com
+  role: portal
+  relation: own
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - IssueTracker
+  - License
+  - GitHubOrganization
+  - SpectralRules
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: lightspark.com
+  found_by:
+  - pointer
+  - vendor-detect
+  types:
+  - Website
+  serves:
+  - hosting
+  vendor: vercel
+  registrable_domain: lightspark.com
+  role: website
+  relation: own
+- host: status.lightspark.com
+  found_by:
+  - pointer
+  types:
+  - StatusPage
+  serves: []
+  registrable_domain: lightspark.com
+  role: status
+  relation: own
+- host: www.lightspark.com
+  found_by:
+  - pointer
+  types:
+  - Support
+  - HelpCenter
+  - Blog
+  - TermsOfService
+  - PrivacyPolicy
+  - Security
+  serves: []
+  registrable_domain: lightspark.com
+  role: support
+  relation: own
+- host: www.postman.com
+  found_by:
+  - pointer
+  types:
+  - PostmanWorkspace
+  serves: []
+  registrable_domain: postman.com
+  role: other
+  relation: platform

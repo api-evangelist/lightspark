@@ -8,9 +8,9 @@ authentication:
   artifact: authentication/lightspark-authentication.yml
   wallet_signature:
     header: Grid-Wallet-Signature
-    description: P-256 session-key signature over the exact `payloadToSign` returned by Grid; required
-      on embedded-wallet actions (credential add/revoke, session revoke, wallet export, wallet privacy
-      update, and quote execution from an embedded wallet).
+    description: P-256 session-key signature over the exact `payloadToSign` returned by Grid; required on embedded-wallet
+      actions (credential add/revoke, session revoke, wallet export, wallet privacy update, and quote execution
+      from an embedded wallet).
     paired_header: Request-Id
 idempotency:
   supported: true
@@ -18,10 +18,24 @@ idempotency:
   required: false
   value: client-generated UUID
   operation_count: 10
-  semantics: If the same key is sent multiple times, the server returns the same response as the first
-    request.
+  semantics: If the same key is sent multiple times, the server returns the same response as the first request.
   source: openapi/lightspark-grid-openapi-original.yml
   docs: https://docs.lightspark.com/api-reference/sandbox-testing
+  coverage: partial
+  mechanism: request header / body token declared in the OpenAPI
+  evidence: Idempotency-Key on 10 of 82 mutating operations
+  verified: derived
+  scope:
+  - createCustomerKycLink
+  - createTransferIn
+  - createTransferOut
+  - createQuote
+  - executeQuote
+  - agentCreateQuote
+  - agentExecuteQuote
+  - agentCreateTransferIn
+  - agentCreateTransferOut
+  - linkStablecoinProviderAccount
 pagination:
   style: cursor
   request_params:
@@ -54,16 +68,15 @@ filtering:
 request_tracing:
   header: Request-Id
   format: Request:<uuid>
-  description: Echoed on signed-retry flows; returned by challenge responses and replayed on the signed
-    request.
+  description: Echoed on signed-retry flows; returned by challenge responses and replayed on the signed request.
 versioning:
   scheme: dated-path
   current: '2025-10-13'
   base_url: https://api.lightspark.com/grid/2025-10-13
   docs: https://docs.lightspark.com/api-reference/environments
-  policy: The date in the base URL is the major version and is pinned by the caller. Backwards-compatible
-    changes (new endpoints, optional params, response fields, enum values, webhook event types) ship into
-    the current version; breaking changes only ship in a new dated version.
+  policy: The date in the base URL is the major version and is pinned by the caller. Backwards-compatible changes
+    (new endpoints, optional params, response fields, enum values, webhook event types) ship into the current version;
+    breaking changes only ship in a new dated version.
 error_envelope:
   media_type: application/json
   rfc9457: false

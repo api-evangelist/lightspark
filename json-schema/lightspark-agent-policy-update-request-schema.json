@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-agent-policy-update-request-schema.json",
+  "title": "AgentPolicyUpdateRequest",
+  "description": "Partial update to an agent's policy. Only provided fields will be updated; omitted fields retain their current values.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentPolicyUpdateRequest",
+  "type": "object",
+  "properties": {
+    "permissions": {
+      "type": "array",
+      "description": "Updated list of permissions. Replaces the entire permissions list when provided.",
+      "items": {
+        "$ref": "#/$defs/AgentPermission"
+      }
+    },
+    "defaultExecutionMode": {
+      "$ref": "#/$defs/AgentExecutionMode"
+    },
+    "spendingLimits": {
+      "$ref": "#/$defs/AgentSpendingLimitsUpdate"
+    },
+    "accountRestrictions": {
+      "$ref": "#/$defs/AgentAccountRestrictions"
+    },
+    "approvalThresholds": {
+      "$ref": "#/$defs/AgentApprovalThresholds"
+    }
+  },
+  "$defs": {
+    "AgentAccountRestrictions": {
+      "type": "object",
+      "description": "Optional restrictions that limit the agent to specific accounts or override policy per account.",
+      "properties": {
+        "allowedAccountIds": {
+          "type": [
+            "array",
+            "null"
+          ],
+          "description": "If set, restricts the agent to operate only on the specified internal account IDs. Null means the agent can access all accounts.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accountRules": {
+          "type": "array",
+          "description": "Per-account rules that override the agent's default policy for specific accounts.",
+          "items": {
+            "$ref": "#/$defs/AgentAccountRule"
+          }
+        }
+      }
+    },
+    "AgentAccountRule": {
+      "type": "object",
+      "description": "Per-account policy override that takes precedence over the agent's default policy for a specific account.",
+      "required": [
+        "accountId"
+      ],
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "description": "The internal account ID this rule applies to."
+        },
+        "executionMode": {
+          "$ref": "#/$defs/AgentExecutionMode"
+        },
+        "perTransactionLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Per-transaction limit override, in the smallest unit of the relevant currency. Null inherits from the agent's spending limits."
+        }
+      }
+    },
+    "AgentApprovalThresholds": {
+      "type": "object",
+      "description": "Thresholds that force approval for high-value transactions, overriding the default execution mode. When a transaction is denominated in a different currency than the threshold, Grid converts using the exchange rate at evaluation time.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code that the amount threshold is denominated in. Required when amount is set."
+        },
+        "amount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "If set, any transaction above this amount (in the smallest unit of the specified currency) will require explicit approval even when the agent's defaultExecutionMode is AUTO. Null means no threshold override."
+        }
+      }
+    },
+    "AgentExecutionMode": {
+      "type": "string",
+      "enum": [
+        "AUTO",
+        "APPROVAL_REQUIRED"
+      ],
+      "description": "Execution mode controlling whether agent actions require human approval. AUTO: The agent can execute actions autonomously without explicit approval. APPROVAL_REQUIRED: All agent actions require explicit human approval before execution."
+    },
+    "AgentPermission": {
+      "type": "string",
+      "enum": [
+        "VIEW_TRANSACTIONS",
+        "CREATE_TRANSFERS",
+        "CREATE_QUOTES",
+        "EXECUTE_QUOTES",
+        "MANAGE_EXTERNAL_ACCOUNTS"
+      ],
+      "description": "Permission granted to an agent that determines what actions it can perform. VIEW_TRANSACTIONS: Can list and retrieve transactions and account balances. CREATE_TRANSFERS: Can initiate same-currency transfers. CREATE_QUOTES: Can create cross-currency quotes. EXECUTE_QUOTES: Can execute cross-currency quotes. MANAGE_EXTERNAL_ACCOUNTS: Can create and manage external accounts."
+    },
+    "AgentSpendingLimitsUpdate": {
+      "type": "object",
+      "description": "Partial update to spending limits. Only provided fields will be updated; omitted fields retain their current values.",
+      "properties": {
+        "currency": {
+          "type": "string",
+          "description": "ISO 4217 currency code that all amount limits are denominated in. Updating this recasts all existing limits into the new currency denomination."
+        },
+        "perTransactionLimit": {
+          "type": "integer",
+          "description": "Maximum amount per transaction."
+        },
+        "dailyLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum daily spend. Set to null to remove the daily limit."
+        },
+        "dailyTransactionLimit": {
+          "type": "integer",
+          "description": "Maximum number of transactions per day."
+        },
+        "monthlyLimit": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "description": "Maximum monthly spend. Set to null to remove the monthly limit."
+        }
+      }
+    }
+  }
+}

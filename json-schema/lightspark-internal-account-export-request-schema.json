@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-internal-account-export-request-schema.json",
+  "title": "Internal Account Export Request",
+  "description": "Request body for `POST /internal-accounts/{id}/export`. The `clientPublicKey` is required on both steps of the signed-retry flow. On step 1 Grid binds it into `payloadToSign` so the subsequent stamp in `Grid-Wallet-Signature` commits to the target pubkey; on step 2 the client echoes the same `clientPublicKey` back and Grid uses it to encrypt the wallet credentials returned in the `200` response.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-internal-accounts-api-openapi.yml#/components/schemas/InternalAccountExportRequest",
+  "type": "object",
+  "required": [
+    "clientPublicKey"
+  ],
+  "properties": {
+    "clientPublicKey": {
+      "type": "string",
+      "description": "Fresh P-256 public key, uncompressed SEC1 hex — 130 hex chars where the first two are `04` (the uncompressed-point indicator). Generate a new keypair for each export and discard the private key after decrypting the response."
+    }
+  }
+}

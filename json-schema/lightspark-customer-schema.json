@@ -1,0 +1,112 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-customer-schema.json",
+  "title": "Customer",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-contact-verification-api-openapi.yml#/components/schemas/Customer",
+  "type": "object",
+  "required": [
+    "umaAddress",
+    "platformCustomerId",
+    "customerType"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "System-generated unique identifier",
+      "readOnly": true
+    },
+    "platformCustomerId": {
+      "type": "string",
+      "description": "Platform-specific customer identifier"
+    },
+    "customerType": {
+      "$ref": "#/$defs/CustomerType"
+    },
+    "region": {
+      "type": "string",
+      "description": "Country code (ISO 3166-1 alpha-2) representing the customer's regional identity and regulatory jurisdiction."
+    },
+    "currencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of currency codes enabled for this customer."
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Email address for the customer."
+    },
+    "phoneNumber": {
+      "type": "string",
+      "pattern": "^\\+[1-9]\\d{1,14}$",
+      "description": "Phone number for the customer in strict E.164 format."
+    },
+    "umaAddress": {
+      "type": "string",
+      "description": "Full UMA address (always present in responses, even if system-generated). This is an optional identifier to route payments to the customer."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation timestamp",
+      "readOnly": true
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp",
+      "readOnly": true
+    },
+    "isDeleted": {
+      "type": "boolean",
+      "description": "Whether the customer is marked as deleted",
+      "readOnly": true
+    },
+    "contactVerification": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/ContactVerification"
+        }
+      ],
+      "readOnly": true,
+      "description": "Email and phone verification state. **Only present when the customer's payment provider requires it** (e.g. EU customers); omitted otherwise."
+    }
+  },
+  "$defs": {
+    "ContactVerification": {
+      "type": "object",
+      "description": "Email and/or phone verification state for the customer. This object is **only present when the customer's regulatory jurisdiction requires contact verification** (e.g. EU customers). For customers who have no such requirement, this object is omitted entirely — no action is needed.\n\nEach channel is reported independently: only the channels the customer's provider actually requires are present. A provider may require both email and phone, just one of them, or — when the object is absent — neither. Every channel that **is** present must reach `VERIFIED` before the customer can begin KYC. Drive each present channel with `POST /customers/{customerId}/verify-email` and/or `POST /customers/{customerId}/verify-phone` (and their `/confirm` sub-routes).",
+      "properties": {
+        "email": {
+          "$ref": "#/$defs/ContactVerificationStatus",
+          "description": "Verification status of the customer's email address. Present only when the provider requires email verification."
+        },
+        "phone": {
+          "$ref": "#/$defs/ContactVerificationStatus",
+          "description": "Verification status of the customer's phone number. Present only when the provider requires phone verification."
+        }
+      }
+    },
+    "ContactVerificationStatus": {
+      "type": "string",
+      "description": "Status of an individual contact-verification channel (email or phone). `PENDING` means verification is required but not yet completed; `VERIFIED` means the channel has been confirmed.",
+      "enum": [
+        "PENDING",
+        "VERIFIED"
+      ]
+    },
+    "CustomerType": {
+      "type": "string",
+      "enum": [
+        "INDIVIDUAL",
+        "BUSINESS"
+      ],
+      "description": "Whether the customer is an individual or a business entity"
+    }
+  }
+}

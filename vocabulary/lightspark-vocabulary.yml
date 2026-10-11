@@ -1,0 +1,452 @@
+generated: '2026-10-12'
+method: derived
+generator: derive-vocabulary.py
+source:
+- openapi/lightspark-agent-management-api-openapi.yml
+- openapi/lightspark-agent-operations-api-openapi.yml
+- openapi/lightspark-api-tokens-api-openapi.yml
+- openapi/lightspark-available-uma-providers-api-openapi.yml
+- openapi/lightspark-cards-api-openapi.yml
+vocabulary:
+  name: Lightspark Domain Vocabulary
+  description: 'Terms declared by Lightspark''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-12'
+  terms:
+  - term: Agent Management
+    definition: 'Endpoints for creating and managing agents (experimental), called by the partner''s backend using platform credentials. Covers
+      the full agent lifecycle: creation, policy configuration, pausing, deletion, the device code installation flow, and approving or rejecting
+      transactions initiated by agents.'
+    tags:
+    - Resource Group
+    source: openapi/lightspark-agent-management-api-openapi.yml
+  - term: Agent Operations
+    definition: Endpoints called by the agent itself using its own credentials (obtained via device code redemption). Scoped to the agent's associated
+      customer — all requests automatically operate on behalf of that customer and are subject to the agent's policy. When an action requires
+      approval, the resulting transaction enters a pending state and must be approved by the platform via `POST /transactions/{transact
+    tags:
+    - Resource Group
+    source: openapi/lightspark-agent-operations-api-openapi.yml
+  - term: API Tokens
+    definition: Endpoints to programmatically manage API tokens
+    tags:
+    - Resource Group
+    source: openapi/lightspark-api-tokens-api-openapi.yml
+  - term: Cards
+    definition: Card management endpoints. Issue debit cards against an internal account, freeze / unfreeze, close, manage card funding sources,
+      and list card transactions.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-cards-api-openapi.yml
+  - term: Contact Verification
+    definition: Endpoints for verifying a customer's email and phone via one-time codes. Required only for customers whose payment provider mandates
+      contact verification (e.g. EU customers); other providers return 409.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-contact-verification-api-openapi.yml
+  - term: Cross-Currency Transfers
+    definition: Endpoints for creating and confirming quotes for cross-currency transfers
+    tags:
+    - Resource Group
+    source: openapi/lightspark-cross-currency-transfers-api-openapi.yml
+  - term: Customers
+    definition: Customer management endpoints for creating and updating customer information
+    tags:
+    - Resource Group
+    source: openapi/lightspark-customers-api-openapi.yml
+  - term: Discoveries
+    definition: Endpoints for discovering available payment rails, banks, and providers for a given country and currency corridor.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-discoveries-api-openapi.yml
+  - term: Documents
+    definition: Endpoints for uploading and managing verification documents for customers and beneficial owners. Supports KYC and KYB document
+      requirements.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-documents-api-openapi.yml
+  - term: Embedded Wallet Auth
+    definition: Endpoints for registering and verifying end-user authentication credentials (email OTP, OAuth, passkey) used to sign Embedded
+      Wallet actions.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-embedded-wallet-auth-api-openapi.yml
+  - term: Exchange Rates
+    definition: Endpoints for retrieving cached foreign exchange rates. Rates are cached for approximately 5 minutes and include platform-specific
+      fees.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-exchange-rates-api-openapi.yml
+  - term: External Accounts
+    definition: External account management endpoints for creating and managing external bank accounts
+    tags:
+    - Resource Group
+    source: openapi/lightspark-external-accounts-api-openapi.yml
+  - term: Internal Accounts
+    definition: Internal account management endpoints for creating and managing internal accounts
+    tags:
+    - Resource Group
+    source: openapi/lightspark-internal-accounts-api-openapi.yml
+  - term: Invitations
+    definition: Endpoints for creating, claiming and managing UMA invitations
+    tags:
+    - Resource Group
+    source: openapi/lightspark-invitations-api-openapi.yml
+  - term: KYC/KYB Verifications
+    definition: Endpoints for Know Your Customer (KYC) and Know Your Business (KYB) verification, including managing beneficial owners and triggering
+      verification for customers.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-kyc-kyb-verifications-api-openapi.yml
+  - term: Platform Configuration
+    definition: Platform configuration endpoints for managing global settings. You can also configure these settings in the Grid dashboard.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-platform-configuration-api-openapi.yml
+  - term: Same-Currency Transfers
+    definition: Endpoints for transferring funds between internal and external accounts with the same currency
+    tags:
+    - Resource Group
+    source: openapi/lightspark-same-currency-transfers-api-openapi.yml
+  - term: Sandbox
+    definition: Endpoints to trigger test cases in sandbox
+    tags:
+    - Resource Group
+    source: openapi/lightspark-sandbox-api-openapi.yml
+  - term: Stablecoins
+    definition: Stablecoin issuance endpoints. Link provider accounts, register provider-created stablecoins, create mint/burn quotes, execute
+      them, and track the resulting operations.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-stablecoins-api-openapi.yml
+  - term: Strong Customer Authentication
+    definition: Endpoints for authorizing money-movement operations that require Strong Customer Authentication. Relevant only for customers in
+      a region where SCA is required (e.g. EU); customers outside SCA-regulated regions never see an SCA challenge and these endpoints return
+      409.
+    tags:
+    - Resource Group
+    source: openapi/lightspark-strong-customer-authentication-api-openapi.yml
+  - term: Transactions
+    definition: Endpoints for retrieving transaction information
+    tags:
+    - Resource Group
+    source: openapi/lightspark-transactions-api-openapi.yml
+  - term: Webhooks
+    definition: Webhook endpoints and configuration for receiving notifications
+    tags:
+    - Resource Group
+    source: openapi/lightspark-webhooks-api-openapi.yml
+  - term: CounterpartyInformation
+    definition: Additional information about the counterparty, if available and relevant to the transaction and platform.
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CounterpartyInformation
+  - term: TransactionSourceType
+    definition: Type of transaction source
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TransactionSourceType
+  - term: TransactionDirection
+    definition: 'Whether the transaction credits (funds in) or debits (funds out) the customer''s account. Independent of `type`: an incoming
+      transaction is normally a `CREDIT`, but an inbound ACH pull, for example, is an `INCOMING` transaction with a `DEBIT` direction.'
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TransactionDirection
+  - term: AgentListResponse
+    definition: 'Object declared by the contract with fields: data, hasMore, nextCursor, totalCount.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentListResponse
+  - term: MxnAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, clabeNumber.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/MxnAccountInfoBase
+  - term: PolygonWalletInfo
+    definition: 'Object declared by the contract with fields: accountType, address.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/PolygonWalletInfo
+  - term: SolanaWalletInfo
+    definition: 'Object declared by the contract with fields: accountType, address.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/SolanaWalletInfo
+  - term: ZmwAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/ZmwAccountInfoBase
+  - term: CryptoNetwork
+    definition: The blockchain network an on-chain transaction settled on. Whether this is the mainnet or a test network (e.g. Solana devnet)
+      is determined by your platform's environment — sandbox platforms operate on test networks, production platforms on mainnet — mirroring how
+      `cryptoNetwork` is interpreted elsewhere in the API.
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CryptoNetwork
+  - term: Transaction
+    definition: 'Object declared by the contract with fields: id, status, type, direction, destination, customerId, platformCustomerId, settledAt,
+      createdAt, updatedAt, receiptDeliveryConfirmedAt, agentId. (2 more)'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Transaction
+  - term: TransactionDestinationType
+    definition: Type of transaction destination
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TransactionDestinationType
+  - term: AgentAction
+    definition: An action submitted by an agent that may require platform approval before execution. All agent-initiated operations (quote execution,
+      transfers) are represented as AgentActions, giving the platform a consistent object to approve, reject, and audit regardless of the underlying
+      operation type.
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentAction
+  - term: DestinationType
+    definition: Type of payment destination
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/DestinationType
+  - term: CurrencyAmount
+    definition: 'Object declared by the contract with fields: amount, currency.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CurrencyAmount
+  - term: PkrAccountInfoBase
+    definition: 'Required fields depend on the selected paymentRails: - BANK_TRANSFER: accountNumber, bankName - MOBILE_MONEY: bankName, phoneNumber'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/PkrAccountInfoBase
+  - term: OnChainTransaction
+    definition: 'Object declared by the contract with fields: transactionHash, network.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/OnChainTransaction
+  - term: CardPullSummary
+    definition: 'Object declared by the contract with fields: count, totalAmount, pendingCount.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CardPullSummary
+  - term: PhpAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, bankName, accountNumber.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/PhpAccountInfoBase
+  - term: GbpAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, sortCode, accountNumber.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/GbpAccountInfoBase
+  - term: IncomingRateDetails
+    definition: 'Details about the rate and fees for an incoming transaction. Note: `gridApiFixedFee` is denominated in the receiving currency,
+      so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same
+      transfer may differ even if the underlying fee structure is unchanged.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/IncomingRateDetails
+  - term: RwfAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/RwfAccountInfoBase
+  - term: TransactionStatus
+    definition: Status of a payment transaction. | Status | Description | |--------|-------------| | `CREATED` | Initial lookup has been created
+      | | `PENDING` | Quote has been created | | `PENDING_AUTHORIZATION` | Awaiting Strong Customer Authentication. Only occurs for customers
+      in a region where SCA is required (e.g. EU); authorize the transaction's `scaChallenge` to proceed. | | `PROCESSING` | Funding has been
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TransactionStatus
+  - term: ScaChallenge
+    definition: A Strong Customer Authentication challenge that must be satisfied before a money-movement operation can complete. This object
+      is **only present when the customer is in a region where SCA is required** (the EU); for customers outside SCA-regulated regions it is omitted
+      entirely and no action is needed. When present on a quote, authorize it by submitting an `ScaAuthorization` proof to `POST /quotes/
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/ScaChallenge
+  - term: SgdAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, bankName, accountNumber, swiftCode.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/SgdAccountInfoBase
+  - term: JmdAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, accountNumber, branchCode, bankAccountType, bankName.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/JmdAccountInfoBase
+  - term: AgentPolicyUpdateRequest
+    definition: Partial update to an agent's policy. Only provided fields will be updated; omitted fields retain their current values.
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentPolicyUpdateRequest
+  - term: CardMerchant
+    definition: 'Object declared by the contract with fields: descriptor, mcc, country.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CardMerchant
+  - term: AgentTransferDetails
+    definition: Details of a transfer-type agent action (TRANSFER_OUT or TRANSFER_IN).
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentTransferDetails
+  - term: BaseTransactionSource
+    definition: 'Object declared by the contract with fields: sourceType, currency.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/BaseTransactionSource
+  - term: AgentExecutionMode
+    definition: 'Execution mode controlling whether agent actions require human approval. AUTO: The agent can execute actions autonomously without
+      explicit approval. APPROVAL_REQUIRED: All agent actions require explicit human approval before execution.'
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentExecutionMode
+  - term: MwkAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/MwkAccountInfoBase
+  - term: Error400
+    definition: 'Object declared by the contract with fields: status, code, message, details.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Error400
+  - term: InrAccountInfoBase
+    definition: 'Required fields depend on the selected paymentRails: - NEFT: accountNumber, ifsc, rail - RTGS: accountNumber, ifsc, rail - UPI:
+      vpa'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/InrAccountInfoBase
+  - term: Error401
+    definition: 'Object declared by the contract with fields: status, code, message, details.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Error401
+  - term: CardRefundSummary
+    definition: 'Object declared by the contract with fields: count, totalAmount.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CardRefundSummary
+  - term: BaseWalletInfo
+    definition: 'Object declared by the contract with fields: accountType, address.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/BaseWalletInfo
+  - term: AgentActionStatus
+    definition: Status of an agent action. | Status | Description | |--------|-------------| | `PENDING_APPROVAL` | Submitted by the agent, awaiting
+      platform approval before execution | | `APPROVED` | Approved by the platform; execution is in progress or completed | | `REJECTED` | Rejected
+      by the platform; the underlying transaction was not executed | | `FAILED` | Approved but execution failed (e.g. quote expired
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentActionStatus
+  - term: UgxAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/UgxAccountInfoBase
+  - term: Error409
+    definition: 'Object declared by the contract with fields: status, code, message, details.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Error409
+  - term: CnyAccountInfoBase
+    definition: 'Required fields depend on the selected paymentRails: - BANK_TRANSFER: accountNumber, bankName - MOBILE_MONEY: bankName, phoneNumber'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/CnyAccountInfoBase
+  - term: AgentCreateResponse
+    definition: Response returned when an agent is created, including the agent and a device code for installation.
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentCreateResponse
+  - term: VndAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, bankName, accountNumber, swiftCode.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/VndAccountInfoBase
+  - term: TzsAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TzsAccountInfoBase
+  - term: AgentActionType
+    definition: The type of action the agent is requesting. | Type | Description | |------|-------------| | `EXECUTE_QUOTE` | Execute a cross-currency
+      quote | | `TRANSFER_OUT` | Transfer from an internal account to an external account | | `TRANSFER_IN` | Transfer from an external account
+      to an internal account |
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentActionType
+  - term: IdrAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, bankName, accountNumber, swiftCode, phoneNumber.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/IdrAccountInfoBase
+  - term: ScaFactor
+    definition: A Strong Customer Authentication factor. | Factor | Description | |--------|-------------| | `SMS_OTP` | One-time code sent by
+      SMS to the customer's verified phone. Requires no prior enrollment. | | `TOTP` | Time-based one-time code from an authenticator app. Requires
+      enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). | | `PASSKEY` | WebAuthn passkey assertion. Re
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/ScaFactor
+  - term: TransactionType
+    definition: Type of transaction (incoming payment or outgoing payment)
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/TransactionType
+  - term: AgentPolicy
+    definition: Policy governing what an agent can do, how it executes actions, and its spending boundaries.
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/AgentPolicy
+  - term: BwpAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/BwpAccountInfoBase
+  - term: SparkWalletInfo
+    definition: 'Object declared by the contract with fields: accountType, address.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/SparkWalletInfo
+  - term: EurAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, iban, swiftCode.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/EurAccountInfoBase
+  - term: OutgoingRateDetails
+    definition: 'Details about the rate and fees for an outgoing transaction or quote. Note: `counterpartyFixedFee` is denominated in the receiving
+      currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote
+      for the same transfer may differ even if the underlying fee structure is unchanged.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/OutgoingRateDetails
+  - term: Quote
+    definition: 'Object declared by the contract with fields: id, status, createdAt, expiresAt, source, destination, sendingCurrency, receivingCurrency,
+      totalSendingAmount, totalReceivingAmount, exchangeRate, feesIncluded. (6 more)'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Quote
+  - term: XafAccountInfoBase
+    definition: 'Object declared by the contract with fields: accountType, phoneNumber, provider, region.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/XafAccountInfoBase
+  - term: BdtAccountInfoBase
+    definition: 'Required fields depend on the selected paymentRails: - BANK_TRANSFER: accountNumber, bankName - MOBILE_MONEY: bankName, phoneNumber'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/BdtAccountInfoBase
+  - term: BaseDestination
+    definition: 'Object declared by the contract with fields: destinationType.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/BaseDestination
+  - term: PaymentRail
+    definition: The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between
+      accounts.
+    tags:
+    - Enumeration
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/PaymentRail
+  - term: Error404
+    definition: 'Object declared by the contract with fields: status, code, message, details.'
+    tags:
+    - Object
+    source: openapi/lightspark-agent-management-api-openapi.yml#/components/schemas/Error404

@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-stablecoin-provider-account-link-request-schema.json",
+  "title": "StablecoinProviderAccountLinkRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-stablecoins-api-openapi.yml#/components/schemas/StablecoinProviderAccountLinkRequest",
+  "type": "object",
+  "required": [
+    "provider",
+    "apiClientId",
+    "apiClientSecret"
+  ],
+  "properties": {
+    "provider": {
+      "$ref": "#/$defs/StablecoinProvider"
+    },
+    "apiClientId": {
+      "type": "string",
+      "description": "Provider API client id used to verify and link the provider account."
+    },
+    "apiClientSecret": {
+      "type": "string",
+      "writeOnly": true,
+      "description": "Provider API client secret. Grid verifies and stores this secret encrypted; it is never returned."
+    },
+    "providerAccountId": {
+      "type": "string",
+      "description": "Provider account id. Optional when the submitted credentials expose exactly one provider account."
+    }
+  },
+  "$defs": {
+    "StablecoinProvider": {
+      "type": "string",
+      "enum": [
+        "BRALE"
+      ],
+      "description": "Stablecoin provider backing the linked account, stablecoin, or operation."
+    }
+  }
+}

@@ -1,0 +1,587 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-incoming-transaction-schema.json",
+  "title": "Incoming Transaction",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-sandbox-api-openapi.yml#/components/schemas/IncomingTransaction",
+  "allOf": [
+    {
+      "$ref": "#/$defs/Transaction"
+    },
+    {
+      "type": "object",
+      "required": [
+        "type",
+        "receivedAmount"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "INCOMING"
+          ]
+        },
+        "source": {
+          "$ref": "#/$defs/TransactionSourceOneOf"
+        },
+        "receivedAmount": {
+          "$ref": "#/$defs/CurrencyAmount",
+          "description": "Amount received in the recipient's currency"
+        },
+        "fees": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The total fees available from the receive quote in the smallest unit of the receiving currency (eg. cents).",
+          "minimum": 0
+        },
+        "reconciliationInstructions": {
+          "$ref": "#/$defs/ReconciliationInstructions",
+          "description": "Included for all transactions except those with \"CREATED\" status"
+        },
+        "rateDetails": {
+          "$ref": "#/$defs/IncomingRateDetails",
+          "description": "Details about the rate and fees for the transaction."
+        },
+        "failureReason": {
+          "$ref": "#/$defs/IncomingTransactionFailureReason",
+          "description": "If the transaction failed, this field provides the reason for failure."
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "AccountTransactionDestination": {
+      "title": "Account Destination",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseTransactionDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Destination account identifier"
+            },
+            "onChainTransaction": {
+              "$ref": "#/$defs/OnChainTransaction",
+              "description": "On-chain transaction that delivered funds to this destination, when the destination is an external crypto wallet. Populated once the crypto transfer has settled."
+            }
+          },
+          "description": "Destination account details"
+        }
+      ]
+    },
+    "AccountTransactionSource": {
+      "title": "Account Source",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseTransactionSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Source account identifier"
+            },
+            "onChainTransaction": {
+              "$ref": "#/$defs/OnChainTransaction",
+              "description": "On-chain transaction that delivered funds from this source, when the source is an external crypto wallet. Populated once the crypto transfer has settled."
+            }
+          },
+          "description": "Source account details"
+        }
+      ]
+    },
+    "BaseTransactionDestination": {
+      "type": "object",
+      "required": [
+        "destinationType"
+      ],
+      "properties": {
+        "destinationType": {
+          "$ref": "#/$defs/TransactionDestinationType"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code for the destination"
+        }
+      }
+    },
+    "BaseTransactionSource": {
+      "type": "object",
+      "required": [
+        "sourceType"
+      ],
+      "properties": {
+        "sourceType": {
+          "$ref": "#/$defs/TransactionSourceType"
+        },
+        "currency": {
+          "type": "string",
+          "description": "Currency code for the source"
+        }
+      }
+    },
+    "CounterpartyInformation": {
+      "type": "object",
+      "description": "Additional information about the counterparty, if available and relevant to the transaction and platform.",
+      "additionalProperties": true
+    },
+    "CryptoNetwork": {
+      "type": "string",
+      "enum": [
+        "BITCOIN",
+        "ETHEREUM",
+        "SOLANA",
+        "BASE",
+        "POLYGON",
+        "TRON",
+        "SPARK"
+      ],
+      "description": "The blockchain network an on-chain transaction settled on. Whether this is the mainnet or a test network (e.g. Solana devnet) is determined by your platform's environment — sandbox platforms operate on test networks, production platforms on mainnet — mirroring how `cryptoNetwork` is interpreted elsewhere in the API."
+    },
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "CurrencyAmount": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      }
+    },
+    "IncomingRateDetails": {
+      "description": "Details about the rate and fees for an incoming transaction. Note: `gridApiFixedFee` is denominated in the receiving currency, so its equivalent value in the sending currency fluctuates with the FX rate. As a result, the total fee on a subsequent quote for the same transfer may differ even if the underlying fee structure is unchanged.",
+      "type": "object",
+      "required": [
+        "gridApiMultiplier",
+        "gridApiFixedFee",
+        "gridApiVariableFeeRate",
+        "gridApiVariableFeeAmount"
+      ],
+      "properties": {
+        "gridApiMultiplier": {
+          "type": "number",
+          "format": "double",
+          "description": "The underlying multiplier from the mSATS to the receiving currency, including variable fees.",
+          "exclusiveMinimum": 0
+        },
+        "gridApiFixedFee": {
+          "type": "integer",
+          "format": "int64",
+          "description": "The fixed fee charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents).",
+          "minimum": 0
+        },
+        "gridApiVariableFeeRate": {
+          "type": "number",
+          "format": "double",
+          "description": "The variable fee rate charged by the Grid product to execute the quote as a percentage of the receiving currency amount.",
+          "minimum": 0
+        },
+        "gridApiVariableFeeAmount": {
+          "type": "number",
+          "format": "int64",
+          "description": "The variable fee amount charged by the Grid product to execute the quote in the smallest unit of the receiving currency (eg. cents). This is the receiving amount times gridApiVariableFeeRate.",
+          "minimum": 0
+        }
+      }
+    },
+    "IncomingTransactionFailureReason": {
+      "type": "string",
+      "enum": [
+        "LNURLP_FAILED",
+        "PAY_REQUEST_FAILED",
+        "PAYMENT_APPROVAL_WEBHOOK_ERROR",
+        "PAYMENT_APPROVAL_TIMED_OUT",
+        "OFFRAMP_FAILED",
+        "MISSING_MANDATORY_PAYEE_DATA",
+        "QUOTE_EXPIRED",
+        "QUOTE_EXECUTION_FAILED"
+      ],
+      "description": "Reason for failure of an incoming transaction. This is used to provide more context on why a transaction failed. If the transaction is not in a failed state, this field is omitted."
+    },
+    "OnChainTransaction": {
+      "type": "object",
+      "required": [
+        "transactionHash",
+        "network"
+      ],
+      "properties": {
+        "transactionHash": {
+          "type": "string",
+          "description": "On-chain transaction hash of the crypto transfer for this leg of the transaction."
+        },
+        "network": {
+          "$ref": "#/$defs/CryptoNetwork",
+          "description": "Blockchain network the transaction settled on (mainnet vs test network is determined by your platform environment)."
+        }
+      }
+    },
+    "PaymentRail": {
+      "type": "string",
+      "enum": [
+        "ACH",
+        "ACH_COLOMBIA",
+        "BANK_TRANSFER",
+        "BRE_B",
+        "CIPS",
+        "FAST",
+        "FASTER_PAYMENTS",
+        "FEDNOW",
+        "INSTAPAY",
+        "MOBILE_MONEY",
+        "NEFT",
+        "PAYNOW",
+        "PESONET",
+        "PIX",
+        "RTGS",
+        "RTP",
+        "SEPA",
+        "SEPA_INSTANT",
+        "SPEI",
+        "SWIFT",
+        "UNIONPAY",
+        "UPI",
+        "WIRE"
+      ],
+      "description": "The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts."
+    },
+    "RealtimeFundingTransactionSource": {
+      "title": "External Funding Source",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseTransactionSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "REALTIME_FUNDING"
+              ]
+            },
+            "customerId": {
+              "type": "string",
+              "description": "The customer on whose behalf the transaction was initiated."
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code for the funding source"
+            },
+            "accountHolderName": {
+              "type": "string",
+              "description": "The name of the originator (sender) of the payment."
+            },
+            "accountIdentifier": {
+              "type": "string",
+              "description": "The originator's account number or IBAN. May be masked or partial depending on the rail."
+            },
+            "bankName": {
+              "type": "string",
+              "description": "The name of the originating bank."
+            },
+            "bankIdentifier": {
+              "type": "string",
+              "description": "The identifier of the originating bank, such as a routing number, BIC, or SWIFT code."
+            },
+            "paymentRail": {
+              "description": "The payment rail the funds arrived on.",
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PaymentRail"
+                }
+              ]
+            },
+            "remittanceInformation": {
+              "type": "string",
+              "description": "Free-form information about the payment provided by the originator. The source field depends on the payment rail: the Addenda record for ACH, the OBI / beneficiary information for wires, and the remittanceInformation field for RTP and FedNow."
+            },
+            "endToEndId": {
+              "type": "string",
+              "description": "The originator's own end-to-end reference for the payment."
+            },
+            "traceNumber": {
+              "type": "string",
+              "description": "Rail-level tracking identifier for the payment, such as an ACH trace number or a wire IMAD/OMAD, useful for reconciliation."
+            },
+            "onChainTransaction": {
+              "$ref": "#/$defs/OnChainTransaction",
+              "description": "On-chain transaction that delivered the funding, when the funds arrived from an external crypto wallet. Populated once the crypto transfer has settled."
+            }
+          },
+          "description": "Transaction was funded using an external funding source. All originator fields are optional and populated on a best-effort basis depending on what the funding source provides."
+        }
+      ]
+    },
+    "ReconciliationInstructions": {
+      "type": "object",
+      "minProperties": 1,
+      "description": "Instructions for reconciling a payment with this transaction. For the on-chain transaction to or from an external crypto wallet that is the transaction's own source or destination, use the `onChainTransaction` on the relevant source or destination instead.",
+      "properties": {
+        "reference": {
+          "type": "string",
+          "description": "Unique reference code to include with the payment to match it with the correct incoming transaction, when available."
+        },
+        "transactionHash": {
+          "type": "string",
+          "description": "Transaction hash of the internal settlement transfer used to deliver a UMA payment — the inter-VASP settlement leg (e.g. USDC on Solana to the receiving partner), when available. This is not a transfer to a customer's own wallet; for that, see the `onChainTransaction` on the transaction's source or destination."
+        }
+      }
+    },
+    "Transaction": {
+      "type": "object",
+      "required": [
+        "id",
+        "status",
+        "type",
+        "direction",
+        "destination",
+        "customerId",
+        "platformCustomerId"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the transaction"
+        },
+        "status": {
+          "$ref": "#/$defs/TransactionStatus"
+        },
+        "type": {
+          "$ref": "#/$defs/TransactionType"
+        },
+        "direction": {
+          "$ref": "#/$defs/TransactionDirection",
+          "description": "Whether this transaction credits or debits the customer's account."
+        },
+        "destination": {
+          "$ref": "#/$defs/TransactionDestinationOneOf"
+        },
+        "customerId": {
+          "type": "string",
+          "description": "System ID of the customer (sender for outgoing, recipient for incoming)"
+        },
+        "platformCustomerId": {
+          "type": "string",
+          "description": "Platform-specific ID of the customer (sender for outgoing, recipient for incoming)"
+        },
+        "settledAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the payment was or will be settled"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the transaction was created"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the transaction was last updated"
+        },
+        "receiptDeliveryConfirmedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "The time at which the platform confirmed delivery of the receipt to their customer."
+        },
+        "agentId": {
+          "type": "string",
+          "description": "If this transaction was initiated by an agent, the system-generated ID of that agent. Absent for platform-initiated transactions."
+        },
+        "description": {
+          "type": "string",
+          "description": "Optional memo or description for the payment"
+        },
+        "counterpartyInformation": {
+          "$ref": "#/$defs/CounterpartyInformation"
+        }
+      }
+    },
+    "TransactionDestinationOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountTransactionDestination"
+        },
+        {
+          "$ref": "#/$defs/UmaAddressTransactionDestination"
+        }
+      ]
+    },
+    "TransactionDestinationType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "UMA_ADDRESS"
+      ],
+      "description": "Type of transaction destination"
+    },
+    "TransactionDirection": {
+      "type": "string",
+      "enum": [
+        "CREDIT",
+        "DEBIT"
+      ],
+      "description": "Whether the transaction credits (funds in) or debits (funds out) the customer's account. Independent of `type`: an incoming transaction is normally a `CREDIT`, but an inbound ACH pull, for example, is an `INCOMING` transaction with a `DEBIT` direction."
+    },
+    "TransactionSourceOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountTransactionSource"
+        },
+        {
+          "$ref": "#/$defs/UmaAddressTransactionSource"
+        },
+        {
+          "$ref": "#/$defs/RealtimeFundingTransactionSource"
+        }
+      ]
+    },
+    "TransactionSourceType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "UMA_ADDRESS",
+        "REALTIME_FUNDING"
+      ],
+      "description": "Type of transaction source"
+    },
+    "TransactionStatus": {
+      "type": "string",
+      "enum": [
+        "CREATED",
+        "PENDING",
+        "PENDING_AUTHORIZATION",
+        "PROCESSING",
+        "COMPLETED",
+        "REJECTED",
+        "FAILED",
+        "REFUNDED",
+        "EXPIRED"
+      ],
+      "description": "Status of a payment transaction.\n\n| Status | Description |\n|--------|-------------|\n| `CREATED` | Initial lookup has been created |\n| `PENDING` | Quote has been created |\n| `PENDING_AUTHORIZATION` | Awaiting Strong Customer Authentication. Only occurs for customers in a region where SCA is required (e.g. EU); authorize the transaction's `scaChallenge` to proceed. |\n| `PROCESSING` | Funding has been received and payment initiated |\n| `COMPLETED` | Cross border payment has been received, converted and payment has been sent to the offramp network |\n| `REJECTED` | Receiving institution or wallet rejected payment, payment has been refunded |\n| `FAILED` | An error occurred during payment |\n| `REFUNDED` | Payment was unable to complete and refunded |\n| `EXPIRED` | Quote has expired |\n"
+    },
+    "TransactionType": {
+      "type": "string",
+      "enum": [
+        "INCOMING",
+        "OUTGOING"
+      ],
+      "description": "Type of transaction (incoming payment or outgoing payment)"
+    },
+    "UmaAddressTransactionDestination": {
+      "title": "UMA Address Destination",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseTransactionDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "umaAddress",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "UMA_ADDRESS"
+              ]
+            },
+            "umaAddress": {
+              "type": "string",
+              "description": "UMA address of the recipient"
+            }
+          },
+          "description": "UMA address destination details"
+        }
+      ]
+    },
+    "UmaAddressTransactionSource": {
+      "title": "UMA Address Source",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseTransactionSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "umaAddress",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "UMA_ADDRESS"
+              ]
+            },
+            "umaAddress": {
+              "type": "string",
+              "description": "UMA address of the sender"
+            }
+          },
+          "description": "UMA address source details"
+        }
+      ]
+    }
+  }
+}

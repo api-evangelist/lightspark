@@ -1,0 +1,694 @@
+{
+  "@context": {
+    "@vocab": "https://lightspark.com/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "lightspark": "https://lightspark.com/schema#",
+    "TransactionSourceType": "lightspark:TransactionSourceType",
+    "TransactionDirection": "lightspark:TransactionDirection",
+    "AgentListResponse": "lightspark:AgentListResponse",
+    "data": {
+      "@id": "lightspark:data",
+      "@container": "@list"
+    },
+    "hasMore": {
+      "@id": "lightspark:hasMore",
+      "@type": "xsd:boolean"
+    },
+    "nextCursor": {
+      "@id": "lightspark:nextCursor",
+      "@type": "xsd:string"
+    },
+    "totalCount": {
+      "@id": "lightspark:totalCount",
+      "@type": "xsd:integer"
+    },
+    "MxnAccountInfoBase": "lightspark:MxnAccountInfoBase",
+    "accountType": {
+      "@id": "lightspark:accountType",
+      "@type": "xsd:string"
+    },
+    "clabeNumber": {
+      "@id": "lightspark:clabeNumber",
+      "@type": "xsd:string"
+    },
+    "PolygonWalletInfo": "lightspark:PolygonWalletInfo",
+    "address": {
+      "@id": "lightspark:address",
+      "@type": "xsd:string"
+    },
+    "SolanaWalletInfo": "lightspark:SolanaWalletInfo",
+    "ZmwAccountInfoBase": "lightspark:ZmwAccountInfoBase",
+    "phoneNumber": {
+      "@id": "lightspark:phoneNumber",
+      "@type": "xsd:string"
+    },
+    "provider": {
+      "@id": "lightspark:provider",
+      "@type": "xsd:string"
+    },
+    "CryptoNetwork": "lightspark:CryptoNetwork",
+    "Transaction": "lightspark:Transaction",
+    "id": {
+      "@id": "lightspark:id",
+      "@type": "xsd:string"
+    },
+    "status": {
+      "@id": "lightspark:status",
+      "@type": "@id"
+    },
+    "type": {
+      "@id": "lightspark:type",
+      "@type": "@id"
+    },
+    "direction": {
+      "@id": "lightspark:direction",
+      "@type": "@id"
+    },
+    "destination": {
+      "@id": "lightspark:destination",
+      "@type": "@id"
+    },
+    "customerId": {
+      "@id": "lightspark:customerId",
+      "@type": "xsd:string"
+    },
+    "platformCustomerId": {
+      "@id": "lightspark:platformCustomerId",
+      "@type": "xsd:string"
+    },
+    "settledAt": {
+      "@id": "lightspark:settledAt",
+      "@type": "xsd:dateTime"
+    },
+    "createdAt": {
+      "@id": "lightspark:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "lightspark:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "receiptDeliveryConfirmedAt": {
+      "@id": "lightspark:receiptDeliveryConfirmedAt",
+      "@type": "xsd:dateTime"
+    },
+    "agentId": {
+      "@id": "lightspark:agentId",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "lightspark:description",
+      "@type": "xsd:string"
+    },
+    "counterpartyInformation": {
+      "@id": "lightspark:counterpartyInformation",
+      "@type": "@id"
+    },
+    "TransactionDestinationType": "lightspark:TransactionDestinationType",
+    "AgentAction": "lightspark:AgentAction",
+    "quote": {
+      "@id": "lightspark:quote"
+    },
+    "transferDetails": {
+      "@id": "lightspark:transferDetails"
+    },
+    "transaction": {
+      "@id": "lightspark:transaction"
+    },
+    "rejectionReason": {
+      "@id": "lightspark:rejectionReason",
+      "@type": "xsd:string"
+    },
+    "DestinationType": "lightspark:DestinationType",
+    "CurrencyAmount": "lightspark:CurrencyAmount",
+    "amount": {
+      "@id": "lightspark:amount",
+      "@type": "xsd:integer"
+    },
+    "currency": {
+      "@id": "lightspark:currency",
+      "@type": "@id"
+    },
+    "PkrAccountInfoBase": "lightspark:PkrAccountInfoBase",
+    "bankName": {
+      "@id": "lightspark:bankName",
+      "@type": "xsd:string"
+    },
+    "accountNumber": {
+      "@id": "lightspark:accountNumber",
+      "@type": "xsd:string"
+    },
+    "iban": {
+      "@id": "lightspark:iban",
+      "@type": "xsd:string"
+    },
+    "OnChainTransaction": "lightspark:OnChainTransaction",
+    "transactionHash": {
+      "@id": "lightspark:transactionHash",
+      "@type": "xsd:string"
+    },
+    "network": {
+      "@id": "lightspark:network",
+      "@type": "@id"
+    },
+    "CardPullSummary": "lightspark:CardPullSummary",
+    "count": {
+      "@id": "lightspark:count",
+      "@type": "xsd:integer"
+    },
+    "totalAmount": {
+      "@id": "lightspark:totalAmount",
+      "@type": "xsd:integer"
+    },
+    "pendingCount": {
+      "@id": "lightspark:pendingCount",
+      "@type": "xsd:integer"
+    },
+    "PhpAccountInfoBase": "lightspark:PhpAccountInfoBase",
+    "GbpAccountInfoBase": "lightspark:GbpAccountInfoBase",
+    "sortCode": {
+      "@id": "lightspark:sortCode",
+      "@type": "xsd:string"
+    },
+    "IncomingRateDetails": "lightspark:IncomingRateDetails",
+    "gridApiMultiplier": {
+      "@id": "lightspark:gridApiMultiplier",
+      "@type": "xsd:decimal"
+    },
+    "gridApiFixedFee": {
+      "@id": "lightspark:gridApiFixedFee",
+      "@type": "xsd:integer"
+    },
+    "gridApiVariableFeeRate": {
+      "@id": "lightspark:gridApiVariableFeeRate",
+      "@type": "xsd:decimal"
+    },
+    "gridApiVariableFeeAmount": {
+      "@id": "lightspark:gridApiVariableFeeAmount",
+      "@type": "xsd:decimal"
+    },
+    "RwfAccountInfoBase": "lightspark:RwfAccountInfoBase",
+    "TransactionStatus": "lightspark:TransactionStatus",
+    "ScaChallenge": "lightspark:ScaChallenge",
+    "expiresAt": {
+      "@id": "lightspark:expiresAt",
+      "@type": "xsd:dateTime"
+    },
+    "factor": {
+      "@id": "lightspark:factor",
+      "@type": "@id"
+    },
+    "availableFactors": {
+      "@id": "lightspark:availableFactors",
+      "@container": "@list"
+    },
+    "purpose": {
+      "@id": "lightspark:purpose",
+      "@type": "xsd:string"
+    },
+    "passkeyAssertionOptions": {
+      "@id": "lightspark:passkeyAssertionOptions"
+    },
+    "passkeyAllowedOrigins": {
+      "@id": "lightspark:passkeyAllowedOrigins",
+      "@container": "@list"
+    },
+    "SgdAccountInfoBase": "lightspark:SgdAccountInfoBase",
+    "swiftCode": {
+      "@id": "lightspark:swiftCode",
+      "@type": "xsd:string"
+    },
+    "JmdAccountInfoBase": "lightspark:JmdAccountInfoBase",
+    "branchCode": {
+      "@id": "lightspark:branchCode",
+      "@type": "xsd:string"
+    },
+    "bankAccountType": {
+      "@id": "lightspark:bankAccountType",
+      "@type": "xsd:string"
+    },
+    "AgentPolicyUpdateRequest": "lightspark:AgentPolicyUpdateRequest",
+    "permissions": {
+      "@id": "lightspark:permissions",
+      "@container": "@list"
+    },
+    "defaultExecutionMode": {
+      "@id": "lightspark:defaultExecutionMode",
+      "@type": "@id"
+    },
+    "spendingLimits": {
+      "@id": "lightspark:spendingLimits",
+      "@type": "@id"
+    },
+    "accountRestrictions": {
+      "@id": "lightspark:accountRestrictions",
+      "@type": "@id"
+    },
+    "approvalThresholds": {
+      "@id": "lightspark:approvalThresholds",
+      "@type": "@id"
+    },
+    "CardMerchant": "lightspark:CardMerchant",
+    "descriptor": {
+      "@id": "lightspark:descriptor",
+      "@type": "xsd:string"
+    },
+    "mcc": {
+      "@id": "lightspark:mcc",
+      "@type": "xsd:string"
+    },
+    "country": {
+      "@id": "lightspark:country",
+      "@type": "xsd:string"
+    },
+    "AgentTransferDetails": "lightspark:AgentTransferDetails",
+    "sourceAccountId": {
+      "@id": "lightspark:sourceAccountId",
+      "@type": "xsd:string"
+    },
+    "destinationAccountId": {
+      "@id": "lightspark:destinationAccountId",
+      "@type": "xsd:string"
+    },
+    "BaseTransactionSource": "lightspark:BaseTransactionSource",
+    "sourceType": {
+      "@id": "lightspark:sourceType",
+      "@type": "@id"
+    },
+    "AgentExecutionMode": "lightspark:AgentExecutionMode",
+    "MwkAccountInfoBase": "lightspark:MwkAccountInfoBase",
+    "Error400": "lightspark:Error400",
+    "code": {
+      "@id": "lightspark:code",
+      "@type": "xsd:string"
+    },
+    "message": {
+      "@id": "lightspark:message",
+      "@type": "xsd:string"
+    },
+    "details": {
+      "@id": "lightspark:details"
+    },
+    "InrAccountInfoBase": "lightspark:InrAccountInfoBase",
+    "vpa": {
+      "@id": "lightspark:vpa",
+      "@type": "xsd:string"
+    },
+    "ifsc": {
+      "@id": "lightspark:ifsc",
+      "@type": "xsd:string"
+    },
+    "rail": {
+      "@id": "lightspark:rail",
+      "@type": "xsd:string"
+    },
+    "Error401": "lightspark:Error401",
+    "CardRefundSummary": "lightspark:CardRefundSummary",
+    "BaseWalletInfo": "lightspark:BaseWalletInfo",
+    "AgentActionStatus": "lightspark:AgentActionStatus",
+    "UgxAccountInfoBase": "lightspark:UgxAccountInfoBase",
+    "Error409": "lightspark:Error409",
+    "CnyAccountInfoBase": "lightspark:CnyAccountInfoBase",
+    "AgentCreateResponse": "lightspark:AgentCreateResponse",
+    "agent": {
+      "@id": "lightspark:agent",
+      "@type": "@id"
+    },
+    "deviceCode": {
+      "@id": "lightspark:deviceCode",
+      "@type": "@id"
+    },
+    "VndAccountInfoBase": "lightspark:VndAccountInfoBase",
+    "TzsAccountInfoBase": "lightspark:TzsAccountInfoBase",
+    "AgentActionType": "lightspark:AgentActionType",
+    "IdrAccountInfoBase": "lightspark:IdrAccountInfoBase",
+    "ScaFactor": "lightspark:ScaFactor",
+    "TransactionType": "lightspark:TransactionType",
+    "AgentPolicy": "lightspark:AgentPolicy",
+    "BwpAccountInfoBase": "lightspark:BwpAccountInfoBase",
+    "SparkWalletInfo": "lightspark:SparkWalletInfo",
+    "EurAccountInfoBase": "lightspark:EurAccountInfoBase",
+    "OutgoingRateDetails": "lightspark:OutgoingRateDetails",
+    "counterpartyMultiplier": {
+      "@id": "lightspark:counterpartyMultiplier",
+      "@type": "xsd:decimal"
+    },
+    "counterpartyFixedFee": {
+      "@id": "lightspark:counterpartyFixedFee",
+      "@type": "xsd:integer"
+    },
+    "Quote": "lightspark:Quote",
+    "source": {
+      "@id": "lightspark:source",
+      "@type": "@id"
+    },
+    "sendingCurrency": {
+      "@id": "lightspark:sendingCurrency",
+      "@type": "@id"
+    },
+    "receivingCurrency": {
+      "@id": "lightspark:receivingCurrency",
+      "@type": "@id"
+    },
+    "totalSendingAmount": {
+      "@id": "lightspark:totalSendingAmount",
+      "@type": "xsd:integer"
+    },
+    "totalReceivingAmount": {
+      "@id": "lightspark:totalReceivingAmount",
+      "@type": "xsd:integer"
+    },
+    "exchangeRate": {
+      "@id": "lightspark:exchangeRate",
+      "@type": "xsd:decimal"
+    },
+    "feesIncluded": {
+      "@id": "lightspark:feesIncluded",
+      "@type": "xsd:integer"
+    },
+    "paymentInstructions": {
+      "@id": "lightspark:paymentInstructions",
+      "@container": "@list"
+    },
+    "transactionId": {
+      "@id": "lightspark:transactionId",
+      "@type": "xsd:string"
+    },
+    "remittanceInformation": {
+      "@id": "lightspark:remittanceInformation",
+      "@type": "xsd:string"
+    },
+    "rateDetails": {
+      "@id": "lightspark:rateDetails",
+      "@type": "@id"
+    },
+    "scaChallenge": {
+      "@id": "lightspark:scaChallenge",
+      "@type": "@id"
+    },
+    "XafAccountInfoBase": "lightspark:XafAccountInfoBase",
+    "region": {
+      "@id": "lightspark:region",
+      "@type": "xsd:string"
+    },
+    "BdtAccountInfoBase": "lightspark:BdtAccountInfoBase",
+    "BaseDestination": "lightspark:BaseDestination",
+    "destinationType": {
+      "@id": "lightspark:destinationType",
+      "@type": "@id"
+    },
+    "PaymentRail": "lightspark:PaymentRail",
+    "Error404": "lightspark:Error404",
+    "DkkAccountInfoBase": "lightspark:DkkAccountInfoBase",
+    "AgentApprovalThresholds": "lightspark:AgentApprovalThresholds",
+    "AgentDeviceCodeStatusResponse": "lightspark:AgentDeviceCodeStatusResponse",
+    "redeemed": {
+      "@id": "lightspark:redeemed",
+      "@type": "xsd:boolean"
+    },
+    "SwiftAccountInfoBase": "lightspark:SwiftAccountInfoBase",
+    "Error500": "lightspark:Error500",
+    "KesAccountInfoBase": "lightspark:KesAccountInfoBase",
+    "TronWalletInfo": "lightspark:TronWalletInfo",
+    "OutgoingTransactionStatus": "lightspark:OutgoingTransactionStatus",
+    "AgentActionRejectRequest": "lightspark:AgentActionRejectRequest",
+    "reason": {
+      "@id": "lightspark:reason",
+      "@type": "xsd:string"
+    },
+    "ZarAccountInfoBase": "lightspark:ZarAccountInfoBase",
+    "BaseQuoteSource": "lightspark:BaseQuoteSource",
+    "PaymentInstructions": "lightspark:PaymentInstructions",
+    "instructionsNotes": {
+      "@id": "lightspark:instructionsNotes",
+      "@type": "xsd:string"
+    },
+    "isPlatformAccount": {
+      "@id": "lightspark:isPlatformAccount",
+      "@type": "xsd:boolean"
+    },
+    "accountOrWalletInfo": {
+      "@id": "lightspark:accountOrWalletInfo"
+    },
+    "CardTransaction": "lightspark:CardTransaction",
+    "cardId": {
+      "@id": "lightspark:cardId",
+      "@type": "xsd:string"
+    },
+    "issuerTransactionToken": {
+      "@id": "lightspark:issuerTransactionToken",
+      "@type": "xsd:string"
+    },
+    "merchant": {
+      "@id": "lightspark:merchant",
+      "@type": "@id"
+    },
+    "authorizedAmount": {
+      "@id": "lightspark:authorizedAmount",
+      "@type": "@id"
+    },
+    "settledAmount": {
+      "@id": "lightspark:settledAmount",
+      "@type": "@id"
+    },
+    "refundedAmount": {
+      "@id": "lightspark:refundedAmount",
+      "@type": "@id"
+    },
+    "accountId": {
+      "@id": "lightspark:accountId",
+      "@type": "xsd:string"
+    },
+    "pullSummary": {
+      "@id": "lightspark:pullSummary",
+      "@type": "@id"
+    },
+    "refundSummary": {
+      "@id": "lightspark:refundSummary",
+      "@type": "@id"
+    },
+    "settlementSummary": {
+      "@id": "lightspark:settlementSummary",
+      "@type": "@id"
+    },
+    "authorizedAt": {
+      "@id": "lightspark:authorizedAt",
+      "@type": "xsd:dateTime"
+    },
+    "lastEventAt": {
+      "@id": "lightspark:lastEventAt",
+      "@type": "xsd:dateTime"
+    },
+    "AgentAccountRule": "lightspark:AgentAccountRule",
+    "executionMode": {
+      "@id": "lightspark:executionMode",
+      "@type": "@id"
+    },
+    "perTransactionLimit": {
+      "@id": "lightspark:perTransactionLimit",
+      "@type": "xsd:integer"
+    },
+    "Agent": "lightspark:Agent",
+    "name": {
+      "@id": "lightspark:name",
+      "@type": "xsd:string"
+    },
+    "isPaused": {
+      "@id": "lightspark:isPaused",
+      "@type": "xsd:boolean"
+    },
+    "isConnected": {
+      "@id": "lightspark:isConnected",
+      "@type": "xsd:boolean"
+    },
+    "policy": {
+      "@id": "lightspark:policy",
+      "@type": "@id"
+    },
+    "usage": {
+      "@id": "lightspark:usage",
+      "@type": "@id"
+    },
+    "RailSelectionMode": "lightspark:RailSelectionMode",
+    "IncomingTransactionFailureReason": "lightspark:IncomingTransactionFailureReason",
+    "AgentSpendingLimitsUpdate": "lightspark:AgentSpendingLimitsUpdate",
+    "dailyLimit": {
+      "@id": "lightspark:dailyLimit",
+      "@type": "xsd:integer"
+    },
+    "dailyTransactionLimit": {
+      "@id": "lightspark:dailyTransactionLimit",
+      "@type": "xsd:integer"
+    },
+    "monthlyLimit": {
+      "@id": "lightspark:monthlyLimit",
+      "@type": "xsd:integer"
+    },
+    "AgentDeviceCodeRedeemResponse": "lightspark:AgentDeviceCodeRedeemResponse",
+    "agentName": {
+      "@id": "lightspark:agentName",
+      "@type": "xsd:string"
+    },
+    "accessToken": {
+      "@id": "lightspark:accessToken",
+      "@type": "xsd:string"
+    },
+    "CardTransactionStatus": "lightspark:CardTransactionStatus",
+    "Currency": "lightspark:Currency",
+    "symbol": {
+      "@id": "lightspark:symbol",
+      "@type": "xsd:string"
+    },
+    "decimals": {
+      "@id": "lightspark:decimals",
+      "@type": "xsd:integer"
+    },
+    "AgentUsage": "lightspark:AgentUsage",
+    "dailyTransactionCount": {
+      "@id": "lightspark:dailyTransactionCount",
+      "@type": "xsd:integer"
+    },
+    "dailySpend": {
+      "@id": "lightspark:dailySpend",
+      "@type": "xsd:integer"
+    },
+    "dailyResetDate": {
+      "@id": "lightspark:dailyResetDate",
+      "@type": "xsd:date"
+    },
+    "monthlySpend": {
+      "@id": "lightspark:monthlySpend",
+      "@type": "xsd:integer"
+    },
+    "monthlyResetMonth": {
+      "@id": "lightspark:monthlyResetMonth",
+      "@type": "xsd:string"
+    },
+    "HtgAccountInfoBase": "lightspark:HtgAccountInfoBase",
+    "MyrAccountInfoBase": "lightspark:MyrAccountInfoBase",
+    "AgentPermission": "lightspark:AgentPermission",
+    "CadAccountInfoBase": "lightspark:CadAccountInfoBase",
+    "bankCode": {
+      "@id": "lightspark:bankCode",
+      "@type": "xsd:string"
+    },
+    "PaymentAccountType": "lightspark:PaymentAccountType",
+    "AedAccountInfoBase": "lightspark:AedAccountInfoBase",
+    "HkdAccountInfoBase": "lightspark:HkdAccountInfoBase",
+    "AgentSpendingLimits": "lightspark:AgentSpendingLimits",
+    "AgentDeviceCode": "lightspark:AgentDeviceCode",
+    "AgentAccountRestrictions": "lightspark:AgentAccountRestrictions",
+    "allowedAccountIds": {
+      "@id": "lightspark:allowedAccountIds",
+      "@container": "@list"
+    },
+    "accountRules": {
+      "@id": "lightspark:accountRules",
+      "@container": "@list"
+    },
+    "BaseTransactionDestination": "lightspark:BaseTransactionDestination",
+    "EgpAccountInfoBase": "lightspark:EgpAccountInfoBase",
+    "NgnAccountInfoBase": "lightspark:NgnAccountInfoBase",
+    "ThbAccountInfoBase": "lightspark:ThbAccountInfoBase",
+    "QuoteSourceType": "lightspark:QuoteSourceType",
+    "XofAccountInfoBase": "lightspark:XofAccountInfoBase",
+    "UsdAccountInfoBase": "lightspark:UsdAccountInfoBase",
+    "routingNumber": {
+      "@id": "lightspark:routingNumber",
+      "@type": "xsd:string"
+    },
+    "ReconciliationInstructions": "lightspark:ReconciliationInstructions",
+    "reference": {
+      "@id": "lightspark:reference",
+      "@type": "xsd:string"
+    },
+    "EthereumWalletInfo": "lightspark:EthereumWalletInfo",
+    "SlvAccountInfoBase": "lightspark:SlvAccountInfoBase",
+    "BasePaymentAccountInfo": "lightspark:BasePaymentAccountInfo",
+    "Refund": "lightspark:Refund",
+    "initiatedAt": {
+      "@id": "lightspark:initiatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "CardSettlementSummary": "lightspark:CardSettlementSummary",
+    "GhsAccountInfoBase": "lightspark:GhsAccountInfoBase",
+    "AgentActionListResponse": "lightspark:AgentActionListResponse",
+    "AgentUpdateRequest": "lightspark:AgentUpdateRequest",
+    "OutgoingTransactionFailureReason": "lightspark:OutgoingTransactionFailureReason",
+    "AgentCreateRequest": "lightspark:AgentCreateRequest",
+    "GtqAccountInfoBase": "lightspark:GtqAccountInfoBase",
+    "VndBeneficiary": "lightspark:VndBeneficiary",
+    "beneficiaryType": {
+      "@id": "lightspark:beneficiaryType",
+      "@type": "xsd:string"
+    },
+    "fullName": {
+      "@id": "lightspark:fullName",
+      "@type": "xsd:string"
+    },
+    "birthDate": {
+      "@id": "lightspark:birthDate",
+      "@type": "xsd:string"
+    },
+    "nationality": {
+      "@id": "lightspark:nationality",
+      "@type": "xsd:string"
+    },
+    "email": {
+      "@id": "lightspark:email",
+      "@type": "xsd:string"
+    },
+    "countryOfResidence": {
+      "@id": "lightspark:countryOfResidence",
+      "@type": "xsd:string"
+    },
+    "ExternalAccountListResponse": "lightspark:ExternalAccountListResponse",
+    "CadBeneficiary": "lightspark:CadBeneficiary",
+    "registrationNumber": {
+      "@id": "lightspark:registrationNumber",
+      "@type": "xsd:string"
+    },
+    "PkrBeneficiary": "lightspark:PkrBeneficiary",
+    "InternalAccountStatus": "lightspark:InternalAccountStatus",
+    "QuoteLockSide": "lightspark:QuoteLockSide",
+    "CnyBeneficiary": "lightspark:CnyBeneficiary",
+    "BrlAccountInfoBase": "lightspark:BrlAccountInfoBase",
+    "pixKey": {
+      "@id": "lightspark:pixKey",
+      "@type": "xsd:string"
+    },
+    "pixKeyType": {
+      "@id": "lightspark:pixKeyType",
+      "@type": "xsd:string"
+    },
+    "taxId": {
+      "@id": "lightspark:taxId",
+      "@type": "xsd:string"
+    },
+    "CopBeneficiary": "lightspark:CopBeneficiary",
+    "documentType": {
+      "@id": "lightspark:documentType",
+      "@type": "xsd:string"
+    },
+    "documentNumber": {
+      "@id": "lightspark:documentNumber",
+      "@type": "xsd:string"
+    },
+    "ExternalAccountReference": "lightspark:ExternalAccountReference",
+    "Error424": "lightspark:Error424",
+    "JmdBeneficiary": "lightspark:JmdBeneficiary"
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Lightspark API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Lightspark's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-12) from openapi/lightspark-agent-management-api-openapi.yml, openapi/lightspark-agent-operations-api-openapi.yml, openapi/lightspark-api-tokens-api-openapi.yml.",
+  "dcterms:created": "2026-10-12",
+  "dcterms:source": [
+    "openapi/lightspark-agent-management-api-openapi.yml",
+    "openapi/lightspark-agent-operations-api-openapi.yml",
+    "openapi/lightspark-api-tokens-api-openapi.yml",
+    "openapi/lightspark-available-uma-providers-api-openapi.yml",
+    "openapi/lightspark-cards-api-openapi.yml"
+  ]
+}

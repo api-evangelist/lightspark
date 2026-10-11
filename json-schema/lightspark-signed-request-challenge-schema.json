@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-signed-request-challenge-schema.json",
+  "title": "Signed Request Challenge",
+  "description": "Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-cards-api-openapi.yml#/components/schemas/SignedRequestChallenge",
+  "type": "object",
+  "required": [
+    "payloadToSign",
+    "requestId",
+    "expiresAt"
+  ],
+  "properties": {
+    "payloadToSign": {
+      "type": "string",
+      "description": "Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request."
+    },
+    "requestId": {
+      "type": "string",
+      "description": "Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time."
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-bulk-customer-import-job-schema.json",
+  "title": "BulkCustomerImportJob",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-customers-api-openapi.yml#/components/schemas/BulkCustomerImportJob",
+  "type": "object",
+  "required": [
+    "id",
+    "status",
+    "progress"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique identifier for the bulk import job"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "PROCESSING",
+        "COMPLETED",
+        "FAILED"
+      ],
+      "description": "Current status of the job"
+    },
+    "progress": {
+      "type": "object",
+      "required": [
+        "total",
+        "processed",
+        "successful",
+        "failed"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "description": "Total number of customers to process"
+        },
+        "processed": {
+          "type": "integer",
+          "description": "Number of customers processed so far"
+        },
+        "successful": {
+          "type": "integer",
+          "description": "Number of customers successfully created"
+        },
+        "failed": {
+          "type": "integer",
+          "description": "Number of customers that failed to create"
+        }
+      }
+    },
+    "errors": {
+      "type": "array",
+      "description": "Detailed error information for failed entries",
+      "items": {
+        "$ref": "#/$defs/BulkCustomerImportErrorEntry"
+      }
+    },
+    "completedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Timestamp when the job completed (only present for COMPLETED or FAILED status)"
+    }
+  },
+  "$defs": {
+    "BulkCustomerImportErrorEntry": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/GridError"
+        },
+        {
+          "type": "object",
+          "description": "Error information for a failed bulk import entry",
+          "required": [
+            "correlationId"
+          ],
+          "properties": {
+            "correlationId": {
+              "type": "string",
+              "description": "Platform customer ID or row number for the failed entry"
+            }
+          }
+        }
+      ]
+    },
+    "GridError": {
+      "type": "object",
+      "title": "GridError",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Error code"
+        },
+        "message": {
+          "type": "string",
+          "description": "Error message"
+        },
+        "details": {
+          "type": "object",
+          "description": "Additional error details",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

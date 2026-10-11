@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-uma-invitation-create-request-schema.json",
+  "title": "UmaInvitationCreateRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-invitations-api-openapi.yml#/components/schemas/UmaInvitationCreateRequest",
+  "type": "object",
+  "required": [
+    "inviterUma"
+  ],
+  "properties": {
+    "inviterUma": {
+      "type": "string",
+      "description": "The UMA address of the customer creating the invitation"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "First name of the invitee to show as part of the invite"
+    },
+    "amountToSend": {
+      "description": "An amount to send (in the smallest unit of the customer's currency) to the invitee when the invitation is claimed.\nThis is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of\nthe amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter\nplatform either does not send the payment or the payment fails, the invitee will not receive this amount. This\nfield is primarily used for display purposes on the claiming side of the invitation.\n",
+      "type": "integer",
+      "format": "int64"
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation expires (if at all)"
+    }
+  }
+}

@@ -1,0 +1,530 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-customer-create-request-one-of-schema.json",
+  "title": "CustomerCreateRequestOneOf",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-customers-api-openapi.yml#/components/schemas/CustomerCreateRequestOneOf",
+  "oneOf": [
+    {
+      "$ref": "#/$defs/IndividualCustomerCreateRequest"
+    },
+    {
+      "$ref": "#/$defs/BusinessCustomerCreateRequest"
+    }
+  ],
+  "$defs": {
+    "Address": {
+      "type": "object",
+      "required": [
+        "line1",
+        "postalCode",
+        "country"
+      ],
+      "properties": {
+        "line1": {
+          "type": "string",
+          "description": "Street address line 1"
+        },
+        "line2": {
+          "type": "string",
+          "description": "Street address line 2"
+        },
+        "city": {
+          "type": "string",
+          "description": "City"
+        },
+        "state": {
+          "type": "string",
+          "description": "State/Province/Region"
+        },
+        "postalCode": {
+          "type": "string",
+          "description": "Postal/ZIP code"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2)"
+        }
+      }
+    },
+    "BusinessCustomerCreateRequest": {
+      "title": "Business Customer Create Request",
+      "allOf": [
+        {
+          "$ref": "#/$defs/CustomerCreateRequest"
+        },
+        {
+          "$ref": "#/$defs/BusinessCustomerFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "businessInfo": {
+              "$ref": "#/$defs/BusinessInfo"
+            }
+          }
+        }
+      ]
+    },
+    "BusinessCustomerFields": {
+      "type": "object",
+      "required": [
+        "customerType"
+      ],
+      "properties": {
+        "customerType": {
+          "type": "string",
+          "enum": [
+            "BUSINESS"
+          ]
+        },
+        "kybStatus": {
+          "$ref": "#/$defs/KybStatus"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        },
+        "businessInfo": {
+          "$ref": "#/$defs/BusinessInfoUpdate"
+        }
+      }
+    },
+    "BusinessInfo": {
+      "type": "object",
+      "description": "Additional information required for business entities",
+      "required": [
+        "legalName",
+        "taxId",
+        "incorporatedOn"
+      ],
+      "properties": {
+        "legalName": {
+          "type": "string",
+          "description": "Legal name of the business"
+        },
+        "doingBusinessAs": {
+          "type": "string",
+          "description": "Trade name or DBA name of the business, if different from the legal name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of incorporation or registration (ISO 3166-1 alpha-2)"
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "Business registration number"
+        },
+        "incorporatedOn": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of incorporation in ISO 8601 format (YYYY-MM-DD)"
+        },
+        "entityType": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "taxId": {
+          "type": "string",
+          "description": "Tax identification number"
+        },
+        "countriesOfOperation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries where the business operates (ISO 3166-1 alpha-2)"
+        },
+        "businessType": {
+          "$ref": "#/$defs/BusinessType"
+        },
+        "purposeOfAccount": {
+          "$ref": "#/$defs/PurposeOfAccount"
+        },
+        "sourceOfFunds": {
+          "type": "string",
+          "description": "The primary source of funds for the business"
+        },
+        "expectedMonthlyTransactionCount": {
+          "type": "string",
+          "enum": [
+            "COUNT_UNDER_10",
+            "COUNT_10_TO_100",
+            "COUNT_100_TO_500",
+            "COUNT_500_TO_1000",
+            "COUNT_OVER_1000"
+          ],
+          "description": "Expected number of transactions per month"
+        },
+        "expectedMonthlyTransactionVolume": {
+          "type": "string",
+          "enum": [
+            "VOLUME_UNDER_10K",
+            "VOLUME_10K_TO_100K",
+            "VOLUME_100K_TO_1M",
+            "VOLUME_1M_TO_10M",
+            "VOLUME_OVER_10M"
+          ],
+          "description": "Expected total transaction volume per month in USD equivalent"
+        },
+        "expectedRecipientJurisdictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries where the business expects to send payments (ISO 3166-1 alpha-2)"
+        },
+        "naicsCode": {
+          "type": "string",
+          "pattern": "^\\d{2,6}$",
+          "description": "NAICS code describing the nature of the business (2-6 digits)"
+        },
+        "sourceOfFundsCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceOfFundsCategory"
+          },
+          "description": "Structured source-of-funds categories for the business"
+        },
+        "sourceOfFundsOtherDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Description of the source of funds when OTHER is selected"
+        },
+        "purposeOfAccountOtherDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Description of the account purpose when OTHER is selected"
+        },
+        "expectedCounterpartyCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)"
+        }
+      }
+    },
+    "BusinessInfoUpdate": {
+      "type": "object",
+      "description": "Additional information for business entities",
+      "properties": {
+        "legalName": {
+          "type": "string",
+          "description": "Legal name of the business"
+        },
+        "doingBusinessAs": {
+          "type": "string",
+          "description": "Trade name or DBA name of the business, if different from the legal name"
+        },
+        "country": {
+          "type": "string",
+          "description": "Country of incorporation or registration (ISO 3166-1 alpha-2)"
+        },
+        "registrationNumber": {
+          "type": "string",
+          "description": "Business registration number"
+        },
+        "incorporatedOn": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of incorporation in ISO 8601 format (YYYY-MM-DD)"
+        },
+        "entityType": {
+          "$ref": "#/$defs/EntityType"
+        },
+        "taxId": {
+          "type": "string",
+          "description": "Tax identification number"
+        },
+        "countriesOfOperation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries where the business operates (ISO 3166-1 alpha-2)"
+        },
+        "businessType": {
+          "$ref": "#/$defs/BusinessType"
+        },
+        "purposeOfAccount": {
+          "$ref": "#/$defs/PurposeOfAccount"
+        },
+        "sourceOfFunds": {
+          "type": "string",
+          "description": "The primary source of funds for the business"
+        },
+        "expectedMonthlyTransactionCount": {
+          "type": "string",
+          "enum": [
+            "COUNT_UNDER_10",
+            "COUNT_10_TO_100",
+            "COUNT_100_TO_500",
+            "COUNT_500_TO_1000",
+            "COUNT_OVER_1000"
+          ],
+          "description": "Expected number of transactions per month"
+        },
+        "expectedMonthlyTransactionVolume": {
+          "type": "string",
+          "enum": [
+            "VOLUME_UNDER_10K",
+            "VOLUME_10K_TO_100K",
+            "VOLUME_100K_TO_1M",
+            "VOLUME_1M_TO_10M",
+            "VOLUME_OVER_10M"
+          ],
+          "description": "Expected total transaction volume per month in USD equivalent"
+        },
+        "expectedRecipientJurisdictions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries where the business expects to send payments (ISO 3166-1 alpha-2)"
+        },
+        "naicsCode": {
+          "type": "string",
+          "pattern": "^\\d{2,6}$",
+          "description": "NAICS code describing the nature of the business (2-6 digits)"
+        },
+        "sourceOfFundsCategories": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceOfFundsCategory"
+          },
+          "description": "Structured source-of-funds categories for the business"
+        },
+        "sourceOfFundsOtherDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Description of the source of funds when OTHER is selected"
+        },
+        "purposeOfAccountOtherDescription": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500,
+          "description": "Description of the account purpose when OTHER is selected"
+        },
+        "expectedCounterpartyCountries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of countries of the business's expected transaction counterparties (ISO 3166-1 alpha-2)"
+        }
+      }
+    },
+    "BusinessType": {
+      "type": "string",
+      "description": "The high-level industry category of the business",
+      "enum": [
+        "AGRICULTURE_FORESTRY_FISHING_AND_HUNTING",
+        "MINING_QUARRYING_AND_OIL_AND_GAS_EXTRACTION",
+        "UTILITIES",
+        "CONSTRUCTION",
+        "MANUFACTURING",
+        "WHOLESALE_TRADE",
+        "RETAIL_TRADE",
+        "TRANSPORTATION_AND_WAREHOUSING",
+        "INFORMATION",
+        "FINANCE_AND_INSURANCE",
+        "REAL_ESTATE_AND_RENTAL_AND_LEASING",
+        "PROFESSIONAL_SCIENTIFIC_AND_TECHNICAL_SERVICES",
+        "MANAGEMENT_OF_COMPANIES_AND_ENTERPRISES",
+        "ADMINISTRATIVE_AND_SUPPORT_AND_WASTE_MANAGEMENT_AND_REMEDIATION_SERVICES",
+        "EDUCATIONAL_SERVICES",
+        "HEALTH_CARE_AND_SOCIAL_ASSISTANCE",
+        "ARTS_ENTERTAINMENT_AND_RECREATION",
+        "ACCOMMODATION_AND_FOOD_SERVICES",
+        "OTHER_SERVICES",
+        "PUBLIC_ADMINISTRATION"
+      ]
+    },
+    "CustomerCreateRequest": {
+      "type": "object",
+      "required": [
+        "customerType"
+      ],
+      "properties": {
+        "platformCustomerId": {
+          "type": "string",
+          "description": "Platform-specific customer identifier. If not provided, one will be generated by the system."
+        },
+        "customerType": {
+          "$ref": "#/$defs/CustomerType"
+        },
+        "region": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2) representing the customer's regional identity. This determines the regulatory jurisdiction and KYC requirements for the customer. Required if the customer will use currencies with different KYC requirements across regions. A customer with accounts in multiple regions should be registered as separate customers. This field is immutable after creation."
+        },
+        "currencies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "List of currency codes the customer will use (ISO 4217 for fiat, e.g. \"USD\", \"EUR\"; tickers for crypto, e.g. \"BTC\", \"USDC\"). Required if the customer will use more than one sending currency, since the correct currencies cannot always be inferred. If not provided, currencies will be inferred from the customer's region. Some currency combinations may require separate customers — if so, the request will be rejected with details."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Email address for the customer."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "pattern": "^\\+[1-9]\\d{1,14}$",
+          "description": "Phone number for the customer in strict E.164 format."
+        },
+        "umaAddress": {
+          "type": "string",
+          "description": "Optional UMA address identifier. If not provided during customer creation, one will be generated by the system. If provided during customer update, the UMA address will be updated to the provided value. This is an optional identifier to route payments to the customer. This is an optional identifier to route payments to the customer."
+        }
+      }
+    },
+    "CustomerType": {
+      "type": "string",
+      "enum": [
+        "INDIVIDUAL",
+        "BUSINESS"
+      ],
+      "description": "Whether the customer is an individual or a business entity"
+    },
+    "EntityType": {
+      "type": "string",
+      "enum": [
+        "SOLE_PROPRIETORSHIP",
+        "PARTNERSHIP",
+        "LLC",
+        "CORPORATION",
+        "S_CORPORATION",
+        "NON_PROFIT",
+        "OTHER"
+      ],
+      "description": "Legal entity type of the business"
+    },
+    "IdentificationType": {
+      "type": "string",
+      "enum": [
+        "SSN",
+        "ITIN",
+        "EIN",
+        "NON_US_TAX_ID"
+      ],
+      "description": "Type of tax identification"
+    },
+    "IndividualCustomerCreateRequest": {
+      "title": "Individual Customer Create Request",
+      "allOf": [
+        {
+          "$ref": "#/$defs/CustomerCreateRequest"
+        },
+        {
+          "$ref": "#/$defs/IndividualCustomerFields"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "idType": {
+              "$ref": "#/$defs/IdentificationType"
+            },
+            "identifier": {
+              "type": "string",
+              "writeOnly": true,
+              "description": "The individual's tax identification number. Required to onboard the individual as a US account holder. Only SSN and ITIN are currently accepted for an individual account holder; other identification types are rejected. Write-only — never returned in customer responses."
+            }
+          }
+        }
+      ]
+    },
+    "IndividualCustomerFields": {
+      "type": "object",
+      "required": [
+        "customerType"
+      ],
+      "properties": {
+        "customerType": {
+          "type": "string",
+          "enum": [
+            "INDIVIDUAL"
+          ]
+        },
+        "kycStatus": {
+          "$ref": "#/$defs/KycStatus"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "Individual's full name"
+        },
+        "birthDate": {
+          "type": "string",
+          "format": "date",
+          "description": "Date of birth in ISO 8601 format (YYYY-MM-DD)"
+        },
+        "nationality": {
+          "type": "string",
+          "description": "Country code (ISO 3166-1 alpha-2)"
+        },
+        "address": {
+          "$ref": "#/$defs/Address"
+        }
+      }
+    },
+    "KybStatus": {
+      "type": "string",
+      "enum": [
+        "UNVERIFIED",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "HOLD"
+      ],
+      "description": "The current KYB status of a business customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information."
+    },
+    "KycStatus": {
+      "type": "string",
+      "enum": [
+        "UNVERIFIED",
+        "PENDING",
+        "APPROVED",
+        "REJECTED",
+        "HOLD"
+      ],
+      "description": "The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information."
+    },
+    "PurposeOfAccount": {
+      "type": "string",
+      "enum": [
+        "CONTRACTOR_PAYOUTS",
+        "CREATOR_PAYOUTS",
+        "EMPLOYEE_PAYOUTS",
+        "MARKETPLACE_SELLER_PAYOUTS",
+        "SUPPLIER_PAYMENTS",
+        "CROSS_BORDER_B2B",
+        "AR_AUTOMATION",
+        "AP_AUTOMATION",
+        "EMBEDDED_PAYMENTS",
+        "PLATFORM_FEE_COLLECTION",
+        "P2P_TRANSFERS",
+        "CHARITABLE_DONATIONS",
+        "OTHER"
+      ],
+      "description": "The intended purpose for using the Grid account"
+    },
+    "SourceOfFundsCategory": {
+      "type": "string",
+      "enum": [
+        "OPERATING_REVENUE",
+        "INVESTMENT_INCOME",
+        "LOANS",
+        "VENTURE_CAPITAL",
+        "PERSONAL_SAVINGS",
+        "DONATIONS",
+        "OTHER"
+      ],
+      "description": "A structured source-of-funds category for the business"
+    }
+  }
+}

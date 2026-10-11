@@ -1,0 +1,37 @@
+name: Lightspark Grid API Rate Limits
+generated: '2026-10-12'
+method: derived
+source: openapi/_original/lightspark-grid-openapi-original.yml
+note: >-
+  Lightspark's docs (docs.lightspark.com/llms.txt index, checked 2026-10-12) publish no general
+  rate-limit page. The Grid OpenAPI documents 429 responses with error code RATE_LIMITED and a
+  Retry-After header on five security-sensitive operations; only one states a numeric limit.
+signaling:
+  status_code: 429
+  error_code: RATE_LIMITED
+  headers:
+  - Retry-After
+limit_count: 1
+limits:
+- name: Two-factor reset initiation
+  endpoint: startTwoFactorReset
+  limit_text: Reset initiation is rate-limited to 5 per 24 hours per customer
+  max: 5
+  window: 24 hours
+  scope: per-customer
+- name: Quote SCA authorization attempts
+  endpoint: authorizeQuote
+  limit_text: Returned with `RATE_LIMITED` when authorization attempts for this challenge happen too frequently
+  scope: per-challenge
+- name: Quote SCA code resend
+  endpoint: resendQuoteScaCode
+  limit_text: Returned with `RATE_LIMITED` when codes are re-sent too frequently
+  scope: per-quote
+- name: Auth credential verification
+  endpoint: verifyAuthCredential
+  limit_text: Returned with `RATE_LIMITED` when verification attempts for this credential happen too frequently
+  scope: per-credential
+- name: Auth credential challenge re-issue
+  endpoint: challengeAuthCredential
+  limit_text: Returned with `RATE_LIMITED` when challenge re-issues are requested
+  scope: per-credential

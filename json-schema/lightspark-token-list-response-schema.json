@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-token-list-response-schema.json",
+  "title": "TokenListResponse",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-api-tokens-api-openapi.yml#/components/schemas/TokenListResponse",
+  "type": "object",
+  "required": [
+    "data",
+    "hasMore"
+  ],
+  "properties": {
+    "data": {
+      "type": "array",
+      "description": "List of tokens matching the filter criteria",
+      "items": {
+        "$ref": "#/$defs/ApiToken"
+      }
+    },
+    "hasMore": {
+      "type": "boolean",
+      "description": "Indicates if more results are available beyond this page"
+    },
+    "nextCursor": {
+      "type": "string",
+      "description": "Cursor to retrieve the next page of results (only present if hasMore is true)"
+    },
+    "totalCount": {
+      "type": "integer",
+      "description": "Total number of tokens matching the criteria (excluding pagination)"
+    }
+  },
+  "$defs": {
+    "ApiToken": {
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "permissions",
+        "clientId",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "System-generated unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the token"
+        },
+        "permissions": {
+          "type": "array",
+          "description": "A list of permissions granted to the token",
+          "items": {
+            "$ref": "#/$defs/Permission"
+          }
+        },
+        "clientId": {
+          "type": "string",
+          "description": "An opaque identifier that should be used as a client_id (or username)  in the HTTP Basic Authentication scheme when issuing http requests to Grid."
+        },
+        "clientSecret": {
+          "type": "string",
+          "description": "The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation. Platform must keep this secret secure as it grants access to the account."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Creation timestamp"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        }
+      }
+    },
+    "Permission": {
+      "type": "string",
+      "enum": [
+        "VIEW",
+        "TRANSACT",
+        "MANAGE"
+      ],
+      "description": "Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers"
+    }
+  }
+}

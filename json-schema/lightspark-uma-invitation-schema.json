@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-uma-invitation-schema.json",
+  "title": "UmaInvitation",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-invitations-api-openapi.yml#/components/schemas/UmaInvitation",
+  "type": "object",
+  "required": [
+    "code",
+    "createdAt",
+    "inviterUma",
+    "status",
+    "url"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The unique code of the invitation"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation was created"
+    },
+    "claimedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation was claimed if it has been claimed"
+    },
+    "url": {
+      "type": "string",
+      "description": "The URL where this invitation can be claimed."
+    },
+    "expiresAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "When the invitation expires (if at all)"
+    },
+    "inviterUma": {
+      "type": "string",
+      "description": "The UMA address of the inviter"
+    },
+    "inviteeUma": {
+      "type": "string",
+      "description": "The UMA address of the invitee"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PENDING",
+        "CLAIMED",
+        "EXPIRED",
+        "CANCELLED"
+      ],
+      "description": "The status of the invitation"
+    },
+    "firstName": {
+      "type": "string",
+      "description": "The inviter's first name. Will be displayed when the recipient clicks the invite link"
+    },
+    "amountToSend": {
+      "$ref": "#/$defs/CurrencyAmount",
+      "description": "The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.\nThis field is useful for \"send-by-link\" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver's UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency."
+    }
+  },
+  "$defs": {
+    "Currency": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "description": "Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. \"BTC\" for Bitcoin, \"USDC\" for USDC, etc.)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the currency"
+        },
+        "symbol": {
+          "type": "string",
+          "description": "Symbol of the currency"
+        },
+        "decimals": {
+          "type": "integer",
+          "description": "Number of decimal places for the currency",
+          "minimum": 0
+        }
+      }
+    },
+    "CurrencyAmount": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "properties": {
+        "amount": {
+          "type": "integer",
+          "format": "int64",
+          "description": "Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)"
+        },
+        "currency": {
+          "$ref": "#/$defs/Currency"
+        }
+      }
+    }
+  }
+}

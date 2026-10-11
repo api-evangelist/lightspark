@@ -1,0 +1,327 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/lightspark/main/json-schema/lightspark-quote-request-schema.json",
+  "title": "QuoteRequest",
+  "x-generated": "2026-10-12",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/lightspark-agent-operations-api-openapi.yml#/components/schemas/QuoteRequest",
+  "type": "object",
+  "required": [
+    "source",
+    "destination",
+    "lockedCurrencySide",
+    "lockedCurrencyAmount"
+  ],
+  "properties": {
+    "lookupId": {
+      "type": "string",
+      "description": "Lookup ID from a previous receiver lookup request. If provided, this can make the quote creation more efficient by reusing cached lookup data.\nNOTE: This is required for UMA destinations due to counterparty institution requirements. See `senderCustomerInfo` for more information."
+    },
+    "source": {
+      "$ref": "#/$defs/QuoteSourceOneOf"
+    },
+    "destination": {
+      "$ref": "#/$defs/QuoteDestinationOneOf"
+    },
+    "lockedCurrencySide": {
+      "$ref": "#/$defs/QuoteLockSide"
+    },
+    "lockedCurrencyAmount": {
+      "type": "integer",
+      "format": "int64",
+      "description": "The amount to send/receive in the smallest unit of the locked currency (eg. cents). See `lockedCurrencySide` for more information.",
+      "exclusiveMinimum": 0,
+      "maximum": 9000000000000000
+    },
+    "immediatelyExecute": {
+      "type": "boolean",
+      "description": "Whether to immediately execute the quote after creation. If true, the quote will be executed and the transaction will be created at the current exchange rate. It should only be used if you don't want to lock and view rate details before executing the quote. If you are executing a pre-existing quote, use the `/quotes/{quoteId}/execute` endpoint instead. This is false by default.\nThis can only be used for quotes with a `source` which is either an internal account, or has direct pull functionality (e.g. ACH pull with an external account).\nNot supported when the `source` is an internal account of type `EMBEDDED_WALLET`: those transfers require a `Grid-Wallet-Signature` over the `payloadToSign` returned in the quote response, which is not available in a combined create-and-execute call. Create the quote first with `immediatelyExecute: false` and then call `POST /quotes/{quoteId}/execute` with the `Grid-Wallet-Signature` stamp header."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description/memo for the transfer"
+    },
+    "remittanceInformation": {
+      "type": "string",
+      "maxLength": 80,
+      "description": "Free-form information about the payment that travels with it to the recipient. The field this populates depends on the payment rail: for ACH it populates the Addenda record, for FedNow and RTP it populates the remittanceInformation field, and for wires it populates the OBI (Originator to Beneficiary Information) / beneficiary information."
+    },
+    "purposeOfPayment": {
+      "$ref": "#/$defs/PurposeOfPayment"
+    },
+    "scaFactor": {
+      "$ref": "#/$defs/ScaFactor",
+      "description": "Optional preferred factor for a Strong Customer Authentication challenge issued at quote creation. Only relevant for a realtime-funding source in a region where SCA is required (e.g. EU); ignored otherwise. Valid values are `SMS_OTP` (default) and `PASSKEY` — `TOTP` cannot carry the required dynamic linking and is rejected. When the quote is returned in `PENDING_AUTHORIZATION`, authorize it via `POST /quotes/{quoteId}/authorize`."
+    },
+    "senderCustomerInfo": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Key-value pairs of additional information about the sender which was requested by the destination. This is relevant when the destination requires more sender info than was provided during customer creation.\nAny fields specified in `requiredPayerDataFields` from the response of the `/receiver/uma/{receiverUmaAddress}` (lookupUma) or `/receiver/external-account/{accountId}` (lookupExternalAccount) endpoints MUST be provided here if they were requested. If the destination did not request any additional information, this field can be omitted.\n"
+    }
+  },
+  "$defs": {
+    "AccountDestination": {
+      "title": "Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Destination account identifier"
+            },
+            "paymentRail": {
+              "allOf": [
+                {
+                  "$ref": "#/$defs/PaymentRail"
+                },
+                {
+                  "description": "The payment rail to use for the transfer. Must be one of the rails supported by the destination account. If not specified, the system will select a default rail."
+                }
+              ]
+            }
+          },
+          "description": "Destination account details"
+        }
+      ]
+    },
+    "AccountQuoteSource": {
+      "title": "Account",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseQuoteSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "accountId",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "ACCOUNT"
+              ]
+            },
+            "accountId": {
+              "type": "string",
+              "description": "Source account identifier"
+            },
+            "customerId": {
+              "type": "string",
+              "description": "Required when funding from an FBO account to identify the customer on whose behalf the transaction is being initiated.  Otherwise, will default to the customerId of the account owner."
+            }
+          },
+          "description": "Source account details"
+        }
+      ]
+    },
+    "BaseDestination": {
+      "type": "object",
+      "required": [
+        "destinationType"
+      ],
+      "properties": {
+        "destinationType": {
+          "$ref": "#/$defs/DestinationType"
+        }
+      }
+    },
+    "BaseQuoteSource": {
+      "type": "object",
+      "required": [
+        "sourceType"
+      ],
+      "properties": {
+        "sourceType": {
+          "$ref": "#/$defs/QuoteSourceType"
+        }
+      }
+    },
+    "DestinationType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "UMA_ADDRESS"
+      ],
+      "description": "Type of payment destination"
+    },
+    "PaymentRail": {
+      "type": "string",
+      "enum": [
+        "ACH",
+        "ACH_COLOMBIA",
+        "BANK_TRANSFER",
+        "BRE_B",
+        "CIPS",
+        "FAST",
+        "FASTER_PAYMENTS",
+        "FEDNOW",
+        "INSTAPAY",
+        "MOBILE_MONEY",
+        "NEFT",
+        "PAYNOW",
+        "PESONET",
+        "PIX",
+        "RTGS",
+        "RTP",
+        "SEPA",
+        "SEPA_INSTANT",
+        "SPEI",
+        "SWIFT",
+        "UNIONPAY",
+        "UPI",
+        "WIRE"
+      ],
+      "description": "The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts."
+    },
+    "PurposeOfPayment": {
+      "type": "string",
+      "description": "The purpose of the payment. This may be required when sending to certain geographies (e.g. India).",
+      "enum": [
+        "GIFT",
+        "SELF",
+        "GOODS_OR_SERVICES",
+        "EDUCATION",
+        "HEALTH_OR_MEDICAL",
+        "REAL_ESTATE_PURCHASE",
+        "TAX_PAYMENT",
+        "LOAN_PAYMENT",
+        "UTILITY_BILL",
+        "DONATION",
+        "TRAVEL",
+        "FAMILY_SUPPORT",
+        "SALARY_PAYMENT",
+        "OTHER"
+      ]
+    },
+    "QuoteDestinationOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountDestination"
+        },
+        {
+          "$ref": "#/$defs/UmaAddressDestination"
+        }
+      ]
+    },
+    "QuoteLockSide": {
+      "type": "string",
+      "enum": [
+        "SENDING",
+        "RECEIVING"
+      ],
+      "description": "The side of the quote which should be locked and specified in the `lockedCurrencyAmount`. For example, if I want to send exactly $5 MXN from my wallet, I would set this to \"sending\", and the `lockedCurrencyAmount` to 500 (in cents). If I want the receiver to receive exactly $10 USD, I would set this to \"receiving\" and the `lockedCurrencyAmount` to 10000 (in cents)."
+    },
+    "QuoteSourceOneOf": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AccountQuoteSource"
+        },
+        {
+          "$ref": "#/$defs/RealtimeFundingQuoteSource"
+        }
+      ]
+    },
+    "QuoteSourceType": {
+      "type": "string",
+      "enum": [
+        "ACCOUNT",
+        "REALTIME_FUNDING"
+      ],
+      "description": "Type of quote funding source"
+    },
+    "RealtimeFundingQuoteSource": {
+      "title": "Real-time Funding",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseQuoteSource"
+        },
+        {
+          "type": "object",
+          "required": [
+            "currency",
+            "sourceType"
+          ],
+          "properties": {
+            "sourceType": {
+              "type": "string",
+              "enum": [
+                "REALTIME_FUNDING"
+              ]
+            },
+            "customerId": {
+              "type": "string",
+              "description": "Source customer ID. If this transaction is being initiated on behalf of a customer, this is required. If customerId is not provided, the quote will be created on behalf of the platform itself."
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code for the funding source. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies."
+            },
+            "cryptoNetwork": {
+              "type": "string",
+              "description": "The crypto network to use for the funding source. Required when `currency` is a stablecoin (e.g. USDC, USDT). Specifies which network the customer will deposit on, so the correct deposit address can be generated. Example values: `SOLANA`, `ETHEREUM`, `BASE`, `POLYGON`, `SPARK`, `LIGHTNING`, `BITCOIN`."
+            }
+          },
+          "description": "Fund the quote using a real-time funding source (RTP, SEPA Instant, Spark, Stables, etc.). This will require manual just-in-time funding using `paymentInstructions` in the response. Because quotes expire quickly, this option is only valid for instant payment methods. Do not try to fund a quote with a non-instant payment method (ACH, etc.)."
+        }
+      ]
+    },
+    "ScaFactor": {
+      "type": "string",
+      "enum": [
+        "SMS_OTP",
+        "TOTP",
+        "PASSKEY"
+      ],
+      "description": "A Strong Customer Authentication factor.\n\n| Factor | Description |\n|--------|-------------|\n| `SMS_OTP` | One-time code sent by SMS to the customer's verified phone. Requires no prior enrollment. |\n| `TOTP` | Time-based one-time code from an authenticator app. Requires enrollment. Not valid for per-transaction challenges (cannot carry dynamic linking). |\n| `PASSKEY` | WebAuthn passkey assertion. Requires enrollment. |\n"
+    },
+    "UmaAddressDestination": {
+      "title": "UMA Address",
+      "allOf": [
+        {
+          "$ref": "#/$defs/BaseDestination"
+        },
+        {
+          "type": "object",
+          "required": [
+            "umaAddress",
+            "destinationType"
+          ],
+          "properties": {
+            "destinationType": {
+              "type": "string",
+              "enum": [
+                "UMA_ADDRESS"
+              ]
+            },
+            "umaAddress": {
+              "type": "string",
+              "description": "UMA address of the recipient"
+            },
+            "currency": {
+              "type": "string",
+              "description": "Currency code for the destination. See [Supported Currencies](https://docs.lightspark.com/platform-overview/core-concepts/currencies-and-rails) for the full list of supported fiat and crypto currencies."
+            }
+          },
+          "description": "UMA address destination details"
+        }
+      ]
+    }
+  }
+}
