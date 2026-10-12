@@ -1,5 +1,5 @@
 generated: '2026-10-12'
-method: none
+method: searched
 source:
 - https://zapier.com/apps/lightspark/integrations
 - https://n8n.io/integrations/lightspark/
@@ -9,8 +9,35 @@ checked:
 - https://composio.dev/toolkits/lightspark
 - https://monid.ai/tools/lightspark
 - https://n8n.io/integrations/lightspark/
+- https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv
 - https://zapier.com/apps/lightspark/integrations
 summary: null
 marketplace_apps: []
-edges: []
+edges:
+- partner_name: MiCA (EU)
+  partner: null
+  type: contract
+  channel: regulator-register
+  relationship: standard-participant
+  direction: partner-built
+  evidence: https://www.esma.europa.eu/sites/default/files/2024-12/CASPS.csv
+  contract_reference:
+    register: 'ESMA interim MiCA register: crypto-asset service providers (CASPS.csv)'
+    spec_file: null
+    role: authorised-casp
+    registered_name: Lightspark Payments Europe AS
+    register_id: 6488O0OC79779MZX1E44
+    competent_authority: Estonian Financial Supervision Authority (EFSA)
+    home_member_state: EE
+    authorised: 15/06/2026
+    services:
+    - providing custody and administration of crypto-assets on behalf of clients
+    - exchange of crypto-assets for funds
+    - exchange of crypto-assets for other crypto-assets
+    - providing transfer services for crypto-assets on behalf of clients
+    matched_domain: lightspark.com
+    detected_by: sweep-crypto.py
+    detected: '2026-10-13'
+  detected_by: sweep-crypto.py
+  first_seen: '2026-10-13'
 templates: []
