@@ -94,23 +94,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    UmaProviderListResponse:
-      type: object
-      properties:
-        data:
-          description: List of available UMA Providers using Grid
-          type: array
-          items:
-            $ref: '#/components/schemas/UmaProvider'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of transactions matching the criteria (excluding pagination)
     UmaProvider:
       type: object
       properties:
@@ -233,6 +216,23 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    UmaProviderListResponse:
+      type: object
+      properties:
+        data:
+          description: List of available UMA Providers using Grid
+          type: array
+          items:
+            $ref: '#/components/schemas/UmaProvider'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of transactions matching the criteria (excluding pagination)
     Currency:
       type: object
       properties:

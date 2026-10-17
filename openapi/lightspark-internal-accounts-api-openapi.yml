@@ -358,9 +358,9 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    SlvAccountInfo:
+    HtgAccountInfo:
       allOf:
-      - $ref: '#/components/schemas/SlvAccountInfoBase'
+      - $ref: '#/components/schemas/HtgAccountInfoBase'
       - type: object
         required:
         - paymentRails
@@ -370,238 +370,34 @@ components:
             items:
               type: string
               enum:
-              - BANK_TRANSFER
               - MOBILE_MONEY
-    SgdAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/SgdAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - PAYNOW
-              - FAST
-              - BANK_TRANSFER
-    VndAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/VndAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    ThbAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/ThbAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    PaymentHtgAccountInfo:
-      title: HTG Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/HtgAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    MxnAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - clabeNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - MXN_ACCOUNT
-        clabeNumber:
-          type: string
-          description: The CLABE number of the bank
-          example: '123456789012345678'
-          minLength: 18
-          maxLength: 18
-          pattern: ^[0-9]{18}$
-      example:
-        accountType: MXN_ACCOUNT
-        clabeNumber: '123456789012345678'
-    PolygonWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - POLYGON_WALLET
-        address:
-          type: string
-          description: Polygon eth wallet address
-          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
-    HkdAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/HkdAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    SolanaWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - SOLANA_WALLET
-        address:
-          type: string
-          description: Solana wallet address
-          example: 4Nd1m6Qkq7RfKuE5vQ9qP9Tn6H94Ueqb4xXHzsAbd8Wg
-    PaymentKesAccountInfo:
-      title: KES Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/KesAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    ZmwAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - ZMW_ACCOUNT
-        phoneNumber:
-          type: string
-          description: Zambian mobile money phone number
-          example: '+260971234567'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+260[0-9]{9}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: ZMW_ACCOUNT
-        phoneNumber: '+260971234567'
-        provider: Example Provider
-    PaymentZmwAccountInfo:
-      title: ZMW Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/ZmwAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentSgdAccountInfo:
-      title: SGD Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/SgdAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentCopAccountInfo:
-      title: COP Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - type: object
-        required:
-        - paymentUrl
-        properties:
-          accountType:
-            type: string
-            enum:
-            - COP_ACCOUNT
-          paymentUrl:
-            type: string
-            format: uri
-            description: A payment URL where the customer can complete their COP deposit.
-            example: https://payments.example.com/t/abc123
-    PkrAccountInfoBase:
+    EgpAccountInfoBase:
       type: object
       required:
       - accountType
       - bankName
       description: 'Required fields depend on the selected paymentRails:
 
-        - BANK_TRANSFER: accountNumber, bankName
+        - BANK_TRANSFER: bankName, iban
 
         - MOBILE_MONEY: bankName, phoneNumber'
       properties:
         accountType:
           type: string
           enum:
-          - PKR_ACCOUNT
+          - EGP_ACCOUNT
+        iban:
+          type: string
+          description: Egyptian IBAN (29 characters, starting with EG)
+          example: EG380019000500000000263180002
+          minLength: 29
+          maxLength: 29
+          pattern: ^EG[0-9]{27}$
         bankName:
           type: string
           description: The name of the bank
           minLength: 1
           maxLength: 255
-        accountNumber:
-          type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        iban:
-          type: string
-          description: Pakistani IBAN (24 characters, starting with PK)
-          example: PK36SCBL0000001123456702
-          minLength: 24
-          maxLength: 24
-          pattern: ^PK[0-9]{2}[A-Z]{4}[0-9]{16}$
         phoneNumber:
           type: string
           description: The phone number in international format
@@ -610,319 +406,10 @@ components:
           maxLength: 15
           pattern: ^\+[0-9]{6,14}$
       example:
-        accountType: PKR_ACCOUNT
+        accountType: EGP_ACCOUNT
+        iban: EG380019000500000000263180002
         bankName: Example Bank
-        accountNumber: '1234567890'
-        iban: PK36SCBL0000001123456702
         phoneNumber: '+1234567890'
-    CurrencyAmount:
-      type: object
-      required:
-      - amount
-      - currency
-      properties:
-        amount:
-          type: integer
-          format: int64
-          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
-          example: 12550
-        currency:
-          $ref: '#/components/schemas/Currency'
-    TzsAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/TzsAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
-    PaymentPolygonWalletInfo:
-      title: Polygon Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/PolygonWalletInfo'
-      - type: object
-        properties:
-          assetType:
-            type: string
-            description: Type of asset
-            enum:
-            - USDC
-    PaymentNgnAccountInfo:
-      title: NGN Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/NgnAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentCadAccountInfo:
-      title: CAD Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/CadAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PhpAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      - accountNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - PHP_ACCOUNT
-        bankName:
-          type: string
-          description: Name of the beneficiary's bank
-          minLength: 1
-          maxLength: 255
-          example: BDO Unibank
-        accountNumber:
-          type: string
-          description: Bank account number
-          minLength: 8
-          maxLength: 16
-          example: 001234567890
-          pattern: ^[0-9]{8,16}$
-      example:
-        accountType: PHP_ACCOUNT
-        bankName: BDO Unibank
-        accountNumber: 001234567890
-    CnyAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/CnyAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    GbpAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - sortCode
-      - accountNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - GBP_ACCOUNT
-        sortCode:
-          type: string
-          description: The UK sort code
-          example: '123456'
-          minLength: 6
-          maxLength: 6
-          pattern: ^[0-9]{6}$
-        accountNumber:
-          type: string
-          description: UK bank account number (8 digits)
-          minLength: 8
-          maxLength: 8
-          example: '12345678'
-          pattern: ^[0-9]{8}$
-      example:
-        accountType: GBP_ACCOUNT
-        sortCode: '123456'
-        accountNumber: '12345678'
-    RwfAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - RWF_ACCOUNT
-        phoneNumber:
-          type: string
-          description: Rwandan mobile money phone number
-          example: '+250781234567'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+250[0-9]{9}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: RWF_ACCOUNT
-        phoneNumber: '+250781234567'
-        provider: Example Provider
-    PlatformInternalAccountListResponse:
-      type: object
-      required:
-      - data
-      properties:
-        data:
-          type: array
-          description: List of internal accounts matching the filter criteria
-          items:
-            $ref: '#/components/schemas/InternalAccount'
-    SgdAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - accountNumber
-      - swiftCode
-      properties:
-        accountType:
-          type: string
-          enum:
-          - SGD_ACCOUNT
-        bankName:
-          type: string
-          description: Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.
-          minLength: 1
-          maxLength: 255
-          example: DBS Bank Ltd
-        accountNumber:
-          type: string
-          description: Bank account number
-          minLength: 1
-          maxLength: 34
-          example: 0123456789
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: DBSSSGSG
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: SGD_ACCOUNT
-        bankName: DBS Bank Ltd
-        accountNumber: 0123456789
-        swiftCode: DBSSSGSG
-    PaymentMyrAccountInfo:
-      title: MYR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/MyrAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    InternalAccountType:
-      title: Internal Account Type
-      type: string
-      enum:
-      - INTERNAL_FIAT
-      - INTERNAL_CRYPTO
-      - EMBEDDED_WALLET
-      description: 'Classification of an internal account.
-
-
-        - `INTERNAL_FIAT`: A Grid-managed fiat holding account (for example, the USD holding account used as the source for Payouts flows).
-
-        - `INTERNAL_CRYPTO`: A Grid-managed crypto holding account denominated in a stablecoin such as USDC.
-
-        - `EMBEDDED_WALLET`: A self-custodial Embedded Wallet provisioned for the customer. Outbound transfers require a session signature produced by the customer''s device — see the Embedded Wallets guide.'
-    JmdAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - accountNumber
-      - branchCode
-      - bankAccountType
-      - bankName
-      properties:
-        accountType:
-          type: string
-          enum:
-          - JMD_ACCOUNT
-        accountNumber:
-          type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        branchCode:
-          type: string
-          description: The branch code
-          minLength: 5
-          maxLength: 5
-          pattern: ^[0-9]{5}$
-        bankAccountType:
-          type: string
-          description: The bank account type
-          enum:
-          - CHECKING
-          - SAVINGS
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: JMD_ACCOUNT
-        accountNumber: '1234567890'
-        branchCode: '11111'
-        bankAccountType: CHECKING
-        bankName: Example Bank
-    PaymentArsAccountInfo:
-      title: ARS Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - type: object
-        required:
-        - accountNumber
-        properties:
-          accountType:
-            type: string
-            enum:
-            - ARS_ACCOUNT
-          accountNumber:
-            type: string
-            description: The static CVU (Clave Virtual Uniforme) bank account number to pay to.
-            minLength: 22
-            maxLength: 22
-            pattern: ^\d{22}$
-            example: '0000003100074052501434'
-    PaymentZarAccountInfo:
-      title: ZAR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/ZarAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
     PaymentBwpAccountInfo:
       title: BWP Account
       allOf:
@@ -936,111 +423,54 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    PaymentEthereumWalletInfo:
-      title: Ethereum Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/EthereumWalletInfo'
-      - type: object
-        properties:
-          assetType:
-            type: string
-            description: Type of asset
-            enum:
-            - USDC
-    GhsAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/GhsAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    PaymentDkkAccountInfo:
-      title: DKK Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/DkkAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentJmdAccountInfo:
-      title: JMD Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/JmdAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentMwkAccountInfo:
-      title: MWK Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/MwkAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    GtqAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/GtqAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    MwkAccountInfoBase:
+    ThbAccountInfoBase:
       type: object
       required:
       - accountType
-      - phoneNumber
-      - provider
+      - bankName
+      - accountNumber
+      - swiftCode
       properties:
         accountType:
           type: string
           enum:
-          - MWK_ACCOUNT
-        phoneNumber:
+          - THB_ACCOUNT
+        bankName:
           type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-        provider:
-          type: string
-          description: The mobile money provider name
+          description: The name of the bank
           minLength: 1
           maxLength: 255
+        accountNumber:
+          type: string
+          description: Thai bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: BKKBTHBK
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
       example:
-        accountType: MWK_ACCOUNT
-        phoneNumber: '+1234567890'
-        provider: Example Provider
+        accountType: THB_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: BKKBTHBK
+    BwpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BwpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
     Error400:
       type: object
       required:
@@ -1185,304 +615,35 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    InrAccountInfoBase:
+    GbpAccountInfoBase:
       type: object
       required:
       - accountType
-      description: 'Required fields depend on the selected paymentRails:
-
-        - NEFT: accountNumber, ifsc, rail
-
-        - RTGS: accountNumber, ifsc, rail
-
-        - UPI: vpa'
+      - sortCode
+      - accountNumber
       properties:
         accountType:
           type: string
           enum:
-          - INR_ACCOUNT
-        vpa:
+          - GBP_ACCOUNT
+        sortCode:
           type: string
-          description: The UPI Virtual Payment Address
-          example: user@upi
-          minLength: 3
-          maxLength: 255
-          pattern: ^[a-zA-Z0-9.\-_]+@[a-zA-Z0-9]+$
+          description: The UK sort code
+          example: '123456'
+          minLength: 6
+          maxLength: 6
+          pattern: ^[0-9]{6}$
         accountNumber:
           type: string
-          description: Indian bank account number (9–18 digits)
-          minLength: 9
-          maxLength: 18
-          example: '000111222333'
-          pattern: ^[0-9]{9,18}$
-        ifsc:
-          type: string
-          description: The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)
-          example: HDFC0001234
-          minLength: 11
-          maxLength: 11
-          pattern: ^[A-Z]{4}0[A-Z0-9]{6}$
-        rail:
-          type: string
-          description: The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).
-          example: NEFT
-          minLength: 1
-          maxLength: 32
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
+          description: UK bank account number (8 digits)
+          minLength: 8
+          maxLength: 8
+          example: '12345678'
+          pattern: ^[0-9]{8}$
       example:
-        accountType: INR_ACCOUNT
-        vpa: user@upi
-        accountNumber: '000111222333'
-        ifsc: HDFC0001234
-        rail: NEFT
-        bankName: Example Bank
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    PaymentBrlAccountInfo:
-      title: BRL Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - type: object
-        required:
-        - qrCode
-        properties:
-          accountType:
-            type: string
-            enum:
-            - BRL_ACCOUNT
-          qrCode:
-            type: string
-            description: A PIX QR code payload that can be used to fund the transaction. This can be rendered as a QR code image or pasted into a PIX-compatible banking app.
-            minLength: 1
-    PaymentEurAccountInfo:
-      title: EUR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/EurAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentSwiftAccountInfo:
-      title: SWIFT Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/SwiftAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentVndAccountInfo:
-      title: VND Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/VndAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    UsdAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/UsdAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - ACH
-              - WIRE
-              - RTP
-              - FEDNOW
-    PaymentBdtAccountInfo:
-      title: BDT Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/BdtAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    BaseWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - BASE_WALLET
-        address:
-          type: string
-          description: Base eth wallet address
-          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
-    EgpAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/EgpAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    InternalAccountExportResponse:
-      title: Internal Account Export Response
-      type: object
-      required:
-      - id
-      - encryptedWalletCredentials
-      properties:
-        id:
-          type: string
-          description: The id of the internal account that was exported.
-          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-        encryptedWalletCredentials:
-          type: string
-          description: 'Encrypted wallet mnemonic, sealed to the `clientPublicKey` from the request body using HPKE: DHKEM(P-256, HKDF-SHA256) + HKDF-SHA256 + AES-256-GCM. Decrypt with the matching private key, then manage the mnemonic securely because it is the master key of the self-custodial Embedded Wallet.
-
-            The value is a JSON string of the form `{"version": "v1.0.0", "data": "<hex>", "dataSignature": "<hex>", "enclaveQuorumPublic": "<hex>"}`. `data` hex-decodes to JSON `{"encappedPublic": "<hex>", "ciphertext": "<hex>", "organizationId": "<id>"}`, where `encappedPublic` is the uncompressed SEC1 ephemeral public key. `dataSignature` is an ECDSA-P256-SHA256 signature over the `data` bytes produced by the issuer key in `enclaveQuorumPublic`; verify before decrypting.
-
-            In sandbox, `dataSignature` and `enclaveQuorumPublic` are empty strings. Clients should bypass attestation verification when calling against sandbox.'
-          example: '{"version":"v1.0.0","data":"7b22656e6361707065645075626c6963223a22303433...","dataSignature":"3045022100c9...","enclaveQuorumPublic":"04a1b2c3..."}'
-    UgxAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - UGX_ACCOUNT
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: UGX_ACCOUNT
-        phoneNumber: '+1234567890'
-        provider: Example Provider
-    CnyAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      description: 'Required fields depend on the selected paymentRails:
-
-        - BANK_TRANSFER: accountNumber, bankName
-
-        - MOBILE_MONEY: bankName, phoneNumber'
-      properties:
-        accountType:
-          type: string
-          enum:
-          - CNY_ACCOUNT
-        accountNumber:
-          type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-      example:
-        accountType: CNY_ACCOUNT
-        accountNumber: '1234567890'
-        bankName: Example Bank
-        phoneNumber: '+1234567890'
+        accountType: GBP_ACCOUNT
+        sortCode: '123456'
+        accountNumber: '12345678'
     VndAccountInfoBase:
       type: object
       required:
@@ -1518,38 +679,28 @@ components:
         bankName: Example Bank
         accountNumber: '1234567890'
         swiftCode: BFTVVNVX
-    TzsAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - TZS_ACCOUNT
-        phoneNumber:
-          type: string
-          description: Tanzanian mobile money phone number
-          example: '+255712345678'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+255[0-9]{9}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: TZS_ACCOUNT
-        phoneNumber: '+255712345678'
-        provider: Example Provider
-    PaymentXofAccountInfo:
-      title: XOF Account
+    PaymentCopAccountInfo:
+      title: COP Account
       allOf:
       - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/XofAccountInfo'
+      - type: object
+        required:
+        - paymentUrl
+        properties:
+          accountType:
+            type: string
+            enum:
+            - COP_ACCOUNT
+          paymentUrl:
+            type: string
+            format: uri
+            description: A payment URL where the customer can complete their COP deposit.
+            example: https://payments.example.com/t/abc123
+    PaymentCadAccountInfo:
+      title: CAD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CadAccountInfo'
       - type: object
         required:
         - reference
@@ -1558,6 +709,98 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
+    PaymentMyrAccountInfo:
+      title: MYR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MyrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentBrlAccountInfo:
+      title: BRL Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - qrCode
+        properties:
+          accountType:
+            type: string
+            enum:
+            - BRL_ACCOUNT
+          qrCode:
+            type: string
+            description: A PIX QR code payload that can be used to fund the transaction. This can be rendered as a QR code image or pasted into a PIX-compatible banking app.
+            minLength: 1
+    PlatformInternalAccountListResponse:
+      type: object
+      required:
+      - data
+      properties:
+        data:
+          type: array
+          description: List of internal accounts matching the filter criteria
+          items:
+            $ref: '#/components/schemas/InternalAccount'
+    EthereumWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ETHEREUM_WALLET
+        address:
+          type: string
+          description: Ethereum L1 wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    PaymentCnyAccountInfo:
+      title: CNY Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/CnyAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentZmwAccountInfo:
+      title: ZMW Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZmwAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    MxnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/MxnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SPEI
     PaymentGbpAccountInfo:
       title: GBP Account
       allOf:
@@ -1571,78 +814,6 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    IdrAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      - accountNumber
-      - swiftCode
-      - phoneNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - IDR_ACCOUNT
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-          example: Bank Central Asia
-        accountNumber:
-          type: string
-          description: Indonesian bank account number
-          minLength: 1
-          maxLength: 34
-          example: '1234567890'
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: CENAIDJA
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-        phoneNumber:
-          type: string
-          description: Indonesian phone number for e-wallet payments
-          example: '+6281234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+62[0-9]{9,12}$
-      example:
-        accountType: IDR_ACCOUNT
-        bankName: Bank Central Asia
-        accountNumber: '1234567890'
-        swiftCode: CENAIDJA
-        phoneNumber: '+6281234567890'
-    BdtAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/BdtAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    GbpAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/GbpAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - FASTER_PAYMENTS
     MyrAccountInfo:
       allOf:
       - $ref: '#/components/schemas/MyrAccountInfoBase'
@@ -1656,379 +827,6 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
-    BwpAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - BWP_ACCOUNT
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: BWP_ACCOUNT
-        phoneNumber: '+1234567890'
-        provider: Example Provider
-    SparkWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - SPARK_WALLET
-        address:
-          type: string
-          description: Spark wallet address
-          example: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
-    PaymentSlvAccountInfo:
-      title: SLV Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/SlvAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    EurAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - iban
-      properties:
-        accountType:
-          type: string
-          enum:
-          - EUR_ACCOUNT
-        iban:
-          type: string
-          description: The IBAN of the bank account
-          example: DE89370400440532013000
-          minLength: 15
-          maxLength: 34
-          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: DEUTDEFF
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: EUR_ACCOUNT
-        iban: DE89370400440532013000
-        swiftCode: DEUTDEFF
-    PaymentIdrAccountInfo:
-      title: IDR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/IdrAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    InternalAccountStatus:
-      title: Internal Account Status
-      type: string
-      enum:
-      - PENDING
-      - ACTIVE
-      - CLOSED
-      - FROZEN
-      - FAILED
-      description: 'Status of a Grid internal account. The status determines whether the account can send or receive payments.
-
-
-        - `PENDING`: The account is under review and is being provisioned. The account cannot send or receive payments until provisioning completes.
-
-        - `ACTIVE`: The account is ready to send and receive payments.
-
-        - `CLOSED`: The account cannot send or receive payments. A customer can initiate the closing of an internal account, after which the account transitions to this status.
-
-        - `FROZEN`: The account cannot send or receive payments. Grid may freeze an account in response to compliance or fraud signals; payments are blocked while the account remains frozen.
-
-        - `FAILED`: The account could not be provisioned. Grid was unable to create the underlying account, so it cannot send or receive payments and requires remediation.'
-      example: ACTIVE
-    PkrAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/PkrAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-              - MOBILE_MONEY
-    PaymentXafAccountInfo:
-      title: XAF Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/XafAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    XafAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      - region
-      properties:
-        accountType:
-          type: string
-          enum:
-          - XAF_ACCOUNT
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-        region:
-          type: string
-          description: Country code within the Central African CFA franc zone
-          minLength: 2
-          maxLength: 2
-          pattern: ^[A-Z]{2}$
-          enum:
-          - CM
-          - CG
-      example:
-        accountType: XAF_ACCOUNT
-        phoneNumber: '+1234567890'
-        provider: Example Provider
-        region: CM
-    PaymentTronWalletInfo:
-      title: Tron Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/TronWalletInfo'
-      - type: object
-        properties:
-          assetType:
-            type: string
-            description: Type of asset
-            enum:
-            - USDT
-    BdtAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      description: 'Required fields depend on the selected paymentRails:
-
-        - BANK_TRANSFER: accountNumber, bankName
-
-        - MOBILE_MONEY: bankName, phoneNumber'
-      properties:
-        accountType:
-          type: string
-          enum:
-          - BDT_ACCOUNT
-        accountNumber:
-          type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        branchCode:
-          type: string
-          description: The branch code
-          minLength: 5
-          maxLength: 5
-          pattern: ^[0-9]{5}$
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: DEUTDEFF
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-      example:
-        accountType: BDT_ACCOUNT
-        accountNumber: '1234567890'
-        bankName: Example Bank
-        branchCode: '11111'
-        swiftCode: DEUTDEFF
-        phoneNumber: '+1234567890'
-    XafAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/XafAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
-    PaymentPhpAccountInfo:
-      title: PHP Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/PhpAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    BwpAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/BwpAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
-    RwfAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/RwfAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
-    NgnAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/NgnAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    PaymentAedAccountInfo:
-      title: AED Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/AedAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    InternalAccountExportRequest:
-      title: Internal Account Export Request
-      description: Request body for `POST /internal-accounts/{id}/export`. The `clientPublicKey` is required on both steps of the signed-retry flow. On step 1 Grid binds it into `payloadToSign` so the subsequent stamp in `Grid-Wallet-Signature` commits to the target pubkey; on step 2 the client echoes the same `clientPublicKey` back and Grid uses it to encrypt the wallet credentials returned in the `200` response.
-      type: object
-      required:
-      - clientPublicKey
-      properties:
-        clientPublicKey:
-          type: string
-          description: Fresh P-256 public key, uncompressed SEC1 hex — 130 hex chars where the first two are `04` (the uncompressed-point indicator). Generate a new keypair for each export and discard the private key after decrypting the response.
-          example: 04f45f2a22c908b9ce09a7150e514afd24627c401c38a4afc164e1ea783adaaa31d4245acfb88c2ebd42b47628d63ecabf345484f0a9f665b63c54c897d5578be2
-    PaymentBaseWalletInfo:
-      title: Base Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/BaseWalletInfo'
-      - type: object
-        properties:
-          assetType:
-            type: string
-            description: Type of asset
-            enum:
-            - USDC
-    PaymentSolanaWalletInfo:
-      title: Solana Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/SolanaWalletInfo'
-      - type: object
-        properties:
-          assetType:
-            type: string
-            description: Type of asset
-            enum:
-            - USDC
-            - USDT
-    PaymentTzsAccountInfo:
-      title: TZS Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/TzsAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
     Error404:
       type: object
       required:
@@ -2086,6 +884,106 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    XofAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XOF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the West African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - BJ
+          - CI
+          - SN
+          - TG
+      example:
+        accountType: XOF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: BJ
+    GhsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GhsAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    InrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/InrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - UPI
+              - NEFT
+              - RTGS
+    PaymentEmbeddedWalletInfo:
+      title: Embedded Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountType
+        - payloadToSign
+        properties:
+          accountType:
+            type: string
+            enum:
+            - EMBEDDED_WALLET
+            description: Discriminator value identifying this as Embedded Wallet payment instructions.
+          payloadToSign:
+            type: string
+            description: JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet.
+            example: '{"type":"ACTIVITY_TYPE_SIGN_TRANSACTION_V2","timestampMs":"1746736509954","organizationId":"org_abc123","parameters":{"signWith":"wallet_abc123def456","unsignedTransaction":"ea69b4bf05f775209f26ff0a34a05569180f7936579d5c4af9377ae550194f72","type":"TRANSACTION_TYPE_ETHEREUM"},"generateAppProofs":true}'
+    PaymentSolanaWalletInfo:
+      title: Solana Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SolanaWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+            - USDT
     DkkAccountInfo:
       allOf:
       - $ref: '#/components/schemas/DkkAccountInfoBase'
@@ -2100,6 +998,173 @@ components:
               enum:
               - SEPA
               - SEPA_INSTANT
+    ZarAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZAR_ACCOUNT
+        accountNumber:
+          type: string
+          description: South African bank account number
+          minLength: 9
+          maxLength: 13
+          example: '1234567890'
+          pattern: ^[0-9]{9,13}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZAR_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+    KesAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - KES_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Kenyan mobile money phone number
+          example: '+254712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+254[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: KES_ACCOUNT
+        phoneNumber: '+254712345678'
+        provider: Example Provider
+    PaymentUsdAccountInfo:
+      title: USD Bank Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UsdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentZarAccountInfo:
+      title: ZAR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ZarAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PkrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/PkrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentPolygonWalletInfo:
+      title: Polygon Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PolygonWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    PaymentVndAccountInfo:
+      title: VND Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/VndAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    MyrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MYR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Malaysian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: MABORUMMYYY
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: MYR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        swiftCode: MABORUMMYYY
+    PaymentPhpAccountInfo:
+      title: PHP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PhpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
     DkkAccountInfoBase:
       type: object
       required:
@@ -2128,278 +1193,6 @@ components:
         accountType: DKK_ACCOUNT
         iban: DK5000400040116243
         swiftCode: DABADKKK
-    KesAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/KesAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
-    PaymentGtqAccountInfo:
-      title: GTQ Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/GtqAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentUsdAccountInfo:
-      title: USD Bank Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/UsdAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    InrAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/InrAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - UPI
-              - NEFT
-              - RTGS
-    SwiftAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - swiftCode
-      - bankName
-      - country
-      properties:
-        accountType:
-          type: string
-          enum:
-          - SWIFT_ACCOUNT
-        country:
-          type: string
-          description: The ISO 3166-1 alpha-2 country code of the bank account
-          example: NG
-          minLength: 2
-          maxLength: 2
-          pattern: ^[A-Z]{2}$
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: DEUTDEFF
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-        bankName:
-          type: string
-          description: The name of the bank
-          example: Deutsche Bank
-          minLength: 1
-          maxLength: 255
-        accountNumber:
-          type: string
-          description: The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).
-          example: '1234567890'
-          minLength: 1
-          maxLength: 34
-        iban:
-          type: string
-          description: The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.
-          example: GB29NWBK60161331926819
-          minLength: 15
-          maxLength: 34
-          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
-      example:
-        accountType: SWIFT_ACCOUNT
-        country: NG
-        swiftCode: DEUTDEFF
-        bankName: Deutsche Bank
-        accountNumber: '1234567890'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    KesAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      properties:
-        accountType:
-          type: string
-          enum:
-          - KES_ACCOUNT
-        phoneNumber:
-          type: string
-          description: Kenyan mobile money phone number
-          example: '+254712345678'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+254[0-9]{9}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: KES_ACCOUNT
-        phoneNumber: '+254712345678'
-        provider: Example Provider
-    PaymentGhsAccountInfo:
-      title: GHS Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/GhsAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    TronWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - TRON_WALLET
-        address:
-          type: string
-          description: Tron wallet address
-          example: TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL
-    PaymentEgpAccountInfo:
-      title: EGP Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/EgpAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    ZarAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - accountNumber
-      - bankName
-      properties:
-        accountType:
-          type: string
-          enum:
-          - ZAR_ACCOUNT
-        accountNumber:
-          type: string
-          description: South African bank account number
-          minLength: 9
-          maxLength: 13
-          example: '1234567890'
-          pattern: ^[0-9]{9,13}$
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: ZAR_ACCOUNT
-        accountNumber: '1234567890'
-        bankName: Example Bank
-    SignedRequestChallenge:
-      title: Signed Request Challenge
-      type: object
-      required:
-      - payloadToSign
-      - requestId
-      - expiresAt
-      description: Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.
-      properties:
-        payloadToSign:
-          type: string
-          description: Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request.
-          example: '{"organizationId":"org_2m9F...","parameters":{"userId":"user_2m9F..."},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_EXAMPLE"}'
-        requestId:
-          type: string
-          description: Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge.
-          example: Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21
-        expiresAt:
-          type: string
-          format: date-time
-          description: Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time.
-          example: '2026-04-08T15:35:00Z'
-    PaymentInrAccountInfo:
-      title: INR Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/InrAccountInfo'
-    AedAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/AedAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
     PhpAccountInfo:
       allOf:
       - $ref: '#/components/schemas/PhpAccountInfoBase'
@@ -2413,6 +1206,397 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
+    UgxAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - UGX_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: UGX_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    EurAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/EurAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SEPA
+              - SEPA_INSTANT
+    MwkAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MWK_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: MWK_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    InternalAccountType:
+      title: Internal Account Type
+      type: string
+      enum:
+      - INTERNAL_FIAT
+      - INTERNAL_CRYPTO
+      - EMBEDDED_WALLET
+      description: 'Classification of an internal account.
+
+
+        - `INTERNAL_FIAT`: A Grid-managed fiat holding account (for example, the USD holding account used as the source for Payouts flows).
+
+        - `INTERNAL_CRYPTO`: A Grid-managed crypto holding account denominated in a stablecoin such as USDC.
+
+        - `EMBEDDED_WALLET`: A self-custodial Embedded Wallet provisioned for the customer. Outbound transfers require a session signature produced by the customer''s device — see the Embedded Wallets guide.'
+    SlvAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SlvAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    XafAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/XafAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    PaymentBdtAccountInfo:
+      title: BDT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BdtAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    CadAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CadAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    PaymentXafAccountInfo:
+      title: XAF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XafAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    ZarAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ZarAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    BwpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BWP_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: BWP_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+    PaymentNgnAccountInfo:
+      title: NGN Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/NgnAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    NgnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - NGN_ACCOUNT
+        accountNumber:
+          type: string
+          description: Nigerian bank account number
+          minLength: 10
+          maxLength: 10
+          example: 0123456789
+          pattern: ^[0-9]{10}$
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: NGN_ACCOUNT
+        accountNumber: 0123456789
+        bankName: Example Bank
+    GbpAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/GbpAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - FASTER_PAYMENTS
+    PaymentAedAccountInfo:
+      title: AED Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/AedAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    InternalAccount:
+      type: object
+      required:
+      - id
+      - type
+      - status
+      - balance
+      - totalBalance
+      - fundingPaymentInstructions
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: The ID of the internal account
+          example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
+        customerId:
+          type: string
+          description: The ID of the customer associated with the internal account. If this field is empty, the internal account belongs to the platform.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        type:
+          $ref: '#/components/schemas/InternalAccountType'
+        status:
+          $ref: '#/components/schemas/InternalAccountStatus'
+        balance:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: The balance available to spend, excluding pending and held funds
+        totalBalance:
+          $ref: '#/components/schemas/CurrencyAmount'
+          description: The total balance, including pending and held funds
+        fundingPaymentInstructions:
+          type: array
+          description: Payment instructions for funding the account
+          items:
+            $ref: '#/components/schemas/PaymentInstructions'
+        privateEnabled:
+          type: boolean
+          description: Whether wallet privacy is enabled for the Embedded Wallet. Only present for `EMBEDDED_WALLET` internal accounts.
+          example: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was created
+          example: '2025-10-03T12:30:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the internal account was last updated
+          example: '2025-10-03T12:30:00Z'
+    PaymentGhsAccountInfo:
+      title: GHS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GhsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    JmdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/JmdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    BdtAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/BdtAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    PaymentHkdAccountInfo:
+      title: HKD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HkdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    BaseWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BASE_WALLET
+        address:
+          type: string
+          description: Base eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
     XofAccountInfo:
       allOf:
       - $ref: '#/components/schemas/XofAccountInfoBase'
@@ -2426,6 +1610,507 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
+    PaymentPkrAccountInfo:
+      title: PKR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/PkrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentKesAccountInfo:
+      title: KES Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/KesAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentSwiftAccountInfo:
+      title: SWIFT Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SwiftAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    RwfAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - RWF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Rwandan mobile money phone number
+          example: '+250781234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+250[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: RWF_ACCOUNT
+        phoneNumber: '+250781234567'
+        provider: Example Provider
+    PaymentIdrAccountInfo:
+      title: IDR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/IdrAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentTzsAccountInfo:
+      title: TZS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TzsAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentEurAccountInfo:
+      title: EUR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EurAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    HtgAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HTG_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: HTG_ACCOUNT
+        phoneNumber: '+1234567890'
+    UgxAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UgxAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    SwiftAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SwiftAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - SWIFT
+    MxnAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - clabeNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - MXN_ACCOUNT
+        clabeNumber:
+          type: string
+          description: The CLABE number of the bank
+          example: '123456789012345678'
+          minLength: 18
+          maxLength: 18
+          pattern: ^[0-9]{18}$
+      example:
+        accountType: MXN_ACCOUNT
+        clabeNumber: '123456789012345678'
+    PaymentUgxAccountInfo:
+      title: UGX Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/UgxAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    XafAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      - region
+      properties:
+        accountType:
+          type: string
+          enum:
+          - XAF_ACCOUNT
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+        region:
+          type: string
+          description: Country code within the Central African CFA franc zone
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          enum:
+          - CM
+          - CG
+      example:
+        accountType: XAF_ACCOUNT
+        phoneNumber: '+1234567890'
+        provider: Example Provider
+        region: CM
+    PaymentSparkWalletInfo:
+      title: Spark Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SparkWalletInfo'
+      - type: object
+        required:
+        - assetType
+        properties:
+          assetType:
+            type: string
+            description: Type of asset or configured Spark token currency code
+          invoice:
+            type: string
+            description: Invoice for the payment
+            example: sparkrt1pgss8ter0fhc4c220f3zftmpz49h8wqte8eg3m5zkrraplgc048jucgszg3ssqgjzqqekv73mmh842yj7drsjwh7t7tz5zt8wf5kghm5v4ehggszppjp5s80cg3qjdzc55g2567tn3lj705hdsr577tg8ah795mlnt6807y657qhkmgfkf9w75p4wz3l8vhua85zdn6ryj32zuj0p00pv2l5z4u47mw6h4s
+    TzsAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TZS_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Tanzanian mobile money phone number
+          example: '+255712345678'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+255[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: TZS_ACCOUNT
+        phoneNumber: '+255712345678'
+        provider: Example Provider
+    JmdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - branchCode
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - JMD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: JMD_ACCOUNT
+        accountNumber: '1234567890'
+        branchCode: '11111'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    PaymentSlvAccountInfo:
+      title: SLV Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SlvAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    AedAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/AedAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    GtqAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - bankAccountType
+      - bankName
+      properties:
+        accountType:
+          type: string
+          enum:
+          - GTQ_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankAccountType:
+          type: string
+          description: The bank account type
+          enum:
+          - CHECKING
+          - SAVINGS
+        bankName:
+          type: string
+          description: The name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: GTQ_ACCOUNT
+        accountNumber: '1234567890'
+        bankAccountType: CHECKING
+        bankName: Example Bank
+    SolanaWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SOLANA_WALLET
+        address:
+          type: string
+          description: Solana wallet address
+          example: 4Nd1m6Qkq7RfKuE5vQ9qP9Tn6H94Ueqb4xXHzsAbd8Wg
+    AedAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - AED_ACCOUNT
+        iban:
+          type: string
+          description: UAE IBAN (23 characters, starting with AE)
+          example: AE070331234567890123456
+          minLength: 23
+          maxLength: 23
+          pattern: ^AE[0-9]{21}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: EBILAEAD
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: AED_ACCOUNT
+        iban: AE070331234567890123456
+        swiftCode: EBILAEAD
+    PhpAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PHP_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank
+          minLength: 1
+          maxLength: 255
+          example: BDO Unibank
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 8
+          maxLength: 16
+          example: 001234567890
+          pattern: ^[0-9]{8,16}$
+      example:
+        accountType: PHP_ACCOUNT
+        bankName: BDO Unibank
+        accountNumber: 001234567890
+    UsdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - accountNumber
+      - routingNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - USD_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        routingNumber:
+          type: string
+          description: The ABA routing number
+          example: '021000021'
+          minLength: 9
+          maxLength: 9
+          pattern: ^[0-9]{9}$
+      example:
+        accountType: USD_ACCOUNT
+        accountNumber: '1234567890'
+        routingNumber: '021000021'
+    PaymentTronWalletInfo:
+      title: Tron Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/TronWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDT
+    ZmwAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - phoneNumber
+      - provider
+      properties:
+        accountType:
+          type: string
+          enum:
+          - ZMW_ACCOUNT
+        phoneNumber:
+          type: string
+          description: Zambian mobile money phone number
+          example: '+260971234567'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+260[0-9]{9}$
+        provider:
+          type: string
+          description: The mobile money provider name
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: ZMW_ACCOUNT
+        phoneNumber: '+260971234567'
+        provider: Example Provider
     PaymentInstructions:
       type: object
       required:
@@ -2538,40 +2223,9 @@ components:
               EMBEDDED_WALLET: '#/components/schemas/PaymentEmbeddedWalletInfo'
               SWIFT_ACCOUNT: '#/components/schemas/PaymentSwiftAccountInfo'
               CNY_ACCOUNT: '#/components/schemas/PaymentCnyAccountInfo'
-    PaymentCnyAccountInfo:
-      title: CNY Account
+    EgpAccountInfo:
       allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/CnyAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentEmbeddedWalletInfo:
-      title: Embedded Wallet
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - type: object
-        required:
-        - accountType
-        - payloadToSign
-        properties:
-          accountType:
-            type: string
-            enum:
-            - EMBEDDED_WALLET
-            description: Discriminator value identifying this as Embedded Wallet payment instructions.
-          payloadToSign:
-            type: string
-            description: JSON-encoded transaction signing payload that must be stamped, as-is (byte-for-byte, without re-serialization), with the session private key of a verified authentication credential on the source Embedded Wallet. The resulting Grid wallet signature is passed as the `Grid-Wallet-Signature` header on `POST /quotes/{quoteId}/execute` to authorize the outbound transfer from the wallet.
-            example: '{"type":"ACTIVITY_TYPE_SIGN_TRANSACTION_V2","timestampMs":"1746736509954","organizationId":"org_abc123","parameters":{"signWith":"wallet_abc123def456","unsignedTransaction":"ea69b4bf05f775209f26ff0a34a05569180f7936579d5c4af9377ae550194f72","type":"TRANSACTION_TYPE_ETHEREUM"},"generateAppProofs":true}'
-    ZarAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/ZarAccountInfoBase'
+      - $ref: '#/components/schemas/EgpAccountInfoBase'
       - type: object
         required:
         - paymentRails
@@ -2582,52 +2236,10 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
-    PaymentUgxAccountInfo:
-      title: UGX Account
+              - MOBILE_MONEY
+    MwkAccountInfo:
       allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/UgxAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    PaymentLightningInvoiceInfo:
-      title: Lightning Invoice
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - type: object
-        required:
-        - invoice
-        properties:
-          accountType:
-            type: string
-            enum:
-            - LIGHTNING
-          invoice:
-            type: string
-            description: Invoice for the payment
-            example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
-    EurAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/EurAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - SEPA
-              - SEPA_INSTANT
-    UgxAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/UgxAccountInfoBase'
+      - $ref: '#/components/schemas/MwkAccountInfoBase'
       - type: object
         required:
         - paymentRails
@@ -2638,215 +2250,9 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
-    PaymentPkrAccountInfo:
-      title: PKR Account
+    GtqAccountInfo:
       allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/PkrAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    Currency:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
-          example: USD
-        name:
-          type: string
-          description: Full name of the currency
-          example: United States Dollar
-        symbol:
-          type: string
-          description: Symbol of the currency
-          example: $
-        decimals:
-          type: integer
-          description: Number of decimal places for the currency
-          minimum: 0
-          example: 2
-    SwiftAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/SwiftAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - SWIFT
-    PaymentHkdAccountInfo:
-      title: HKD Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/HkdAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    HtgAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - HTG_ACCOUNT
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-      example:
-        accountType: HTG_ACCOUNT
-        phoneNumber: '+1234567890'
-    MyrAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      - accountNumber
-      - swiftCode
-      properties:
-        accountType:
-          type: string
-          enum:
-          - MYR_ACCOUNT
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        accountNumber:
-          type: string
-          description: Malaysian bank account number
-          minLength: 1
-          maxLength: 34
-          example: '1234567890'
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: MABORUMMYYY
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: MYR_ACCOUNT
-        bankName: Example Bank
-        accountNumber: '1234567890'
-        swiftCode: MABORUMMYYY
-    CadAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankCode
-      - branchCode
-      - accountNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - CAD_ACCOUNT
-        bankCode:
-          type: string
-          description: Canadian financial institution number (3 digits)
-          example: '001'
-          minLength: 3
-          maxLength: 3
-          pattern: ^[0-9]{3}$
-        branchCode:
-          type: string
-          description: Transit number identifying the branch (5 digits)
-          example: '00012'
-          minLength: 5
-          maxLength: 5
-          pattern: ^[0-9]{5}$
-        accountNumber:
-          type: string
-          description: Bank account number (7-12 digits)
-          example: '1234567'
-          minLength: 7
-          maxLength: 12
-          pattern: ^[0-9]{7,12}$
-    PaymentAccountType:
-      type: string
-      enum:
-      - USD_ACCOUNT
-      - BRL_ACCOUNT
-      - MXN_ACCOUNT
-      - DKK_ACCOUNT
-      - ARS_ACCOUNT
-      - COP_ACCOUNT
-      - EUR_ACCOUNT
-      - INR_ACCOUNT
-      - NGN_ACCOUNT
-      - CAD_ACCOUNT
-      - GBP_ACCOUNT
-      - HKD_ACCOUNT
-      - IDR_ACCOUNT
-      - MYR_ACCOUNT
-      - PHP_ACCOUNT
-      - SGD_ACCOUNT
-      - THB_ACCOUNT
-      - VND_ACCOUNT
-      - SPARK_WALLET
-      - LIGHTNING
-      - SOLANA_WALLET
-      - TRON_WALLET
-      - POLYGON_WALLET
-      - BASE_WALLET
-      - ETHEREUM_WALLET
-      - EMBEDDED_WALLET
-      description: Type of payment account or wallet
-      example: USD_ACCOUNT
-    AedAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - iban
-      properties:
-        accountType:
-          type: string
-          enum:
-          - AED_ACCOUNT
-        iban:
-          type: string
-          description: UAE IBAN (23 characters, starting with AE)
-          example: AE070331234567890123456
-          minLength: 23
-          maxLength: 23
-          pattern: ^AE[0-9]{21}$
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: EBILAEAD
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: AED_ACCOUNT
-        iban: AE070331234567890123456
-        swiftCode: EBILAEAD
-    IdrAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/IdrAccountInfoBase'
+      - $ref: '#/components/schemas/GtqAccountInfoBase'
       - type: object
         required:
         - paymentRails
@@ -2857,324 +2263,6 @@ components:
               type: string
               enum:
               - BANK_TRANSFER
-    PaymentThbAccountInfo:
-      title: THB Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/ThbAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    HkdAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      - accountNumber
-      - swiftCode
-      properties:
-        accountType:
-          type: string
-          enum:
-          - HKD_ACCOUNT
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        accountNumber:
-          type: string
-          description: Hong Kong bank account number
-          minLength: 1
-          maxLength: 34
-          example: '123456789012'
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: HSBCHKHHHKH
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: HKD_ACCOUNT
-        bankName: Example Bank
-        accountNumber: '123456789012'
-        swiftCode: HSBCHKHHHKH
-    MxnAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/MxnAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - SPEI
-    PaymentRwfAccountInfo:
-      title: RWF Account
-      allOf:
-      - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/RwfAccountInfo'
-      - type: object
-        required:
-        - reference
-        properties:
-          reference:
-            type: string
-            description: Unique reference code that must be included with the payment to properly credit it
-            example: UMA-Q12345-REF
-    EgpAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      description: 'Required fields depend on the selected paymentRails:
-
-        - BANK_TRANSFER: bankName, iban
-
-        - MOBILE_MONEY: bankName, phoneNumber'
-      properties:
-        accountType:
-          type: string
-          enum:
-          - EGP_ACCOUNT
-        iban:
-          type: string
-          description: Egyptian IBAN (29 characters, starting with EG)
-          example: EG380019000500000000263180002
-          minLength: 29
-          maxLength: 29
-          pattern: ^EG[0-9]{27}$
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-      example:
-        accountType: EGP_ACCOUNT
-        iban: EG380019000500000000263180002
-        bankName: Example Bank
-        phoneNumber: '+1234567890'
-    NgnAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - accountNumber
-      - bankName
-      properties:
-        accountType:
-          type: string
-          enum:
-          - NGN_ACCOUNT
-        accountNumber:
-          type: string
-          description: Nigerian bank account number
-          minLength: 10
-          maxLength: 10
-          example: 0123456789
-          pattern: ^[0-9]{10}$
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: NGN_ACCOUNT
-        accountNumber: 0123456789
-        bankName: Example Bank
-    ThbAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - bankName
-      - accountNumber
-      - swiftCode
-      properties:
-        accountType:
-          type: string
-          enum:
-          - THB_ACCOUNT
-        bankName:
-          type: string
-          description: The name of the bank
-          minLength: 1
-          maxLength: 255
-        accountNumber:
-          type: string
-          description: Thai bank account number
-          minLength: 1
-          maxLength: 34
-          example: '1234567890'
-        swiftCode:
-          type: string
-          description: The SWIFT/BIC code of the bank
-          example: BKKBTHBK
-          minLength: 8
-          maxLength: 11
-          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
-      example:
-        accountType: THB_ACCOUNT
-        bankName: Example Bank
-        accountNumber: '1234567890'
-        swiftCode: BKKBTHBK
-    InternalAccount:
-      type: object
-      required:
-      - id
-      - type
-      - status
-      - balance
-      - totalBalance
-      - fundingPaymentInstructions
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          description: The ID of the internal account
-          example: InternalAccount:12dcbd6-dced-4ec4-b756-3c3a9ea3d123
-        customerId:
-          type: string
-          description: The ID of the customer associated with the internal account. If this field is empty, the internal account belongs to the platform.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        type:
-          $ref: '#/components/schemas/InternalAccountType'
-        status:
-          $ref: '#/components/schemas/InternalAccountStatus'
-        balance:
-          $ref: '#/components/schemas/CurrencyAmount'
-          description: The balance available to spend, excluding pending and held funds
-        totalBalance:
-          $ref: '#/components/schemas/CurrencyAmount'
-          description: The total balance, including pending and held funds
-        fundingPaymentInstructions:
-          type: array
-          description: Payment instructions for funding the account
-          items:
-            $ref: '#/components/schemas/PaymentInstructions'
-        privateEnabled:
-          type: boolean
-          description: Whether wallet privacy is enabled for the Embedded Wallet. Only present for `EMBEDDED_WALLET` internal accounts.
-          example: true
-        createdAt:
-          type: string
-          format: date-time
-          description: Timestamp when the internal account was created
-          example: '2025-10-03T12:30:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Timestamp when the internal account was last updated
-          example: '2025-10-03T12:30:00Z'
-    XofAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - phoneNumber
-      - provider
-      - region
-      properties:
-        accountType:
-          type: string
-          enum:
-          - XOF_ACCOUNT
-        phoneNumber:
-          type: string
-          description: The phone number in international format
-          example: '+1234567890'
-          minLength: 7
-          maxLength: 15
-          pattern: ^\+[0-9]{6,14}$
-        provider:
-          type: string
-          description: The mobile money provider name
-          minLength: 1
-          maxLength: 255
-        region:
-          type: string
-          description: Country code within the West African CFA franc zone
-          minLength: 2
-          maxLength: 2
-          pattern: ^[A-Z]{2}$
-          enum:
-          - BJ
-          - CI
-          - SN
-          - TG
-      example:
-        accountType: XOF_ACCOUNT
-        phoneNumber: '+1234567890'
-        provider: Example Provider
-        region: BJ
-    CadAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/CadAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
-    UsdAccountInfoBase:
-      type: object
-      required:
-      - accountType
-      - accountNumber
-      - routingNumber
-      properties:
-        accountType:
-          type: string
-          enum:
-          - USD_ACCOUNT
-        accountNumber:
-          type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        routingNumber:
-          type: string
-          description: The ABA routing number
-          example: '021000021'
-          minLength: 9
-          maxLength: 9
-          pattern: ^[0-9]{9}$
-      example:
-        accountType: USD_ACCOUNT
-        accountNumber: '1234567890'
-        routingNumber: '021000021'
-    EthereumWalletInfo:
-      type: object
-      required:
-      - address
-      - accountType
-      properties:
-        accountType:
-          type: string
-          enum:
-          - ETHEREUM_WALLET
-        address:
-          type: string
-          description: Ethereum L1 wallet address
-          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
     SlvAccountInfoBase:
       type: object
       required:
@@ -3217,9 +2305,55 @@ components:
         bankName: Banco Cuscatlan
         accountNumber: 0123456789
         bankAccountType: CHECKING
-    MwkAccountInfo:
+    PaymentThbAccountInfo:
+      title: THB Account
       allOf:
-      - $ref: '#/components/schemas/MwkAccountInfoBase'
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/ThbAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentInrAccountInfo:
+      title: INR Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/InrAccountInfo'
+    SgdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/SgdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - PAYNOW
+              - FAST
+              - BANK_TRANSFER
+    HkdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/HkdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    TzsAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/TzsAccountInfoBase'
       - type: object
         required:
         - paymentRails
@@ -3230,13 +2364,150 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
-    BasePaymentAccountInfo:
+    IdrAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/IdrAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    NgnAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/NgnAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    SgdAccountInfoBase:
       type: object
       required:
       - accountType
+      - accountNumber
+      - swiftCode
       properties:
         accountType:
-          $ref: '#/components/schemas/PaymentAccountType'
+          type: string
+          enum:
+          - SGD_ACCOUNT
+        bankName:
+          type: string
+          description: Name of the beneficiary's bank. When omitted, resolved from swiftCode via the payout partner bank directory at account creation.
+          minLength: 1
+          maxLength: 255
+          example: DBS Bank Ltd
+        accountNumber:
+          type: string
+          description: Bank account number
+          minLength: 1
+          maxLength: 34
+          example: 0123456789
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DBSSSGSG
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: SGD_ACCOUNT
+        bankName: DBS Bank Ltd
+        accountNumber: 0123456789
+        swiftCode: DBSSSGSG
+    InternalAccountExportResponse:
+      title: Internal Account Export Response
+      type: object
+      required:
+      - id
+      - encryptedWalletCredentials
+      properties:
+        id:
+          type: string
+          description: The id of the internal account that was exported.
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        encryptedWalletCredentials:
+          type: string
+          description: 'Encrypted wallet mnemonic, sealed to the `clientPublicKey` from the request body using HPKE: DHKEM(P-256, HKDF-SHA256) + HKDF-SHA256 + AES-256-GCM. Decrypt with the matching private key, then manage the mnemonic securely because it is the master key of the self-custodial Embedded Wallet.
+
+            The value is a JSON string of the form `{"version": "v1.0.0", "data": "<hex>", "dataSignature": "<hex>", "enclaveQuorumPublic": "<hex>"}`. `data` hex-decodes to JSON `{"encappedPublic": "<hex>", "ciphertext": "<hex>", "organizationId": "<id>"}`, where `encappedPublic` is the uncompressed SEC1 ephemeral public key. `dataSignature` is an ECDSA-P256-SHA256 signature over the `data` bytes produced by the issuer key in `enclaveQuorumPublic`; verify before decrypting.
+
+            In sandbox, `dataSignature` and `enclaveQuorumPublic` are empty strings. Clients should bypass attestation verification when calling against sandbox.'
+          example: '{"version":"v1.0.0","data":"7b22656e6361707065645075626c6963223a22303433...","dataSignature":"3045022100c9...","enclaveQuorumPublic":"04a1b2c3..."}'
+    SwiftAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - swiftCode
+      - bankName
+      - country
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SWIFT_ACCOUNT
+        country:
+          type: string
+          description: The ISO 3166-1 alpha-2 country code of the bank account
+          example: NG
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        bankName:
+          type: string
+          description: The name of the bank
+          example: Deutsche Bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The bank account number. Required for most corridors. Use iban instead for IBAN-only corridors (e.g. BR, GB).
+          example: '1234567890'
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: The IBAN of the bank account. Required for IBAN-only corridors (e.g. BR, GB). Use accountNumber for all other corridors.
+          example: GB29NWBK60161331926819
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+      example:
+        accountType: SWIFT_ACCOUNT
+        country: NG
+        swiftCode: DEUTDEFF
+        bankName: Deutsche Bank
+        accountNumber: '1234567890'
+    PaymentEgpAccountInfo:
+      title: EGP Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/EgpAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
     InternalAccountUpdateRequest:
       title: Internal Account Update Request
       description: Partial request body for `PATCH /internal-accounts/{id}`. At least one update field must be provided. On step 1 of the signed-retry flow Grid binds the submitted update fields into `payloadToSign`; on step 2 the client echoes the same fields back and Grid applies the update to the internal account.
@@ -3246,35 +2517,105 @@ components:
           type: boolean
           description: Whether wallet privacy should be enabled for the Embedded Wallet.
           example: true
-    PaymentSparkWalletInfo:
-      title: Spark Wallet
+    PaymentEthereumWalletInfo:
+      title: Ethereum Wallet
       allOf:
       - $ref: '#/components/schemas/BasePaymentAccountInfo'
-      - $ref: '#/components/schemas/SparkWalletInfo'
+      - $ref: '#/components/schemas/EthereumWalletInfo'
       - type: object
-        required:
-        - assetType
         properties:
           assetType:
             type: string
-            description: Type of asset or configured Spark token currency code
+            description: Type of asset
+            enum:
+            - USDC
+    PaymentLightningInvoiceInfo:
+      title: Lightning Invoice
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - invoice
+        properties:
+          accountType:
+            type: string
+            enum:
+            - LIGHTNING
           invoice:
             type: string
             description: Invoice for the payment
-            example: sparkrt1pgss8ter0fhc4c220f3zftmpz49h8wqte8eg3m5zkrraplgc048jucgszg3ssqgjzqqekv73mmh842yj7drsjwh7t7tz5zt8wf5kghm5v4ehggszppjp5s80cg3qjdzc55g2567tn3lj705hdsr577tg8ah795mlnt6807y657qhkmgfkf9w75p4wz3l8vhua85zdn6ryj32zuj0p00pv2l5z4u47mw6h4s
-    HtgAccountInfo:
+            example: lnbc15u1p3xnhl2pp5jptserfk3zk4qy42tlucycrfwxhydvlemu9pqr93tuzlv9cc7g3sdqsvfhkcap3xyhx7un8cqzpgxqzjcsp5f8c52y2stc300gl6s4xswtjpc37hrnnr3c9wvtgjfuvqmpm35evq9qyyssqy4lgd8tj637qcjp05rdpxxykjenthxftej7a2zzmwrmrl70fyj9hvj0rewhzj7jfyuwkwcg9g2jpwtk3wkjtwnkdks84hsnu8xps5vsq4gj5hs
+    PaymentXofAccountInfo:
+      title: XOF Account
       allOf:
-      - $ref: '#/components/schemas/HtgAccountInfoBase'
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/XofAccountInfo'
       - type: object
         required:
-        - paymentRails
+        - reference
         properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - MOBILE_MONEY
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentDkkAccountInfo:
+      title: DKK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/DkkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PkrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - PKR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        iban:
+          type: string
+          description: Pakistani IBAN (24 characters, starting with PK)
+          example: PK36SCBL0000001123456702
+          minLength: 24
+          maxLength: 24
+          pattern: ^PK[0-9]{2}[A-Z]{4}[0-9]{16}$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: PKR_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '1234567890'
+        iban: PK36SCBL0000001123456702
+        phoneNumber: '+1234567890'
     GhsAccountInfoBase:
       type: object
       required:
@@ -3312,6 +2653,485 @@ components:
         accountNumber: '1234567890'
         bankName: Example Bank
         phoneNumber: '+1234567890'
+    BasePaymentAccountInfo:
+      type: object
+      required:
+      - accountType
+      properties:
+        accountType:
+          $ref: '#/components/schemas/PaymentAccountType'
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    InternalAccountExportRequest:
+      title: Internal Account Export Request
+      description: Request body for `POST /internal-accounts/{id}/export`. The `clientPublicKey` is required on both steps of the signed-retry flow. On step 1 Grid binds it into `payloadToSign` so the subsequent stamp in `Grid-Wallet-Signature` commits to the target pubkey; on step 2 the client echoes the same `clientPublicKey` back and Grid uses it to encrypt the wallet credentials returned in the `200` response.
+      type: object
+      required:
+      - clientPublicKey
+      properties:
+        clientPublicKey:
+          type: string
+          description: Fresh P-256 public key, uncompressed SEC1 hex — 130 hex chars where the first two are `04` (the uncompressed-point indicator). Generate a new keypair for each export and discard the private key after decrypting the response.
+          example: 04f45f2a22c908b9ce09a7150e514afd24627c401c38a4afc164e1ea783adaaa31d4245acfb88c2ebd42b47628d63ecabf345484f0a9f665b63c54c897d5578be2
+    InrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      description: 'Required fields depend on the selected paymentRails:
+
+        - NEFT: accountNumber, ifsc, rail
+
+        - RTGS: accountNumber, ifsc, rail
+
+        - UPI: vpa'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - INR_ACCOUNT
+        vpa:
+          type: string
+          description: The UPI Virtual Payment Address
+          example: user@upi
+          minLength: 3
+          maxLength: 255
+          pattern: ^[a-zA-Z0-9.\-_]+@[a-zA-Z0-9]+$
+        accountNumber:
+          type: string
+          description: Indian bank account number (9–18 digits)
+          minLength: 9
+          maxLength: 18
+          example: '000111222333'
+          pattern: ^[0-9]{9,18}$
+        ifsc:
+          type: string
+          description: The Indian Financial System Code (IFSC) of the beneficiary's bank branch (NEFT/RTGS)
+          example: HDFC0001234
+          minLength: 11
+          maxLength: 11
+          pattern: ^[A-Z]{4}0[A-Z0-9]{6}$
+        rail:
+          type: string
+          description: The payment rail to route the payout over, for currencies that support more than one (e.g. NEFT or RTGS for INR).
+          example: NEFT
+          minLength: 1
+          maxLength: 32
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+      example:
+        accountType: INR_ACCOUNT
+        vpa: user@upi
+        accountNumber: '000111222333'
+        ifsc: HDFC0001234
+        rail: NEFT
+        bankName: Example Bank
+    RwfAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/RwfAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    InternalAccountStatus:
+      title: Internal Account Status
+      type: string
+      enum:
+      - PENDING
+      - ACTIVE
+      - CLOSED
+      - FROZEN
+      - FAILED
+      description: 'Status of a Grid internal account. The status determines whether the account can send or receive payments.
+
+
+        - `PENDING`: The account is under review and is being provisioned. The account cannot send or receive payments until provisioning completes.
+
+        - `ACTIVE`: The account is ready to send and receive payments.
+
+        - `CLOSED`: The account cannot send or receive payments. A customer can initiate the closing of an internal account, after which the account transitions to this status.
+
+        - `FROZEN`: The account cannot send or receive payments. Grid may freeze an account in response to compliance or fraud signals; payments are blocked while the account remains frozen.
+
+        - `FAILED`: The account could not be provisioned. Grid was unable to create the underlying account, so it cannot send or receive payments and requires remediation.'
+      example: ACTIVE
+    Error401:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 401
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    PaymentRwfAccountInfo:
+      title: RWF Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/RwfAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    EurAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - iban
+      properties:
+        accountType:
+          type: string
+          enum:
+          - EUR_ACCOUNT
+        iban:
+          type: string
+          description: The IBAN of the bank account
+          example: DE89370400440532013000
+          minLength: 15
+          maxLength: 34
+          pattern: ^[A-Z]{2}[0-9]{2}[A-Za-z0-9]{11,30}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: EUR_ACCOUNT
+        iban: DE89370400440532013000
+        swiftCode: DEUTDEFF
+    PaymentArsAccountInfo:
+      title: ARS Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - type: object
+        required:
+        - accountNumber
+        properties:
+          accountType:
+            type: string
+            enum:
+            - ARS_ACCOUNT
+          accountNumber:
+            type: string
+            description: The static CVU (Clave Virtual Uniforme) bank account number to pay to.
+            minLength: 22
+            maxLength: 22
+            pattern: ^\d{22}$
+            example: '0000003100074052501434'
+    VndAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/VndAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    HkdAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      properties:
+        accountType:
+          type: string
+          enum:
+          - HKD_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        accountNumber:
+          type: string
+          description: Hong Kong bank account number
+          minLength: 1
+          maxLength: 34
+          example: '123456789012'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: HSBCHKHHHKH
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+      example:
+        accountType: HKD_ACCOUNT
+        bankName: Example Bank
+        accountNumber: '123456789012'
+        swiftCode: HSBCHKHHHKH
+    BdtAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - BDT_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        branchCode:
+          type: string
+          description: The branch code
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: DEUTDEFF
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: BDT_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        branchCode: '11111'
+        swiftCode: DEUTDEFF
+        phoneNumber: '+1234567890'
+    IdrAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      - accountNumber
+      - swiftCode
+      - phoneNumber
+      properties:
+        accountType:
+          type: string
+          enum:
+          - IDR_ACCOUNT
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+          example: Bank Central Asia
+        accountNumber:
+          type: string
+          description: Indonesian bank account number
+          minLength: 1
+          maxLength: 34
+          example: '1234567890'
+        swiftCode:
+          type: string
+          description: The SWIFT/BIC code of the bank
+          example: CENAIDJA
+          minLength: 8
+          maxLength: 11
+          pattern: ^[A-Z]{4}[A-Z]{2}[A-Z0-9]{2}([A-Z0-9]{3})?$
+        phoneNumber:
+          type: string
+          description: Indonesian phone number for e-wallet payments
+          example: '+6281234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+62[0-9]{9,12}$
+      example:
+        accountType: IDR_ACCOUNT
+        bankName: Bank Central Asia
+        accountNumber: '1234567890'
+        swiftCode: CENAIDJA
+        phoneNumber: '+6281234567890'
+    CnyAccountInfoBase:
+      type: object
+      required:
+      - accountType
+      - bankName
+      description: 'Required fields depend on the selected paymentRails:
+
+        - BANK_TRANSFER: accountNumber, bankName
+
+        - MOBILE_MONEY: bankName, phoneNumber'
+      properties:
+        accountType:
+          type: string
+          enum:
+          - CNY_ACCOUNT
+        accountNumber:
+          type: string
+          description: The account number of the bank
+          minLength: 1
+          maxLength: 34
+        bankName:
+          type: string
+          description: The name of the bank
+          minLength: 1
+          maxLength: 255
+        phoneNumber:
+          type: string
+          description: The phone number in international format
+          example: '+1234567890'
+          minLength: 7
+          maxLength: 15
+          pattern: ^\+[0-9]{6,14}$
+      example:
+        accountType: CNY_ACCOUNT
+        accountNumber: '1234567890'
+        bankName: Example Bank
+        phoneNumber: '+1234567890'
+    PolygonWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - POLYGON_WALLET
+        address:
+          type: string
+          description: Polygon eth wallet address
+          example: '0xAbCDEF1234567890aBCdEf1234567890ABcDef12'
+    PaymentMwkAccountInfo:
+      title: MWK Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/MwkAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    CnyAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/CnyAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+              - MOBILE_MONEY
+    SparkWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - SPARK_WALLET
+        address:
+          type: string
+          description: Spark wallet address
+          example: spark1pgssyuuuhnrrdjswal5c3s3rafw9w3y5dd4cjy3duxlf7hjzkp0rqx6dj6mrhu
+    PaymentSgdAccountInfo:
+      title: SGD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/SgdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
     PaymentMxnAccountInfo:
       title: MXN Account
       allOf:
@@ -3325,19 +3145,28 @@ components:
             type: string
             description: Unique reference code that must be included with the payment to properly credit it
             example: UMA-Q12345-REF
-    JmdAccountInfo:
-      allOf:
-      - $ref: '#/components/schemas/JmdAccountInfoBase'
-      - type: object
-        required:
-        - paymentRails
-        properties:
-          paymentRails:
-            type: array
-            items:
-              type: string
-              enum:
-              - BANK_TRANSFER
+    SignedRequestChallenge:
+      title: Signed Request Challenge
+      type: object
+      required:
+      - payloadToSign
+      - requestId
+      - expiresAt
+      description: Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.
+      properties:
+        payloadToSign:
+          type: string
+          description: Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request.
+          example: '{"organizationId":"org_2m9F...","parameters":{"userId":"user_2m9F..."},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_EXAMPLE"}'
+        requestId:
+          type: string
+          description: Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge.
+          example: Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time.
+          example: '2026-04-08T15:35:00Z'
     ZmwAccountInfo:
       allOf:
       - $ref: '#/components/schemas/ZmwAccountInfoBase'
@@ -3351,39 +3180,145 @@ components:
               type: string
               enum:
               - MOBILE_MONEY
-    GtqAccountInfoBase:
+    KesAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/KesAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - MOBILE_MONEY
+    ThbAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/ThbAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - BANK_TRANSFER
+    UsdAccountInfo:
+      allOf:
+      - $ref: '#/components/schemas/UsdAccountInfoBase'
+      - type: object
+        required:
+        - paymentRails
+        properties:
+          paymentRails:
+            type: array
+            items:
+              type: string
+              enum:
+              - ACH
+              - WIRE
+              - RTP
+              - FEDNOW
+    PaymentAccountType:
+      type: string
+      enum:
+      - USD_ACCOUNT
+      - BRL_ACCOUNT
+      - MXN_ACCOUNT
+      - DKK_ACCOUNT
+      - ARS_ACCOUNT
+      - COP_ACCOUNT
+      - EUR_ACCOUNT
+      - INR_ACCOUNT
+      - NGN_ACCOUNT
+      - CAD_ACCOUNT
+      - GBP_ACCOUNT
+      - HKD_ACCOUNT
+      - IDR_ACCOUNT
+      - MYR_ACCOUNT
+      - PHP_ACCOUNT
+      - SGD_ACCOUNT
+      - THB_ACCOUNT
+      - VND_ACCOUNT
+      - SPARK_WALLET
+      - LIGHTNING
+      - SOLANA_WALLET
+      - TRON_WALLET
+      - POLYGON_WALLET
+      - BASE_WALLET
+      - ETHEREUM_WALLET
+      - EMBEDDED_WALLET
+      description: Type of payment account or wallet
+      example: USD_ACCOUNT
+    CadAccountInfoBase:
       type: object
       required:
       - accountType
+      - bankCode
+      - branchCode
       - accountNumber
-      - bankAccountType
-      - bankName
       properties:
         accountType:
           type: string
           enum:
-          - GTQ_ACCOUNT
+          - CAD_ACCOUNT
+        bankCode:
+          type: string
+          description: Canadian financial institution number (3 digits)
+          example: '001'
+          minLength: 3
+          maxLength: 3
+          pattern: ^[0-9]{3}$
+        branchCode:
+          type: string
+          description: Transit number identifying the branch (5 digits)
+          example: '00012'
+          minLength: 5
+          maxLength: 5
+          pattern: ^[0-9]{5}$
         accountNumber:
           type: string
-          description: The account number of the bank
-          minLength: 1
-          maxLength: 34
-        bankAccountType:
-          type: string
-          description: The bank account type
+          description: Bank account number (7-12 digits)
+          example: '1234567'
+          minLength: 7
+          maxLength: 12
+          pattern: ^[0-9]{7,12}$
+    Error500:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
           enum:
-          - CHECKING
-          - SAVINGS
-        bankName:
+          - 500
+          description: HTTP status code
+        code:
           type: string
-          description: The name of the beneficiary's bank
-          minLength: 1
-          maxLength: 255
-      example:
-        accountType: GTQ_ACCOUNT
-        accountNumber: '1234567890'
-        bankAccountType: CHECKING
-        bankName: Example Bank
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     InternalAccountListResponse:
       type: object
       required:
@@ -3404,6 +3339,71 @@ components:
         totalCount:
           type: integer
           description: Total number of customers matching the criteria (excluding pagination)
+    TronWalletInfo:
+      type: object
+      required:
+      - address
+      - accountType
+      properties:
+        accountType:
+          type: string
+          enum:
+          - TRON_WALLET
+        address:
+          type: string
+          description: Tron wallet address
+          example: TNPeeaaFB7K9cmo4uQpcU32zGK8G1NYqeL
+    PaymentBaseWalletInfo:
+      title: Base Wallet
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/BaseWalletInfo'
+      - type: object
+        properties:
+          assetType:
+            type: string
+            description: Type of asset
+            enum:
+            - USDC
+    PaymentJmdAccountInfo:
+      title: JMD Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/JmdAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentGtqAccountInfo:
+      title: GTQ Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/GtqAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
+    PaymentHtgAccountInfo:
+      title: HTG Account
+      allOf:
+      - $ref: '#/components/schemas/BasePaymentAccountInfo'
+      - $ref: '#/components/schemas/HtgAccountInfo'
+      - type: object
+        required:
+        - reference
+        properties:
+          reference:
+            type: string
+            description: Unique reference code that must be included with the payment to properly credit it
+            example: UMA-Q12345-REF
   securitySchemes:
     BasicAuth:
       type: http

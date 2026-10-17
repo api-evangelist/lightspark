@@ -175,13 +175,6 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    StablecoinProviderAccountStatus:
-      type: string
-      enum:
-      - ACTIVE
-      - INVALID
-      - REVOKED
-      description: Status of the linked stablecoin provider account credentials.
     StablecoinProviderAccountLinkRequest:
       type: object
       required:
@@ -204,70 +197,6 @@ components:
           type: string
           description: Provider account id. Optional when the submitted credentials expose exactly one provider account.
           example: 2VcUIonJeVQzFoBuC7LdFT0dRe4
-    StablecoinProviderAccountListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          items:
-            $ref: '#/components/schemas/StablecoinProviderAccount'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page.
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results.
-        totalCount:
-          type: integer
-          description: Total number of stablecoin provider account links matching the criteria.
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     StablecoinProviderAccount:
       type: object
       required:
@@ -308,6 +237,13 @@ components:
           format: date-time
           description: Last update timestamp.
           example: '2026-05-20T16:35:00Z'
+    StablecoinProviderAccountStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - INVALID
+      - REVOKED
+      description: Status of the linked stablecoin provider account credentials.
     StablecoinProvider:
       type: string
       enum:
@@ -457,6 +393,57 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error409:
+      type: object
+      required:
+      - message
+      - status
+      - code
+      properties:
+        status:
+          type: integer
+          enum:
+          - 409
+          description: HTTP status code
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - CONFLICT
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    StablecoinProviderEnvironment:
+      type: string
+      enum:
+      - SANDBOX
+      - PRODUCTION
+      description: Provider environment derived from the authenticated Grid platform mode.
     Error500:
       type: object
       required:
@@ -538,6 +525,25 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    StablecoinProviderAccountListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/StablecoinProviderAccount'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page.
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results.
+        totalCount:
+          type: integer
+          description: Total number of stablecoin provider account links matching the criteria.
     Error404:
       type: object
       required:
@@ -595,12 +601,6 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    StablecoinProviderEnvironment:
-      type: string
-      enum:
-      - SANDBOX
-      - PRODUCTION
-      description: Provider environment derived from the authenticated Grid platform mode.
   securitySchemes:
     BasicAuth:
       type: http

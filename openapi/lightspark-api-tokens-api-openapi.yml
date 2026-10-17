@@ -263,46 +263,6 @@ components:
           format: date-time
           description: Last update timestamp
           example: '2025-07-21T17:32:28Z'
-    Permission:
-      type: string
-      enum:
-      - VIEW
-      - TRANSACT
-      - MANAGE
-      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     TokenListResponse:
       type: object
       required:
@@ -467,21 +427,46 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
-    ApiTokenCreateRequest:
+    Permission:
+      type: string
+      enum:
+      - VIEW
+      - TRANSACT
+      - MANAGE
+      description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
+    Error500:
       type: object
       required:
-      - name
-      - permissions
+      - message
+      - status
+      - code
       properties:
-        name:
+        status:
+          type: integer
+          enum:
+          - 500
+          description: HTTP status code
+        code:
           type: string
-          description: Name of the token to help identify it
-          example: Sandbox read-only
-        permissions:
-          type: array
-          description: A list of permissions to grant to the token
-          items:
-            $ref: '#/components/schemas/Permission'
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        message:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Error401:
       type: object
       required:
@@ -530,6 +515,21 @@ components:
           type: object
           description: Additional error details
           additionalProperties: true
+    ApiTokenCreateRequest:
+      type: object
+      required:
+      - name
+      - permissions
+      properties:
+        name:
+          type: string
+          description: Name of the token to help identify it
+          example: Sandbox read-only
+        permissions:
+          type: array
+          description: A list of permissions to grant to the token
+          items:
+            $ref: '#/components/schemas/Permission'
     Error404:
       type: object
       required:
