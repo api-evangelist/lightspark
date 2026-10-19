@@ -30,3 +30,101 @@
     detected: '2026-10-14'
   status: not-a-workflow
   arazzo: null
+- slug: lightspark-a2a-protocol-own-agent-card
+  label: A2A protocol (own Agent Card)
+  partner_name: A2A protocol (own Agent Card)
+  category: A2A agent
+  type: register
+  channel: provider-built
+  evidence: https://docs.lightspark.com/.well-known/agent-card.json
+  source: edge
+  relationship: compatible
+  contract_reference:
+    register: provider's own /.well-known/agent-card.json
+    spec_file: null
+    standard: A2A
+    role: a2a-agent-card
+    registered_name: Lightspark Docs
+    organization: Lightspark Docs
+    matched_domain: lightspark.com
+    matched_by: own-domain
+    detected_by: sweep-ai-agents.py
+    detected: '2026-10-15'
+  status: not-a-workflow
+  arazzo: null
+- slug: lightspark-npm-registry
+  label: npm registry
+  partner: npm
+  partner_name: npm registry
+  category: official SDK (JavaScript/TypeScript)
+  type: register
+  channel: package-registry
+  evidence: https://www.npmjs.com/package/@lightsparkdev/core
+  source: edge
+  relationship: distribution-channel
+  contract_reference:
+    register: npm registry (public registry JSON)
+    spec_file: null
+    language: JavaScript/TypeScript
+    packages:
+    - name: '@lightsparkdev/core'
+      version: 1.5.3
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/core
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    - name: '@lightsparkdev/crypto-wasm'
+      version: 0.1.27
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/crypto-wasm
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    - name: '@lightsparkdev/grid'
+      version: 1.8.0
+      released: '2026-05-28'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/grid
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    - name: '@lightsparkdev/lightspark-cli'
+      version: 0.1.20
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/lightspark-cli
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    - name: '@lightsparkdev/lightspark-sdk'
+      version: 1.9.20
+      released: '2026-10-03'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/lightspark-sdk
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    - name: '@lightsparkdev/uma'
+      version: 0.0.10
+      released: '2025-02-05'
+      released_field: modified
+      lapsed: false
+      page: https://www.npmjs.com/package/@lightsparkdev/uma
+      repo_leg: github-org:lightsparkdev
+      publisher_leg: email:lightspark.com
+      matched_by: domain
+    current: true
+    signal_note: 'an official package on the registry: distribution, not an integration; lapsed = no release in
+      24 months'
+    detected_by: sweep-official-sdks.py
+    detected: '2026-10-18'
+  status: not-a-workflow
+  arazzo: null
