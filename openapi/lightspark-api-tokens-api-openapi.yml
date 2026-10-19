@@ -222,6 +222,94 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    TokenListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of tokens matching the filter criteria
+          items:
+            $ref: '#/components/schemas/ApiToken'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of tokens matching the criteria (excluding pagination)
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    ApiTokenCreateRequest:
+      type: object
+      required:
+      - name
+      - permissions
+      properties:
+        name:
+          type: string
+          description: Name of the token to help identify it
+          example: Sandbox read-only
+        permissions:
+          type: array
+          description: A list of permissions to grant to the token
+          items:
+            $ref: '#/components/schemas/Permission'
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     ApiToken:
       type: object
       required:
@@ -253,6 +341,11 @@ components:
           type: string
           description: The secret that should be used to authenticate against Grid API. This secret is not stored and will never be available again after creation. Platform must keep this secret secure as it grants access to the account.
           example: ed0ad25881e234cc28fb2dec0a4fe64e4172
+        expiresAt:
+          type: string
+          format: date-time
+          description: Timestamp after which the token no longer authenticates. Requests made with an expired token return `401`. Omitted when the token does not expire.
+          example: '2026-07-21T17:32:28Z'
         createdAt:
           type: string
           format: date-time
@@ -263,38 +356,105 @@ components:
           format: date-time
           description: Last update timestamp
           example: '2025-07-21T17:32:28Z'
-    TokenListResponse:
+    Error404:
       type: object
       required:
-      - data
-      - hasMore
+      - reason
+      - code
       properties:
-        data:
-          type: array
-          description: List of tokens matching the filter criteria
-          items:
-            $ref: '#/components/schemas/ApiToken'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
+        code:
           type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of tokens matching the criteria (excluding pagination)
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Error400:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -302,6 +462,8 @@ components:
             |------------|-------------|
 
             | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
 
             | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
 
@@ -312,10 +474,6 @@ components:
             | INVALID_UMA_ADDRESS | UMA address format is invalid |
 
             | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
 
             | INVALID_RECEIVER | Receiver is invalid |
 
@@ -329,7 +487,7 @@ components:
 
             | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
 
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
 
             | AMOUNT_OUT_OF_RANGE | Amount is out of range |
 
@@ -344,8 +502,6 @@ components:
             | INVALID_BANK_ACCOUNT | Bank account is invalid |
 
             | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
 
             | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
 
@@ -373,22 +529,69 @@ components:
 
             | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
 
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
             | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
 
             | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
 
             | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
 
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
             '
           enum:
           - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
           - MISSING_MANDATORY_USER_INFO
           - INVITATION_ALREADY_CLAIMED
           - INVITATIONS_NOT_CONFIGURED
           - INVALID_UMA_ADDRESS
           - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
           - INVALID_RECEIVER
           - PARSE_PAYREQ_RESPONSE_ERROR
           - CERT_CHAIN_INVALID
@@ -403,7 +606,6 @@ components:
           - INVALID_REQUEST_FORMAT
           - INVALID_BANK_ACCOUNT
           - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
           - PARSE_LNURLP_RESPONSE_ERROR
           - INVALID_AMOUNT
           - WEBHOOK_ENDPOINT_NOT_SET
@@ -417,15 +619,50 @@ components:
           - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
           - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
           - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
           - STABLECOIN_PROVIDER_ACCOUNT_INVALID
           - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
           - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
           type: string
           description: Error message
         details:
           type: object
-          description: Additional error details
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
           additionalProperties: true
     Permission:
       type: string
@@ -434,51 +671,12 @@ components:
       - TRANSACT
       - MANAGE
       description: 'Permission of an API token that determines what actions the token can perform: VIEW: Can view all data, including platform config, customers and transactions TRANSACT: Can send payments MANAGE: Can manage platform config, api tokens and customers'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Error401:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -508,85 +706,42 @@ components:
           - WALLET_SIGNATURE_BODY_MISMATCH
           - WALLET_SIGNATURE_INVALID
           - REQUEST_ID_MISSING
-        message:
+        reason:
           type: string
           description: Error message
         details:
           type: object
           description: Additional error details
           additionalProperties: true
-    ApiTokenCreateRequest:
+    FieldConstraint:
       type: object
-      required:
-      - name
-      - permissions
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
       properties:
-        name:
+        format:
           type: string
-          description: Name of the token to help identify it
-          example: Sandbox read-only
-        permissions:
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
           type: array
-          description: A list of permissions to grant to the token
           items:
-            $ref: '#/components/schemas/Permission'
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
           type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
   securitySchemes:
     BasicAuth:
       type: http
@@ -595,7 +750,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header

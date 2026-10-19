@@ -234,6 +234,421 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
+    Error403:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            | END_USER_TERMS_NOT_ACCEPTED | Customer has not accepted the End User Terms |
+
+            | CUSTOMER_NOT_VERIFIED | The customer is not verified and cannot perform this action |
+
+            | SANCTION_BLOCKED | Blocked by sanction screening |
+
+            | DESTINATION_NOT_ALLOWED | The agent may not pay this destination |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+          - END_USER_TERMS_NOT_ACCEPTED
+          - CUSTOMER_NOT_VERIFIED
+          - SANCTION_BLOCKED
+          - DESTINATION_NOT_ALLOWED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    UmaInvitationStatus:
+      type: string
+      enum:
+      - PENDING
+      - CLAIMED
+      - EXPIRED
+      - CANCELLED
+      description: The status of the invitation
+      example: PENDING
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error400:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
+          additionalProperties: true
     UmaInvitationCreateRequest:
       type: object
       required:
@@ -267,6 +682,48 @@ components:
           format: date-time
           description: When the invitation expires (if at all)
           example: '2025-09-01T14:30:00Z'
+    Error401:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Currency:
       type: object
       properties:
@@ -287,15 +744,6 @@ components:
           description: Number of decimal places for the currency
           minimum: 0
           example: 2
-    UmaInvitationClaimRequest:
-      type: object
-      required:
-      - inviteeUma
-      properties:
-        inviteeUma:
-          type: string
-          description: The UMA address of the customer claiming the invitation
-          example: $invitee@uma.domain
     CurrencyAmount:
       type: object
       required:
@@ -309,150 +757,15 @@ components:
           example: 12550
         currency:
           $ref: '#/components/schemas/Currency'
-    Error400:
+    UmaInvitationClaimRequest:
       type: object
       required:
-      - message
-      - status
-      - code
+      - inviteeUma
       properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
-        code:
+        inviteeUma:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | INVALID_INPUT | Invalid input provided |
-
-            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
-
-            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
-
-            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
-
-            | INVALID_UMA_ADDRESS | UMA address format is invalid |
-
-            | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
-
-            | INVALID_RECEIVER | Receiver is invalid |
-
-            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
-
-            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
-
-            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
-
-            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
-
-            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
-
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
-
-            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
-
-            | INVALID_CURRENCY | Currency is invalid |
-
-            | INVALID_TIMESTAMP | Timestamp is invalid |
-
-            | INVALID_NONCE | Nonce is invalid |
-
-            | INVALID_REQUEST_FORMAT | Request format is invalid |
-
-            | INVALID_BANK_ACCOUNT | Bank account is invalid |
-
-            | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
-
-            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
-
-            | INVALID_AMOUNT | Amount is invalid |
-
-            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
-
-            | LOW_QUALITY | Document quality too low to process |
-
-            | DATA_MISMATCH | Document details don''t match provided information |
-
-            | EXPIRED | Document has expired |
-
-            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
-
-            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
-
-            | INCOMPLETE | Document is missing pages or sides |
-
-            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
-
-            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
-
-            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
-
-            '
-          enum:
-          - INVALID_INPUT
-          - MISSING_MANDATORY_USER_INFO
-          - INVITATION_ALREADY_CLAIMED
-          - INVITATIONS_NOT_CONFIGURED
-          - INVALID_UMA_ADDRESS
-          - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
-          - INVALID_RECEIVER
-          - PARSE_PAYREQ_RESPONSE_ERROR
-          - CERT_CHAIN_INVALID
-          - CERT_CHAIN_EXPIRED
-          - INVALID_PUBKEY_FORMAT
-          - MISSING_REQUIRED_UMA_PARAMETERS
-          - SENDER_NOT_ACCEPTED
-          - AMOUNT_OUT_OF_RANGE
-          - INVALID_CURRENCY
-          - INVALID_TIMESTAMP
-          - INVALID_NONCE
-          - INVALID_REQUEST_FORMAT
-          - INVALID_BANK_ACCOUNT
-          - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
-          - PARSE_LNURLP_RESPONSE_ERROR
-          - INVALID_AMOUNT
-          - WEBHOOK_ENDPOINT_NOT_SET
-          - WEBHOOK_DELIVERY_ERROR
-          - LOW_QUALITY
-          - DATA_MISMATCH
-          - EXPIRED
-          - SUSPECTED_FRAUD
-          - UNSUITABLE_DOCUMENT
-          - INCOMPLETE
-          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
-          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
-          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
-          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
-          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
-          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          description: The UMA address of the customer claiming the invitation
+          example: $invitee@uma.domain
     UmaInvitation:
       type: object
       required:
@@ -494,14 +807,7 @@ components:
           description: The UMA address of the invitee
           example: $invitee@uma.domain
         status:
-          type: string
-          enum:
-          - PENDING
-          - CLAIMED
-          - EXPIRED
-          - CANCELLED
-          description: The status of the invitation
-          example: PENDING
+          $ref: '#/components/schemas/UmaInvitationStatus'
         firstName:
           type: string
           description: The inviter's first name. Will be displayed when the recipient clicks the invite link
@@ -511,183 +817,35 @@ components:
           description: 'The amount to send to the invitee when the invitation is claimed. This is optional and if not provided, the invitee will not receive any amount. Note that the actual sending of the amount must be done by the inviter platform once the INVITATION_CLAIMED webhook is received. If the inviter platform either does not send the payment or the payment fails, the invitee will not receive this amount. This field is primarily used for display purposes on the claiming side of the invitation.
 
             This field is useful for "send-by-link" style customer flows where an inviter can send a payment simply by sharing a link without knowing the receiver''s UMA address. Note that these sends can only be sender-locked, meaning that the sender will not know ahead of time how much the receiver will receive in the receiving currency.'
-    Error500:
+    FieldConstraint:
       type: object
-      required:
-      - message
-      - status
-      - code
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
       properties:
-        status:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
           type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error403:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
           type: integer
-          enum:
-          - 403
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | FORBIDDEN | Insufficient permissions |
-
-            | USER_NOT_READY | Customer exists but is not ready for operation |
-
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
-
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
-
-            '
-          enum:
-          - FORBIDDEN
-          - USER_NOT_READY
-          - COUNTERPARTY_NOT_ALLOWED
-          - VELOCITY_LIMIT_EXCEEDED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error404:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          description: Maximum length in characters.
+          example: 500
   securitySchemes:
     BasicAuth:
       type: http
@@ -696,7 +854,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header

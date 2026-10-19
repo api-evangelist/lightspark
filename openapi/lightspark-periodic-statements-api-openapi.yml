@@ -1,0 +1,927 @@
+openapi: 3.2.0
+info:
+  title: Grid Periodic Statements API
+  description: API for managing global payments on the open Money Grid. Built by Lightspark. See the full documentation at https://docs.lightspark.com/.
+  version: '2025-10-13'
+  contact:
+    name: Lightspark Support
+    email: support@lightspark.com
+  license:
+    name: Proprietary
+    url: https://lightspark.com/terms
+servers:
+- url: https://api.lightspark.com/grid/2025-10-13
+  description: Production server
+security:
+- BasicAuth: []
+- AgentAuth: []
+tags:
+- name: Periodic Statements
+  description: 'Build, deliver, and evidence a Regulation E periodic statement for a customer''s internal account. A statement period is a calendar month in US Central time (`America/Chicago`).
+
+
+    A statement is issued for each customer''s own USD internal account and covers their whole balance. Money received through a rule-based account appears on its owner''s statement; rule-based, bulk settlement and platform-owned accounts have no statement of their own.
+
+
+    **1. The statement — `GET /internal-accounts/{id}/balance-changes?startDate=&endDate=`**
+
+
+    One row per change to the balance, in the order the money moved, with the opening and closing balances for the window in the same response. Page until `hasMore` is false, then assert this identity across every page before you render anything:
+
+
+    ```
+
+    openingBalance + Σ(data[].amount) == closingBalance
+
+    ```
+
+
+    If it does not hold, do not send the statement; contact support instead. `startDate` and `endDate` bound a half-open window `[startDate, endDate)`: for a monthly statement, pass the first instant of the month and the first instant of the following month, both in US Central time (for August 2026, `2026-08-01T00:00:00-05:00` and `2026-09-01T00:00:00-05:00`). Grid records a statement as fetched only for a window that is exactly one such month.
+
+
+    **2. The receipt — `POST /internal-accounts/{id}/confirm-statement`**
+
+
+    Once a month, after you have pulled and issued a period''s statement, send a receipt with the `statementMonth` it covers. Grid stores it as the delivery record for that account and period. Sending it again is harmless: the first receipt''s time is kept.
+
+
+    **Timing**
+
+
+    A window whose card settlement has not closed is refused with `409 NOT_YET_AVAILABLE` rather than answered with figures that could still change; retry once it has settled.'
+paths:
+  /internal-accounts/{id}/balance-changes:
+    parameters:
+    - name: id
+      in: path
+      description: The id of the internal account to list balance changes for.
+      required: true
+      schema:
+        type: string
+      example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+    get:
+      summary: List balance changes for a period
+      description: 'Every change to this account''s balance in a window, in the order the money moved, with the opening and closing balances for that window in the same response.
+
+
+        `GET /transactions` returns one row per transaction. This returns one row per change to the balance, and a transaction that moves the balance more than once produces more than one change: an ACH deposit and its later return are two, and a card purchase that clears in two parts is two. Each change''s `transactionId` names its transaction, so fetch it from `GET /transactions/{transactionId}` for its type, counterparty, merchant and rail.
+
+
+        **The identity to assert:** `openingBalance + Σ(data[].amount) == closingBalance`, summed over every page. The opening and closing balances describe the window rather than the page, so they are the same on every page. Page until `hasMore` is false, then assert the identity.
+
+
+        `startDate` and `endDate` are instants in any timezone, UTC included, and the window is half-open: a change at exactly `endDate` belongs to the next window. Consecutive windows therefore tile with no gap and no overlap.
+
+
+        A window whose card settlement has not closed is refused with `409 NOT_YET_AVAILABLE`, because its figures could still change. Retry once it has settled.
+
+
+        A fee is already inside a change''s `amount`. For the fee itself, read `fees` on the change''s transaction, counting each transaction once.'
+      operationId: listInternalAccountBalanceChanges
+      tags:
+      - Periodic Statements
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: startDate
+        in: query
+        required: true
+        description: Start of the window, inclusive, in ISO 8601 format. Must carry a timezone, either `Z` for UTC or an offset.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-08-01T00:00:00-05:00'
+      - name: endDate
+        in: query
+        required: true
+        description: End of the window, exclusive, in ISO 8601 format. Must carry a timezone, either `Z` for UTC or an offset, and must not be in the future.
+        schema:
+          type: string
+          format: date-time
+        example: '2026-09-01T00:00:00-05:00'
+      - name: limit
+        in: query
+        required: false
+        description: Maximum number of changes to return per page
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 200
+          default: 100
+      - name: cursor
+        in: query
+        required: false
+        description: 'Cursor for pagination: the `nextCursor` from the previous page, unchanged. Send it with the same account, `startDate` and `endDate` as that page. A cursor does not expire.'
+        schema:
+          type: string
+      responses:
+        '200':
+          description: The balance changes in the window, with the balances that bound it
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BalanceChangeListResponse'
+        '400':
+          description: Bad request. Returned when `startDate` or `endDate` is missing, has no timezone, or is in the future, when `startDate` is not before `endDate`, when `cursor` was not issued by this endpoint for the same account and window, or when the account has no statement of its own.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Internal account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: The window is not final yet. Card settlement for one of its boundaries has not closed, so its balances and changes could still change. Retry once it has settled.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+  /internal-accounts/{id}/confirm-statement:
+    parameters:
+    - name: id
+      in: path
+      description: The id of the internal account whose statement was delivered.
+      required: true
+      schema:
+        type: string
+      example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+    post:
+      summary: Send a receipt for a periodic statement
+      description: 'Record your monthly receipt that you pulled and issued this account''s periodic statement for a period. Grid stores it as the delivery record for that account and period.
+
+
+        Send it once a month for each account, after you have issued the statement built from `GET /internal-accounts/{id}/balance-changes`. Send it within five days of the month''s end for every customer account: Grid checks then that every account''s statement was issued.
+
+
+        `statementMonth` names the statement month as `YYYY-MM`, a calendar month in US Central time. It must be a month that has already begun.
+
+
+        Sending a receipt is idempotent. The stored time is the first receipt''s, so calling this again does not move it.'
+      operationId: confirmStatementDelivery
+      tags:
+      - Periodic Statements
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConfirmStatementDeliveryRequest'
+      responses:
+        '200':
+          description: Receipt recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StatementDelivery'
+        '400':
+          description: Bad request. Returned when `statementMonth` is not a `YYYY-MM` month or names a month that has not begun, when `statementDeliveredAt` is missing, in the future or before the period has ended, or when the account has no statement of its own.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Internal account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: The period is not final yet. Card settlement for the month has not closed, so its statement could still change and cannot have been issued. Send the receipt once `GET /internal-accounts/{id}/balance-changes` serves the month.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+components:
+  schemas:
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    FieldConstraint:
+      type: object
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
+      properties:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
+          type: integer
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    BalanceChange:
+      type: object
+      description: 'One movement of the account''s balance, signed in the account holder''s polarity: money out is negative and money in is positive, so a window''s changes sum to its closing balance less its opening balance.'
+      required:
+      - id
+      - amount
+      - effectiveAt
+      properties:
+        id:
+          type: string
+          description: Stable identifier for this balance change
+          example: BalanceChange:019542f5-b3e7-1d02-0000-000000000003
+        transactionId:
+          type: string
+          description: The transaction this change belongs to. Fetch it with `GET /transactions/{transactionId}` for its type, counterparty, merchant and rail. Several changes can share one transaction, for example an ACH deposit and its return, or a card purchase that settles in parts. Absent for an adjustment with no transaction behind it.
+          example: Transaction:019542f5-b3e7-1d02-0000-000000000004
+        amount:
+          $ref: '#/components/schemas/CurrencyAmount'
+        effectiveAt:
+          type: string
+          format: date-time
+          description: When the account holder's balance moved. Changes are ordered by this time.
+          example: '2026-09-03T14:31:00Z'
+    Error409:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | TRANSACTION_NOT_CANCELLABLE | Transaction has already settled or is otherwise past the point where it can be cancelled |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | SCA_SESSION_REQUIRED | The customer''s Strong Customer Authentication login session is missing or expired. Re-authenticate the customer, then retry the request. Distinct from a `401`, which means the platform''s own API credentials were rejected |
+
+            | BENEFICIARY_TRUSTED | The external account is currently a trusted beneficiary, so it cannot be deleted. Untrust it first via `POST /customers/external-accounts/{externalAccountId}/untrust` (and its `/confirm`), then delete |
+
+            | BANK_ACCOUNT_VALIDATION_PENDING | The US bank account on this request is still being validated. Grid verifies a newly added ACH account by sending a micro-entry and waiting out the return window, which takes a few banking days. The account is not rejected; retry once validation completes. A permanently failed account returns `400 INVALID_BANK_ACCOUNT` instead |
+
+            | INVALID_STATE_TRANSITION | The requested card `status` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE \| FROZEN → CLOSED`, or the card cannot be unfrozen by the platform because Grid froze it for review, it was frozen as `COMPROMISED`, or its customer is not `ACTIVE` |
+
+            | CARD_ALREADY_CLOSED | `status: CLOSED` was requested for a card that is already `CLOSED` |
+
+            | CARD_NOT_MUTABLE | The card is `CLOSED`, so it can no longer be mutated |
+
+            | PIN_CHANGE_REQUIRED | The card''s PIN unblock allowance is consumed for seven days. Change the PIN to recover sooner. `details.pinUnblockAvailableAt` gives the next allowed unblock time |
+
+            | CARD_LIMIT_REACHED | The platform has reached the maximum number of live cards it may hold, or the cardholder already holds a card and the platform is limited to one per cardholder. Closing a card frees its slot; contact Lightspark to raise the limit |
+
+            | STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE | Grid enablement can only be requested while the stablecoin is `NOT_ENABLED` (a repeat request while already `PENDING_APPROVAL` succeeds). `ENABLING`, `ENABLED` and `DISABLED` are driven by Lightspark and cannot be requested |
+
+            | NOT_YET_AVAILABLE | The request is valid, but its result is not available yet because the data it depends on could still change. Retry later. `reason` says what is outstanding. For balance changes, card settlement for a window boundary has not closed |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            | DOCUMENT_ALREADY_EXISTS | A document of this type already exists for the holder; replace it with PUT |
+
+            | DUPLICATE_EXTERNAL_ACCOUNT | An equivalent external account already exists. When the conflicting account belongs to your platform, `details.externalAccountId` and `details.platformAccountId` identify it; otherwise `details` is omitted |
+
+            | DUPLICATE_PAY_REQUEST | A pay request with this idempotency key already exists |
+
+            | OPERATION_IN_PROGRESS | A conflicting Embedded Wallet operation is still in progress |
+
+            | SMS_OTP_CREDENTIAL_SET_CHANGED | The SMS_OTP credential set changed while the request was in flight |
+
+            | SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS | The phone number is already associated with an SMS_OTP credential |
+
+            | STABLECOIN_SYMBOL_ALREADY_EXISTS | A stablecoin with this symbol is already registered |
+
+            | STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS | A stablecoin with this token identifier is already registered |
+
+            | WALLET_NOT_PROVISIONED | The embedded wallet has not been provisioned |
+
+            | PAYMENT_DOCUMENT_ALREADY_USED | The payment document is already attached to a quote. A document can be used on one quote only, so upload the file again to use it on another quote |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - TRANSACTION_NOT_CANCELLABLE
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - SCA_SESSION_REQUIRED
+          - BENEFICIARY_TRUSTED
+          - BANK_ACCOUNT_VALIDATION_PENDING
+          - INVALID_STATE_TRANSITION
+          - CARD_ALREADY_CLOSED
+          - CARD_NOT_MUTABLE
+          - PIN_CHANGE_REQUIRED
+          - CARD_LIMIT_REACHED
+          - STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE
+          - NOT_YET_AVAILABLE
+          - CONFLICT
+          - DOCUMENT_ALREADY_EXISTS
+          - DUPLICATE_EXTERNAL_ACCOUNT
+          - DUPLICATE_PAY_REQUEST
+          - OPERATION_IN_PROGRESS
+          - SMS_OTP_CREDENTIAL_SET_CHANGED
+          - SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS
+          - STABLECOIN_SYMBOL_ALREADY_EXISTS
+          - STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS
+          - WALLET_NOT_PROVISIONED
+          - PAYMENT_DOCUMENT_ALREADY_USED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    StatementDelivery:
+      type: object
+      required:
+      - internalAccountId
+      - statementMonth
+      - statementDeliveredAt
+      properties:
+        internalAccountId:
+          type: string
+          description: The account whose statement this is
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        statementMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+          description: The statement month, as `YYYY-MM`
+          example: 2026-09
+        fetchedAt:
+          type: string
+          format: date-time
+          description: When the statement for this period was first read from Grid. Absent if it never has been
+          example: '2026-10-01T09:00:00Z'
+        statementDeliveredAt:
+          type: string
+          format: date-time
+          description: When the statement was issued, from the first receipt for this period. Later receipts do not move it.
+          example: '2026-10-03T14:31:00Z'
+    Error404:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error400:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
+          additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CurrencyAmount:
+      type: object
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          description: Amount in the smallest unit of the currency (e.g., cents for USD/EUR, satoshis for BTC)
+          example: 12550
+        currency:
+          $ref: '#/components/schemas/Currency'
+    Currency:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Three-letter currency code (ISO 4217) for fiat currencies. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+        name:
+          type: string
+          description: Full name of the currency
+          example: United States Dollar
+        symbol:
+          type: string
+          description: Symbol of the currency
+          example: $
+        decimals:
+          type: integer
+          description: Number of decimal places for the currency
+          minimum: 0
+          example: 2
+    BalanceChangeListResponse:
+      type: object
+      description: A window of balance changes with the balances that bound it. The opening and closing balances describe the whole window, not the page, so they are the same on every page, and the identity `openingBalance + Σ(data[].amount) == closingBalance` holds only once every page's `data` is summed.
+      required:
+      - data
+      - startDate
+      - endDate
+      - openingBalance
+      - closingBalance
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: Balance changes on this page, ordered by `effectiveAt`
+          items:
+            $ref: '#/components/schemas/BalanceChange'
+        startDate:
+          type: string
+          format: date-time
+          description: Start of the window, inclusive
+          example: '2026-08-01T00:00:00-05:00'
+        endDate:
+          type: string
+          format: date-time
+          description: End of the window, exclusive
+          example: '2026-09-01T00:00:00-05:00'
+        openingBalance:
+          $ref: '#/components/schemas/CurrencyAmount'
+        closingBalance:
+          $ref: '#/components/schemas/CurrencyAmount'
+        hasMore:
+          type: boolean
+          description: Indicates if more changes are available beyond this page
+          example: false
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+          example: BalanceChange:019542f5-b3e7-1d02-0000-000000000003
+        totalCount:
+          type: integer
+          description: Number of balance changes in the window, across all pages
+          example: 42
+    ConfirmStatementDeliveryRequest:
+      type: object
+      required:
+      - statementMonth
+      - statementDeliveredAt
+      properties:
+        statementMonth:
+          type: string
+          pattern: ^\d{4}-(0[1-9]|1[0-2])$
+          description: The statement month the receipt covers, as `YYYY-MM`. A statement month is a calendar month in US Central time, and it must have already begun.
+          example: 2026-09
+        statementDeliveredAt:
+          type: string
+          format: date-time
+          description: When you issued the statement to the customer. Must include a timezone offset, must not be in the future, and must be at or after the end of the period.
+          example: '2026-10-03T14:31:00Z'
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: API token authentication using format `<api token id>:<api client secret>`
+    AgentAuth:
+      type: http
+      scheme: bearer
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+    WebhookSignature:
+      type: apiKey
+      in: header
+      name: X-Grid-Signature
+      description: 'Secp256r1 (P-256) asymmetric signature of the webhook payload, which can be used to verify that the webhook was sent by Grid.
+
+        To verify the signature:
+
+        1. Get the Grid public key provided to you during integration
+
+        2. Decode the base64 signature from the header
+
+        3. Create a SHA-256 hash of the request body
+
+        4. Verify the signature using the public key and the hash
+
+
+        If the signature verification succeeds, the webhook is authentic. If not, it should be rejected.
+
+        '

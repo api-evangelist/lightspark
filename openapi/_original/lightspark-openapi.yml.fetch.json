@@ -1,0 +1,12 @@
+{
+ "url": "https://docs.lightspark.com/openapi.yaml",
+ "final": "https://docs.lightspark.com/openapi.yaml",
+ "status": 200,
+ "content_type": "text/yaml",
+ "bytes": 1390888,
+ "sha256": "add40cac0f84d218e8dc008c83078b90ffcbd476c14c5f5a9403c1a0fb7b90ad",
+ "fetched_at": "2026-10-19",
+ "fetched_by": "APIEvangelist-Harvest/1.0 (+https://apievangelist.com)",
+ "match": "byte-identical",
+ "note": "re-archived: the provider's current document replaced a stale archive (roadmap#793); the old files are in openapi/_superseded/2026-10-19-stale"
+}

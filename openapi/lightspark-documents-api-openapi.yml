@@ -22,10 +22,74 @@ paths:
   /documents:
     post:
       summary: Upload a document
-      description: 'Upload a verification document for a customer or beneficial owner. The request must use multipart/form-data with the file in the `file` field and metadata in the remaining fields.
+      description: 'Upload a verification document for a customer or beneficial owner.
+
+        The request must use multipart/form-data with the file in the `file` field
+
+        and metadata in the remaining fields.
 
 
-        Supported file types: PDF, JPEG, PNG. Maximum file size: 10 MB.'
+        Every upload requires `file`, `documentType`, `country`, and
+
+        `documentHolder`. Identity documents require more fields:
+
+
+        | `documentType` | Also required | `side` |
+
+        | -------------- | ------------- | ------ |
+
+        | `PASSPORT` | `documentNumber`, `issuingAuthority` | Not allowed |
+
+        | `DRIVERS_LICENSE` | `documentNumber`, `issuingAuthority` | Required |
+
+        | `NATIONAL_ID` | `documentNumber`, `issuingAuthority` | Required |
+
+        | Any other type | None | Optional |
+
+
+        Where `side` is required, upload the `FRONT` and `BACK` as two separate
+
+        documents. A driver''s license issued in Brazil (`country` is `BR`) is
+
+        the exception: upload it as one image and omit `side`.
+
+
+        A missing required field, or a `side` that isn''t allowed, returns
+
+        `400 INVALID_INPUT`.
+
+
+        Supported file types: `application/pdf`, `image/jpeg`, and `image/png`.
+
+        Grid matches on the `Content-Type` of the multipart part, not the file
+
+        extension. Any other type, and any file over 10 MB, returns
+
+        `400 INVALID_INPUT`.
+
+
+        Grid forwards the file to its verification provider, which screens it as
+
+        the request is handled and can reject it with `422 DOCUMENT_REJECTED`.
+
+        To pass that screen, a photo or scan of a document must:
+
+
+        - show the whole document, with all four corners inside the frame and
+
+        nothing overlapping an edge
+
+        - be in focus and free of glare, so every field and the machine-readable
+
+        zone can be read
+
+        - be in color, not a black-and-white copy
+
+        - be a photo or scan of the physical document, not a screen capture, and
+
+        not retouched in an image editor
+
+        - be unexpired'
       operationId: uploadDocument
       tags:
       - Documents
@@ -58,6 +122,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '422':
+          description: The verification provider rejected the file. `precheckErrors` names each problem it found. No document is created, so re-upload a corrected file with `POST /documents`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error422'
         '500':
           description: Internal service error
           content:
@@ -162,7 +232,75 @@ paths:
                 $ref: '#/components/schemas/Error500'
     put:
       summary: Replace a document
-      description: Replace an existing document with a new file and/or updated metadata. This is useful when a document was rejected and needs to be re-uploaded. The request must use multipart/form-data.
+      description: 'Replace an existing document with a new file and/or updated metadata.
+
+        The request must use multipart/form-data.
+
+
+        Use this when a stored document was rejected during review, which arrives
+
+        as an entry in the verification''s `errors` array rather than as an error
+
+        on upload. Replacing marks the previously submitted file inactive, which
+
+        a second `POST /documents` would not do: that leaves the rejected file
+
+        active alongside the new one, and the rejection can carry. Call
+
+        `POST /verifications` afterwards to start a new review, since existing
+
+        errors persist until a new review produces a new verdict.
+
+
+        A file rejected on upload with `422 DOCUMENT_REJECTED` never creates a
+
+        document, so there is nothing to replace. Retry those with
+
+        `POST /documents`.
+
+
+        The request follows the same per-type field rules as
+
+        `POST /documents`, except that `documentHolder` isn''t sent. Grid
+
+        overwrites every metadata field with the values in this request, so
+
+        resend `documentNumber`, `issuingAuthority`, and `side` even if they
+
+        haven''t changed.
+
+
+        Supported file types: `application/pdf`, `image/jpeg`, and `image/png`.
+
+        Grid matches on the `Content-Type` of the multipart part, not the file
+
+        extension. Any other type, and any file over 10 MB, returns
+
+        `400 INVALID_INPUT`.
+
+
+        Grid forwards the file to its verification provider, which screens it as
+
+        the request is handled and can reject it with `422 DOCUMENT_REJECTED`.
+
+        To pass that screen, a photo or scan of a document must:
+
+
+        - show the whole document, with all four corners inside the frame and
+
+        nothing overlapping an edge
+
+        - be in focus and free of glare, so every field and the machine-readable
+
+        zone can be read
+
+        - be in color, not a black-and-white copy
+
+        - be a photo or scan of the physical document, not a screen capture, and
+
+        not retouched in an image editor
+
+        - be unexpired'
       operationId: replaceDocument
       tags:
       - Documents
@@ -202,6 +340,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '422':
+          description: The verification provider rejected the file. `precheckErrors` names each problem it found. The stored document keeps its previous file and metadata, so retry with a corrected file.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error422'
         '500':
           description: Internal service error
           content:
@@ -251,7 +395,53 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error500'
 components:
+  requestBodies:
+    DocumentReplaceRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentReplaceRequest'
+    DocumentUploadRequestBody:
+      required: true
+      content:
+        multipart/form-data:
+          schema:
+            $ref: '#/components/schemas/DocumentUploadRequest'
   schemas:
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    DocumentSide:
+      type: string
+      enum:
+      - FRONT
+      - BACK
+      description: Which side of a two-sided document, such as a driver's license or national ID, an image shows.
+      example: FRONT
     DocumentType:
       type: string
       enum:
@@ -293,34 +483,382 @@ components:
 
         **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
       example: PASSPORT
-    DocumentUploadRequest:
-      title: Document Upload Request
-      allOf:
-      - $ref: '#/components/schemas/BaseDocumentRequest'
-      - type: object
-        required:
-        - documentHolder
-        properties:
-          documentHolder:
-            type: string
-            description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
-            example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+    BaseDocumentRequest:
+      type: object
+      required:
+      - file
+      - documentType
+      - country
+      properties:
+        file:
+          type: string
+          format: binary
+          description: 'The document file. Grid accepts three formats, matched on the
+
+            `Content-Type` of the multipart part rather than the file extension:
+
+            `application/pdf`, `image/jpeg`, and `image/png`. Any other type,
+
+            including `image/heic`, `image/webp`, and `image/tiff`, returns
+
+            `400 INVALID_INPUT`. The file must be 10 MB or smaller.
+
+            '
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        side:
+          $ref: '#/components/schemas/DocumentSide'
+          description: 'Which side of the document this image shows. Required when
+
+            `documentType` is `DRIVERS_LICENSE` or `NATIONAL_ID`: upload the
+
+            `FRONT` and `BACK` as two separate documents. A `PASSPORT`, or a
+
+            `DRIVERS_LICENSE` issued in Brazil (`country` is `BR`), is a single
+
+            image: sending `side` for either returns `400 INVALID_INPUT`. Optional
+
+            for all other document types.
+
+            '
+        country:
+          type: string
+          description: Country that issued the document (ISO 3166-1 alpha-2)
+          example: US
+        documentNumber:
+          type: string
+          maxLength: 100
+          description: 'Identification number printed on the document, such as a passport
+
+            number. Required when `documentType` is `PASSPORT`,
+
+            `DRIVERS_LICENSE`, or `NATIONAL_ID`.
+
+            '
+          example: A12345678
+        issuingAuthority:
+          type: string
+          maxLength: 255
+          description: 'Name of the government agency or organization that issued the
+
+            document. Required when `documentType` is `PASSPORT`,
+
+            `DRIVERS_LICENSE`, or `NATIONAL_ID`.
+
+            '
+          example: U.S. Department of State
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     DocumentReplaceRequest:
       title: Document Replace Request
       allOf:
       - $ref: '#/components/schemas/BaseDocumentRequest'
+    Error409:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | TRANSACTION_NOT_CANCELLABLE | Transaction has already settled or is otherwise past the point where it can be cancelled |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | SCA_SESSION_REQUIRED | The customer''s Strong Customer Authentication login session is missing or expired. Re-authenticate the customer, then retry the request. Distinct from a `401`, which means the platform''s own API credentials were rejected |
+
+            | BENEFICIARY_TRUSTED | The external account is currently a trusted beneficiary, so it cannot be deleted. Untrust it first via `POST /customers/external-accounts/{externalAccountId}/untrust` (and its `/confirm`), then delete |
+
+            | BANK_ACCOUNT_VALIDATION_PENDING | The US bank account on this request is still being validated. Grid verifies a newly added ACH account by sending a micro-entry and waiting out the return window, which takes a few banking days. The account is not rejected; retry once validation completes. A permanently failed account returns `400 INVALID_BANK_ACCOUNT` instead |
+
+            | INVALID_STATE_TRANSITION | The requested card `status` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE \| FROZEN → CLOSED`, or the card cannot be unfrozen by the platform because Grid froze it for review, it was frozen as `COMPROMISED`, or its customer is not `ACTIVE` |
+
+            | CARD_ALREADY_CLOSED | `status: CLOSED` was requested for a card that is already `CLOSED` |
+
+            | CARD_NOT_MUTABLE | The card is `CLOSED`, so it can no longer be mutated |
+
+            | PIN_CHANGE_REQUIRED | The card''s PIN unblock allowance is consumed for seven days. Change the PIN to recover sooner. `details.pinUnblockAvailableAt` gives the next allowed unblock time |
+
+            | CARD_LIMIT_REACHED | The platform has reached the maximum number of live cards it may hold, or the cardholder already holds a card and the platform is limited to one per cardholder. Closing a card frees its slot; contact Lightspark to raise the limit |
+
+            | STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE | Grid enablement can only be requested while the stablecoin is `NOT_ENABLED` (a repeat request while already `PENDING_APPROVAL` succeeds). `ENABLING`, `ENABLED` and `DISABLED` are driven by Lightspark and cannot be requested |
+
+            | NOT_YET_AVAILABLE | The request is valid, but its result is not available yet because the data it depends on could still change. Retry later. `reason` says what is outstanding. For balance changes, card settlement for a window boundary has not closed |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            | DOCUMENT_ALREADY_EXISTS | A document of this type already exists for the holder; replace it with PUT |
+
+            | DUPLICATE_EXTERNAL_ACCOUNT | An equivalent external account already exists. When the conflicting account belongs to your platform, `details.externalAccountId` and `details.platformAccountId` identify it; otherwise `details` is omitted |
+
+            | DUPLICATE_PAY_REQUEST | A pay request with this idempotency key already exists |
+
+            | OPERATION_IN_PROGRESS | A conflicting Embedded Wallet operation is still in progress |
+
+            | SMS_OTP_CREDENTIAL_SET_CHANGED | The SMS_OTP credential set changed while the request was in flight |
+
+            | SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS | The phone number is already associated with an SMS_OTP credential |
+
+            | STABLECOIN_SYMBOL_ALREADY_EXISTS | A stablecoin with this symbol is already registered |
+
+            | STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS | A stablecoin with this token identifier is already registered |
+
+            | WALLET_NOT_PROVISIONED | The embedded wallet has not been provisioned |
+
+            | PAYMENT_DOCUMENT_ALREADY_USED | The payment document is already attached to a quote. A document can be used on one quote only, so upload the file again to use it on another quote |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - TRANSACTION_NOT_CANCELLABLE
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - SCA_SESSION_REQUIRED
+          - BENEFICIARY_TRUSTED
+          - BANK_ACCOUNT_VALIDATION_PENDING
+          - INVALID_STATE_TRANSITION
+          - CARD_ALREADY_CLOSED
+          - CARD_NOT_MUTABLE
+          - PIN_CHANGE_REQUIRED
+          - CARD_LIMIT_REACHED
+          - STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE
+          - NOT_YET_AVAILABLE
+          - CONFLICT
+          - DOCUMENT_ALREADY_EXISTS
+          - DUPLICATE_EXTERNAL_ACCOUNT
+          - DUPLICATE_PAY_REQUEST
+          - OPERATION_IN_PROGRESS
+          - SMS_OTP_CREDENTIAL_SET_CHANGED
+          - SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS
+          - STABLECOIN_SYMBOL_ALREADY_EXISTS
+          - STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS
+          - WALLET_NOT_PROVISIONED
+          - PAYMENT_DOCUMENT_ALREADY_USED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error422:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | DOCUMENT_REJECTED | The verification provider screened the uploaded file and marked it unusable. `precheckErrors` names each problem it found |
+
+            '
+          enum:
+          - DOCUMENT_REJECTED
+        reason:
+          type: string
+          description: Error message
+        precheckErrors:
+          type: array
+          description: One entry per problem the verification provider found in the uploaded file, passed through verbatim. Common values are `dataNotReadable` (the data on the document cannot be read), `screenshot` (the file is a screen capture rather than a photo or scan), `grayscale` (a black-and-white copy of a color document), and `documentExpired`.
+          items:
+            type: string
+          example:
+          - dataNotReadable
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error404:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_FOUND | Transaction not found |
+
+            | INVITATION_NOT_FOUND | Invitation not found |
+
+            | USER_NOT_FOUND | Customer not found |
+
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Document:
+      type: object
+      required:
+      - id
+      - documentHolder
+      - documentType
+      - country
+      - fileName
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this document
+          example: Document:019542f5-b3e7-1d02-0000-000000000001
+        documentHolder:
+          type: string
+          description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+        documentType:
+          $ref: '#/components/schemas/DocumentType'
+        side:
+          $ref: '#/components/schemas/DocumentSide'
+          description: Which side of the document this upload represents. Relevant for two-sided documents like driver's licenses or national IDs.
+        country:
+          type: string
+          description: Country that issued the document (ISO 3166-1 alpha-2)
+          example: US
+        documentNumber:
+          type: string
+          description: Document identification number (e.g., passport number)
+          example: A12345678
+        issuingAuthority:
+          type: string
+          description: Name of the government agency or organization that issued the document
+          example: U.S. Department of State
+        fileName:
+          type: string
+          description: Original file name of the uploaded document
+          example: passport_scan.pdf
+        createdAt:
+          type: string
+          format: date-time
+          description: When this document was uploaded
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this document was last updated
+          example: '2025-10-03T12:00:00Z'
     Error400:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -328,6 +866,8 @@ components:
             |------------|-------------|
 
             | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
 
             | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
 
@@ -338,10 +878,6 @@ components:
             | INVALID_UMA_ADDRESS | UMA address format is invalid |
 
             | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
 
             | INVALID_RECEIVER | Receiver is invalid |
 
@@ -355,7 +891,7 @@ components:
 
             | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
 
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
 
             | AMOUNT_OUT_OF_RANGE | Amount is out of range |
 
@@ -370,8 +906,6 @@ components:
             | INVALID_BANK_ACCOUNT | Bank account is invalid |
 
             | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
 
             | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
 
@@ -399,22 +933,69 @@ components:
 
             | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
 
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
             | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
 
             | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
 
             | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
 
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
             '
           enum:
           - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
           - MISSING_MANDATORY_USER_INFO
           - INVITATION_ALREADY_CLAIMED
           - INVITATIONS_NOT_CONFIGURED
           - INVALID_UMA_ADDRESS
           - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
           - INVALID_RECEIVER
           - PARSE_PAYREQ_RESPONSE_ERROR
           - CERT_CHAIN_INVALID
@@ -429,7 +1010,6 @@ components:
           - INVALID_REQUEST_FORMAT
           - INVALID_BANK_ACCOUNT
           - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
           - PARSE_LNURLP_RESPONSE_ERROR
           - INVALID_AMOUNT
           - WEBHOOK_ENDPOINT_NOT_SET
@@ -443,92 +1023,50 @@ components:
           - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
           - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
           - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
           - STABLECOIN_PROVIDER_ACCOUNT_INVALID
           - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
           - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
           type: string
           description: Error message
         details:
           type: object
-          description: Additional error details
-          additionalProperties: true
-    BaseDocumentRequest:
-      type: object
-      required:
-      - file
-      - documentType
-      - country
-      properties:
-        file:
-          type: string
-          format: binary
-          description: The document file (PDF, JPEG, or PNG, max 10 MB)
-        documentType:
-          $ref: '#/components/schemas/DocumentType'
-        side:
-          type: string
-          enum:
-          - FRONT
-          - BACK
-          description: Which side of the document (for two-sided documents like driver's licenses)
-          example: FRONT
-        country:
-          type: string
-          description: Country that issued the document (ISO 3166-1 alpha-2)
-          example: US
-        documentNumber:
-          type: string
-          description: Document identification number (e.g., passport number)
-          example: A12345678
-        issuingAuthority:
-          type: string
-          description: Name of the government agency or organization that issued the document
-          example: U.S. Department of State
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
           additionalProperties: true
     DocumentListResponse:
       type: object
@@ -550,104 +1088,12 @@ components:
         totalCount:
           type: integer
           description: Total number of results matching the criteria
-    Document:
-      type: object
-      required:
-      - id
-      - documentHolder
-      - documentType
-      - country
-      - fileName
-      - createdAt
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this document
-          example: Document:019542f5-b3e7-1d02-0000-000000000001
-        documentHolder:
-          type: string
-          description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
-          example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
-        documentType:
-          $ref: '#/components/schemas/DocumentType'
-        side:
-          type: string
-          enum:
-          - FRONT
-          - BACK
-          description: Which side of the document this upload represents. Relevant for two-sided documents like driver's licenses or national IDs.
-          example: FRONT
-        country:
-          type: string
-          description: Country that issued the document (ISO 3166-1 alpha-2)
-          example: US
-        documentNumber:
-          type: string
-          description: Document identification number (e.g., passport number)
-          example: A12345678
-        issuingAuthority:
-          type: string
-          description: Name of the government agency or organization that issued the document
-          example: U.S. Department of State
-        fileName:
-          type: string
-          description: Original file name of the uploaded document
-          example: passport_scan.pdf
-        createdAt:
-          type: string
-          format: date-time
-          description: When this document was uploaded
-          example: '2025-10-03T12:00:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: When this document was last updated
-          example: '2025-10-03T12:00:00Z'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
     Error401:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -677,83 +1123,54 @@ components:
           - WALLET_SIGNATURE_BODY_MISMATCH
           - WALLET_SIGNATURE_INVALID
           - REQUEST_ID_MISSING
-        message:
+        reason:
           type: string
           description: Error message
         details:
           type: object
           description: Additional error details
           additionalProperties: true
-    Error404:
+    DocumentUploadRequest:
+      title: Document Upload Request
+      allOf:
+      - $ref: '#/components/schemas/BaseDocumentRequest'
+      - type: object
+        required:
+        - documentHolder
+        properties:
+          documentHolder:
+            type: string
+            description: ID of the entity that owns this document. Can be a Customer ID or a BeneficialOwner ID.
+            example: BeneficialOwner:019542f5-b3e7-1d02-0000-000000000001
+    FieldConstraint:
       type: object
-      required:
-      - message
-      - status
-      - code
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
       properties:
-        status:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
           type: integer
-          enum:
-          - 404
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_FOUND | Transaction not found |
-
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
-
-            '
-          enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-  requestBodies:
-    DocumentReplaceRequestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            $ref: '#/components/schemas/DocumentReplaceRequest'
-    DocumentUploadRequestBody:
-      required: true
-      content:
-        multipart/form-data:
-          schema:
-            $ref: '#/components/schemas/DocumentUploadRequest'
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
   securitySchemes:
     BasicAuth:
       type: http
@@ -762,7 +1179,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header

@@ -28,29 +28,25 @@ paths:
       schema:
         type: string
     post:
-      summary: Generate a hosted KYC link for an existing customer
+      summary: Generate a hosted KYC/KYB link for an existing customer
       description: 'Generate a single-use hosted URL the customer can complete to verify their identity, and (where supported) a provider-specific `token` for embedding the verification flow directly via the provider''s SDK.
 
 
-        The customer must already exist — create them with `POST /customers` first. Calling this endpoint does not change the customer''s `kycStatus`; the customer remains `PENDING` until they complete (or fail) the hosted flow.
+        The customer must already exist — create them with `POST /customers` first. Calling this endpoint does not change the customer''s verification status; the customer remains at their current status until they complete (or fail) the hosted flow.
 
 
-        Each call returns a fresh link. Previously-issued links are not invalidated, but they remain single-use and will expire on their own. For request-level retry safety, include an `Idempotency-Key` header.'
+        This endpoint generates the link for both customer types; `customerType` selects which flow the provider runs. `INDIVIDUAL` runs identity verification (KYC), tracked on `kycStatus`. `BUSINESS` runs business verification (KYB), tracked on `kybStatus` — the flow confirms the company details, collects formation, ownership, and proof-of-address documents, and gathers the control person and every beneficial owner holding 25% or more. Business information already supplied via `POST /customers` or `PATCH /customers/{customerId}` is prefilled, so send what you have before generating the link.
+
+
+        The hosted link is one of two ways to verify a customer. To collect the data yourself instead, submit it through `POST /customers`, `POST /beneficial-owners` (business customers), and `POST /documents`, then call `POST /verifications`. Both paths produce the same status transitions and the same `CUSTOMER.KYC_*` / `CUSTOMER.KYB_*` webhooks.
+
+
+        Each call returns a fresh link. Previously-issued links are not invalidated, but they remain single-use and will expire on their own.'
       operationId: createCustomerKycLink
       tags:
       - KYC/KYB Verifications
       security:
       - BasicAuth: []
-      parameters:
-      - name: Idempotency-Key
-        in: header
-        required: false
-        description: 'A unique identifier for the request. If the same key is sent multiple times, the server will return the same response as the first request.
-
-          '
-        schema:
-          type: string
-          example: <uuid>
       requestBody:
         required: false
         content:
@@ -282,6 +278,48 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+    delete:
+      summary: Delete a beneficial owner
+      description: Remove a beneficial owner from a business customer. The owner's uploaded documents are deleted with them, and the customer's verification status is recomputed without this owner. The request is rejected while a verification review that includes this owner is in progress; wait for the review to finish and retry.
+      operationId: deleteBeneficialOwner
+      tags:
+      - KYC/KYB Verifications
+      security:
+      - BasicAuth: []
+      parameters:
+      - name: beneficialOwnerId
+        in: path
+        description: Beneficial owner ID
+        required: true
+        schema:
+          type: string
+      responses:
+        '204':
+          description: Beneficial owner deleted successfully
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '404':
+          description: Beneficial owner not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. A verification review that includes this beneficial owner is in progress. Retry after the review finishes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
         '500':
           description: Internal service error
           content:
@@ -552,41 +590,136 @@ paths:
                 $ref: '#/components/schemas/Error500'
 components:
   schemas:
-    KycLinkResponse:
-      type: object
-      description: A hosted KYC link that the customer can complete to verify their identity.
-      required:
-      - kycUrl
-      - expiresAt
-      - provider
-      properties:
-        kycUrl:
-          type: string
-          description: Hosted URL the customer should be sent to in order to complete verification. The URL is single-use and expires at `expiresAt`. To generate a new link (for example, after the previous one expires or is abandoned), call this endpoint again.
-          example: https://kyc.lightspark.com/onboard/abc123def456
-        expiresAt:
-          type: string
-          format: date-time
-          description: Time at which the hosted link expires and can no longer be used.
-          example: '2027-01-15T14:32:00Z'
-        provider:
-          $ref: '#/components/schemas/KycProvider'
-        token:
-          type: string
-          description: Provider-specific token that can be used in place of the hosted URL — for example, to embed the provider's SDK directly in your application. Only returned for providers that support direct SDK integration. Whether to use the hosted URL or the embedded SDK is up to you; both flows result in the same `kycStatus` update on the customer.
-          example: _act-sbx-jwt-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-    BeneficialOwnerRole:
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    KycStatus:
       type: string
       enum:
-      - UBO
-      - DIRECTOR
-      - COMPANY_OFFICER
-      - CONTROL_PERSON
-      - TRUSTEE
-      - GENERAL_PARTNER
-      description: Role of the beneficial owner within the business
-      example: UBO
-    BeneficialOwnerListResponse:
+      - UNVERIFIED
+      - PENDING
+      - APPROVED
+      - REJECTED
+      - HOLD
+      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
+      example: APPROVED
+    DocumentType:
+      type: string
+      enum:
+      - PASSPORT
+      - DRIVERS_LICENSE
+      - NATIONAL_ID
+      - PROOF_OF_ADDRESS
+      - BANK_STATEMENT
+      - TAX_RETURN
+      - CERTIFICATE_OF_INCORPORATION
+      - ARTICLES_OF_INCORPORATION
+      - ARTICLES_OF_ASSOCIATION
+      - STATE_REGISTRY_EXCERPT
+      - GOOD_STANDING_CERTIFICATE
+      - INFORMATION_STATEMENT
+      - INCUMBENCY_CERTIFICATE
+      - BUSINESS_LICENSE
+      - SHAREHOLDER_REGISTER
+      - POWER_OF_ATTORNEY
+      - UTILITY_BILL
+      - ELECTRICITY_BILL
+      - RENT_OR_LEASE_AGREEMENT
+      - DIRECTOR_REGISTRY
+      - TRUST_AGREEMENT
+      - STATE_COMPANY_REGISTRY
+      - PARTNERSHIP_CONTROL_AGREEMENT
+      - PARTNERSHIP_AGREEMENT
+      - SELFIE
+      - OTHER
+      description: 'Type of identity or business verification document. Document types are grouped by verification category:
+
+        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
+
+        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
+
+        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
+
+        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
+
+        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
+      example: PASSPORT
+    VerificationRequest:
+      type: object
+      required:
+      - customerId
+      properties:
+        customerId:
+          type: string
+          description: The ID of the customer to verify
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+    BeneficialOwnerPersonalInfo:
+      type: object
+      required:
+      - firstName
+      - lastName
+      - birthDate
+      - nationality
+      - address
+      - idType
+      - identifier
+      properties:
+        firstName:
+          type: string
+          maxLength: 250
+          description: First name of the individual
+          example: Jane
+        middleName:
+          type: string
+          maxLength: 250
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          maxLength: 250
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          maxLength: 100
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
+    VerificationListResponse:
       type: object
       required:
       - data
@@ -594,9 +727,9 @@ components:
       properties:
         data:
           type: array
-          description: List of beneficial owners matching the filter criteria
+          description: List of verifications matching the filter criteria
           items:
-            $ref: '#/components/schemas/BeneficialOwner'
+            $ref: '#/components/schemas/Verification'
         hasMore:
           type: boolean
           description: Indicates if more results are available beyond this page
@@ -606,195 +739,168 @@ components:
         totalCount:
           type: integer
           description: Total number of results matching the criteria
-    Error400:
+    IdentificationType:
+      type: string
+      enum:
+      - SSN
+      - ITIN
+      - EIN
+      - NON_US_TAX_ID
+      description: Type of tax identification
+      example: SSN
+    BeneficialOwnerUpdateRequest:
+      type: object
+      properties:
+        roles:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100)
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfoUpdate'
+    Address:
       type: object
       required:
-      - message
-      - status
-      - code
+      - line1
+      - postalCode
+      - country
       properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
-        code:
+        line1:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | INVALID_INPUT | Invalid input provided |
-
-            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
-
-            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
-
-            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
-
-            | INVALID_UMA_ADDRESS | UMA address format is invalid |
-
-            | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
-
-            | INVALID_RECEIVER | Receiver is invalid |
-
-            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
-
-            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
-
-            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
-
-            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
-
-            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
-
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
-
-            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
-
-            | INVALID_CURRENCY | Currency is invalid |
-
-            | INVALID_TIMESTAMP | Timestamp is invalid |
-
-            | INVALID_NONCE | Nonce is invalid |
-
-            | INVALID_REQUEST_FORMAT | Request format is invalid |
-
-            | INVALID_BANK_ACCOUNT | Bank account is invalid |
-
-            | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
-
-            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
-
-            | INVALID_AMOUNT | Amount is invalid |
-
-            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
-
-            | LOW_QUALITY | Document quality too low to process |
-
-            | DATA_MISMATCH | Document details don''t match provided information |
-
-            | EXPIRED | Document has expired |
-
-            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
-
-            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
-
-            | INCOMPLETE | Document is missing pages or sides |
-
-            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
-
-            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
-
-            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
-
-            '
-          enum:
-          - INVALID_INPUT
-          - MISSING_MANDATORY_USER_INFO
-          - INVITATION_ALREADY_CLAIMED
-          - INVITATIONS_NOT_CONFIGURED
-          - INVALID_UMA_ADDRESS
-          - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
-          - INVALID_RECEIVER
-          - PARSE_PAYREQ_RESPONSE_ERROR
-          - CERT_CHAIN_INVALID
-          - CERT_CHAIN_EXPIRED
-          - INVALID_PUBKEY_FORMAT
-          - MISSING_REQUIRED_UMA_PARAMETERS
-          - SENDER_NOT_ACCEPTED
-          - AMOUNT_OUT_OF_RANGE
-          - INVALID_CURRENCY
-          - INVALID_TIMESTAMP
-          - INVALID_NONCE
-          - INVALID_REQUEST_FORMAT
-          - INVALID_BANK_ACCOUNT
-          - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
-          - PARSE_LNURLP_RESPONSE_ERROR
-          - INVALID_AMOUNT
-          - WEBHOOK_ENDPOINT_NOT_SET
-          - WEBHOOK_DELIVERY_ERROR
-          - LOW_QUALITY
-          - DATA_MISMATCH
-          - EXPIRED
-          - SUSPECTED_FRAUD
-          - UNSUITABLE_DOCUMENT
-          - INCOMPLETE
-          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
-          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
-          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
-          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
-          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
-          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
+          description: Street address line 1
+          example: 123 Main Street
+        line2:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    Error409:
+          description: Street address line 2
+          example: Apt 4B
+        city:
+          type: string
+          description: City
+          example: San Francisco
+        state:
+          type: string
+          description: State/Province/Region
+          example: CA
+        postalCode:
+          type: string
+          description: Postal/ZIP code
+          example: '94105'
+        country:
+          type: string
+          description: Country code (ISO 3166-1 alpha-2)
+          example: US
+    FieldError:
       type: object
       required:
-      - message
-      - status
-      - code
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
       properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
+        field:
           type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
         message:
           type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    BeneficialOwnerPersonalInfoUpdate:
+      type: object
+      description: Partial update for beneficial owner personal information. Only provided fields are updated.
+      properties:
+        firstName:
+          type: string
+          maxLength: 250
+          description: First name of the individual
+          example: Jane
+        middleName:
+          type: string
+          maxLength: 250
+          description: Middle name of the individual
+          example: Marie
+        lastName:
+          type: string
+          maxLength: 250
+          description: Last name of the individual
+          example: Smith
+        birthDate:
+          type: string
+          format: date
+          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
+          example: '1978-06-15'
+        nationality:
+          type: string
+          description: Country of nationality (ISO 3166-1 alpha-2)
+          example: US
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Email address of the individual
+          example: jane.smith@acmecorp.com
+        phoneNumber:
+          type: string
+          description: Phone number in E.164 format
+          example: '+14155550192'
+          pattern: ^\+[1-9]\d{1,14}$
+        address:
+          $ref: '#/components/schemas/Address'
+        idType:
+          $ref: '#/components/schemas/IdentificationType'
+        identifier:
+          type: string
+          maxLength: 100
+          description: The identification number or value
+          example: 123-45-6789
+        countryOfIssuance:
+          type: string
+          description: Country that issued the identification (ISO 3166-1 alpha-2)
+          example: US
+    Verification:
+      type: object
+      required:
+      - id
+      - customerId
+      - verificationStatus
+      - errors
+      - createdAt
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this verification
+          example: Verification:019542f5-b3e7-1d02-0000-000000000001
+        customerId:
+          type: string
+          description: The ID of the customer being verified
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        verificationStatus:
+          $ref: '#/components/schemas/VerificationStatus'
+        errors:
+          type: array
+          description: List of issues preventing verification from proceeding. Empty when verificationStatus is APPROVED or IN_PROGRESS.
+          items:
+            $ref: '#/components/schemas/VerificationError'
+        createdAt:
+          type: string
+          format: date-time
+          description: When this verification was created
+          example: '2025-10-03T12:00:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: When this verification was last updated
+          example: '2025-10-03T12:00:00Z'
     BeneficialOwner:
       type: object
       required:
@@ -842,164 +948,35 @@ components:
           format: date-time
           description: When this beneficial owner was last updated
           example: '2025-10-03T12:00:00Z'
-    Error401:
+    KycLinkCreateRequest:
+      type: object
+      description: Request body for generating a hosted KYC link for an existing customer.
+      properties:
+        redirectUri:
+          type: string
+          format: uri
+          description: URI the customer is redirected to after completing the hosted KYC flow. Must start with `https://` (or `http://` for local development). Embedded in the returned `kycUrl`.
+          example: https://app.example.com/onboarding/completed
+    BeneficialOwnerListResponse:
       type: object
       required:
-      - message
-      - status
-      - code
+      - data
+      - hasMore
       properties:
-        status:
+        data:
+          type: array
+          description: List of beneficial owners matching the filter criteria
+          items:
+            $ref: '#/components/schemas/BeneficialOwner'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
           type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    BeneficialOwnerPersonalInfoUpdate:
-      type: object
-      description: Partial update for beneficial owner personal information. Only provided fields are updated.
-      properties:
-        firstName:
-          type: string
-          description: First name of the individual
-          example: Jane
-        middleName:
-          type: string
-          description: Middle name of the individual
-          example: Marie
-        lastName:
-          type: string
-          description: Last name of the individual
-          example: Smith
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1978-06-15'
-        nationality:
-          type: string
-          description: Country of nationality (ISO 3166-1 alpha-2)
-          example: US
-        email:
-          type: string
-          format: email
-          description: Email address of the individual
-          example: jane.smith@acmecorp.com
-        phoneNumber:
-          type: string
-          description: Phone number in E.164 format
-          example: '+14155550192'
-          pattern: ^\+[1-9]\d{1,14}$
-        address:
-          $ref: '#/components/schemas/Address'
-        idType:
-          $ref: '#/components/schemas/IdentificationType'
-        identifier:
-          type: string
-          description: The identification number or value
-          example: 123-45-6789
-        countryOfIssuance:
-          type: string
-          description: Country that issued the identification (ISO 3166-1 alpha-2)
-          example: US
-    IdentificationType:
-      type: string
-      enum:
-      - SSN
-      - ITIN
-      - EIN
-      - NON_US_TAX_ID
-      description: Type of tax identification
-      example: SSN
-    BeneficialOwnerPersonalInfo:
-      type: object
-      required:
-      - firstName
-      - lastName
-      - birthDate
-      - nationality
-      - address
-      - idType
-      - identifier
-      properties:
-        firstName:
-          type: string
-          description: First name of the individual
-          example: Jane
-        middleName:
-          type: string
-          description: Middle name of the individual
-          example: Marie
-        lastName:
-          type: string
-          description: Last name of the individual
-          example: Smith
-        birthDate:
-          type: string
-          format: date
-          description: Date of birth in ISO 8601 format (YYYY-MM-DD)
-          example: '1978-06-15'
-        nationality:
-          type: string
-          description: Country of nationality (ISO 3166-1 alpha-2)
-          example: US
-        email:
-          type: string
-          format: email
-          description: Email address of the individual
-          example: jane.smith@acmecorp.com
-        phoneNumber:
-          type: string
-          description: Phone number in E.164 format
-          example: '+14155550192'
-          pattern: ^\+[1-9]\d{1,14}$
-        address:
-          $ref: '#/components/schemas/Address'
-        idType:
-          $ref: '#/components/schemas/IdentificationType'
-        identifier:
-          type: string
-          description: The identification number or value
-          example: 123-45-6789
-        countryOfIssuance:
-          type: string
-          description: Country that issued the identification (ISO 3166-1 alpha-2)
-          example: US
+          description: Total number of results matching the criteria
     VerificationError:
       type: object
       required:
@@ -1041,72 +1018,139 @@ components:
           type: string
           description: Human-readable description of the issue
           example: Business address line 1 is required
-    VerificationRequest:
+    Error500:
       type: object
       required:
-      - customerId
-      properties:
-        customerId:
-          type: string
-          description: The ID of the customer to verify
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-    Error404:
-      type: object
-      required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
 
             |------------|-------------|
 
-            | TRANSACTION_NOT_FOUND | Transaction not found |
+            | GRID_SWITCH_ERROR | Grid switch error |
 
-            | INVITATION_NOT_FOUND | Invitation not found |
-
-            | USER_NOT_FOUND | Customer not found |
-
-            | QUOTE_NOT_FOUND | Quote not found |
-
-            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
-
-            | TOKEN_NOT_FOUND | Token not found |
-
-            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
-
-            | REFERENCE_NOT_FOUND | Reference not found |
-
-            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+            | INTERNAL_ERROR | Internal server or UMA error |
 
             '
           enum:
-          - TRANSACTION_NOT_FOUND
-          - INVITATION_NOT_FOUND
-          - USER_NOT_FOUND
-          - QUOTE_NOT_FOUND
-          - LOOKUP_REQUEST_NOT_FOUND
-          - TOKEN_NOT_FOUND
-          - BULK_UPLOAD_JOB_NOT_FOUND
-          - REFERENCE_NOT_FOUND
-          - UMA_NOT_FOUND
-          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
           type: string
           description: Error message
         details:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error401:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    FieldConstraint:
+      type: object
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
+      properties:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
+          type: integer
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
+    BeneficialOwnerCreateRequest:
+      type: object
+      required:
+      - customerId
+      - roles
+      - ownershipPercentage
+      - personalInfo
+      properties:
+        customerId:
+          type: string
+          description: The ID of the business customer this beneficial owner is associated with
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        roles:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/BeneficialOwnerRole'
+          description: Roles of this person within the business
+          example:
+          - UBO
+          - DIRECTOR
+        ownershipPercentage:
+          type: integer
+          description: Percentage of ownership in the business (0-100). Relevant when role includes UBO.
+          minimum: 0
+          maximum: 100
+          example: 51
+        personalInfo:
+          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
+    KycProvider:
+      type: string
+      description: The KYC provider that will perform identity verification for the customer. Grid selects the provider based on the customer's region and platform configuration; the value is informational for platforms that want to integrate directly with the provider's SDK.
+      enum:
+      - SUMSUB
+      example: SUMSUB
     VerificationErrorType:
       type: string
       enum:
@@ -1134,47 +1178,450 @@ components:
       - MISSING_GOOD_STANDING_DOCUMENT
       description: Type of verification error. The category-specific MISSING_*_DOCUMENT types indicate which document category is needed. Document quality types (POOR_QUALITY_DOCUMENT, SUSPECTED_FRAUD_DOCUMENT, etc.) indicate specific issues with uploaded documents. APPLICANT_* types indicate issues with the applicant themselves (sanctions, fraud, criminal records).
       example: MISSING_FIELD
-    DocumentType:
+    KycLinkResponse:
+      type: object
+      description: A hosted KYC link that the customer can complete to verify their identity.
+      required:
+      - kycUrl
+      - expiresAt
+      - provider
+      properties:
+        kycUrl:
+          type: string
+          description: Hosted URL the customer should be sent to in order to complete verification. The URL is single-use and expires at `expiresAt`. To generate a new link (for example, after the previous one expires or is abandoned), call this endpoint again.
+          example: https://kyc.lightspark.com/onboard/abc123def456
+        expiresAt:
+          type: string
+          format: date-time
+          description: Time at which the hosted link expires and can no longer be used.
+          example: '2027-01-15T14:32:00Z'
+        provider:
+          $ref: '#/components/schemas/KycProvider'
+        token:
+          type: string
+          description: Provider-specific token that can be used in place of the hosted URL — for example, to embed the provider's SDK directly in your application. Only returned for providers that support direct SDK integration. Whether to use the hosted URL or the embedded SDK is up to you; both flows result in the same `kycStatus` update on the customer.
+          example: _act-sbx-jwt-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+    Error409:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | TRANSACTION_NOT_CANCELLABLE | Transaction has already settled or is otherwise past the point where it can be cancelled |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | SCA_SESSION_REQUIRED | The customer''s Strong Customer Authentication login session is missing or expired. Re-authenticate the customer, then retry the request. Distinct from a `401`, which means the platform''s own API credentials were rejected |
+
+            | BENEFICIARY_TRUSTED | The external account is currently a trusted beneficiary, so it cannot be deleted. Untrust it first via `POST /customers/external-accounts/{externalAccountId}/untrust` (and its `/confirm`), then delete |
+
+            | BANK_ACCOUNT_VALIDATION_PENDING | The US bank account on this request is still being validated. Grid verifies a newly added ACH account by sending a micro-entry and waiting out the return window, which takes a few banking days. The account is not rejected; retry once validation completes. A permanently failed account returns `400 INVALID_BANK_ACCOUNT` instead |
+
+            | INVALID_STATE_TRANSITION | The requested card `status` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE \| FROZEN → CLOSED`, or the card cannot be unfrozen by the platform because Grid froze it for review, it was frozen as `COMPROMISED`, or its customer is not `ACTIVE` |
+
+            | CARD_ALREADY_CLOSED | `status: CLOSED` was requested for a card that is already `CLOSED` |
+
+            | CARD_NOT_MUTABLE | The card is `CLOSED`, so it can no longer be mutated |
+
+            | PIN_CHANGE_REQUIRED | The card''s PIN unblock allowance is consumed for seven days. Change the PIN to recover sooner. `details.pinUnblockAvailableAt` gives the next allowed unblock time |
+
+            | CARD_LIMIT_REACHED | The platform has reached the maximum number of live cards it may hold, or the cardholder already holds a card and the platform is limited to one per cardholder. Closing a card frees its slot; contact Lightspark to raise the limit |
+
+            | STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE | Grid enablement can only be requested while the stablecoin is `NOT_ENABLED` (a repeat request while already `PENDING_APPROVAL` succeeds). `ENABLING`, `ENABLED` and `DISABLED` are driven by Lightspark and cannot be requested |
+
+            | NOT_YET_AVAILABLE | The request is valid, but its result is not available yet because the data it depends on could still change. Retry later. `reason` says what is outstanding. For balance changes, card settlement for a window boundary has not closed |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            | DOCUMENT_ALREADY_EXISTS | A document of this type already exists for the holder; replace it with PUT |
+
+            | DUPLICATE_EXTERNAL_ACCOUNT | An equivalent external account already exists. When the conflicting account belongs to your platform, `details.externalAccountId` and `details.platformAccountId` identify it; otherwise `details` is omitted |
+
+            | DUPLICATE_PAY_REQUEST | A pay request with this idempotency key already exists |
+
+            | OPERATION_IN_PROGRESS | A conflicting Embedded Wallet operation is still in progress |
+
+            | SMS_OTP_CREDENTIAL_SET_CHANGED | The SMS_OTP credential set changed while the request was in flight |
+
+            | SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS | The phone number is already associated with an SMS_OTP credential |
+
+            | STABLECOIN_SYMBOL_ALREADY_EXISTS | A stablecoin with this symbol is already registered |
+
+            | STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS | A stablecoin with this token identifier is already registered |
+
+            | WALLET_NOT_PROVISIONED | The embedded wallet has not been provisioned |
+
+            | PAYMENT_DOCUMENT_ALREADY_USED | The payment document is already attached to a quote. A document can be used on one quote only, so upload the file again to use it on another quote |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - TRANSACTION_NOT_CANCELLABLE
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - SCA_SESSION_REQUIRED
+          - BENEFICIARY_TRUSTED
+          - BANK_ACCOUNT_VALIDATION_PENDING
+          - INVALID_STATE_TRANSITION
+          - CARD_ALREADY_CLOSED
+          - CARD_NOT_MUTABLE
+          - PIN_CHANGE_REQUIRED
+          - CARD_LIMIT_REACHED
+          - STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE
+          - NOT_YET_AVAILABLE
+          - CONFLICT
+          - DOCUMENT_ALREADY_EXISTS
+          - DUPLICATE_EXTERNAL_ACCOUNT
+          - DUPLICATE_PAY_REQUEST
+          - OPERATION_IN_PROGRESS
+          - SMS_OTP_CREDENTIAL_SET_CHANGED
+          - SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS
+          - STABLECOIN_SYMBOL_ALREADY_EXISTS
+          - STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS
+          - WALLET_NOT_PROVISIONED
+          - PAYMENT_DOCUMENT_ALREADY_USED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    BeneficialOwnerRole:
       type: string
       enum:
-      - PASSPORT
-      - DRIVERS_LICENSE
-      - NATIONAL_ID
-      - PROOF_OF_ADDRESS
-      - BANK_STATEMENT
-      - TAX_RETURN
-      - CERTIFICATE_OF_INCORPORATION
-      - ARTICLES_OF_INCORPORATION
-      - ARTICLES_OF_ASSOCIATION
-      - STATE_REGISTRY_EXCERPT
-      - GOOD_STANDING_CERTIFICATE
-      - INFORMATION_STATEMENT
-      - INCUMBENCY_CERTIFICATE
-      - BUSINESS_LICENSE
-      - SHAREHOLDER_REGISTER
-      - POWER_OF_ATTORNEY
-      - UTILITY_BILL
-      - ELECTRICITY_BILL
-      - RENT_OR_LEASE_AGREEMENT
-      - DIRECTOR_REGISTRY
-      - TRUST_AGREEMENT
-      - STATE_COMPANY_REGISTRY
-      - PARTNERSHIP_CONTROL_AGREEMENT
-      - PARTNERSHIP_AGREEMENT
-      - SELFIE
-      - OTHER
-      description: 'Type of identity or business verification document. Document types are grouped by verification category:
+      - UBO
+      - DIRECTOR
+      - COMPANY_OFFICER
+      - CONTROL_PERSON
+      - TRUSTEE
+      - GENERAL_PARTNER
+      description: Role of the beneficial owner within the business
+      example: UBO
+    Error404:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
 
-        **Identity** — PASSPORT, DRIVERS_LICENSE, NATIONAL_ID
+            |------------|-------------|
 
-        **Business — Legal presence** — CERTIFICATE_OF_INCORPORATION, ARTICLES_OF_INCORPORATION, ARTICLES_OF_ASSOCIATION, STATE_REGISTRY_EXCERPT
+            | TRANSACTION_NOT_FOUND | Transaction not found |
 
-        **Business — Control structure** — DIRECTOR_REGISTRY, TRUST_AGREEMENT, STATE_COMPANY_REGISTRY, PARTNERSHIP_CONTROL_AGREEMENT
+            | INVITATION_NOT_FOUND | Invitation not found |
 
-        **Business — Ownership structure** — SHAREHOLDER_REGISTER, TRUST_AGREEMENT, PARTNERSHIP_AGREEMENT
+            | USER_NOT_FOUND | Customer not found |
 
-        **Proof of address** — UTILITY_BILL, RENT_OR_LEASE_AGREEMENT, ELECTRICITY_BILL, BANK_STATEMENT, TAX_RETURN'
-      example: PASSPORT
+            | QUOTE_NOT_FOUND | Quote not found |
+
+            | LOOKUP_REQUEST_NOT_FOUND | Lookup request not found |
+
+            | TOKEN_NOT_FOUND | Token not found |
+
+            | BULK_UPLOAD_JOB_NOT_FOUND | Bulk upload job not found |
+
+            | REFERENCE_NOT_FOUND | Reference not found |
+
+            | UMA_NOT_FOUND | The UMA address is well-formed but no receiver exists at the counterparty VASP |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
+
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
+            '
+          enum:
+          - TRANSACTION_NOT_FOUND
+          - INVITATION_NOT_FOUND
+          - USER_NOT_FOUND
+          - QUOTE_NOT_FOUND
+          - LOOKUP_REQUEST_NOT_FOUND
+          - TOKEN_NOT_FOUND
+          - BULK_UPLOAD_JOB_NOT_FOUND
+          - REFERENCE_NOT_FOUND
+          - UMA_NOT_FOUND
+          - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error400:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
+          additionalProperties: true
     VerificationStatus:
       type: string
       enum:
@@ -1186,196 +1633,6 @@ components:
       - READY_FOR_VERIFICATION
       description: Current status of the KYC/KYB verification
       example: RESOLVE_ERRORS
-    KycStatus:
-      type: string
-      enum:
-      - UNVERIFIED
-      - PENDING
-      - APPROVED
-      - REJECTED
-      - HOLD
-      description: The current KYC status of a customer. `HOLD` means the customer is placed on hold and may be required to update or provide more information.
-      example: APPROVED
-    KycLinkCreateRequest:
-      type: object
-      description: Request body for generating a hosted KYC link for an existing customer.
-      properties:
-        redirectUri:
-          type: string
-          format: uri
-          description: URI the customer is redirected to after completing the hosted KYC flow. Must start with `https://` (or `http://` for local development). Embedded in the returned `kycUrl`.
-          example: https://app.example.com/onboarding/completed
-    Address:
-      type: object
-      required:
-      - line1
-      - postalCode
-      - country
-      properties:
-        line1:
-          type: string
-          description: Street address line 1
-          example: 123 Main Street
-        line2:
-          type: string
-          description: Street address line 2
-          example: Apt 4B
-        city:
-          type: string
-          description: City
-          example: San Francisco
-        state:
-          type: string
-          description: State/Province/Region
-          example: CA
-        postalCode:
-          type: string
-          description: Postal/ZIP code
-          example: '94105'
-        country:
-          type: string
-          description: Country code (ISO 3166-1 alpha-2)
-          example: US
-    BeneficialOwnerCreateRequest:
-      type: object
-      required:
-      - customerId
-      - roles
-      - ownershipPercentage
-      - personalInfo
-      properties:
-        customerId:
-          type: string
-          description: The ID of the business customer this beneficial owner is associated with
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BeneficialOwnerRole'
-          description: Roles of this person within the business
-          example:
-          - UBO
-          - DIRECTOR
-        ownershipPercentage:
-          type: integer
-          description: Percentage of ownership in the business (0-100). Relevant when role includes UBO.
-          minimum: 0
-          maximum: 100
-          example: 51
-        personalInfo:
-          $ref: '#/components/schemas/BeneficialOwnerPersonalInfo'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    VerificationListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of verifications matching the filter criteria
-          items:
-            $ref: '#/components/schemas/Verification'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of results matching the criteria
-    Verification:
-      type: object
-      required:
-      - id
-      - customerId
-      - verificationStatus
-      - errors
-      - createdAt
-      properties:
-        id:
-          type: string
-          description: Unique identifier for this verification
-          example: Verification:019542f5-b3e7-1d02-0000-000000000001
-        customerId:
-          type: string
-          description: The ID of the customer being verified
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        verificationStatus:
-          $ref: '#/components/schemas/VerificationStatus'
-        errors:
-          type: array
-          description: List of issues preventing verification from proceeding. Empty when verificationStatus is APPROVED or IN_PROGRESS.
-          items:
-            $ref: '#/components/schemas/VerificationError'
-        createdAt:
-          type: string
-          format: date-time
-          description: When this verification was created
-          example: '2025-10-03T12:00:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: When this verification was last updated
-          example: '2025-10-03T12:00:00Z'
-    BeneficialOwnerUpdateRequest:
-      type: object
-      properties:
-        roles:
-          type: array
-          items:
-            $ref: '#/components/schemas/BeneficialOwnerRole'
-          description: Roles of this person within the business
-          example:
-          - UBO
-          - DIRECTOR
-        ownershipPercentage:
-          type: integer
-          description: Percentage of ownership in the business (0-100)
-          minimum: 0
-          maximum: 100
-          example: 51
-        personalInfo:
-          $ref: '#/components/schemas/BeneficialOwnerPersonalInfoUpdate'
-    KycProvider:
-      type: string
-      description: The KYC provider that will perform identity verification for the customer. Grid selects the provider based on the customer's region and platform configuration; the value is informational for platforms that want to integrate directly with the provider's SDK.
-      enum:
-      - SUMSUB
-      example: SUMSUB
   securitySchemes:
     BasicAuth:
       type: http
@@ -1384,7 +1641,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header

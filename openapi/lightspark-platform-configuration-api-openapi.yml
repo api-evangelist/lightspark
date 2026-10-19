@@ -49,7 +49,10 @@ paths:
                 $ref: '#/components/schemas/Error500'
     patch:
       summary: Update platform configuration
-      description: Update the platform configuration settings
+      description: 'Update platform configuration settings. `cardConfigs` can establish platform-level caps on a single card transaction, on spend during one UTC calendar day, and on the number of transactions during one UTC calendar day. Grid enforces the lower of each platform cap and its corresponding card-specific value without replacing the card-specific value. Daily limits reset at 00:00 UTC.
+
+
+        Set `cardConfigs.pinTargetOrigin` to the canonical HTTPS origin of your frontend before calling `GET /cards/{id}/pin-entry-url`. Omit the field to preserve its value or set it to `null` to clear it.'
       operationId: updatePlatformConfig
       tags:
       - Platform Configuration
@@ -84,6 +87,23 @@ paths:
                 sendFromEmailSenderName: Acme Notifications
                 replyToEmailAddress: support@acme.com
                 logoUrl: https://acme.com/logo.png
+              cardTokenization2faConfig:
+                displayName: Acme
+                logoUrl: https://acme.com/card-email-logo.png
+                email:
+                  fromAddress: cards@acme.com
+                  fromName: Acme Cards
+                  replyToAddress: support@acme.com
+                  subject: Your Acme card verification code
+                  bodyText: Use this code to finish adding your Acme card to your digital wallet.
+                sms:
+                  templateSid: HJaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                  bodyText: Use this code to finish adding your Acme card to your digital wallet.
+              cardConfigs:
+                pinTargetOrigin: https://app.example.com
+                maxSpendPerTransaction: 10000
+                maxSpendPerDay: 50000
+                maxTransactionsPerDay: 50
       responses:
         '200':
           description: Configuration updated successfully
@@ -92,7 +112,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/PlatformConfig'
         '400':
-          description: Bad request
+          description: Bad request. Includes `INVALID_INPUT` when `cardConfigs.pinTargetOrigin` is supplied but is neither null nor a canonical HTTPS origin.
           content:
             application/json:
               schema:
@@ -117,6 +137,40 @@ paths:
                 $ref: '#/components/schemas/Error501'
 components:
   schemas:
+    PaymentDocumentRequirementId:
+      type: string
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
+
+
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
+
+
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
+    CardTokenization2FAConfig:
+      type: object
+      description: Per-platform branding for authentication codes sent when a cardholder adds a Grid-issued card to a digital wallet. Updates apply to subsequent delivery attempts. Invalid sender or provider configuration can cause delivery to fail.
+      properties:
+        displayName:
+          type: string
+          maxLength: 255
+          description: 'Name shown in authentication messages and used to build the default
+
+            subject, body, and sender name. Defaults to the platform''s name.
+
+            '
+          example: Acme
+        logoUrl:
+          type: string
+          format: uri
+          pattern: ^https://
+          maxLength: 512
+          description: HTTPS URL of the logo displayed in email messages.
+          example: https://acme.com/card-email-logo.png
+        email:
+          $ref: '#/components/schemas/CardTokenization2FAEmailConfig'
+        sms:
+          $ref: '#/components/schemas/CardTokenization2FASmsConfig'
     CounterpartyFieldDefinition:
       type: object
       properties:
@@ -129,447 +183,13 @@ components:
       required:
       - name
       - mandatory
-    EmbeddedWalletConfig:
-      type: object
-      description: 'Per-platform embedded-wallet configuration. Controls branding and OTP
-
-        behavior for the email sent when a customer authenticates with an
-
-        EMAIL_OTP credential. Fields omitted from a request are left unchanged.
-
-        '
-      properties:
-        appName:
-          type: string
-          maxLength: 255
-          description: App name displayed in the default OTP email template.
-          example: Acme Wallet
-        otpLength:
-          type: integer
-          minimum: 4
-          maximum: 12
-          description: 'Number of digits / characters in the OTP code. Defaults to 6 when
-
-            not set.
-
-            '
-          example: 6
-        alphanumeric:
-          type: boolean
-          description: 'If true, OTP includes letters in addition to digits. Defaults to
-
-            numeric-only when not set.
-
-            '
-          example: false
-        expirationSeconds:
-          type: integer
-          minimum: 1
-          maximum: 86400
-          description: 'OTP validity window in seconds. Defaults to 300 when not set.
-
-            '
-          example: 300
-        sendFromEmailAddress:
-          type: string
-          format: email
-          maxLength: 255
-          description: Custom sender email address for OTP emails.
-          example: noreply@acme.com
-        sendFromEmailSenderName:
-          type: string
-          maxLength: 255
-          description: 'Custom sender display name. Defaults to "Notifications" when not set.
-
-            '
-          example: Acme Notifications
-        replyToEmailAddress:
-          type: string
-          format: email
-          maxLength: 255
-          description: Custom reply-to email address for OTP emails.
-          example: support@acme.com
-        logoUrl:
-          type: string
-          format: uri
-          maxLength: 512
-          description: URL to a PNG logo for the OTP email. Resized to 340x124px.
-          example: https://acme.com/logo.png
-    Error501:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 501
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-
-            | NOT_IMPLEMENTED | Feature not implemented |
-
-            '
-          enum:
-          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
-          - NOT_IMPLEMENTED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CustomerInfoFieldName:
+    FeeOriginator:
       type: string
       enum:
-      - FULL_NAME
-      - BIRTH_DATE
-      - NATIONALITY
-      - PHONE_NUMBER
-      - EMAIL
-      - POSTAL_ADDRESS
-      - TAX_ID
-      - REGISTRATION_NUMBER
-      - USER_TYPE
-      - COUNTRY_OF_RESIDENCE
-      - ACCOUNT_IDENTIFIER
-      - FI_LEGAL_ENTITY_NAME
-      - FI_ADDRESS
-      - PURPOSE_OF_PAYMENT
-      - ULTIMATE_INSTITUTION_COUNTRY
-      - IDENTIFIER
-      - BUSINESS_TYPE
-      - COMPANY_LEGAL_NAME
-      - ID_TYPE
-      - ID_NUMBER
-      description: Name of a type of field containing info about a platform's customer or counterparty customer.
-      example: FULL_NAME
-    Error400:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | INVALID_INPUT | Invalid input provided |
-
-            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
-
-            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
-
-            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
-
-            | INVALID_UMA_ADDRESS | UMA address format is invalid |
-
-            | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
-
-            | INVALID_RECEIVER | Receiver is invalid |
-
-            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
-
-            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
-
-            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
-
-            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
-
-            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
-
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
-
-            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
-
-            | INVALID_CURRENCY | Currency is invalid |
-
-            | INVALID_TIMESTAMP | Timestamp is invalid |
-
-            | INVALID_NONCE | Nonce is invalid |
-
-            | INVALID_REQUEST_FORMAT | Request format is invalid |
-
-            | INVALID_BANK_ACCOUNT | Bank account is invalid |
-
-            | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
-
-            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
-
-            | INVALID_AMOUNT | Amount is invalid |
-
-            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
-
-            | LOW_QUALITY | Document quality too low to process |
-
-            | DATA_MISMATCH | Document details don''t match provided information |
-
-            | EXPIRED | Document has expired |
-
-            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
-
-            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
-
-            | INCOMPLETE | Document is missing pages or sides |
-
-            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
-
-            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
-
-            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
-
-            '
-          enum:
-          - INVALID_INPUT
-          - MISSING_MANDATORY_USER_INFO
-          - INVITATION_ALREADY_CLAIMED
-          - INVITATIONS_NOT_CONFIGURED
-          - INVALID_UMA_ADDRESS
-          - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
-          - INVALID_RECEIVER
-          - PARSE_PAYREQ_RESPONSE_ERROR
-          - CERT_CHAIN_INVALID
-          - CERT_CHAIN_EXPIRED
-          - INVALID_PUBKEY_FORMAT
-          - MISSING_REQUIRED_UMA_PARAMETERS
-          - SENDER_NOT_ACCEPTED
-          - AMOUNT_OUT_OF_RANGE
-          - INVALID_CURRENCY
-          - INVALID_TIMESTAMP
-          - INVALID_NONCE
-          - INVALID_REQUEST_FORMAT
-          - INVALID_BANK_ACCOUNT
-          - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
-          - PARSE_LNURLP_RESPONSE_ERROR
-          - INVALID_AMOUNT
-          - WEBHOOK_ENDPOINT_NOT_SET
-          - WEBHOOK_DELIVERY_ERROR
-          - LOW_QUALITY
-          - DATA_MISMATCH
-          - EXPIRED
-          - SUSPECTED_FRAUD
-          - UNSUITABLE_DOCUMENT
-          - INCOMPLETE
-          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
-          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
-          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
-          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
-          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
-          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    TransactionType:
-      type: string
-      enum:
-      - INCOMING
-      - OUTGOING
-      description: Type of transaction (incoming payment or outgoing payment)
-    PlatformConfig:
-      type: object
-      properties:
-        id:
-          type: string
-          description: System-generated unique identifier
-          readOnly: true
-          example: PlatformConfig:019542f5-b3e7-1d02-0000-000000000003
-        umaDomain:
-          type: string
-          description: UMA domain for this platform
-          example: platform.uma.domain
-        proxyUmaSubdomain:
-          type: string
-          description: The subdomain that incoming requests will be proxied to
-          example: platform
-        webhookEndpoint:
-          type: string
-          description: URL where webhook notifications will be sent
-          example: https://api.mycompany.com/webhooks/uma
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlatformCurrencyConfig'
-          description: 'List of currencies supported by the platform. This is what the platform''s
-
-            customers are able to hold, send, and receive.
-
-            '
-        isRegulatedFinancialInstitution:
-          type: boolean
-          description: 'Whether the platform is a regulated financial institution. This is used to
-
-            determine if the platform''s customers must be KYC/KYB''d by Lightspark via
-
-            the KYC link flow. This can only be set by Lightspark during platform
-
-            creation.
-
-            '
-          example: false
-        embeddedWalletConfig:
-          $ref: '#/components/schemas/EmbeddedWalletConfig'
-          description: 'Embedded-wallet branding and OTP settings for this platform. Present
-
-            only when the platform has configured embedded-wallet support;
-
-            omitted otherwise.
-
-            '
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2025-06-15T12:30:45Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2025-06-15T12:30:45Z'
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    PlatformConfigUpdateRequest:
-      type: object
-      properties:
-        umaDomain:
-          type: string
-          example: mycompany.com
-        webhookEndpoint:
-          type: string
-          example: https://api.mycompany.com/webhooks/uma
-        supportedCurrencies:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlatformCurrencyConfig'
-        embeddedWalletConfig:
-          $ref: '#/components/schemas/EmbeddedWalletConfig'
-          description: 'Update or create the embedded-wallet configuration for this platform.
-
-            Fields omitted from the nested object are left unchanged. Omit this
-
-            field at the top level to leave the embedded-wallet configuration
-
-            unchanged entirely.
-
-            '
-    Error401:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNAUTHORIZED | Issue with API credentials |
-
-            | INVALID_SIGNATURE | Signature header is invalid |
-
-            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
-
-            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
-
-            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
-
-            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
-
-            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
-
-            '
-          enum:
-          - UNAUTHORIZED
-          - INVALID_SIGNATURE
-          - WALLET_SIGNATURE_MISSING
-          - WALLET_SIGNATURE_MALFORMED
-          - WALLET_SIGNATURE_BODY_MISMATCH
-          - WALLET_SIGNATURE_INVALID
-          - REQUEST_ID_MISSING
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+      - GRID
+      - EXTERNAL
+      description: Who originated the movement over the rail. An ACH OUT where Grid is the originator means Grid is pushing out the funds, while an ACH OUT with an EXTERNAL originator indicates Grid received an ACH pull request from an external source.
+      example: GRID
     PlatformCurrencyConfig:
       type: object
       properties:
@@ -633,6 +253,847 @@ components:
       - maxAmount
       - requiredCounterpartyFields
       - enabledTransactionTypes
+    CardTokenization2FAEmailConfig:
+      type: object
+      description: Email branding and sender settings for card-tokenization authentication messages. Invalid or unverified sender identities can cause delivery to fail.
+      properties:
+        fromAddress:
+          type: string
+          format: email
+          maxLength: 255
+          description: Sender address for card-tokenization authentication emails.
+          example: cards@acme.com
+        fromName:
+          type: string
+          maxLength: 255
+          description: Sender display name. Defaults to `displayName`.
+          example: Acme Cards
+        replyToAddress:
+          type: string
+          format: email
+          maxLength: 255
+          description: Reply-to address for card-tokenization authentication emails.
+          example: support@acme.com
+        subject:
+          type: string
+          maxLength: 255
+          description: 'Subject for the authentication email. Defaults to
+
+            "Your {displayName} verification code".
+
+            '
+          example: Your Acme card verification code
+        bodyText:
+          type: string
+          maxLength: 2000
+          description: 'Plain-text message content. Lightspark inserts the authentication code into
+
+            a controlled text and HTML template; arbitrary HTML and template variables
+
+            are not supported. Defaults to "Use this code to finish adding your
+
+            {displayName} card to your wallet."
+
+            '
+          example: Use this code to finish adding your Acme card to your digital wallet.
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    TransactionType:
+      type: string
+      enum:
+      - INCOMING
+      - OUTGOING
+      - CARD
+      description: Type of transaction
+    PlatformConfig:
+      type: object
+      properties:
+        id:
+          type: string
+          description: System-generated unique identifier
+          example: PlatformConfig:019542f5-b3e7-1d02-0000-000000000003
+        umaDomain:
+          type: string
+          pattern: ^[^\u0000-\u001f\u007f]*$
+          maxLength: 200
+          description: UMA domain for this platform
+          example: platform.uma.domain
+        proxyUmaSubdomain:
+          type: string
+          pattern: ^[^\u0000-\u001f\u007f]*$
+          maxLength: 200
+          description: The subdomain that incoming requests will be proxied to
+          example: platform
+        webhookEndpoint:
+          type: string
+          description: URL where webhook notifications will be sent
+          example: https://api.mycompany.com/webhooks/uma
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
+          description: 'List of currencies supported by the platform. This is what the platform''s
+
+            customers are able to hold, send, and receive.
+
+            '
+        isRegulatedFinancialInstitution:
+          type: boolean
+          description: 'Whether the platform is a regulated financial institution. This is used to
+
+            determine if the platform''s customers must be KYC/KYB''d by Lightspark via
+
+            the KYC link flow. This can only be set by Lightspark during platform
+
+            creation.
+
+            '
+          example: false
+        embeddedWalletConfig:
+          $ref: '#/components/schemas/EmbeddedWalletConfig'
+          description: 'Embedded-wallet branding and OTP settings for this platform. Present
+
+            only when the platform has configured embedded-wallet support;
+
+            omitted otherwise.
+
+            '
+        cardTokenization2faConfig:
+          $ref: '#/components/schemas/CardTokenization2FAConfig'
+          description: 'Branding and sender configuration for card-tokenization authentication
+
+            messages. This configuration is independent of embedded-wallet support.
+
+            '
+        cardConfigs:
+          $ref: '#/components/schemas/CardConfig'
+          description: Platform-level settings for cards issued by this platform.
+        feeConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeeConfigOneOf'
+          description: 'Platform-collected fees that should be added on top of
+
+            Grid-collected fees. Contains every currently-active fee config
+
+            for the platform.
+
+            '
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: '2025-06-15T12:30:45Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: '2025-06-15T12:30:45Z'
+    FixedFee:
+      type: object
+      description: Fixed fee charged per transaction.
+      required:
+      - amount
+      - currency
+      properties:
+        amount:
+          type: integer
+          format: int64
+          minimum: 0
+          maximum: 9007199254740991
+          description: Fee amount in the smallest unit of the fixed fee's `currency` (e.g., cents for USD).
+          example: 100
+        currency:
+          type: string
+          description: Three-letter currency code (ISO 4217) the fixed fee is denominated in. Some cryptocurrencies may use their own ticker symbols (e.g. "BTC" for Bitcoin, "USDC" for USDC, etc.)
+          example: USD
+    FeeConfigOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/CrossCurrencyTransactionFeeConfig'
+      - $ref: '#/components/schemas/RailFeeConfig'
+      discriminator:
+        propertyName: feeType
+        mapping:
+          CROSS_CURRENCY_TRANSACTION: '#/components/schemas/CrossCurrencyTransactionFeeConfig'
+          RAIL: '#/components/schemas/RailFeeConfig'
+    PaymentRail:
+      type: string
+      enum:
+      - ACH
+      - ACH_COLOMBIA
+      - ACH_SAME_DAY
+      - BANK_TRANSFER
+      - BRE_B
+      - CIPS
+      - FAST
+      - FASTER_PAYMENTS
+      - FEDNOW
+      - INSTAPAY
+      - MOBILE_MONEY
+      - NEFT
+      - PAYNOW
+      - PESONET
+      - PIX
+      - RTGS
+      - RTP
+      - SEPA
+      - SEPA_INSTANT
+      - SPEI
+      - SWIFT
+      - UNIONPAY
+      - UPI
+      - WIRE
+      description: 'The payment rail used for the transfer. Payment rails represent the underlying payment network or system used to move funds between accounts.
+
+
+        `ACH_SAME_DAY` requests same-business-day settlement for a USD payout and is priced separately. It is subject to the NACHA per-entry same-day limit, which the network applies to every originator: $1,000,000 per entry, rising to $10,000,000 on 2027-09-17. A payout above that limit is rejected rather than slowed — check the amount before requesting this rail, or send it over `ACH`, which settles on the standard schedule and has no such limit.
+
+
+        `ACH` will settle on the standard next-business-day schedule. Until a date we announce in advance, `ACH` continues to settle same-business-day on production platforms; it already settles next-business-day on sandbox platforms. To guarantee same-day settlement after that date, request `ACH_SAME_DAY`.'
+      example: ACH
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    Error501:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
+
+            | NOT_IMPLEMENTED | Feature not implemented |
+
+            | UNRECOGNIZED_MANDATORY_COUNTERPARTY_DATA_KEY | The counterparty requires a data key Grid does not recognise |
+
+            '
+          enum:
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
+          - UNRECOGNIZED_MANDATORY_COUNTERPARTY_DATA_KEY
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    PlatformConfigUpdateRequest:
+      type: object
+      properties:
+        umaDomain:
+          type: string
+          pattern: ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$
+          maxLength: 200
+          example: mycompany.com
+        webhookEndpoint:
+          type: string
+          example: https://api.mycompany.com/webhooks/uma
+        supportedCurrencies:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlatformCurrencyConfig'
+        embeddedWalletConfig:
+          $ref: '#/components/schemas/EmbeddedWalletConfig'
+          description: 'Update or create the embedded-wallet configuration for this platform.
+
+            Fields omitted from the nested object are left unchanged. Omit this
+
+            field at the top level to leave the embedded-wallet configuration
+
+            unchanged entirely.
+
+            '
+        cardTokenization2faConfig:
+          $ref: '#/components/schemas/CardTokenization2FAConfig'
+          description: 'Update card-tokenization authentication branding and delivery settings.
+
+            Fields omitted from the nested object are left unchanged. Changes apply
+
+            to subsequent delivery attempts.
+
+            '
+        cardConfigs:
+          $ref: '#/components/schemas/CardConfig'
+          description: Update platform-level card settings. Fields omitted from the nested object are left unchanged. For any card limit, supply null to clear the platform cap or a positive integer to set it. Set `pinTargetOrigin` to configure the website that hosts PIN-entry iframes, or supply null to clear it. Omit this field at the top level to leave all card settings unchanged.
+        feeConfigs:
+          type: array
+          items:
+            $ref: '#/components/schemas/FeeConfigOneOf'
+          description: 'Merge-by-key upsert of platform fee configs. A cross-currency transaction
+
+            fee config is keyed by `(feeType, sourceCurrency)` and a rail fee config by
+
+            `(feeType, rail, direction, originator)`. Setting variable and fixed fees
+
+            to 0 for an existing config deactivates it. Omit this field to leave fee
+
+            configs unchanged.
+
+            '
+    FeeType:
+      type: string
+      enum:
+      - CROSS_CURRENCY_TRANSACTION
+      - RAIL
+      description: "The kind of activity this fee applies to.\n\n- `CROSS_CURRENCY_TRANSACTION` — a fee charged on transactions where the sending\n  currency differs from the receiving currency\n- `RAIL` — a fee charged on any transaction that uses the specified payment rail\n"
+      example: CROSS_CURRENCY_TRANSACTION
+    CustomerInfoFieldName:
+      type: string
+      enum:
+      - FULL_NAME
+      - BIRTH_DATE
+      - NATIONALITY
+      - PHONE_NUMBER
+      - EMAIL
+      - POSTAL_ADDRESS
+      - TAX_ID
+      - REGISTRATION_NUMBER
+      - USER_TYPE
+      - COUNTRY_OF_RESIDENCE
+      - ACCOUNT_IDENTIFIER
+      - FI_LEGAL_ENTITY_NAME
+      - FI_ADDRESS
+      - PURPOSE_OF_PAYMENT
+      - ULTIMATE_INSTITUTION_COUNTRY
+      - IDENTIFIER
+      - BUSINESS_TYPE
+      - COMPANY_LEGAL_NAME
+      - ID_TYPE
+      - ID_NUMBER
+      description: Name of a type of field containing info about a platform's customer or counterparty customer.
+      example: FULL_NAME
+    Error401:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNAUTHORIZED | Issue with API credentials |
+
+            | INVALID_SIGNATURE | Signature header is invalid |
+
+            | WALLET_SIGNATURE_MISSING | The `Grid-Wallet-Signature` header is required for this Embedded Wallet action but was not supplied |
+
+            | WALLET_SIGNATURE_MALFORMED | The `Grid-Wallet-Signature` header could not be parsed (bad encoding, structure, or fields) |
+
+            | WALLET_SIGNATURE_BODY_MISMATCH | The `Grid-Wallet-Signature` was computed over a different request body than the one received |
+
+            | WALLET_SIGNATURE_INVALID | The `Grid-Wallet-Signature` failed cryptographic verification against the registered credential |
+
+            | REQUEST_ID_MISSING | The `Request-Id` header is required on the signed retry but was not supplied (paired with `Grid-Wallet-Signature`) |
+
+            '
+          enum:
+          - UNAUTHORIZED
+          - INVALID_SIGNATURE
+          - WALLET_SIGNATURE_MISSING
+          - WALLET_SIGNATURE_MALFORMED
+          - WALLET_SIGNATURE_BODY_MISMATCH
+          - WALLET_SIGNATURE_INVALID
+          - REQUEST_ID_MISSING
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    FieldConstraint:
+      type: object
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
+      properties:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
+          type: integer
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
+    FeeDirection:
+      type: string
+      enum:
+      - IN
+      - OUT
+      description: Whether the money is coming in or going out, relative to Grid. Only `OUT` is accepted today.
+      example: OUT
+    CardConfig:
+      type: object
+      description: Platform-level settings that apply to cards issued by the platform.
+      properties:
+        pinTargetOrigin:
+          anyOf:
+          - type: string
+            format: uri
+            pattern: ^https://(?:[^\s/?#@:\[\]\\]+|\[[0-9A-Fa-f:.]+\])(?::[0-9]{1,5})?$
+          - type: 'null'
+          description: 'Canonical HTTPS origin of the page that hosts the PIN-entry iframe returned by `GET /cards/{id}/pin-entry-url`. Include the scheme, host, and optional port, without a path, trailing slash, query, fragment, or credentials. The iframe is restricted to this origin, so it must match the embedding page''s origin exactly. Different user-specific paths on the same origin use this one setting.
+
+
+            Required before requesting a PIN-entry URL. Omit this field when updating platform configuration to preserve its value; set it to `null` to clear it. If unset, PIN-entry URL requests return `409 CONFLICT`. Changes apply to newly requested URLs.'
+          example: https://app.example.com
+        maxSpendPerTransaction:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: The largest amount any of your cards can authorize on a single transaction, in the smallest unit of each card's currency (cents for USD). An authorization for exactly the limit is allowed. A later clearing can still settle above it — a restaurant tip, for example — so this caps the authorization, not the final settled amount. It covers every card Grid makes authorization decisions for, both those you have already issued and any you issue later, and does not apply to cards whose issuer makes the decisions. Where a card sets its own `maxSpendPerTransaction`, the lower of the two applies. `null` means no platform-wide limit.
+          example: 10000
+        maxSpendPerDay:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: Platform-level cap on cumulative new spend during one UTC calendar day for every card whose authorization decisions are made by Grid. The value is interpreted in the smallest unit of each card's currency. Grid enforces the lower of this cap and the card's configured `maxSpendPerDay`; null means no platform-level daily cap. The window resets at 00:00 UTC. Refunds, reversals, and authorization expiries do not restore capacity during the day. The cap applies to existing cards and cards issued later. Provider-decided card programs are unaffected.
+          example: 50000
+        maxTransactionsPerDay:
+          anyOf:
+          - type: integer
+            format: int32
+            minimum: 1
+            maximum: 2147483647
+          - type: 'null'
+          description: Platform-level cap on the number of transactions each card may authorize during one UTC calendar day, for every card whose authorization decisions are made by Grid. Grid enforces the lower of this cap and the card's configured `maxTransactionsPerDay`; null means no platform-level daily transaction cap. The window resets at 00:00 UTC. Each approved authorization counts once; refunds, reversals, and authorization expiries do not restore capacity during the day. The cap applies to existing cards and cards issued later. Provider-decided card programs are unaffected.
+          example: 50
+        panRevealCssUrl:
+          anyOf:
+          - type: string
+            format: uri
+            pattern: ^https://[^@]*$
+            maxLength: 512
+          - type: 'null'
+          description: HTTPS URL of a stylesheet that styles the card-details iframe returned by `POST /cards/{id}/reveal`, so the revealed PAN, expiry, and CVV carry your branding instead of the default. The card processor's page links the stylesheet and the cardholder's browser fetches it, so it must be reachable over HTTPS without credentials. Style the `card`, `pan`, `expiry`, and `cvv` ids and the `pan-separator` class; the rest of the page structure is not a contract. The stylesheet loads into the page rendering the live card details, so host it somewhere you would trust with them. `null` restores the default styling. A `cssUrl` in the body of `POST /cards/{id}/reveal` overrides this for one reveal. Applies to cards whose `cardCapabilities.supportsPanReveal` is true; cards revealed through the card issuer's own hosted flow are styled by that issuer.
+          example: https://acme.com/card-reveal.css
+    RailFeeConfig:
+      allOf:
+      - $ref: '#/components/schemas/FeeConfig'
+      - type: object
+        properties:
+          feeType:
+            enum:
+            - RAIL
+          rail:
+            $ref: '#/components/schemas/PaymentRail'
+            description: The rail used in the transaction. `ACH`, `ACH_SAME_DAY`, `RTP`, `FEDNOW` and `WIRE` are accepted today; other rails return a `NOT_IMPLEMENTED` error.
+          direction:
+            $ref: '#/components/schemas/FeeDirection'
+          originator:
+            $ref: '#/components/schemas/FeeOriginator'
+        required:
+        - rail
+        - direction
+        - originator
+      description: 'A fee charged when a transaction uses the specified rail. There can be at most one for a given rail, direction and originator. For example, a config with rail: ACH, direction: OUT, originator: GRID will charge a fee on all outgoing ACH transactions. `ACH` and `ACH_SAME_DAY` are separate rails, so price each one with its own config.'
+    FeeConfig:
+      type: object
+      description: A platform-configured fee collected by Grid and settled to the platform internal account. These fields are shared by every platform fee config.
+      properties:
+        feeType:
+          $ref: '#/components/schemas/FeeType'
+        variableFeeBps:
+          type: integer
+          minimum: 0
+          maximum: 10000
+          description: Variable fee in basis points (1 bps = 0.01%) to apply to a transaction's source-currency amount.
+          example: 30
+        fixedFee:
+          $ref: '#/components/schemas/FixedFee'
+      required:
+      - feeType
+      - variableFeeBps
+      - fixedFee
+    Error400:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
+          additionalProperties: true
+    EmbeddedWalletConfig:
+      type: object
+      description: 'Per-platform embedded-wallet configuration. Controls branding and OTP
+
+        behavior for the email sent when a customer authenticates with an
+
+        EMAIL_OTP credential. Fields omitted from a request are left unchanged.
+
+        '
+      properties:
+        appName:
+          type: string
+          maxLength: 255
+          description: App name displayed in the default OTP email template.
+          example: Acme Wallet
+        otpLength:
+          type: integer
+          minimum: 6
+          maximum: 9
+          description: 'Number of digits / characters in the OTP code. Defaults to 6 when
+
+            not set.
+
+            '
+          example: 6
+        alphanumeric:
+          type: boolean
+          description: 'If true, OTP includes letters in addition to digits. Defaults to
+
+            numeric-only when not set.
+
+            '
+          example: false
+        expirationSeconds:
+          type: integer
+          minimum: 1
+          maximum: 600
+          description: 'OTP validity window in seconds. Defaults to 300 when not set.
+
+            '
+          example: 300
+        sendFromEmailAddress:
+          type: string
+          format: email
+          maxLength: 255
+          description: Custom sender email address for OTP emails.
+          example: noreply@acme.com
+        sendFromEmailSenderName:
+          type: string
+          maxLength: 255
+          description: 'Custom sender display name. Defaults to "Notifications" when not set.
+
+            '
+          example: Acme Notifications
+        replyToEmailAddress:
+          type: string
+          format: email
+          maxLength: 255
+          description: Custom reply-to email address for OTP emails.
+          example: support@acme.com
+        logoUrl:
+          type: string
+          format: uri
+          maxLength: 512
+          description: URL to a PNG logo for the OTP email. Resized to 340x124px.
+          example: https://acme.com/logo.png
+    CardTokenization2FASmsConfig:
+      type: object
+      description: SMS settings for card-tokenization authentication messages delivered through a Lightspark-managed Twilio sender.
+      properties:
+        templateSid:
+          type: string
+          maxLength: 64
+          description: 'Twilio Verify template SID to use for this platform. An invalid or unavailable
+
+            template can cause delivery to fail.
+
+            '
+          example: HJaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        bodyText:
+          type: string
+          maxLength: 480
+          description: 'Plain-text fallback message used when Twilio Verify is unavailable for the
+
+            authentication code. Lightspark appends the code to this text. Defaults to
+
+            "Your {displayName} verification code is:".
+
+            '
+          example: Use this code to finish adding your Acme card to your digital wallet.
+    CrossCurrencyTransactionFeeConfig:
+      allOf:
+      - $ref: '#/components/schemas/FeeConfig'
+      - type: object
+        properties:
+          feeType:
+            enum:
+            - CROSS_CURRENCY_TRANSACTION
+          sourceCurrency:
+            type: string
+            description: Currency code of the sending side this fee applies to. Only `USD` is accepted today; other currencies return a `NOT_IMPLEMENTED` error.
+            example: USD
+        required:
+        - sourceCurrency
+      description: A fee charged for a cross-currency transaction. There can be at most one cross-currency transaction fee config for a given source currency. The fee will apply to all cross-currency transactions that originate in the source currency.
   securitySchemes:
     BasicAuth:
       type: http
@@ -641,7 +1102,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header

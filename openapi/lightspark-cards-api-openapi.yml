@@ -17,23 +17,43 @@ security:
 - AgentAuth: []
 tags:
 - name: Cards
-  description: Card management endpoints. Issue debit cards against an internal account, freeze / unfreeze, close, manage card funding sources, and list card transactions.
+  description: Card management endpoints. Issue debit cards against an internal account, freeze / unfreeze, close, manage a card's funding source, and list card transactions.
 paths:
   /cards:
     post:
       summary: Issue a card
-      description: 'Issue a new card for a cardholder. Every card must be bound to at least one funding source at create time. The cardholder must have KYC status `APPROVED` before a card can be issued; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
+      description: 'Issue a new card for a cardholder. Every card is bound to one internal account, `fundingSource`, at create time. The cardholder must have KYC status `APPROVED` before a card can be issued; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
 
 
-        If any funding source is an Embedded Wallet internal account, the cardholder must authorize Grid to sign Spark token transactions for that card funding source by completing the delegated-key creation flow with `POST /auth/delegated-keys`. Until an active delegated key exists for that funding source, Authorization Decisioning cannot use it to fund card transactions.
+        Card issuance is fee-bearing and cannot be reversed, so an `Idempotency-Key` header is required. Retries must carry the same key.
 
 
-        New cards start in `state: "PROCESSING"` while the card issuer provisions the card. The `card.state_change` webhook fires on each state transition, including the transition to `ACTIVE` (or to `CLOSED` with `stateReason: "ISSUER_REJECTED"` if provisioning fails).'
+        Optional `maxSpendPerTransaction`, `maxSpendPerDay`, and `maxTransactionsPerDay` values set the card-specific caps on one transaction, on spend during one UTC calendar day, and on the number of transactions during one UTC calendar day. Check the funding-source internal account''s `cardCapabilities.supportsSpendLimitsAtIssuance` before supplying either spend limit, and `cardCapabilities.supportsTransactionCountLimit` before supplying the transaction count limit. If the platform config sets the corresponding `cardConfigs` value, Grid enforces the lower of the card and platform caps. Amounts use the smallest unit of the card''s currency.
+
+
+        If the funding source is an Embedded Wallet internal account, the cardholder must authorize Grid to sign Spark token transactions for that card funding source by completing the delegated-key creation flow with `POST /auth/delegated-keys`. Until an active delegated key exists for that funding source, Authorization Decisioning cannot use it to fund card transactions.
+
+
+        A platform may be limited to a maximum number of live cards. Once that limit is reached, further issuance is rejected with `CARD_LIMIT_REACHED` until a card is closed or Lightspark raises the limit. Cards in `CLOSED` status do not count toward the limit.
+
+
+        New cards start in `status: "PROCESSING"` while the card issuer provisions the card. The `card.status_change` webhook fires on each status transition, including the transition to `ACTIVE` (or to `CLOSED` with `statusReason: "ISSUER_REJECTED"` if provisioning fails). A provisioned card funded by a USDB Embedded Wallet remains `PENDING_AUTH` with `statusReason: "DELEGATION_REQUIRED"` until all signed retries of `POST /auth/delegated-keys` are complete. Replacing USD funding with USDB without an active key, or revoking the required key, also moves an active card to `PENDING_AUTH`. Completing delegation or switching back to USD restores `ACTIVE`; frozen and closed cards keep their status.'
       operationId: createCard
       tags:
       - Cards
       security:
       - BasicAuth: []
+      parameters:
+      - name: Idempotency-Key
+        in: header
+        description: 'A unique identifier for the request, up to 255 characters. A retry carrying the same key returns the card created by the first request; reusing a key for a materially different card request is rejected with `409`.
+
+          '
+        required: true
+        schema:
+          type: string
+          maxLength: 255
+          example: 550e8400-e29b-41d4-a716-446655440000
       requestBody:
         required: true
         content:
@@ -44,11 +64,13 @@ paths:
               virtualCard:
                 summary: Issue a virtual card with one funding source
                 value:
-                  cardholderId: Customer:019542f5-b3e7-1d02-0000-000000000001
-                  platformCardId: card-emp-aary-001
+                  customerId: Customer:019542f5-b3e7-1d02-0000-000000000001
+                  platformCardId: card-emp-001
                   form: VIRTUAL
-                  fundingSources:
-                  - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                  fundingSource: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                  maxSpendPerTransaction: 5000
+                  maxSpendPerDay: 25000
+                  maxTransactionsPerDay: 20
       responses:
         '201':
           description: Card created successfully. Newly-created cards start in `PROCESSING` while the issuer provisions them. Cards funded by an Embedded Wallet internal account also require an active delegated key for that funding source before Authorization Decisioning can use it.
@@ -57,7 +79,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Card'
         '400':
-          description: Bad request. Returned with `CARDHOLDER_KYC_NOT_APPROVED` when the cardholder's KYC status is not `APPROVED`, with `FUNDING_SOURCE_INELIGIBLE` when the supplied funding source does not belong to the cardholder or is not denominated in a card-eligible currency, and for general invalid parameters.
+          description: Bad request. Returned with `CARDHOLDER_KYC_NOT_APPROVED` when the cardholder's KYC status is not `APPROVED`, and with `INVALID_INPUT` when the `Idempotency-Key` header is missing or exceeds 255 characters, when a required `threeDSecurePassword` is missing, empty, or whitespace-only, when the supplied funding source does not belong to the cardholder or is not denominated in a card-eligible currency, and for general invalid parameters.
           content:
             application/json:
               schema:
@@ -68,6 +90,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error401'
+        '409':
+          description: Conflict. Returned with `CARD_LIMIT_REACHED` when the platform has reached the maximum number of live cards it may hold, and with `CONFLICT` when the `Idempotency-Key` was already used for a different card request. Closing a card frees its slot; contact Lightspark to raise the limit.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
         '500':
           description: Internal service error
           content:
@@ -82,22 +110,22 @@ paths:
                 $ref: '#/components/schemas/Error501'
     get:
       summary: List cards
-      description: Retrieve a paginated list of cards. Cards can be filtered by cardholder, bound funding-source internal account, state, and platform-specific card identifier. If no filters are provided, returns all cards visible to the caller.
+      description: Retrieve a paginated list of cards. Cards can be filtered by cardholder, bound funding-source internal account, status, and platform-specific card identifier. If no filters are provided, returns all cards visible to the caller.
       operationId: listCards
       tags:
       - Cards
       security:
       - BasicAuth: []
       parameters:
-      - name: cardholderId
+      - name: customerId
         in: query
-        description: Filter by cardholder (customer) id.
+        description: Filter by customer id.
         required: false
         schema:
           type: string
       - name: accountId
         in: query
-        description: Filter by internal account id. Returns cards whose `fundingSources` array contains the given internal account id.
+        description: Filter by internal account id. Returns cards whose `fundingSource` is the given internal account id.
         required: false
         schema:
           type: string
@@ -107,12 +135,12 @@ paths:
         required: false
         schema:
           type: string
-      - name: state
+      - name: status
         in: query
-        description: Filter by card state.
+        description: Filter by card status.
         required: false
         schema:
-          $ref: '#/components/schemas/CardState'
+          $ref: '#/components/schemas/CardStatus'
       - name: limit
         in: query
         description: Maximum number of results to return (default 20, max 100)
@@ -218,55 +246,12 @@ paths:
                 $ref: '#/components/schemas/Error501'
     patch:
       summary: Update a card
-      description: 'Update a card''s `state` and / or its bound `fundingSources`. At least one of the two fields must be supplied.
-
-
-        - `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible. Any other transition returns `409 INVALID_STATE_TRANSITION`.
-
-        - `fundingSources`, when supplied, fully replaces the card''s bound funding sources. Array order determines the priority Authorization Decisioning tries them in. Each id must belong to the cardholder and be denominated in the card''s currency; the list must contain at least one source. `fundingSources` cannot be supplied alongside `state: CLOSED`.
-
-
-        Because both updates are sensitive state changes, this endpoint uses Grid''s 202 → signed-retry pattern (same shape as `DELETE /auth/credentials/{id}` and `POST /internal-accounts/{id}/export`):
-
-
-        1. Call `PATCH /cards/{id}` with the target fields and no signing headers. The response is `202` with a `payloadToSign`, `requestId`, and `expiresAt`.
-
-
-        2. Sign the `payloadToSign` with the session private key of a verified authentication credential on the card''s owning internal account and retry with the signature as the `Grid-Wallet-Signature` header and the `requestId` echoed back as the `Request-Id` header. The signed retry returns `200` with the updated `Card`.
-
-
-        Effects:
-
-        - `state: FROZEN`: Authorization Decisioning declines new auths with `CARD_PAUSED`. Existing pulls and in-flight reconciliation continue — freezing does not pause the lifecycle of authorizations that already passed.
-
-        - `state: ACTIVE`: normal authorization behavior resumes.
-
-        - `state: CLOSED`: terminal close. The card transitions to `state: "CLOSED"` with `stateReason: "CLOSED_BY_PLATFORM"` and stays in the system for audit and reconciliation. All pending auths reconcile to a terminal state via the existing reconcile primitive. Inbound clearings received after close follow the standard force-post / late-presentment path — Lightspark absorbs the loss if a post-hoc pull on the now-unbound source fails. Funding-source bindings are detached. Refunds already in flight still complete because Lightspark holds the card-reserve keys.
-
-        - `fundingSources` change: emits `card.funding_source_change` reflecting the new ordered binding.
-
-
-        The `card.state_change` webhook fires on every successful `state` transition; the `card.funding_source_change` webhook fires whenever `fundingSources` is updated.'
+      description: 'Update a card''s `status`, bound `fundingSource`, and / or `maxSpendPerTransaction`, `maxSpendPerDay`, or `maxTransactionsPerDay`, or set a new `threeDSecurePassword`. At least one field must be supplied. - `status` transitions include `ACTIVE ⇄ FROZEN`, `PENDING_AUTH → ACTIVE | FROZEN`, and `ACTIVE | PENDING_AUTH | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible. Activating a card whose USDB funding source lacks a usable delegated key returns `409 INVALID_STATE_TRANSITION`. `PENDING_AUTH` is managed by Grid and cannot be requested. Completing delegation does not unfreeze or reopen a card. Requesting `status: ACTIVE` returns `409 INVALID_STATE_TRANSITION` while the customer is not `ACTIVE`, for a card Grid froze for review, and for a card frozen with substatus `COMPROMISED`. Contact Grid support to have such a card reviewed, or close a compromised card and issue a new one. - `fundingSource`, when supplied, replaces the card''s bound internal account. It must belong to the customer and use a currency supported by the card program, including USDB for USD cards. An active card becomes `PENDING_AUTH` when switched to USDB without an active delegated key. Switching back to USD restores readiness. `fundingSource` cannot be supplied alongside `status: CLOSED`. On card programs where the card issuer makes authorization decisions, `fundingSource` cannot be combined with any `status` change, so send the changes as separate requests. On card programs where Grid makes the authorization decision, the combination remains valid for `status` changes other than `CLOSED`. - `maxSpendPerTransaction` sets the largest amount the card can authorize on a single transaction. An authorization for exactly the limit is allowed, and a later clearing can still settle above it — a restaurant tip, for example — so this caps the authorization, not the final settled amount. Send a positive integer in the smallest unit of the card''s currency (cents for USD) to set the limit, or null to remove it. If your platform config sets `cardConfigs.maxSpendPerTransaction`, the lower of the two applies. You can only send this when the card''s `cardCapabilities.supportsSpendLimits` is true, and not together with `status: CLOSED`. - `maxSpendPerDay`, when supplied, replaces the card-specific cap on cumulative new spend during one UTC calendar day. Supply a positive integer in the smallest unit of the card''s currency to set it or null to clear it. If the platform config sets `cardConfigs.maxSpendPerDay`, Grid enforces the lower of the card and platform values. Refunds, reversals, and authorization expiries do not restore capacity during the day. The card''s `cardCapabilities.supportsSpendLimits` must be true. `maxSpendPerDay` cannot be supplied alongside `status: CLOSED`. - `maxTransactionsPerDay`, when supplied, replaces the card-specific cap on the number of transactions the card may authorize during one UTC calendar day. Supply a positive integer to set it or null to clear it. If the platform config sets `cardConfigs.maxTransactionsPerDay`, Grid enforces the lower of the card and platform values. Refunds, reversals, and authorization expiries do not restore capacity during the day. `maxTransactionsPerDay` requires the card''s `cardCapabilities.supportsTransactionCountLimit` to be true and cannot be supplied alongside `status: CLOSED`. This endpoint is authenticated by the platform credential alone and returns `200` directly. It deliberately does not use Grid''s 202 → signed-retry pattern: that pattern signs with the session key of a credential on the owning internal account, so it models actions taken *by* the end user on their own credentials or funds. Freezing or closing a card is routinely an action taken *about* a user and without them present - fraud response, offboarding, an ops-driven freeze - and requiring the cardholder''s signature would make exactly those cases impossible.'
       operationId: updateCardById
       tags:
       - Cards
       security:
       - BasicAuth: []
-      parameters:
-      - name: Grid-Wallet-Signature
-        in: header
-        required: false
-        description: Signature over the `payloadToSign` returned in a prior `202` response, produced with the session private key of a verified authentication credential on the card's owning internal account and base64-encoded. Required on the signed retry; ignored on the initial call.
-        schema:
-          type: string
-        example: MEUCIQDx7k2N0aK4p8f3vR9J6yT5wL1mB0sXnG2hQ4vJ8zYkCgIgZ4rP9dT7eWfU3oM6KjR1qSpNvBwL0tXyA2iG8fH5dE=
-      - name: Request-Id
-        in: header
-        required: false
-        description: The `requestId` returned in a prior `202` response, echoed back on the signed retry so the server can correlate it with the issued challenge. Required on the signed retry; must be paired with `Grid-Wallet-Signature`.
-        schema:
-          type: string
-        example: 7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21
       requestBody:
         required: true
         content:
@@ -277,48 +262,59 @@ paths:
               freeze:
                 summary: Freeze an active card
                 value:
-                  state: FROZEN
+                  status: FROZEN
+                  substatus: SUSPICIOUS_ACTIVITY
+                  reason: Unrecognised charges reported by the cardholder.
               unfreeze:
                 summary: Unfreeze a frozen card
                 value:
-                  state: ACTIVE
-              updateFundingSources:
-                summary: Replace the card's bound funding sources
+                  status: ACTIVE
+                  substatus: ISSUER_REQUEST
+                  reason: Review closed with no action.
+              updateFundingSource:
+                summary: Replace the card's bound funding source
                 value:
-                  fundingSources:
-                  - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-                  - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
-              freezeAndUpdateSources:
-                summary: Freeze the card and replace its funding sources in one call
+                  fundingSource: InternalAccount:019542f5-b3e7-1d02-0000-000000000003
+              setSpendingLimit:
+                summary: Set the card's spending and transaction limits
                 value:
-                  state: FROZEN
-                  fundingSources:
-                  - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+                  maxSpendPerTransaction: 10000
+                  maxSpendPerDay: 25000
+                  maxTransactionsPerDay: 20
+              clearSpendingLimit:
+                summary: Remove the card's spending limits
+                value:
+                  maxSpendPerTransaction: null
+                  maxSpendPerDay: null
+                  maxTransactionsPerDay: null
+              freezeAndUpdateSource:
+                summary: Freeze the card and replace its funding source in one call
+                value:
+                  status: FROZEN
+                  substatus: SUSPICIOUS_ACTIVITY
+                  reason: Unrecognised charges reported by the cardholder.
+                  fundingSource: InternalAccount:019542f5-b3e7-1d02-0000-000000000003
               close:
                 summary: Permanently close the card
                 value:
-                  state: CLOSED
+                  status: CLOSED
+                  substatus: END_USER_REQUEST
+                  reason: Cardholder asked us to close the card.
       responses:
         '200':
-          description: Signed retry accepted. Returns the updated card.
+          description: Card updated. Returns the updated card.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Card'
-        '202':
-          description: Challenge issued. The response contains a `payloadToSign` that must be signed with the session private key of a verified authentication credential on the card's owning internal account, along with a `requestId` that must be echoed back on the retry.
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SignedRequestChallenge'
         '400':
-          description: Bad request. Returned with `FUNDING_SOURCE_INELIGIBLE` when a supplied funding source does not belong to the cardholder or is not denominated in the card's currency, and for general invalid parameters.
+          description: Bad request. Returned with `INVALID_INPUT` when a supplied funding source does not belong to the cardholder or uses a currency unsupported by the card program, when `fundingSource` is combined with any `status` change on a card program where the card issuer makes authorization decisions, when `status` is supplied without `substatus` or without a non-empty `reason`, and for general invalid parameters.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error400'
         '401':
-          description: Unauthorized. Returned when the provided `Grid-Wallet-Signature` is missing, malformed, or does not match a pending update challenge for this card, or when the `Request-Id` does not match an unexpired pending challenge.
+          description: Unauthorized. Returned when the platform credential is missing or invalid, or does not grant access to this card.
           content:
             application/json:
               schema:
@@ -330,7 +326,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error404'
         '409':
-          description: 'Conflict. Returned with `INVALID_STATE_TRANSITION` when the requested `state` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE | FROZEN → CLOSED` (e.g. trying to un-freeze a `CLOSED` card); with `CARD_ALREADY_CLOSED` when `state: CLOSED` is requested for a card that is already `CLOSED`; and with `CARD_NOT_MUTABLE` when the card is `CLOSED`.'
+          description: 'Conflict. Returned with `INVALID_STATE_TRANSITION` when the requested `status` transition is not one of `ACTIVE ⇄ FROZEN`, `PENDING_AUTH → ACTIVE | FROZEN`, or `ACTIVE | PENDING_AUTH | FROZEN → CLOSED`, when activation is requested before delegated signing authorization is complete, or when `status: ACTIVE` is requested while the customer is not `ACTIVE`, for a card Grid froze for review, or for a card frozen as `COMPROMISED`; with `CARD_ALREADY_CLOSED` when `status: CLOSED` is requested for a card that is already `CLOSED`; and with `CARD_NOT_MUTABLE` when the card is `CLOSED`.'
           content:
             application/json:
               schema:
@@ -357,10 +353,16 @@ paths:
         type: string
     post:
       summary: Reveal card details
-      description: 'Mint a signed, short-lived URL for the card processor''s iframe that displays the card''s full PAN, CVV, and expiry to the cardholder. This is the only way to obtain a reveal URL — the `Card` resource never carries one.
+      description: 'When the card''s `cardCapabilities.supportsPanReveal` is true, mint a signed, short-lived URL for the card processor''s iframe that displays the card''s full PAN, CVV, and expiry to the cardholder. The `Card` resource never carries a reveal URL.
+
+
+        When `cardCapabilities.supportsPanReveal` is false, this endpoint cannot reveal the card. Use the card issuer''s challenge-based hosted reveal flow instead.
 
 
         Request the reveal right before rendering the iframe and render the returned `panEmbedUrl` immediately; it expires at `expiresAt` (within minutes). Never store, cache, or log the URL — it is a bearer secret for the full card details. The card data renders inside the processor''s iframe and never crosses Grid''s or your servers.
+
+
+        Set `cardConfigs.panRevealCssUrl` on your platform config to style the iframe with your own stylesheet, or send `cssUrl` in the body to override it for one reveal.
 
 
         Every reveal is audit-logged with the requesting actor.'
@@ -369,6 +371,12 @@ paths:
       - Cards
       security:
       - BasicAuth: []
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardRevealRequest'
       responses:
         '200':
           description: Reveal URL minted.
@@ -394,6 +402,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. The card's `cardCapabilities.supportsPanReveal` is false, so Grid cannot mint a PAN reveal URL for it. Use the card issuer's challenge-based hosted reveal flow instead. This capability is fixed for the card, so retrying will not help.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
         '500':
           description: Internal service error
           content:
@@ -406,8 +420,381 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error501'
+  /cards/{id}/tokenize:
+    parameters:
+    - name: id
+      in: path
+      description: System-generated unique card identifier
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Add a card to a digital wallet
+      description: 'Exchange the values your app received from Apple Pay, Google Pay, or Samsung Pay for the encrypted provisioning payload that completes adding the card to that wallet (in-app push provisioning). Call it from your backend inside the wallet SDK''s credentials callback and hand the response straight back to the SDK.
+
+
+        The payload is encrypted to the wallet provider''s keys, so neither your app nor your servers ever see card data. Do not store or log it; it is valid for one provisioning attempt.
+
+
+        Cardholders can always add a card to a wallet by typing its details in manually — that path needs nothing from you. This endpoint is for the in-app "Add to Wallet" button, which additionally requires approval from each wallet provider. See Digital wallet tokenization.
+
+
+        Only `ACTIVE` cards can be added. Every call is audit-logged with the requesting actor and the target wallet.'
+      operationId: tokenizeCard
+      tags:
+      - Cards
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardTokenizationRequestOneOf'
+            examples:
+              applePay:
+                summary: Apple Pay
+                value:
+                  wallet: APPLE_PAY
+                  certificate: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM=
+                  nonce: MTIzNDU2Nzg=
+                  nonceSignature: c2lnbmF0dXJl
+              googlePay:
+                summary: Google Pay (Unified Push Provisioning)
+                value:
+                  wallet: GOOGLE_PAY
+                  walletAccountId: wallet-account-8f14e45f
+                  serverSessionId: 8c3b8a7e-2a5d-4b7f-9c1e-6d2f0a1b3c4d
+                  opaquePaymentCardRequested: false
+              samsungPay:
+                summary: Samsung Pay
+                value:
+                  wallet: SAMSUNG_PAY
+                  walletAccountId: wallet-account-8f14e45f
+                  deviceId: device-3c59dc04
+      responses:
+        '200':
+          description: Provisioning payload minted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardTokenizationResponseOneOf'
+              examples:
+                applePay:
+                  summary: Apple Pay
+                  value:
+                    wallet: APPLE_PAY
+                    applePay:
+                      activationData: YWN0aXZhdGlvbi1kYXRh
+                      encryptedPassData: ZW5jcnlwdGVkLXBhc3MtZGF0YQ==
+                      ephemeralPublicKey: ZXBoZW1lcmFsLXB1YmxpYy1rZXk=
+                googlePay:
+                  summary: Google Pay
+                  value:
+                    wallet: GOOGLE_PAY
+                    provisioningPayload: eyJjYXJkIjoiLi4uIn0=
+        '400':
+          description: Invalid input. The body does not match the request shape for its `wallet` (a required field is missing, or a field from another wallet's shape was supplied), or the wallet provider rejected the values (for example, an expired Apple nonce). Restart the add-to-wallet flow in the app to obtain fresh values.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden. The session has no attributable actor to audit the request against (for example, an impersonated dashboard session).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. `CARD_NOT_MUTABLE` when the card is `CLOSED`; `CONFLICT` when the card's `cardCapabilities.supportsDigitalWalletTokenization` is false or the card is not `ACTIVE`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without a configured card issuer return `501 NOT_IMPLEMENTED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+  /cards/{id}/set-pin:
+    parameters:
+    - name: id
+      in: path
+      description: System-generated unique card identifier
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Set a card PIN
+      description: 'Set or replace the card''s online PIN using a block encrypted in your client with the published PIN encryption public key. Grid cannot decrypt the block and never stores or logs PIN material.
+
+
+        Use this when you operate your own PIN-entry UI. For a hosted PIN-entry iframe, use `GET /cards/{id}/pin-entry-url` — the two are alternatives, and a card may use either at any time.
+
+
+        Setting a PIN clears a `BLOCKED` PIN, so a cardholder locked out by incorrect attempts can recover by choosing a new PIN without a separate unblock. Read `GET /cards/{id}` for the resulting status. Grid supports online PINs only; offline PIN cards are not supported.
+
+
+        Every call is audit-logged with the requesting actor.'
+      operationId: setCardPin
+      tags:
+      - Cards
+      security:
+      - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CardPinSetRequest'
+      responses:
+        '204':
+          description: PIN change accepted.
+        '400':
+          description: Bad request. Returned with `INVALID_INPUT` when `encryptedPinBlock` is absent, is not valid base64, or the encrypted block is rejected.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error400'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden. The session has no attributable actor to audit the change against (for example, an impersonated dashboard session).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. Returned with `CONFLICT` for a closed card or a card that does not support PIN management.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without card support return `501 NOT_IMPLEMENTED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+  /cards/{id}/pin-entry-url:
+    parameters:
+    - name: id
+      in: path
+      description: System-generated unique card identifier
+      required: true
+      schema:
+        type: string
+    get:
+      summary: Get a PIN-entry URL
+      description: 'Get a temporary URL for a secure PIN-entry iframe. The cardholder chooses a four-digit PIN inside the iframe, without the plaintext PIN crossing your servers or Grid''s. Grid supports online PINs only.
+
+
+        Configure `cardConfigs.pinTargetOrigin` through `PATCH /config` before requesting a URL. It is the canonical HTTPS origin of the page that hosts the iframe. The iframe is restricted to that origin; this endpoint takes no request body or origin parameter.
+
+
+        Each call creates a fresh, temporary PIN-entry session. Request a URL immediately before displaying the form. Fetching the URL does not set or change the PIN. Set your iframe''s `src` to the returned `iframeUrl` without modifying it. Follow the Card PIN guide to submit the form and confirm the result. Never store, cache, or log the URL or token. The session expires at `expiresAt` and permits one successful PIN submission. Responses include `Cache-Control: no-store`.
+
+
+        Use the iframe''s submission result to confirm completion, and `GET /cards/{id}` to read `pinStatus`. `OK` alone cannot confirm a change to an already configured PIN.
+
+
+        If you operate your own PIN-entry UI, use `POST /cards/{id}/set-pin` with a client-encrypted payload instead.
+
+
+        Requires permission to manage cards. Every successful URL request is audit-logged with the requesting actor.'
+      operationId: getCardPinUrl
+      tags:
+      - Cards
+      security:
+      - BasicAuth: []
+      responses:
+        '200':
+          description: A fresh PIN-entry URL and its expiration.
+          headers:
+            Cache-Control:
+              description: Prevents storage of the temporary PIN-entry credential.
+              schema:
+                type: string
+                enum:
+                - no-store
+              example: no-store
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CardPinUrlResponse'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden. The caller lacks permission to manage cards or has no attributable actor to audit the request against (for example, an impersonated dashboard session).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. Returned with `CONFLICT` for a closed card, a card that does not support PIN management, or an unset `cardConfigs.pinTargetOrigin`. Configure the origin through `PATCH /config` before requesting a PIN-entry URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without card support return `501 NOT_IMPLEMENTED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
+  /cards/{id}/pin/unblock:
+    parameters:
+    - name: id
+      in: path
+      description: System-generated unique card identifier
+      required: true
+      schema:
+        type: string
+    post:
+      summary: Unblock a card PIN
+      description: 'Clear a `BLOCKED` PIN, restoring the cardholder''s existing PIN without changing it. A PIN blocks after three consecutive incorrect entries; until it is cleared, PIN-verified transactions decline.
+
+
+        Unblocking is idempotent and safe to call on a card whose `pinStatus` is already `OK`. It has no effect on a card with no PIN set, which returns `409` — set a PIN with `POST /cards/{id}/set-pin` instead.
+
+
+        Each card permits one unblock attempt per rolling seven days. Further attempts return `409 PIN_CHANGE_REQUIRED` with `details.pinUnblockAvailableAt`. Change the PIN through either PIN-entry flow to recover sooner; changing the PIN does not reset the unblock allowance.
+
+
+        Only request an unblock after authenticating the cardholder and receiving their explicit request. Do not automatically unblock after a declined transaction.
+
+
+        Grid supports online PINs only. Offline PIN cards are not supported. Read `GET /cards/{id}` to check `pinStatus`.
+
+
+        Every call is audit-logged with the requesting actor.'
+      operationId: unblockCardPin
+      tags:
+      - Cards
+      security:
+      - BasicAuth: []
+      responses:
+        '204':
+          description: PIN unblock accepted; read GET /cards/{id} for its `pinStatus`.
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error401'
+        '403':
+          description: Forbidden. The session has no attributable actor to audit the change against (for example, an impersonated dashboard session).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error403'
+        '404':
+          description: Card not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error404'
+        '409':
+          description: Conflict. Returned with `CONFLICT` for a closed card, a card with no PIN to unblock, or a card that does not support PIN management. Returned with `PIN_CHANGE_REQUIRED` when the card's seven-day unblock allowance is consumed. Change the PIN or wait until `details.pinUnblockAvailableAt`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error409'
+        '500':
+          description: Internal service error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error500'
+        '501':
+          description: Not implemented in this environment. Cards are not enabled for every Grid deployment; environments without card support return `501 NOT_IMPLEMENTED`.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error501'
 components:
   schemas:
+    GooglePayTokenizationResponseFields:
+      type: object
+      required:
+      - wallet
+      - provisioningPayload
+      properties:
+        wallet:
+          type: string
+          enum:
+          - GOOGLE_PAY
+          description: Discriminator value identifying a Google Pay response.
+          example: GOOGLE_PAY
+        provisioningPayload:
+          type: string
+          description: Base64-encoded opaque payload for the device token. Return it from the TapAndPay payment-credentials callback.
+          example: eyJjYXJkIjoiLi4uIn0=
+        googleAccountPayload:
+          type: string
+          description: Present when `opaquePaymentCardRequested` was `true`. Return it alongside `provisioningPayload` so Google also saves the card to the cardholder's Google Account.
+          example: eyJmcGFuIjoiLi4uIn0=
+    CardBrand:
+      type: string
+      enum:
+      - VISA
+      - MASTERCARD
+      description: 'Card network brand. Read-only — determined by Grid when the card is
+
+        provisioned with the issuer.
+
+        '
     CardForm:
       type: string
       enum:
@@ -417,522 +804,16 @@ components:
         `PHYSICAL` will be added in a later release.
 
         '
-    CardUpdateRequest:
-      type: object
-      description: Update request for `PATCH /cards/{id}`. At least one of `state` or `fundingSources` must be supplied. `state` transitions are limited to `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`; any other transition returns `409 INVALID_STATE_TRANSITION`. `CLOSED` is terminal and irreversible and cannot be combined with `fundingSources`. `fundingSources`, when supplied, fully replaces the card's bound funding sources — the array order determines the priority Authorization Decisioning tries them in.
-      properties:
-        state:
-          type: string
-          enum:
-          - ACTIVE
-          - FROZEN
-          - CLOSED
-          description: Target state for the card. Permitted transitions are `ACTIVE ⇄ FROZEN` and `ACTIVE | FROZEN → CLOSED`. `CLOSED` is terminal and irreversible; once closed, the card stays in the system for audit and reconciliation but cannot transact again.
-          example: FROZEN
-        fundingSources:
-          type: array
-          description: 'New ordered list of internal account ids to bind as funding sources. Fully replaces the previous binding. Each id must belong to the cardholder and be denominated in the card''s currency. The list must contain at least one source — to stop a card from spending without removing all sources, transition it to `FROZEN` instead. Cannot be supplied alongside `state: CLOSED`.'
-          minItems: 1
-          items:
-            type: string
-          example:
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
-    Card:
-      type: object
-      required:
-      - id
-      - cardholderId
-      - state
-      - form
-      - fundingSources
-      - createdAt
-      - updatedAt
-      properties:
-        id:
-          type: string
-          description: System-generated unique card identifier
-          readOnly: true
-          example: Card:019542f5-b3e7-1d02-0000-000000000010
-        cardholderId:
-          type: string
-          description: The id of the `Customer` who holds this card.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        platformCardId:
-          type: string
-          description: Platform-specific card identifier. Optional on create — system-generated if omitted, mirroring `platformCustomerId` semantics.
-          example: card-emp-aary-001
-        state:
-          $ref: '#/components/schemas/CardState'
-        stateReason:
-          anyOf:
-          - $ref: '#/components/schemas/CardStateReason'
-          - type: 'null'
-          description: Reason associated with the current `state`. Populated when the card is `CLOSED` or when provisioning was rejected; otherwise null.
-        brand:
-          $ref: '#/components/schemas/CardBrand'
-        form:
-          $ref: '#/components/schemas/CardForm'
-        last4:
-          type: string
-          description: Last four digits of the card PAN.
-          example: '4242'
-        expMonth:
-          type: integer
-          minimum: 1
-          maximum: 12
-          description: Card expiration month (1–12).
-          example: 12
-        expYear:
-          type: integer
-          description: Card expiration year (four digits).
-          example: 2029
-        fundingSources:
-          type: array
-          description: Internal account ids bound to this card as funding sources, in priority order — the first entry is tried first by Authorization Decisioning. Every card has at least one funding source.
-          items:
-            type: string
-          example:
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000003
-        currency:
-          type: string
-          description: Currency the card transacts in (ISO 4217 for fiat, tickers for crypto). Derived from the funding sources at issue time — all funding sources bound to a card must be denominated in the same card-eligible currency.
-          example: USD
-          readOnly: true
-        processorRef:
-          type: string
-          description: Opaque processor-side reference for the card (e.g. the Lithic card token). Useful for cross-referencing in the processor's dashboards; not used for any Grid request routing.
-          example: card_b81c2a4f
-          readOnly: true
-        issuerRef:
-          type: string
-          description: Opaque identifier for the card on the issuer of record (e.g. the Lead Bank account/card identifier). Useful for cross-referencing in issuer dashboards; not used for any Grid request routing.
-          example: lead_card_7a1b9c3d
-          readOnly: true
-        createdAt:
-          type: string
-          format: date-time
-          description: Creation timestamp
-          readOnly: true
-          example: '2026-05-08T14:10:00Z'
-        updatedAt:
-          type: string
-          format: date-time
-          description: Last update timestamp
-          readOnly: true
-          example: '2026-05-08T14:11:00Z'
-    Error403:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 403
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | FORBIDDEN | Insufficient permissions |
-
-            | USER_NOT_READY | Customer exists but is not ready for operation |
-
-            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
-
-            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
-
-            '
-          enum:
-          - FORBIDDEN
-          - USER_NOT_READY
-          - COUNTERPARTY_NOT_ALLOWED
-          - VELOCITY_LIMIT_EXCEEDED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CardStateReason:
+    PaymentDocumentRequirementId:
       type: string
-      enum:
-      - ISSUER_REJECTED
-      - CLOSED_BY_PLATFORM
-      - CLOSED_BY_GRID
-      description: 'Reason a card reached a terminal or non-active state. Present on
+      description: 'A stable identifier for one required document within a purpose''s requirements. The same ID means the same requirement across quotes. It is separate from `PaymentDocumentType`. The requirement ID names the document to supply, and the document type names what a file is. The two differ where a requirement accepts alternatives. For example, a file declared as either `PURCHASE_ORDER` or `DELIVERY_SLIP` fills the `SUPPORTING_PROOF` requirement.
 
-        `CLOSED` cards, and on cards that fail provisioning before reaching
 
-        `ACTIVE`.
+        [Supporting Documents](https://docs.lightspark.com/payouts-and-b2b/payment-flow/send-payment#supporting-documents) lists the IDs each purpose requires.
 
 
-        | Reason | Description |
-
-        |--------|-------------|
-
-        | `ISSUER_REJECTED` | The card issuer rejected provisioning during `PROCESSING`. |
-
-        | `CLOSED_BY_PLATFORM` | The card was closed via `PATCH /cards/{id}` (`state: CLOSED`) by the platform. |
-
-        | `CLOSED_BY_GRID` | The card was closed by Grid (e.g. compliance or risk action). |
-
-        '
-    SignedRequestChallenge:
-      title: Signed Request Challenge
-      type: object
-      required:
-      - payloadToSign
-      - requestId
-      - expiresAt
-      description: Common base for two-step signed-retry challenge responses on Embedded Wallet endpoints (credential registration or revocation, session refresh or revocation, wallet export, customer email updates, and similar). Holds the signing fields shared across every challenge shape; each variant composes this base via `allOf` and adds its own resource `id` (and `type`, when applicable) with variant-specific description and example.
-      properties:
-        payloadToSign:
-          type: string
-          description: Canonical payload for the retry authorization stamp. Build an API-key stamp over this exact value with the session API keypair, then send the full base64url-encoded stamp in `Grid-Wallet-Signature` on the retry that completes the original request.
-          example: '{"organizationId":"org_2m9F...","parameters":{"userId":"user_2m9F..."},"timestampMs":"1775681700000","type":"ACTIVITY_TYPE_EXAMPLE"}'
-        requestId:
-          type: string
-          description: Grid-issued `Request:<uuid>` identifier for this pending request. Echo this value exactly in the `Request-Id` header on the signed retry so the server can correlate the retry with the issued challenge.
-          example: Request:7c4a8d09-ca37-4e3e-9e0d-8c2b3e9a1f21
-        expiresAt:
-          type: string
-          format: date-time
-          description: Timestamp after which this challenge is no longer valid. The signed retry must be submitted before this time.
-          example: '2026-04-08T15:35:00Z'
-    Error501:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 501
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
-
-            | NOT_IMPLEMENTED | Feature not implemented |
-
-            '
-          enum:
-          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
-          - NOT_IMPLEMENTED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CardState:
-      type: string
-      enum:
-      - PENDING_KYC
-      - PROCESSING
-      - ACTIVE
-      - FROZEN
-      - CLOSED
-      description: 'Lifecycle state of a card.
-
-
-        | State | Description |
-
-        |-------|-------------|
-
-        | `PENDING_KYC` | The cardholder has not yet completed KYC. Cards in this state cannot transact. |
-
-        | `PROCESSING` | The card has been requested and is being provisioned with the issuer. |
-
-        | `ACTIVE` | The card is live and can authorize transactions. |
-
-        | `FROZEN` | The card is temporarily disabled by the platform. New authorizations are declined with `CARD_PAUSED`. Existing settlements and refunds continue to reconcile. |
-
-        | `CLOSED` | The card is permanently closed. Terminal, irreversible state. |
-
-        '
-    Error400:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 400
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | INVALID_INPUT | Invalid input provided |
-
-            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
-
-            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
-
-            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
-
-            | INVALID_UMA_ADDRESS | UMA address format is invalid |
-
-            | INVITATION_CANCELLED | Invitation has been cancelled |
-
-            | QUOTE_REQUEST_FAILED | An issue occurred during the quote process; this is retryable |
-
-            | INVALID_PAYREQ_RESPONSE | Counterparty Payreq response was invalid |
-
-            | INVALID_RECEIVER | Receiver is invalid |
-
-            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
-
-            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
-
-            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
-
-            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
-
-            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
-
-            | SENDER_NOT_ACCEPTED | Sender is not accepted |
-
-            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
-
-            | INVALID_CURRENCY | Currency is invalid |
-
-            | INVALID_TIMESTAMP | Timestamp is invalid |
-
-            | INVALID_NONCE | Nonce is invalid |
-
-            | INVALID_REQUEST_FORMAT | Request format is invalid |
-
-            | INVALID_BANK_ACCOUNT | Bank account is invalid |
-
-            | SELF_PAYMENT | Self payment not allowed |
-
-            | LOOKUP_REQUEST_FAILED | Lookup request failed |
-
-            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
-
-            | INVALID_AMOUNT | Amount is invalid |
-
-            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
-
-            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
-
-            | LOW_QUALITY | Document quality too low to process |
-
-            | DATA_MISMATCH | Document details don''t match provided information |
-
-            | EXPIRED | Document has expired |
-
-            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
-
-            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
-
-            | INCOMPLETE | Document is missing pages or sides |
-
-            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
-
-            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
-
-            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
-
-            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
-
-            '
-          enum:
-          - INVALID_INPUT
-          - MISSING_MANDATORY_USER_INFO
-          - INVITATION_ALREADY_CLAIMED
-          - INVITATIONS_NOT_CONFIGURED
-          - INVALID_UMA_ADDRESS
-          - INVITATION_CANCELLED
-          - QUOTE_REQUEST_FAILED
-          - INVALID_PAYREQ_RESPONSE
-          - INVALID_RECEIVER
-          - PARSE_PAYREQ_RESPONSE_ERROR
-          - CERT_CHAIN_INVALID
-          - CERT_CHAIN_EXPIRED
-          - INVALID_PUBKEY_FORMAT
-          - MISSING_REQUIRED_UMA_PARAMETERS
-          - SENDER_NOT_ACCEPTED
-          - AMOUNT_OUT_OF_RANGE
-          - INVALID_CURRENCY
-          - INVALID_TIMESTAMP
-          - INVALID_NONCE
-          - INVALID_REQUEST_FORMAT
-          - INVALID_BANK_ACCOUNT
-          - SELF_PAYMENT
-          - LOOKUP_REQUEST_FAILED
-          - PARSE_LNURLP_RESPONSE_ERROR
-          - INVALID_AMOUNT
-          - WEBHOOK_ENDPOINT_NOT_SET
-          - WEBHOOK_DELIVERY_ERROR
-          - LOW_QUALITY
-          - DATA_MISMATCH
-          - EXPIRED
-          - SUSPECTED_FRAUD
-          - UNSUITABLE_DOCUMENT
-          - INCOMPLETE
-          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
-          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
-          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
-          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
-          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
-          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CardCreateRequest:
-      type: object
-      required:
-      - cardholderId
-      - form
-      - fundingSources
-      properties:
-        cardholderId:
-          type: string
-          description: The id of the `Customer` to issue the card to. The customer must have KYC status `APPROVED`; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
-          example: Customer:019542f5-b3e7-1d02-0000-000000000001
-        platformCardId:
-          type: string
-          description: Optional platform-specific card identifier. System-generated when omitted, mirroring `platformCustomerId` semantics.
-          example: card-emp-aary-001
-        form:
-          $ref: '#/components/schemas/CardForm'
-        fundingSources:
-          type: array
-          description: Internal account ids to bind as funding sources, in priority order. The first entry is tried first by Authorization Decisioning. Every card must be bound to at least one source, and every source must belong to the cardholder and be denominated in a card-eligible currency (USDB in v1); otherwise the request is rejected with `FUNDING_SOURCE_INELIGIBLE`.
-          minItems: 1
-          items:
-            type: string
-          example:
-          - InternalAccount:019542f5-b3e7-1d02-0000-000000000002
-    Error409:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 409
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
-
-            | UMA_ADDRESS_EXISTS | UMA address already exists |
-
-            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
-
-            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
-
-            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
-
-            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
-
-            '
-          enum:
-          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
-          - UMA_ADDRESS_EXISTS
-          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
-          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
-          - PASSKEY_ALREADY_ENROLLED
-          - CONFLICT
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
-    CardListResponse:
-      type: object
-      required:
-      - data
-      - hasMore
-      properties:
-        data:
-          type: array
-          description: List of cards matching the filter criteria
-          items:
-            $ref: '#/components/schemas/Card'
-        hasMore:
-          type: boolean
-          description: Indicates if more results are available beyond this page
-        nextCursor:
-          type: string
-          description: Cursor to retrieve the next page of results (only present if hasMore is true)
-        totalCount:
-          type: integer
-          description: Total number of cards matching the criteria (excluding pagination)
-    Error500:
-      type: object
-      required:
-      - message
-      - status
-      - code
-      properties:
-        status:
-          type: integer
-          enum:
-          - 500
-          description: HTTP status code
-        code:
-          type: string
-          description: '| Error Code | Description |
-
-            |------------|-------------|
-
-            | GRID_SWITCH_ERROR | Grid switch error |
-
-            | INTERNAL_ERROR | Internal server or UMA error |
-
-            '
-          enum:
-          - GRID_SWITCH_ERROR
-          - INTERNAL_ERROR
-        message:
-          type: string
-          description: Error message
-        details:
-          type: object
-          description: Additional error details
-          additionalProperties: true
+        Treat the ID as an opaque value, not a member of a fixed list. Grid may add new IDs as requirements change.'
+      example: SUPPORTING_PROOF
     CardRevealResponse:
       type: object
       required:
@@ -949,18 +830,533 @@ components:
           format: date-time
           description: When the signed URL stops loading. Request a new reveal rather than re-rendering an expired URL.
           example: '2026-05-08T14:16:00Z'
+    CardStatus:
+      type: string
+      enum:
+      - PENDING_KYC
+      - PROCESSING
+      - PENDING_AUTH
+      - ACTIVE
+      - FROZEN
+      - CLOSED
+      description: 'Lifecycle status of a card.
+
+
+        | Status | Description |
+
+        |-------|-------------|
+
+        | `PENDING_KYC` | The cardholder has not yet completed KYC. Cards in this status cannot transact. |
+
+        | `PROCESSING` | The card has been requested and is being provisioned with the issuer. |
+
+        | `PENDING_AUTH` | The issuer has provisioned the card, but its USDB Embedded Wallet funding source lacks an active delegated signing key. Complete `POST /auth/delegated-keys` before using the card. |
+
+        | `ACTIVE` | The card is live and can authorize transactions. |
+
+        | `FROZEN` | The card is temporarily disabled by the platform or by Grid. New authorizations are declined with `cardDeclinedReason: CARD_NOT_ACTIVE`. Existing settlements and refunds continue to reconcile. A card Grid froze for review, or one frozen as `COMPROMISED`, cannot be unfrozen by the platform. |
+
+        | `CLOSED` | The card is permanently closed. Terminal, irreversible status. |
+
+        '
+    SamsungPayTokenizationRequestFields:
+      type: object
+      required:
+      - wallet
+      - walletAccountId
+      - deviceId
+      properties:
+        wallet:
+          type: string
+          enum:
+          - SAMSUNG_PAY
+          description: Discriminator value identifying a Samsung Pay request.
+          example: SAMSUNG_PAY
+        walletAccountId:
+          type: string
+          description: The cardholder's Samsung Wallet identifier (`walletUserId`) reported by the Samsung Pay SDK.
+          example: wallet-account-8f14e45f
+        deviceId:
+          type: string
+          description: The stable device identifier reported by the Samsung Pay SDK.
+          example: device-3c59dc04
+    ApplePayTokenizationRequestFields:
+      type: object
+      required:
+      - wallet
+      - certificate
+      - nonce
+      - nonceSignature
+      properties:
+        wallet:
+          type: string
+          enum:
+          - APPLE_PAY
+          description: Discriminator value identifying an Apple Pay request.
+          example: APPLE_PAY
+        certificate:
+          type: string
+          description: The leaf certificate from the `certificates` array Apple passes to your `PKAddPaymentPassViewControllerDelegate`, base64-encoded in PEM form.
+          example: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM=
+        nonce:
+          type: string
+          description: The `nonce` Apple passes to your delegate, base64-encoded.
+          example: MTIzNDU2Nzg=
+        nonceSignature:
+          type: string
+          description: The `nonceSignature` Apple passes to your delegate, base64-encoded.
+          example: c2lnbmF0dXJl
+    CardRevealRequest:
+      type: object
+      description: Optional overrides for one reveal. Omit the body entirely to use your platform's configured settings.
+      properties:
+        cssUrl:
+          anyOf:
+          - type: string
+            format: uri
+            pattern: ^https://[^@]*$
+            maxLength: 512
+          - type: 'null'
+          description: 'HTTPS URL of a stylesheet for this reveal only, overriding `cardConfigs.panRevealCssUrl` for this call without changing your platform config. Use it to style one reveal differently from the rest — to match the cardholder''s light or dark theme, for example. Subject to the same rules as the platform-level setting: it must be reachable over HTTPS without credentials, it styles the same selectors, and it loads into the page rendering the live card details, so host it somewhere you would trust with them. Omit the field, or send `null`, to fall back to your platform config.'
+          example: https://acme.com/card-reveal-dark.css
+    CardTokenizationRequest:
+      type: object
+      description: Fields shared by every add-to-wallet request. The wallet SDK hands your app a set of values when the cardholder taps "Add to Wallet"; pass them here unchanged in the request shape for that `wallet`.
+      required:
+      - wallet
+      properties:
+        wallet:
+          $ref: '#/components/schemas/DigitalWallet'
+    CardPinStatus:
+      type: string
+      enum:
+      - NOT_SET
+      - OK
+      - BLOCKED
+      example: OK
+      description: 'State of the card''s PIN. On the Card resource, this is the last known status
+
+        and is present whenever PIN management is supported. An absent value means
+
+        PIN management is unavailable for this card; it does not mean `NOT_SET`.
+
+        Use `GET /cards/{id}` to retrieve `pinStatus`.
+
+
+        | Status | Description |
+
+        |--------|-------------|
+
+        | `NOT_SET` | No PIN has been set on the card. PIN verification is not enabled. Set one with `POST /cards/{id}/set-pin` or the hosted form returned by `GET /cards/{id}/pin-entry-url`. |
+
+        | `OK` | A PIN is set and usable. |
+
+        | `BLOCKED` | The PIN was entered incorrectly three consecutive times and is refused until cleared with `POST /cards/{id}/pin/unblock`, or replaced with `POST /cards/{id}/set-pin`. |
+
+        '
+    CardCreateRequest:
+      type: object
+      required:
+      - customerId
+      - form
+      - fundingSource
+      properties:
+        customerId:
+          type: string
+          description: The id of the `Customer` to issue the card to. The customer must have KYC status `APPROVED`; otherwise the request is rejected with `CARDHOLDER_KYC_NOT_APPROVED`.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCardId:
+          type: string
+          description: Platform-specific card identifier. Always generated by the server; any value supplied in the request is ignored.
+          example: card-emp-001
+        threeDSecurePassword:
+          type: string
+          description: 'Static password used as the card''s 3-D Secure factor. Required when the first funding-source internal account''s `cardCapabilities.supports3dSecurePassword` is true; omitting it or supplying an empty or whitespace-only string is rejected with `INVALID_INPUT`. When the capability is false, supplying this field is rejected with `INVALID_INPUT` because cards in that program have no static-password factor. Grid does not retain the value: it is forwarded to the issuer and discarded, so it cannot be read back afterwards; a cardholder who forgets it must set a new one through `PATCH /cards/{id}`.'
+          example: AbCd1234EfGh5678
+        form:
+          $ref: '#/components/schemas/CardForm'
+        fundingSource:
+          type: string
+          description: Internal account id that funds this card. The account must belong to the customer and be denominated in a card-eligible currency; otherwise the request is rejected with `INVALID_INPUT`.
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        maxSpendPerTransaction:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: The largest amount this card can authorize on a single transaction, in the smallest unit of its currency (cents for USD). An authorization for exactly the limit is allowed. A later clearing can still settle above it — a restaurant tip, for example — so this caps the authorization, not the final settled amount. Omit the field to set no limit. If your platform config also sets `cardConfigs.maxSpendPerTransaction`, the lower of the two applies. You can only send this when the funding-source internal account's `cardCapabilities.supportsSpendLimitsAtIssuance` is true.
+          example: 5000
+        maxSpendPerDay:
+          type: integer
+          format: int64
+          minimum: 1
+          maximum: 9007199254740991
+          description: Optional card-specific cap on cumulative new spend during one UTC calendar day, in the smallest unit of the card's currency (USD cents for USDB-funded cards). Omit this field for no card-specific daily cap. When the platform config also supplies `cardConfigs.maxSpendPerDay`, Grid enforces the lower of the two values. The window resets at 00:00 UTC, and refunds, reversals, and authorization expiries do not restore capacity during the day. Accepted only when the funding-source internal account's `cardCapabilities.supportsSpendLimitsAtIssuance` is true. Spend exactly equal to the effective limit is allowed.
+          example: 25000
+        maxTransactionsPerDay:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+          description: Optional card-specific cap on the number of transactions the card may authorize during one UTC calendar day. Omit this field for no card-specific daily transaction cap. When the platform config also supplies `cardConfigs.maxTransactionsPerDay`, Grid enforces the lower of the two values. The window resets at 00:00 UTC. Each approved authorization counts once; refunds, reversals, and authorization expiries do not restore capacity during the day. Accepted only when the funding-source internal account's `cardCapabilities.supportsTransactionCountLimit` is true.
+          example: 20
+        allowedMccs:
+          type: array
+          minItems: 1
+          description: Merchant category codes the card may spend at. Applies only to a card issued with `agentId`, and is ignored otherwise. Omit to allow every category not blocked.
+          items:
+            type: string
+            pattern: ^[0-9]{4}$
+          example:
+          - '5411'
+        blockedMccs:
+          type: array
+          description: Merchant category codes the card declines. Applies only to a card issued with `agentId`, and is ignored otherwise.
+          items:
+            type: string
+            pattern: ^[0-9]{4}$
+          example:
+          - '7995'
+        agentId:
+          type: string
+          description: 'Issue the card for this agent, which must belong to the same customer. The agent can then read the card, tighten its limits, and freeze it through `/agents/me/cards`. Grid''s default agent merchant-category blocks apply in addition to `blockedMccs` until the platform lifts them with `PATCH /cards/{id}` and `defaultMccBlocksLifted: true`. The card''s spend is the customer''s own and does not count against the agent''s policy.'
+          example: Agent:019542f5-b3e7-1d02-0000-000000000042
+    SamsungPayTokenizationResponseFields:
+      type: object
+      required:
+      - wallet
+      - provisioningPayload
+      properties:
+        wallet:
+          type: string
+          enum:
+          - SAMSUNG_PAY
+          description: Discriminator value identifying a Samsung Pay response.
+          example: SAMSUNG_PAY
+        provisioningPayload:
+          type: string
+          description: Base64-encoded opaque payload. Pass it to the Samsung Pay SDK's `addCard` call.
+          example: eyJjYXJkIjoiLi4uIn0=
+    FieldError:
+      type: object
+      required:
+      - field
+      description: One field-level validation failure. Field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`) emit an array of these under `details.errors` so platforms can render form-field-level UX for every failure in a single round-trip.
+      properties:
+        field:
+          type: string
+          description: Dot-notation path to the offending field.
+          example: identifier
+        constraint:
+          $ref: '#/components/schemas/FieldConstraint'
+        message:
+          type: string
+          description: Human-readable explanation of what's wrong with this field.
+          example: Value is not one of the allowed enum members.
+    SamsungPayTokenizationRequest:
+      title: Samsung Pay Tokenization Request
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationRequest'
+      - $ref: '#/components/schemas/SamsungPayTokenizationRequestFields'
+    CardStatusReason:
+      type: string
+      enum:
+      - DELEGATION_REQUIRED
+      - ISSUER_REJECTED
+      - CLOSED_BY_PLATFORM
+      - CLOSED_BY_GRID
+      description: 'Reason a card reached a terminal or non-active status. Present on
+
+        `PENDING_AUTH` and `CLOSED` cards, and on cards that fail provisioning before reaching
+
+        `ACTIVE`.
+
+
+        | Reason | Description |
+
+        |--------|-------------|
+
+        | `DELEGATION_REQUIRED` | The card funding source has no usable delegated signing key. Present while the card is `PENDING_AUTH`. |
+
+        | `ISSUER_REJECTED` | The card issuer rejected provisioning during `PROCESSING`. |
+
+        | `CLOSED_BY_PLATFORM` | The card was closed via `PATCH /cards/{id}` (`status: CLOSED`) by the platform. |
+
+        | `CLOSED_BY_GRID` | The card was closed by Grid (e.g. compliance or risk action). |
+
+        '
+    CardUpdateRequest:
+      type: object
+      description: Update request for `PATCH /cards/{id}`. At least one of `status`, `fundingSource`, `maxSpendPerTransaction`, `maxSpendPerDay`, `maxTransactionsPerDay`, `allowedMccs`, `blockedMccs`, `defaultMccBlocksLifted`, or `threeDSecurePassword` must be supplied; `allowedMccs`, `blockedMccs` and `defaultMccBlocksLifted` count only for a card issued for an agent, and are ignored on any other card. Supplying `status` also requires `substatus` and `reason`, so every card state change carries why it happened. `status` transitions include `ACTIVE ⇄ FROZEN`, `PENDING_AUTH → ACTIVE | FROZEN`, and `ACTIVE | PENDING_AUTH | FROZEN → CLOSED`. Explicit activation requires completed delegated signing authorization; otherwise it returns `409 INVALID_STATE_TRANSITION`. Funding-source changes reconcile `ACTIVE` / `PENDING_AUTH` automatically. `PENDING_AUTH` cannot be requested. `CLOSED` is terminal and irreversible and cannot be combined with `fundingSource`, `maxSpendPerTransaction`, `maxSpendPerDay`, or `maxTransactionsPerDay`.
+      properties:
+        status:
+          $ref: '#/components/schemas/CardUpdateStatus'
+        substatus:
+          $ref: '#/components/schemas/CardUpdateSubstatus'
+        reason:
+          type: string
+          minLength: 1
+          description: A short sentence naming why the card is moving. Required whenever `status` is supplied, and recorded against the card so a later reader can tell why it changed.
+          example: Cardholder reported the card stolen.
+        fundingSource:
+          type: string
+          description: 'Replaces the card''s funding source. Must belong to the customer and be denominated in a currency supported by the card''s program, including USDB for USD cards. Changing the funding source does not change the card''s currency or spending-limit units. Cannot be supplied alongside `status: CLOSED`. To stop a card from spending, set `status: FROZEN` instead.'
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        maxSpendPerTransaction:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: 'A new limit on the largest amount this card can authorize on a single transaction, in the smallest unit of its currency (cents for USD). An authorization for exactly the limit is allowed. A later clearing can still settle above it — a restaurant tip, for example — so this caps the authorization, not the final settled amount. Send a positive integer to set the limit, `null` to remove it, or omit the field to leave it unchanged. If your platform config also sets `cardConfigs.maxSpendPerTransaction`, the lower of the two applies. You can only send this when the card''s `cardCapabilities.supportsSpendLimits` is true, and not together with `status: CLOSED`.'
+          example: 10000
+        maxSpendPerDay:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: 'Replacement card-specific UTC-calendar-day cap, in the smallest unit of the card''s currency. Omit this field to leave the current cap unchanged, supply null to clear it, or supply a positive integer to set it. When the platform config also supplies `cardConfigs.maxSpendPerDay`, Grid enforces the lower of the two values. Refunds, reversals, and authorization expiries do not restore capacity during the day. Accepted only when the card''s `cardCapabilities.supportsSpendLimits` is true. Cannot be supplied alongside `status: CLOSED`.'
+          example: 25000
+        maxTransactionsPerDay:
+          anyOf:
+          - type: integer
+            format: int32
+            minimum: 1
+            maximum: 2147483647
+          - type: 'null'
+          description: 'Replacement card-specific cap on the number of transactions the card may authorize during one UTC calendar day. Omit this field to leave the current cap unchanged, supply null to clear it, or supply a positive integer to set it. When the platform config also supplies `cardConfigs.maxTransactionsPerDay`, Grid enforces the lower of the two values. Refunds, reversals, and authorization expiries do not restore capacity during the day. Accepted only when the card''s `cardCapabilities.supportsTransactionCountLimit` is true. Cannot be supplied alongside `status: CLOSED`.'
+          example: 20
+        threeDSecurePassword:
+          type: string
+          description: Sets a new static 3-D Secure password on the card. Send it on its own, and only when the card's `cardCapabilities.supports3dSecurePassword` is true.
+          example: AbCd1234EfGh5678
+        allowedMccs:
+          anyOf:
+          - type: array
+            minItems: 1
+            items:
+              type: string
+              pattern: ^[0-9]{4}$
+          - type: 'null'
+          description: 'Replacement list of merchant category codes the card may spend at. Applies only to a card issued for an agent, and is ignored otherwise. Supply null to allow every category not blocked, or omit to leave it unchanged. Cannot be supplied alongside `status: CLOSED`.'
+          example:
+          - '5411'
+        blockedMccs:
+          anyOf:
+          - type: array
+            items:
+              type: string
+              pattern: ^[0-9]{4}$
+          - type: 'null'
+          description: 'Replacement list of merchant category codes the card declines. Applies only to a card issued for an agent, and is ignored otherwise. Supply null to clear it, or omit to leave it unchanged. Grid''s default agent blocks still apply on top of this list; lift them with `defaultMccBlocksLifted`. Cannot be supplied alongside `status: CLOSED`.'
+          example:
+          - '7995'
+        defaultMccBlocksLifted:
+          type: boolean
+          description: 'On a card issued for an agent, `true` lifts Grid''s default agent merchant-category blocks and `false` restores them. Ignored on a card with no agent. Cannot be supplied alongside `status: CLOSED`.'
+          example: true
+    GooglePayTokenizationRequest:
+      title: Google Pay Tokenization Request
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationRequest'
+      - $ref: '#/components/schemas/GooglePayTokenizationRequestFields'
+    CardTokenizationResponse:
+      type: object
+      description: 'Fields shared by every add-to-wallet response. The payload is encrypted to the wallet provider''s keys: neither your app nor your servers can read the card data inside it. Hand it to the wallet SDK; it is valid for a single provisioning attempt.'
+      required:
+      - wallet
+      properties:
+        wallet:
+          $ref: '#/components/schemas/DigitalWallet'
+    CardUpdateStatus:
+      type: string
+      enum:
+      - ACTIVE
+      - FROZEN
+      - CLOSED
+      description: Target status for the card. Permitted transitions are `ACTIVE ⇄ FROZEN`, `PENDING_AUTH → ACTIVE | FROZEN`, and `ACTIVE | PENDING_AUTH | FROZEN → CLOSED`. Activation requires completed delegated signing authorization. `CLOSED` is terminal and irreversible; once closed, the card stays in the system for audit and reconciliation but cannot transact again.
+      example: FROZEN
+    CardTokenizationApplePayPayload:
+      type: object
+      description: The encrypted pass data for Apple Wallet. Pass the three fields straight into the `PKAddPaymentPassRequest` your delegate's completion handler expects.
+      required:
+      - activationData
+      - encryptedPassData
+      - ephemeralPublicKey
+      properties:
+        activationData:
+          type: string
+          description: Base64 `activationData` for `PKAddPaymentPassRequest`.
+          example: YWN0aXZhdGlvbi1kYXRh
+        encryptedPassData:
+          type: string
+          description: Base64 `encryptedPassData` for `PKAddPaymentPassRequest`.
+          example: ZW5jcnlwdGVkLXBhc3MtZGF0YQ==
+        ephemeralPublicKey:
+          type: string
+          description: Base64 `ephemeralPublicKey` for `PKAddPaymentPassRequest`.
+          example: ZXBoZW1lcmFsLXB1YmxpYy1rZXk=
+    CardPinUrlResponse:
+      type: object
+      description: A temporary PIN-entry iframe URL, its credential, and expiration.
+      required:
+      - iframeUrl
+      - sessionToken
+      - expiresAt
+      - environment
+      properties:
+        iframeUrl:
+          type: string
+          format: uri
+          description: 'Ready-to-use URL for the secure PIN-entry iframe. Set this as your iframe''s `src` without modifying it. The cardholder enters their PIN inside the iframe, so the plaintext PIN never reaches your servers or Grid''s. Use the message flow in the [Card PIN guide](https://docs.lightspark.com/cards/card-management/pins) to submit and confirm the result.
+
+
+            The URL contains a temporary credential. Never store, cache, or log it. It expires at `expiresAt` and permits one successful PIN submission.'
+          example: https://embed.example.com/pin?session=eyJhbGciOiJIUzI1NiJ9...
+        sessionToken:
+          type: string
+          description: Temporary credential authorizing one successful PIN submission. It is already included in `iframeUrl`; use that URL to load the form. Never store, cache, or log the token. Use the iframe's submission result to confirm a change; status `OK` alone cannot prove that an existing PIN was changed. Read `GET /cards/{id}` for its `pinStatus`.
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        expiresAt:
+          type: string
+          format: date-time
+          description: When the URL stops working. Request a new URL rather than reusing an expired URL or token.
+          example: '2026-05-08T14:16:00Z'
+        environment:
+          $ref: '#/components/schemas/GridEnvironment'
+    CardTokenizationResponseOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/ApplePayTokenizationResponse'
+      - $ref: '#/components/schemas/GooglePayTokenizationResponse'
+      - $ref: '#/components/schemas/SamsungPayTokenizationResponse'
+      discriminator:
+        propertyName: wallet
+        mapping:
+          APPLE_PAY: '#/components/schemas/ApplePayTokenizationResponse'
+          GOOGLE_PAY: '#/components/schemas/GooglePayTokenizationResponse'
+          SAMSUNG_PAY: '#/components/schemas/SamsungPayTokenizationResponse'
+    CardUpdateSubstatus:
+      type: string
+      enum:
+      - LOST
+      - COMPROMISED
+      - DAMAGED
+      - END_USER_REQUEST
+      - ISSUER_REQUEST
+      - NOT_ACTIVE
+      - SUSPICIOUS_ACTIVITY
+      - INTERNAL_REVIEW
+      - EXPIRED
+      - UNDELIVERABLE
+      - OTHER
+      description: Why the card is moving, in the card issuer's vocabulary. Required whenever `status` is supplied, and forwarded to the issuer. Pick `OTHER` when none of the named values fit and say why in `reason`.
+      example: SUSPICIOUS_ACTIVITY
+    CardCapabilities:
+      type: object
+      description: Actions supported by the card program associated with this resource.
+      required:
+      - supportsSpendLimits
+      - supportsSpendLimitsAtIssuance
+      - supportsTransactionCountLimit
+      - supports3dSecurePassword
+      - supportsPanReveal
+      - supportsDigitalWalletTokenization
+      properties:
+        supportsSpendLimits:
+          type: boolean
+          description: Whether a card in this program can have `maxSpendPerTransaction` and `maxSpendPerDay` at all. On card programs where the card issuer makes authorization decisions, these limits can only be set after issuance through `PATCH /cards/{id}`. Check `supportsSpendLimitsAtIssuance` to determine whether you can supply them when issuing a card.
+          example: true
+        supportsSpendLimitsAtIssuance:
+          type: boolean
+          description: Whether `maxSpendPerTransaction` and `maxSpendPerDay` may be supplied on `POST /cards`. This is true for card programs where Grid makes the authorization decision and false for card programs where the card issuer makes authorization decisions.
+          example: true
+        supportsTransactionCountLimit:
+          type: boolean
+          description: Whether cards in this program accept `maxTransactionsPerDay`.
+          example: true
+        supports3dSecurePassword:
+          type: boolean
+          description: Whether cards in this program accept a caller-supplied `threeDSecurePassword`.
+          example: false
+        supportsPanReveal:
+          type: boolean
+          description: Whether cards in this program can be revealed through `POST /cards/{id}/reveal`.
+          example: true
+        supportsDigitalWalletTokenization:
+          type: boolean
+          description: Whether cards in this program can be added to Apple Pay, Google Pay, or Samsung Pay from your app through `POST /cards/{id}/tokenize`. Manual entry into a wallet works regardless of this flag.
+          example: true
+    Error500:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | GRID_SWITCH_ERROR | Grid switch error |
+
+            | INTERNAL_ERROR | Internal server or UMA error |
+
+            '
+          enum:
+          - GRID_SWITCH_ERROR
+          - INTERNAL_ERROR
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    GooglePayTokenizationResponse:
+      title: Google Pay Tokenization Response
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationResponse'
+      - $ref: '#/components/schemas/GooglePayTokenizationResponseFields'
+    Error501:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY | Unrecognized mandatory payee data key |
+
+            | NOT_IMPLEMENTED | Feature not implemented |
+
+            | UNRECOGNIZED_MANDATORY_COUNTERPARTY_DATA_KEY | The counterparty requires a data key Grid does not recognise |
+
+            '
+          enum:
+          - UNRECOGNIZED_MANDATORY_PAYEE_DATA_KEY
+          - NOT_IMPLEMENTED
+          - UNRECOGNIZED_MANDATORY_COUNTERPARTY_DATA_KEY
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
     Error401:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 401
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -990,35 +1386,429 @@ components:
           - WALLET_SIGNATURE_BODY_MISMATCH
           - WALLET_SIGNATURE_INVALID
           - REQUEST_ID_MISSING
-        message:
+        reason:
           type: string
           description: Error message
         details:
           type: object
           description: Additional error details
           additionalProperties: true
-    CardBrand:
+    ApplePayTokenizationResponse:
+      title: Apple Pay Tokenization Response
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationResponse'
+      - $ref: '#/components/schemas/ApplePayTokenizationResponseFields'
+    DigitalWallet:
       type: string
       enum:
-      - VISA
-      - MASTERCARD
-      description: 'Card network brand. Read-only — determined by Grid when the card is
+      - APPLE_PAY
+      - GOOGLE_PAY
+      - SAMSUNG_PAY
+      description: The digital wallet a card is being added to.
+      example: APPLE_PAY
+    FieldConstraint:
+      type: object
+      description: Machine-readable validator hint accompanying a 400 `INVALID_INPUT` error. Consumers use it to drive form UI (input types, dropdowns, masking, length limits) and to pre-validate the field client-side before re-submitting. Fields are additive.
+      properties:
+        format:
+          type: string
+          description: Named format the value must satisfy — HTML5 input type names (`email`, `tel`, `url`, `date`, ...) or semantic slugs (`iso3166-1-alpha-2`, `bcp47-language-tag`, `us-ssn`, `e.164`).
+          example: email
+        pattern:
+          type: string
+          description: Regular expression the value must match (JavaScript-flavor).
+          example: ^\d{5}(-\d{4})?$
+        enum:
+          type: array
+          items:
+            type: string
+          description: Allowed values when the field is drawn from a fixed set.
+          example:
+          - SSN
+          - ITIN
+          - NON_US_TAX_ID
+        minLength:
+          type: integer
+          description: Minimum length in characters.
+          example: 1
+        maxLength:
+          type: integer
+          description: Maximum length in characters.
+          example: 500
+    GooglePayTokenizationRequestFields:
+      type: object
+      required:
+      - wallet
+      - walletAccountId
+      - serverSessionId
+      properties:
+        wallet:
+          type: string
+          enum:
+          - GOOGLE_PAY
+          description: Discriminator value identifying a Google Pay request.
+          example: GOOGLE_PAY
+        walletAccountId:
+          type: string
+          description: The stable identifier of the Google Wallet account the card is being added to, as reported by the TapAndPay client.
+          example: wallet-account-8f14e45f
+        serverSessionId:
+          type: string
+          format: uuid
+          description: The `serverSessionId` Google supplies in the TapAndPay payment-credentials callback under Unified Push Provisioning.
+          example: 8c3b8a7e-2a5d-4b7f-9c1e-6d2f0a1b3c4d
+        deviceId:
+          type: string
+          description: The stable device identifier from `getStableHardwareId`, when the SDK supplies one. Unified Push Provisioning does not always.
+          example: device-3c59dc04
+        opaquePaymentCardRequested:
+          type: boolean
+          default: false
+          description: Set to the value Google supplies in the payment-credentials callback. When `true`, the response also carries `googleAccountPayload`, which saves the card to the cardholder's Google Account for online payments in addition to the device token.
+          example: false
+    ApplePayTokenizationResponseFields:
+      type: object
+      required:
+      - wallet
+      - applePay
+      properties:
+        wallet:
+          type: string
+          enum:
+          - APPLE_PAY
+          description: Discriminator value identifying an Apple Pay response.
+          example: APPLE_PAY
+        applePay:
+          $ref: '#/components/schemas/CardTokenizationApplePayPayload'
+    Error403:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
 
-        provisioned with the issuer.
+            |------------|-------------|
 
-        '
+            | FORBIDDEN | Insufficient permissions |
+
+            | USER_NOT_READY | Customer exists but is not ready for operation |
+
+            | COUNTERPARTY_NOT_ALLOWED | Counterparty has not been enabled for your account |
+
+            | VELOCITY_LIMIT_EXCEEDED | Counterparty has exceeded velocity limits |
+
+            | END_USER_TERMS_NOT_ACCEPTED | Customer has not accepted the End User Terms |
+
+            | CUSTOMER_NOT_VERIFIED | The customer is not verified and cannot perform this action |
+
+            | SANCTION_BLOCKED | Blocked by sanction screening |
+
+            | DESTINATION_NOT_ALLOWED | The agent may not pay this destination |
+
+            '
+          enum:
+          - FORBIDDEN
+          - USER_NOT_READY
+          - COUNTERPARTY_NOT_ALLOWED
+          - VELOCITY_LIMIT_EXCEEDED
+          - END_USER_TERMS_NOT_ACCEPTED
+          - CUSTOMER_NOT_VERIFIED
+          - SANCTION_BLOCKED
+          - DESTINATION_NOT_ALLOWED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    GridEnvironment:
+      type: string
+      enum:
+      - SANDBOX
+      - PRODUCTION
+      description: Session environment. The iframeUrl already selects the matching environment.
+      example: SANDBOX
+    Card:
+      type: object
+      required:
+      - id
+      - customerId
+      - status
+      - form
+      - fundingSource
+      - maxSpendPerTransaction
+      - maxSpendPerDay
+      - maxTransactionsPerDay
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+          description: System-generated unique card identifier
+          example: Card:019542f5-b3e7-1d02-0000-000000000010
+        customerId:
+          type: string
+          description: The id of the `Customer` who holds this card.
+          example: Customer:019542f5-b3e7-1d02-0000-000000000001
+        platformCardId:
+          type: string
+          description: Platform-specific card identifier generated by the server.
+          example: card-emp-001
+        status:
+          $ref: '#/components/schemas/CardStatus'
+        statusReason:
+          $ref: '#/components/schemas/CardStatusReason'
+          description: Reason associated with the current `status`. Present when the card is `PENDING_AUTH`, `CLOSED`, or when provisioning was rejected; absent otherwise.
+        brand:
+          $ref: '#/components/schemas/CardBrand'
+        form:
+          $ref: '#/components/schemas/CardForm'
+        pinStatus:
+          $ref: '#/components/schemas/CardPinStatus'
+        pinUnblockAvailableAt:
+          type: string
+          format: date-time
+          readOnly: true
+          description: Earliest time another PIN unblock attempt is allowed. Absent until the unblock allowance is used. Changing the PIN does not reset this time.
+          example: '2026-10-15T15:00:00Z'
+        last4:
+          type: string
+          description: Last four digits of the card PAN.
+          example: '4242'
+        expMonth:
+          type: integer
+          minimum: 1
+          maximum: 12
+          description: Card expiration month (1–12).
+          example: 12
+        expYear:
+          type: integer
+          description: Card expiration year (four digits).
+          example: 2029
+        fundingSource:
+          type: string
+          description: Internal account id that funds this card.
+          example: InternalAccount:019542f5-b3e7-1d02-0000-000000000002
+        cardCapabilities:
+          $ref: '#/components/schemas/CardCapabilities'
+          description: Actions supported for this card by the issuer selected at issuance. Present for cards whose program has been resolved; absent otherwise. These capabilities are fixed at issuance for the card's lifetime.
+        maxSpendPerTransaction:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: The largest amount this card can authorize on a single transaction, in the smallest unit of its `currency` (cents for USD). An authorization for exactly the limit is allowed. A later clearing can still settle above it — a restaurant tip, for example — so this caps the authorization, not the final settled amount. `null` means the card sets no limit of its own. If your platform config also sets `cardConfigs.maxSpendPerTransaction` (the platform-level limit), the lower of the two applies and this value stays as you set it.
+          example: 5000
+        maxSpendPerDay:
+          anyOf:
+          - type: integer
+            format: int64
+            minimum: 1
+            maximum: 9007199254740991
+          - type: 'null'
+          description: Card-specific cap on cumulative new spend during one UTC calendar day, in the smallest unit of the card's `currency`. The window resets at 00:00 UTC. Null means the card has no card-specific daily cap. When the platform config also supplies `cardConfigs.maxSpendPerDay`, Grid enforces the lower of the two values without replacing this configured value. Refunds, reversals, and authorization expiries do not restore capacity during the day. Spend exactly equal to the effective limit is allowed.
+          example: 25000
+        maxTransactionsPerDay:
+          anyOf:
+          - type: integer
+            format: int32
+            minimum: 1
+            maximum: 2147483647
+          - type: 'null'
+          description: Card-specific cap on the number of transactions the card may authorize during one UTC calendar day. The window resets at 00:00 UTC. Null means the card has no card-specific daily transaction cap. When the platform config also supplies `cardConfigs.maxTransactionsPerDay`, Grid enforces the lower of the two values without replacing this configured value. Each approved authorization counts once for the day it was authorized; refunds, reversals, and authorization expiries do not restore capacity during the day. A transaction that brings the day's count exactly to the effective limit is allowed.
+          example: 20
+        allowedMccs:
+          type: array
+          minItems: 1
+          description: Merchant category codes the card may spend at. Present only on a card issued for an agent; absent when that card may spend at any category not blocked.
+          items:
+            type: string
+            pattern: ^[0-9]{4}$
+          example:
+          - '5411'
+        blockedMccs:
+          type: array
+          description: 'Merchant category codes a card issued for an agent declines, with `cardDeclinedReason: BLOCKED`. Present only on such a card, which also declines Grid''s default agent categories unless `defaultMccBlocksLifted` is true.'
+          items:
+            type: string
+            pattern: ^[0-9]{4}$
+          example:
+          - '7995'
+        agentId:
+          type: string
+          description: The agent the card was issued for, when there is one.
+          example: Agent:019542f5-b3e7-1d02-0000-000000000042
+        defaultMccBlocksLifted:
+          type: boolean
+          description: Whether the platform lifted Grid's default agent merchant-category blocks on this card. Present only for a card issued for an agent.
+          example: false
+        currency:
+          type: string
+          description: Currency the card transacts in, fixed at issuance by its card program. USDB-funded cards transact in USD, with funding converted at 1 USDB = 1 USD. Spending limits use the smallest unit of the card's currency (USD cents for USDB-funded cards). Changing the funding source does not change the card's currency or spending-limit units.
+          example: USD
+        processorRef:
+          type: string
+          description: Opaque processor-side reference for the card (e.g. the Lithic card token). Useful for cross-referencing in the processor's dashboards; not used for any Grid request routing.
+          example: card_b81c2a4f
+        issuerRef:
+          type: string
+          description: Opaque identifier for the card on the issuer of record (e.g. the Lead Bank account/card identifier). Useful for cross-referencing in issuer dashboards; not used for any Grid request routing.
+          example: lead_card_7a1b9c3d
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation timestamp
+          example: '2026-05-08T14:10:00Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: Last update timestamp
+          example: '2026-05-08T14:11:00Z'
+    CardListResponse:
+      type: object
+      required:
+      - data
+      - hasMore
+      properties:
+        data:
+          type: array
+          description: List of cards matching the filter criteria
+          items:
+            $ref: '#/components/schemas/Card'
+        hasMore:
+          type: boolean
+          description: Indicates if more results are available beyond this page
+        nextCursor:
+          type: string
+          description: Cursor to retrieve the next page of results (only present if hasMore is true)
+        totalCount:
+          type: integer
+          description: Total number of cards matching the criteria (excluding pagination)
+    Error409:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL | Transaction is not pending platform approval |
+
+            | TRANSACTION_NOT_CANCELLABLE | Transaction has already settled or is otherwise past the point where it can be cancelled |
+
+            | UMA_ADDRESS_EXISTS | UMA address already exists |
+
+            | EMAIL_OTP_EMAIL_ALREADY_EXISTS | Email address is already associated with an EMAIL_OTP credential |
+
+            | EMAIL_OTP_CREDENTIAL_SET_CHANGED | Tied EMAIL_OTP credential set changed after the signed-retry challenge was issued |
+
+            | PASSKEY_ALREADY_ENROLLED | The customer already has an enrolled passkey factor; only one passkey per customer is supported. Delete the existing one before enrolling another |
+
+            | SCA_SESSION_REQUIRED | The customer''s Strong Customer Authentication login session is missing or expired. Re-authenticate the customer, then retry the request. Distinct from a `401`, which means the platform''s own API credentials were rejected |
+
+            | BENEFICIARY_TRUSTED | The external account is currently a trusted beneficiary, so it cannot be deleted. Untrust it first via `POST /customers/external-accounts/{externalAccountId}/untrust` (and its `/confirm`), then delete |
+
+            | BANK_ACCOUNT_VALIDATION_PENDING | The US bank account on this request is still being validated. Grid verifies a newly added ACH account by sending a micro-entry and waiting out the return window, which takes a few banking days. The account is not rejected; retry once validation completes. A permanently failed account returns `400 INVALID_BANK_ACCOUNT` instead |
+
+            | INVALID_STATE_TRANSITION | The requested card `status` transition is not one of `ACTIVE ⇄ FROZEN` or `ACTIVE \| FROZEN → CLOSED`, or the card cannot be unfrozen by the platform because Grid froze it for review, it was frozen as `COMPROMISED`, or its customer is not `ACTIVE` |
+
+            | CARD_ALREADY_CLOSED | `status: CLOSED` was requested for a card that is already `CLOSED` |
+
+            | CARD_NOT_MUTABLE | The card is `CLOSED`, so it can no longer be mutated |
+
+            | PIN_CHANGE_REQUIRED | The card''s PIN unblock allowance is consumed for seven days. Change the PIN to recover sooner. `details.pinUnblockAvailableAt` gives the next allowed unblock time |
+
+            | CARD_LIMIT_REACHED | The platform has reached the maximum number of live cards it may hold, or the cardholder already holds a card and the platform is limited to one per cardholder. Closing a card frees its slot; contact Lightspark to raise the limit |
+
+            | STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE | Grid enablement can only be requested while the stablecoin is `NOT_ENABLED` (a repeat request while already `PENDING_APPROVAL` succeeds). `ENABLING`, `ENABLED` and `DISABLED` are driven by Lightspark and cannot be requested |
+
+            | NOT_YET_AVAILABLE | The request is valid, but its result is not available yet because the data it depends on could still change. Retry later. `reason` says what is outstanding. For balance changes, card settlement for a window boundary has not closed |
+
+            | CONFLICT | Generic resource-state conflict. Returned, for example, when `platformCustomerId` on a customer create call collides with an existing active customer on the same platform |
+
+            | DOCUMENT_ALREADY_EXISTS | A document of this type already exists for the holder; replace it with PUT |
+
+            | DUPLICATE_EXTERNAL_ACCOUNT | An equivalent external account already exists. When the conflicting account belongs to your platform, `details.externalAccountId` and `details.platformAccountId` identify it; otherwise `details` is omitted |
+
+            | DUPLICATE_PAY_REQUEST | A pay request with this idempotency key already exists |
+
+            | OPERATION_IN_PROGRESS | A conflicting Embedded Wallet operation is still in progress |
+
+            | SMS_OTP_CREDENTIAL_SET_CHANGED | The SMS_OTP credential set changed while the request was in flight |
+
+            | SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS | The phone number is already associated with an SMS_OTP credential |
+
+            | STABLECOIN_SYMBOL_ALREADY_EXISTS | A stablecoin with this symbol is already registered |
+
+            | STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS | A stablecoin with this token identifier is already registered |
+
+            | WALLET_NOT_PROVISIONED | The embedded wallet has not been provisioned |
+
+            | PAYMENT_DOCUMENT_ALREADY_USED | The payment document is already attached to a quote. A document can be used on one quote only, so upload the file again to use it on another quote |
+
+            '
+          enum:
+          - TRANSACTION_NOT_PENDING_PLATFORM_APPROVAL
+          - TRANSACTION_NOT_CANCELLABLE
+          - UMA_ADDRESS_EXISTS
+          - EMAIL_OTP_EMAIL_ALREADY_EXISTS
+          - EMAIL_OTP_CREDENTIAL_SET_CHANGED
+          - PASSKEY_ALREADY_ENROLLED
+          - SCA_SESSION_REQUIRED
+          - BENEFICIARY_TRUSTED
+          - BANK_ACCOUNT_VALIDATION_PENDING
+          - INVALID_STATE_TRANSITION
+          - CARD_ALREADY_CLOSED
+          - CARD_NOT_MUTABLE
+          - PIN_CHANGE_REQUIRED
+          - CARD_LIMIT_REACHED
+          - STABLECOIN_GRID_ENABLEMENT_NOT_REQUESTABLE
+          - NOT_YET_AVAILABLE
+          - CONFLICT
+          - DOCUMENT_ALREADY_EXISTS
+          - DUPLICATE_EXTERNAL_ACCOUNT
+          - DUPLICATE_PAY_REQUEST
+          - OPERATION_IN_PROGRESS
+          - SMS_OTP_CREDENTIAL_SET_CHANGED
+          - SMS_OTP_PHONE_NUMBER_ALREADY_EXISTS
+          - STABLECOIN_SYMBOL_ALREADY_EXISTS
+          - STABLECOIN_TOKEN_IDENTIFIER_ALREADY_EXISTS
+          - WALLET_NOT_PROVISIONED
+          - PAYMENT_DOCUMENT_ALREADY_USED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+    CardTokenizationRequestOneOf:
+      oneOf:
+      - $ref: '#/components/schemas/ApplePayTokenizationRequest'
+      - $ref: '#/components/schemas/GooglePayTokenizationRequest'
+      - $ref: '#/components/schemas/SamsungPayTokenizationRequest'
+      discriminator:
+        propertyName: wallet
+        mapping:
+          APPLE_PAY: '#/components/schemas/ApplePayTokenizationRequest'
+          GOOGLE_PAY: '#/components/schemas/GooglePayTokenizationRequest'
+          SAMSUNG_PAY: '#/components/schemas/SamsungPayTokenizationRequest'
     Error404:
       type: object
       required:
-      - message
-      - status
+      - reason
       - code
       properties:
-        status:
-          type: integer
-          enum:
-          - 404
-          description: HTTP status code
         code:
           type: string
           description: '| Error Code | Description |
@@ -1045,6 +1835,34 @@ components:
 
             | STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND | Stablecoin provider account link not found |
 
+            | ACCOUNT_NOT_FOUND | Account not found |
+
+            | AUTH_METHOD_NOT_FOUND | Authentication credential not found |
+
+            | CUSTOMER_NOT_FOUND | Customer not found |
+
+            | DOCUMENT_HOLDER_NOT_FOUND | Document holder not found |
+
+            | NOT_FOUND | The requested resource was not found |
+
+            | PAYMENT_URL_NOT_FOUND | Payment URL not found |
+
+            | PLATFORM_NOT_FOUND | Platform not found |
+
+            | REQUEST_NOT_FOUND | Pending request not found |
+
+            | SESSION_NOT_FOUND | Session not found |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND | Stablecoin external account not found |
+
+            | STABLECOIN_NOT_FOUND | Stablecoin not found |
+
+            | STABLECOIN_OPERATION_NOT_FOUND | Stablecoin operation not found |
+
+            | VERIFICATION_NOT_FOUND | Verification not found |
+
+            | PAYMENT_DOCUMENT_NOT_FOUND | Payment document not found |
+
             '
           enum:
           - TRANSACTION_NOT_FOUND
@@ -1057,13 +1875,269 @@ components:
           - REFERENCE_NOT_FOUND
           - UMA_NOT_FOUND
           - STABLECOIN_PROVIDER_ACCOUNT_NOT_FOUND
-        message:
+          - ACCOUNT_NOT_FOUND
+          - AUTH_METHOD_NOT_FOUND
+          - CUSTOMER_NOT_FOUND
+          - DOCUMENT_HOLDER_NOT_FOUND
+          - NOT_FOUND
+          - PAYMENT_URL_NOT_FOUND
+          - PLATFORM_NOT_FOUND
+          - REQUEST_NOT_FOUND
+          - SESSION_NOT_FOUND
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_FOUND
+          - STABLECOIN_NOT_FOUND
+          - STABLECOIN_OPERATION_NOT_FOUND
+          - VERIFICATION_NOT_FOUND
+          - PAYMENT_DOCUMENT_NOT_FOUND
+        reason:
           type: string
           description: Error message
         details:
           type: object
           description: Additional error details
           additionalProperties: true
+    Error400:
+      type: object
+      required:
+      - reason
+      - code
+      properties:
+        code:
+          type: string
+          description: '| Error Code | Description |
+
+            |------------|-------------|
+
+            | INVALID_INPUT | Invalid input provided |
+
+            | END_USER_TERMS_VERSION_NOT_FOUND | The submitted version is not supported for the agreement it was sent for |
+
+            | MISSING_MANDATORY_USER_INFO | Required customer information is missing |
+
+            | INVITATION_ALREADY_CLAIMED | Invitation has already been claimed |
+
+            | INVITATIONS_NOT_CONFIGURED | Invitations are not configured |
+
+            | INVALID_UMA_ADDRESS | UMA address format is invalid |
+
+            | INVITATION_CANCELLED | Invitation has been cancelled |
+
+            | INVALID_RECEIVER | Receiver is invalid |
+
+            | PARSE_PAYREQ_RESPONSE_ERROR | Error parsing receiver PayReq response |
+
+            | CERT_CHAIN_INVALID | Counterparty certificate chain is invalid |
+
+            | CERT_CHAIN_EXPIRED | Counterparty certificate chain has expired |
+
+            | INVALID_PUBKEY_FORMAT | Counterparty Public key format is invalid |
+
+            | MISSING_REQUIRED_UMA_PARAMETERS | Counterparty required UMA parameters are missing |
+
+            | SENDER_NOT_ACCEPTED | The receiving institution declined this sender. Final; a retry returns the same answer |
+
+            | AMOUNT_OUT_OF_RANGE | Amount is out of range |
+
+            | INVALID_CURRENCY | Currency is invalid |
+
+            | INVALID_TIMESTAMP | Timestamp is invalid |
+
+            | INVALID_NONCE | Nonce is invalid |
+
+            | INVALID_REQUEST_FORMAT | Request format is invalid |
+
+            | INVALID_BANK_ACCOUNT | Bank account is invalid |
+
+            | SELF_PAYMENT | Self payment not allowed |
+
+            | PARSE_LNURLP_RESPONSE_ERROR | Error parsing LNURLP response |
+
+            | INVALID_AMOUNT | Amount is invalid |
+
+            | WEBHOOK_ENDPOINT_NOT_SET | Webhook endpoint is not set |
+
+            | WEBHOOK_DELIVERY_ERROR | Webhook delivery error |
+
+            | LOW_QUALITY | Document quality too low to process |
+
+            | DATA_MISMATCH | Document details don''t match provided information |
+
+            | EXPIRED | Document has expired |
+
+            | SUSPECTED_FRAUD | Document suspected of being forged or edited |
+
+            | UNSUITABLE_DOCUMENT | Document type is not accepted or not supported |
+
+            | INCOMPLETE | Document is missing pages or sides |
+
+            | EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS | An EMAIL_OTP credential is already registered on the target internal account; only one email OTP credential is supported per internal account at this time |
+
+            | SMS_OTP_CREDENTIAL_ALREADY_EXISTS | An SMS_OTP credential is already registered on the target internal account; only one SMS OTP credential is supported per internal account at this time |
+
+            | PASSKEY_CREDENTIAL_ALREADY_EXISTS | A PASSKEY credential with the same WebAuthn credentialId is already registered on the target internal account |
+
+            | AUTH_CREDENTIAL_VERIFICATION_REQUIRED | The new email or phone number has no verified replacement credential |
+
+            | AUTH_CREDENTIAL_VERIFICATION_EXPIRED | The replacement credential''s verification has expired |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_INVALID | The stablecoin provider account link is not usable |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_REVOKED | The stablecoin provider account link has been revoked |
+
+            | STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED | Multiple active provider account links exist; pass `stablecoinProviderAccountId` to select one |
+
+            | CARDHOLDER_KYC_NOT_APPROVED | The cardholder''s KYC status is not `APPROVED`, so a card cannot be issued |
+
+            | ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED | The customer create request omits an accountholder agreement its accounts require |
+
+            | TRANSACTION_SIZE_LIMIT_EXCEEDED | The requested amount exceeds the configured maximum single-transaction amount for this trade corridor or withdrawal currency |
+
+            | EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED | The destination account''s ownership must be verified before this transfer can proceed |
+
+            | INSUFFICIENT_FUNDS | Insufficient funds for this operation |
+
+            | QUOTE_EXPIRED | The quote has expired; request a new quote |
+
+            | QUOTE_RATE_UNAVAILABLE | No exchange rate is available for this corridor right now |
+
+            | STABLECOIN_AMOUNT_NOT_REPRESENTABLE | The amount cannot be represented at the token''s precision |
+
+            | STABLECOIN_BURN_SOURCE_NOT_SUPPORTED | The burn source account cannot be used for this operation |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED | Linking the external account for stablecoin operations failed |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED | The external account needs a link method before it can be used |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED | The external account is not linked for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED | This external account type is not supported for stablecoin operations |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED | The provider could not link the external account |
+
+            | STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED | The external account must be linked with the provider first |
+
+            | STABLECOIN_GRID_OPERATIONS_NOT_ENABLED | The stablecoin is not enabled for Grid operations |
+
+            | STABLECOIN_NOT_PROVISIONED | The stablecoin is not provisioned for issuer operations |
+
+            | STABLECOIN_OPERATION_NOT_SUPPORTED | The stablecoin does not support this operation |
+
+            | STABLECOIN_PROVIDER_ERROR | The stablecoin provider rejected the operation |
+
+            | STABLECOIN_PROVIDER_SOURCE_NOT_LINKED | The provider source account is not linked |
+
+            | STABLECOIN_VERIFICATION_FAILED | The stablecoin could not be verified with the provider |
+
+            | DOCUMENTS_REQUIRED | The destination requires supporting documents for the quote''s `purposeOfPayment` that the request did not supply. `details.missingRequirements` lists the requirement ID of each one |
+
+            '
+          enum:
+          - INVALID_INPUT
+          - END_USER_TERMS_VERSION_NOT_FOUND
+          - MISSING_MANDATORY_USER_INFO
+          - INVITATION_ALREADY_CLAIMED
+          - INVITATIONS_NOT_CONFIGURED
+          - INVALID_UMA_ADDRESS
+          - INVITATION_CANCELLED
+          - INVALID_RECEIVER
+          - PARSE_PAYREQ_RESPONSE_ERROR
+          - CERT_CHAIN_INVALID
+          - CERT_CHAIN_EXPIRED
+          - INVALID_PUBKEY_FORMAT
+          - MISSING_REQUIRED_UMA_PARAMETERS
+          - SENDER_NOT_ACCEPTED
+          - AMOUNT_OUT_OF_RANGE
+          - INVALID_CURRENCY
+          - INVALID_TIMESTAMP
+          - INVALID_NONCE
+          - INVALID_REQUEST_FORMAT
+          - INVALID_BANK_ACCOUNT
+          - SELF_PAYMENT
+          - PARSE_LNURLP_RESPONSE_ERROR
+          - INVALID_AMOUNT
+          - WEBHOOK_ENDPOINT_NOT_SET
+          - WEBHOOK_DELIVERY_ERROR
+          - LOW_QUALITY
+          - DATA_MISMATCH
+          - EXPIRED
+          - SUSPECTED_FRAUD
+          - UNSUITABLE_DOCUMENT
+          - INCOMPLETE
+          - EMAIL_OTP_CREDENTIAL_ALREADY_EXISTS
+          - SMS_OTP_CREDENTIAL_ALREADY_EXISTS
+          - PASSKEY_CREDENTIAL_ALREADY_EXISTS
+          - AUTH_CREDENTIAL_VERIFICATION_REQUIRED
+          - AUTH_CREDENTIAL_VERIFICATION_EXPIRED
+          - STABLECOIN_PROVIDER_ACCOUNT_INVALID
+          - STABLECOIN_PROVIDER_ACCOUNT_REVOKED
+          - STABLECOIN_PROVIDER_ACCOUNT_SELECTION_REQUIRED
+          - CARDHOLDER_KYC_NOT_APPROVED
+          - ACCOUNTHOLDER_AGREEMENT_NOT_ACCEPTED
+          - TRANSACTION_SIZE_LIMIT_EXCEEDED
+          - EXTERNAL_ACCOUNT_VERIFICATION_REQUIRED
+          - INSUFFICIENT_FUNDS
+          - QUOTE_EXPIRED
+          - QUOTE_RATE_UNAVAILABLE
+          - STABLECOIN_AMOUNT_NOT_REPRESENTABLE
+          - STABLECOIN_BURN_SOURCE_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_LINK_METHOD_REQUIRED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_LINKED
+          - STABLECOIN_EXTERNAL_ACCOUNT_NOT_SUPPORTED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_FAILED
+          - STABLECOIN_EXTERNAL_ACCOUNT_PROVIDER_LINK_REQUIRED
+          - STABLECOIN_GRID_OPERATIONS_NOT_ENABLED
+          - STABLECOIN_NOT_PROVISIONED
+          - STABLECOIN_OPERATION_NOT_SUPPORTED
+          - STABLECOIN_PROVIDER_ERROR
+          - STABLECOIN_PROVIDER_SOURCE_NOT_LINKED
+          - STABLECOIN_VERIFICATION_FAILED
+          - DOCUMENTS_REQUIRED
+        reason:
+          type: string
+          description: Error message
+        details:
+          type: object
+          description: Additional error details. Shape varies by `code`. For field-validation errors on submit endpoints (e.g. `POST /customers`, `PATCH /customers/{id}`), `details.errors[]` enumerates every invalid field so platforms can render form-field-level UX for the entire request in a single round-trip.
+          properties:
+            errors:
+              type: array
+              description: One entry per invalid field. Present on field-validation errors from submit endpoints.
+              items:
+                $ref: '#/components/schemas/FieldError'
+            missingRequirements:
+              type: array
+              description: The requirement ID of each required document that the quote request did not supply. Present on `DOCUMENTS_REQUIRED`.
+              items:
+                $ref: '#/components/schemas/PaymentDocumentRequirementId'
+          additionalProperties: true
+    ApplePayTokenizationRequest:
+      title: Apple Pay Tokenization Request
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationRequest'
+      - $ref: '#/components/schemas/ApplePayTokenizationRequestFields'
+    SamsungPayTokenizationResponse:
+      title: Samsung Pay Tokenization Response
+      allOf:
+      - $ref: '#/components/schemas/CardTokenizationResponse'
+      - $ref: '#/components/schemas/SamsungPayTokenizationResponseFields'
+    CardPinSetRequest:
+      type: object
+      required:
+      - encryptedPinBlock
+      properties:
+        encryptedPinBlock:
+          type: string
+          description: 'The cardholder''s PIN, encrypted in your client before calling Grid. Use the [PIN encryption public key](https://docs.lightspark.com/keys/pin-encryption-public-key.pem.txt) for both sandbox and production. Grid cannot decrypt the block and never stores or logs PIN material.
+
+
+            Build it in the client, immediately after PIN entry, so the PIN never reaches your servers either: serialize `{"nonce": <random integer>, "pin": "<4-digit PIN>"}` as JSON, encode it as UTF-8, encrypt it using the public key above, and base64-encode the ciphertext. Generate a fresh cryptographically random integer `nonce` for each request to prevent replay. Preserve the PIN as a string, including leading zeros. Send the resulting base64 string as `encryptedPinBlock`. Never send the plaintext PIN or the unencrypted JSON to Grid. Keep ciphertext out of logs, storage, and analytics too.
+
+
+            A rejected block returns `400 INVALID_INPUT`. Check the payload, encoding, and public key, then create a new block with a fresh nonce. See [Card PINs](https://docs.lightspark.com/cards/card-management/pins) for the complete PIN-entry flows.'
+          minLength: 16
+          maxLength: 1024
+          example: SGVsbG8sIHRoaXMgaXMgYSBiYXNlNjQtZW5jb2RlZCBjaXBoZXJ0ZXh0Li4u
   securitySchemes:
     BasicAuth:
       type: http
@@ -1072,7 +2146,7 @@ components:
     AgentAuth:
       type: http
       scheme: bearer
-      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/{code}/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
+      description: 'Bearer token authentication for agent-scoped endpoints. The token is the `accessToken` returned when redeeming a device code via `POST /agents/device-codes/redeem`. Agent credentials are user-scoped: all requests are automatically bound to the agent''s associated customer and subject to the agent''s policy.'
     WebhookSignature:
       type: apiKey
       in: header
